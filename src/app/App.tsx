@@ -402,7 +402,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
           <div className="stage-status"><span className={`status-dot ${loading ? 'loading-dot' : ''}`} />{error ? tr('载入失败', 'Load failed') : loading ? `${Math.floor(progress)}%` : `${visible.length} ${tr('个零件', 'bricks')}`}</div>
         </div>
         <div className="canvas-host" ref={stageRef} />
-        {mode === 'build' && selected && sceneRef.current && <SelectedPartPreview scene={sceneRef.current} part={selected} onClose={() => patch({ selection: [] })} tr={tr} />}
+        {selected && sceneRef.current && <SelectedPartPreview scene={sceneRef.current} part={selected} onClose={() => patch({ selection: [] })} tr={tr} />}
         <div className="viewport-toolbar" aria-label={tr('视角工具', 'View tools')}>
           <div className="view-select"><Box size={16} /><select aria-label={tr('模型视角', 'Model view')} value={state.view} onChange={e => patch({ view: e.target.value as ExplorerState['view'], revision: state.revision + 1 })}>{Object.entries(viewNames(tr)).map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select><ChevronDown size={12} /></div>
           <div className="toolbar-divider" />

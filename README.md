@@ -8,17 +8,7 @@
   An unofficial desktop workspace for exploring LDraw models, inspecting individual bricks, and following animated build instructions.
 </p>
 
-<p align="center">
-  <a href="docs/media/brick-atlas-demo-4k.mp4">
-    <img src="docs/media/brick-atlas-readme-preview.gif" width="960" alt="Brick Atlas Super Speedster demo">
-  </a>
-</p>
-
-<p align="center">
-  <a href="docs/media/brick-atlas-demo-4k.mp4"><strong>4K MP4 · Mobile compatible</strong></a>
-  &nbsp;·&nbsp;
-  <a href="docs/media/brick-atlas-build-explode-demo.webm">2K WebM</a>
-</p>
+https://github.com/user-attachments/assets/1761f41d-e016-40c3-85f9-06102f5acc66
 
 ## Features
 

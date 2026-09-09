@@ -56,6 +56,8 @@ export class AtlasScene {
   private cameraMoving = false;
   private interaction = false;
   private panMode = false;
+  private requestedPixelRatio = Math.min(Math.max(devicePixelRatio, 2), 3);
+  private drawingPixelLimit = Infinity;
   private actualExplosion = 0;
   private assemblyProgress = 1;
   private assemblyIds = new Set<string>();
@@ -90,7 +92,7 @@ export class AtlasScene {
     this.renderer.toneMappingExposure = 1.12;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = PCFSoftShadowMap;
-    this.renderer.setPixelRatio(Math.min(Math.max(devicePixelRatio, 2), 3));
+    this.renderer.setPixelRatio(this.requestedPixelRatio);
     this.renderer.domElement.setAttribute('aria-label', `${manifest.model.title} ${this.text('交互式三维模型', 'interactive 3D model')}`);
     this.renderer.domElement.setAttribute('role', 'img');
     this.renderer.domElement.tabIndex = 0;
@@ -230,12 +232,42 @@ export class AtlasScene {
     if (Math.abs(current.x - width) > 0.5 || Math.abs(current.y - height) > 0.5) {
       this.renderer.setSize(width, height);
     }
+    this.applyPixelRatio(width, height);
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.inventory = inventoryLayout(this.visible, this.camera.aspect);
     this.fitRequested = true;
     this.updateLayout();
+    this.fit();
   };
+
+  private applyPixelRatio(width: number, height: number) {
+    const gl = this.renderer.getContext();
+    const viewport = gl.getParameter(gl.MAX_VIEWPORT_DIMS) as Int32Array;
+    const maximumRatio = Math.min(
+      this.renderer.capabilities.maxTextureSize / width,
+      this.renderer.capabilities.maxTextureSize / height,
+      viewport[0] / width,
+      viewport[1] / height,
+      Math.sqrt(this.drawingPixelLimit / (width * height)),
+    );
+    let pixelRatio = Math.max(1, Math.min(this.requestedPixelRatio, maximumRatio));
+    if (Math.abs(this.renderer.getPixelRatio() - pixelRatio) > 0.001) {
+      this.renderer.setPixelRatio(pixelRatio);
+    }
+    const expectedWidth = Math.floor(width * pixelRatio);
+    const expectedHeight = Math.floor(height * pixelRatio);
+    const drawingWidth = gl.drawingBufferWidth;
+    const drawingHeight = gl.drawingBufferHeight;
+    if (drawingWidth + 1 < expectedWidth || drawingHeight + 1 < expectedHeight) {
+      this.drawingPixelLimit = Math.min(this.drawingPixelLimit, drawingWidth * drawingHeight);
+      pixelRatio = Math.min(this.requestedPixelRatio, maximumRatio) * Math.min(
+        drawingWidth / expectedWidth,
+        drawingHeight / expectedHeight,
+      ) * 0.98;
+      this.renderer.setPixelRatio(Math.max(1, pixelRatio));
+    }
+  }
 
   private addChunk(groupId: GroupId, buffer: ArrayBuffer) {
     const chunk = this.manifest.chunks.find(c => c.groupId === groupId)!;
@@ -312,9 +344,10 @@ export class AtlasScene {
     }
     for (const line of this.lineObjects) line.visible = state.edges && state.quality !== 'low';
     this.renderer.shadowMap.enabled = state.buildStep === null;
-    const pixelRatio = state.quality === 'low' ? 1 : state.quality === 'ultra' ? 4
+    this.requestedPixelRatio = state.quality === 'low' ? 1 : state.quality === 'ultra' ? 4
       : state.quality === 'high' ? 3 : Math.min(Math.max(devicePixelRatio, 2), 3);
-    if (this.renderer.getPixelRatio() !== pixelRatio) this.renderer.setPixelRatio(pixelRatio);
+    const { width, height } = this.host.getBoundingClientRect();
+    if (width && height) this.applyPixelRatio(width, height);
     if (previous.xray !== state.xray) this.model.traverse(object => {
       const material = (object as Mesh).material;
       if (material) (Array.isArray(material) ? material : [material]).forEach(item => setAtlasXray(item, state.xray));
@@ -368,31 +401,33 @@ export class AtlasScene {
 
   private fit(immediate = false) {
     if (!this.visible.length) { this.fitRequested = false; return; }
-    const box = new Box3();
-    for (const part of this.visible) {
-      const offset = this.offsets[part.index];
-      box.union(new Box3(new Vector3(...part.bounds.min).add(offset), new Vector3(...part.bounds.max).add(offset)));
-    }
-    box.getCenter(this.desiredTarget);
     const inventoryMix = Math.max(0, Math.min(1, (this.actualExplosion - 0.45) / 0.55));
     const inventoryDirection = new Vector3(0, 0, 1).applyMatrix4(inventoryRotation.clone().invert());
     const direction = this.userDirection.clone().normalize().lerp(inventoryDirection, inventoryMix).normalize();
     this.camera.fov = 34 - inventoryMix * 18;
     this.camera.updateProjectionMatrix();
     const temporary = new PerspectiveCamera(this.camera.fov, this.camera.aspect);
-    temporary.position.copy(this.desiredTarget).add(direction);
-    temporary.lookAt(this.desiredTarget);
+    temporary.position.copy(direction);
+    temporary.lookAt(new Vector3());
     temporary.updateMatrixWorld();
-    const rotation = new Matrix4().makeRotationFromQuaternion(temporary.quaternion).invert();
+    const worldToView = new Matrix4().makeRotationFromQuaternion(temporary.quaternion).invert();
     const viewBox = new Box3();
     for (const part of this.visible) {
-      const offset = this.offsets[part.index].clone().sub(this.desiredTarget);
-      viewBox.union(new Box3(new Vector3(...part.bounds.min).add(offset), new Vector3(...part.bounds.max).add(offset)).applyMatrix4(rotation));
+      const offset = this.offsets[part.index];
+      viewBox.union(this.partBox(part).translate(offset).applyMatrix4(worldToView));
     }
+    const viewCenter = viewBox.getCenter(new Vector3());
+    this.desiredTarget.copy(viewCenter).applyMatrix4(worldToView.clone().invert());
     const tan = Math.tan(this.camera.fov * Math.PI / 360);
-    const distance = Math.max(viewBox.max.y, -viewBox.min.y) / tan;
-    const horizontal = Math.max(viewBox.max.x, -viewBox.min.x) / tan / this.camera.aspect;
-    const fitDistance = Math.max(distance, horizontal, 20) * 1.15 + viewBox.max.z;
+    const halfWidth = Math.max(viewBox.max.x - viewCenter.x, viewCenter.x - viewBox.min.x);
+    const halfHeight = Math.max(viewBox.max.y - viewCenter.y, viewCenter.y - viewBox.min.y);
+    const nearDepth = Math.max(0, viewBox.max.z - viewCenter.z);
+    const padding = 1.15 + inventoryMix * 0.13;
+    const fitDistance = Math.max(
+      halfHeight / tan,
+      halfWidth / tan / this.camera.aspect,
+      20,
+    ) * padding + nearDepth;
     this.desiredPosition.copy(this.desiredTarget).addScaledVector(direction, fitDistance);
     this.cameraMoving = true;
     if (immediate || this.reducedMotion) {
@@ -561,10 +596,56 @@ export class AtlasScene {
   }
 
   projectPart(part: PartInstance) {
-    const center = new Vector3(...part.bounds.min).add(new Vector3(...part.bounds.max)).multiplyScalar(0.5).add(this.offsets[part.index]);
+    const center = this.partBox(part).getCenter(new Vector3()).add(this.offsets[part.index]);
     center.project(this.camera);
     const { width, height } = this.renderer.domElement.getBoundingClientRect();
     return { id: part.instanceId, x: (center.x + 1) / 2 * width, y: (1 - center.y) / 2 * height, z: center.z };
+  }
+
+  private partBox(part: PartInstance) {
+    return this.picks.get(part.index)?.box.clone()
+      ?? new Box3(new Vector3(...part.bounds.min), new Vector3(...part.bounds.max));
+  }
+
+  private projectedFraming() {
+    const { width, height } = this.renderer.domElement.getBoundingClientRect();
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    let insideInstances = 0;
+    let totalInstances = 0;
+    for (const part of this.visible) {
+      if (!this.loaded.has(part.groupId)) continue;
+      totalInstances++;
+      const bounds = this.partBox(part).translate(this.offsets[part.index]);
+      const { min, max } = bounds;
+      let inside = true;
+      for (const x of [min.x, max.x]) {
+        for (const y of [min.y, max.y]) {
+          for (const z of [min.z, max.z]) {
+            const point = new Vector3(x, y, z).project(this.camera);
+            const screenX = (point.x + 1) / 2 * width;
+            const screenY = (1 - point.y) / 2 * height;
+            minX = Math.min(minX, screenX);
+            maxX = Math.max(maxX, screenX);
+            minY = Math.min(minY, screenY);
+            maxY = Math.max(maxY, screenY);
+            inside &&= point.z >= -1 && point.z <= 1
+              && screenX >= 0 && screenX <= width
+              && screenY >= 0 && screenY <= height;
+          }
+        }
+      }
+      if (inside) insideInstances++;
+    }
+    return {
+      width,
+      height,
+      minX,
+      maxX,
+      minY,
+      maxY,
+      insideInstances,
+      totalInstances,
+    };
   }
 
   getPartPreview(instanceId: string): PartPreviewData | null {
@@ -760,6 +841,8 @@ export class AtlasScene {
   }
 
   snapshot() {
+    const gl = this.renderer.getContext();
+    const viewport = gl.getParameter(gl.MAX_VIEWPORT_DIMS) as Int32Array;
     return {
       ...this.metrics,
       selected: [...this.state.selection],
@@ -773,6 +856,16 @@ export class AtlasScene {
       requestedExplosion: this.state.explosion,
       autoRotate: this.controls.autoRotate,
       controlsEnabled: this.controls.enabled,
+      pixelRatio: this.renderer.getPixelRatio(),
+      renderBuffer: {
+        width: this.renderer.domElement.width,
+        height: this.renderer.domElement.height,
+        drawingWidth: gl.drawingBufferWidth,
+        drawingHeight: gl.drawingBufferHeight,
+        maxWidth: Math.min(this.renderer.capabilities.maxTextureSize, viewport[0]),
+        maxHeight: Math.min(this.renderer.capabilities.maxTextureSize, viewport[1]),
+      },
+      framing: this.projectedFraming(),
     };
   }
 

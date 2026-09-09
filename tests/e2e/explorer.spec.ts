@@ -47,11 +47,47 @@ test('real geometry, framing, views, motion, reversible explosion and pixel cove
   const rect = (await canvas.boundingBox())!;
   const inside = inventory.projected.filter(p => p.x >= 0 && p.y >= 0 && p.x <= rect.width && p.y <= rect.height && p.z < 1).length;
   expect(inside).toBe(278);
+  expect(inventory.framing.insideInstances).toBe(278);
+  expect(inventory.framing.minX).toBeGreaterThan(rect.width * 0.04);
+  expect(inventory.framing.maxX).toBeLessThan(rect.width * 0.96);
+  expect(inventory.framing.minY).toBeGreaterThan(rect.height * 0.04);
+  expect(inventory.framing.maxY).toBeLessThan(rect.height * 0.96);
+  if (testInfo.project.name === 'desktop-chrome') {
+    await page.setViewportSize({ width: 3840, height: 2160 });
+    await page.getByRole('button', { name: '适配全部可见零件' }).click();
+    await page.waitForTimeout(1200);
+    const inventory4k = (await getMetrics(page))!;
+    const framing4k = inventory4k.framing;
+    expect(inventory4k.renderBuffer.width).toBeLessThanOrEqual(inventory4k.renderBuffer.maxWidth);
+    expect(inventory4k.renderBuffer.height).toBeLessThanOrEqual(inventory4k.renderBuffer.maxHeight);
+    expect(inventory4k.renderBuffer.drawingWidth).toBe(inventory4k.renderBuffer.width);
+    expect(inventory4k.renderBuffer.drawingHeight).toBe(inventory4k.renderBuffer.height);
+    expect(framing4k.insideInstances).toBe(278);
+    expect(framing4k.minX).toBeGreaterThan(framing4k.width * 0.04);
+    expect(framing4k.maxX).toBeLessThan(framing4k.width * 0.96);
+    expect(framing4k.minY).toBeGreaterThan(framing4k.height * 0.04);
+    expect(framing4k.maxY).toBeLessThan(framing4k.height * 0.96);
+  }
   await page.screenshot({ path: testInfo.outputPath('inventory-100.png') });
   // Inventory positions are computed from exact per-instance bounds, not synthetic UI targets.
-  const target = inventory.projected.find(p => p.x > 50 && p.x < rect.width - 80 && p.y > 75 && p.y < rect.height - 40)!;
+  const currentInventory = (await getMetrics(page))!;
+  const currentRect = (await canvas.boundingBox())!;
+  const target = currentInventory.projected.find(
+    p => p.x > 50 && p.x < currentRect.width - 80 && p.y > 75 && p.y < currentRect.height - 40,
+  )!;
   await canvas.click({ position: { x: target.x, y: target.y } });
   await expect.poll(async () => (await getMetrics(page))?.selected.length).toBe(1);
+  const preview = page.getByRole('region', { name: '选中积木三维预览' });
+  await expect(preview).toBeVisible();
+  const previewCanvas = preview.getByRole('img', { name: '选中积木可旋转三维预览' });
+  const previewBefore = await previewCanvas.screenshot();
+  const previewBox = (await previewCanvas.boundingBox())!;
+  await page.mouse.move(previewBox.x + previewBox.width * 0.3, previewBox.y + previewBox.height * 0.5);
+  await page.mouse.down();
+  await page.mouse.move(previewBox.x + previewBox.width * 0.72, previewBox.y + previewBox.height * 0.58, { steps: 8 });
+  await page.mouse.up();
+  await page.waitForTimeout(250);
+  expect(await previewCanvas.screenshot()).not.toEqual(previewBefore);
   await page.getByRole('button', { name: '复原模型', exact: true }).click();
   await expect.poll(async () => (await getMetrics(page))?.actualExplosion).toBe(0);
   expect((await getMetrics(page))!.offsets.every(v => v.every(c => c === 0))).toBe(true);
@@ -136,6 +172,7 @@ test('every inventory instance is individually addressable', async ({ page }, te
     await canvas.click({ position: { x: point.x, y: point.y }, force: true });
     const selected = (await getMetrics(page))!.selected;
     if (selected[0] !== point.id) missed.push(point.id);
+    await page.keyboard.press('Escape');
   }
   await testInfo.attach('picking-audit', { body: JSON.stringify({ total: points.length, missed }), contentType: 'application/json' });
   expect(missed).toEqual([]);
