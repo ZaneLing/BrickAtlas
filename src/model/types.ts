@@ -99,7 +99,7 @@ export interface ExplorerState {
 
 export const initialState: ExplorerState = {
   hiddenGroups: [], hiddenBrickIds: [], selection: [], highlightedBrickIds: [], isolation: null, explosion: 0,
-  autoRotate: false, edges: true, quality: 'auto', view: 'perspective', revision: 0,
+  autoRotate: false, edges: true, quality: 'high', view: 'perspective', revision: 0,
   buildStep: null, highlightStep: true, grid: true, background: 'studio', assemblyRevision: 0, xray: false,
 };
 

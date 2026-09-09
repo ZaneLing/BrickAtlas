@@ -1,5 +1,5 @@
 import {
-  ACESFilmicToneMapping, AmbientLight, Box3, BufferAttribute, BufferGeometry, DataTexture, DirectionalLight, DoubleSide,
+  ACESFilmicToneMapping, AmbientLight, Box3, BufferAttribute, BufferGeometry, Color, DataTexture, DirectionalLight, DoubleSide,
   FloatType, GridHelper, Group, HemisphereLight, LineSegments, Matrix4, Mesh, MeshBasicMaterial,
   MOUSE, NearestFilter, PCFSoftShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Raycaster, RGBAFormat,
   ShadowMaterial,
@@ -134,8 +134,12 @@ export class AtlasScene {
     this.controls.addEventListener('change', this.invalidate);
     this.controls.addEventListener('start', this.controlStart);
     this.controls.addEventListener('end', this.controlEnd);
-    this.stateData = new Float32Array(manifest.instances.length * 8);
-    this.texture = new DataTexture(this.stateData, manifest.instances.length, 2, RGBAFormat, FloatType);
+    this.stateData = new Float32Array(manifest.instances.length * 12);
+    for (const part of manifest.instances) {
+      const color = new Color(part.colorHex);
+      this.stateData.set([color.r, color.g, color.b, 1], manifest.instances.length * 8 + part.index * 4);
+    }
+    this.texture = new DataTexture(this.stateData, manifest.instances.length, 3, RGBAFormat, FloatType);
     this.texture.minFilter = NearestFilter;
     this.texture.magFilter = NearestFilter;
     this.texture.needsUpdate = true;
@@ -592,6 +596,18 @@ export class AtlasScene {
     canvas.addEventListener('keydown', this.keydown);
   }
 
+  private detachEvents() {
+    const canvas = this.renderer.domElement;
+    canvas.removeEventListener('pointerdown', this.pointerDown);
+    canvas.removeEventListener('pointermove', this.pointerMove);
+    canvas.removeEventListener('pointerup', this.pointerUp);
+    canvas.removeEventListener('pointercancel', this.pointerCancel);
+    canvas.removeEventListener('pointerleave', this.pointerLeave);
+    canvas.removeEventListener('webglcontextlost', this.contextLost);
+    canvas.removeEventListener('webglcontextrestored', this.contextRestored);
+    canvas.removeEventListener('keydown', this.keydown);
+  }
+
   snapshot() {
     return {
       ...this.metrics,
@@ -609,6 +625,7 @@ export class AtlasScene {
     this.worker?.terminate();
     this.motionPreference.removeEventListener('change', this.motionChanged);
     this.observer.disconnect();
+    this.detachEvents();
     this.controls.dispose();
     const geometries = new Set<BufferGeometry>(), materials = new Set<Material>();
     this.scene.traverse(object => {
@@ -622,7 +639,9 @@ export class AtlasScene {
     this.texture.dispose();
     this.environment.dispose();
     this.captureRenderer?.dispose();
+    this.captureRenderer?.forceContextLoss();
     this.renderer.dispose();
+    this.renderer.forceContextLoss();
     this.renderer.domElement.remove();
   }
 }

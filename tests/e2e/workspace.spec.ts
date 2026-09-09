@@ -20,6 +20,27 @@ test('catalog exposes twelve projects, real previews and model parameters', asyn
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
+test('landing scroll story builds and explodes a live 3D model', async ({ page }) => {
+  await page.goto('/');
+  const story = page.getByRole('region', { name: '滚动式功能演示' });
+  await story.scrollIntoViewIfNeeded();
+  await expect(story.locator('canvas')).toBeVisible();
+  await expect(story.getByText('实时渲染')).toBeVisible();
+  const scrollStory = (progress: number) => page.evaluate(value => {
+    const section = document.querySelector('.landing-story')!;
+    const top = section.getBoundingClientRect().top + scrollY;
+    scrollTo(0, top + (section.clientHeight - innerHeight) * value);
+  }, progress);
+  await scrollStory(0.25);
+  await expect.poll(async () => page.evaluate(() => {
+    const count = window.__landingAtlas?.().visibleInstances ?? 0;
+    return count > 0 && count < 278;
+  })).toBe(true);
+  await scrollStory(0.9);
+  await expect(story.getByText('三维拆分', { exact: true }).locator('..').locator('..')).toHaveClass(/active/);
+  await expect.poll(async () => page.evaluate(() => window.__landingAtlas?.().actualExplosion ?? 0)).toBeGreaterThan(0.35);
+});
+
 test('language toggle translates the complete workspace and persists', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: '切换为英文' }).click();
@@ -178,8 +199,28 @@ test('workspace navigation returns home and switches models', async ({ page }) =
 
 test('creator preflights a local MPD without uploading it', async ({ page }) => {
   await page.goto('/create');
-  await page.locator('input[type=file]').setInputFiles('assets-source/set-original/31027-1.mpd');
+  await page.locator('input[accept*=".ldr"]').setInputFiles('assets-source/set-original/31027-1.mpd');
   await expect(page.getByRole('heading', { name: '31027-1.mpd' })).toBeVisible();
   await expect(page.getByText('Type-1 引用')).toBeVisible();
   await expect(page.getByText('结构演示', { exact: false })).toBeVisible();
+});
+
+test('image studio converts an image into bricks, steps, and exports', async ({ page }) => {
+  await page.goto('/create');
+  await expect(page.getByRole('region', { name: '图片转积木工作台' })).toBeVisible();
+  await page.locator('input[accept^="image/"]').setInputFiles('public/models/5867/preview.png');
+  await expect(page.locator('.image-stage-heading strong')).toHaveText('preview');
+  await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().bricks ?? 0)).toBeGreaterThan(20);
+  const canvas = page.getByRole('img', { name: '图片生成的积木三维模型' });
+  await expect(canvas).toBeVisible();
+  const ratio = await canvas.evaluate(element => (element as HTMLCanvasElement).width / element.getBoundingClientRect().width);
+  expect(ratio).toBeGreaterThanOrEqual(1.9);
+  await page.getByLabel('拆分程度').fill('70');
+  await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().explosion ?? 0)).toBeGreaterThan(0.6);
+  const bomDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'BOM CSV' }).click();
+  expect((await bomDownload).suggestedFilename()).toContain('-bom.csv');
+  const ldrawDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'LDraw', exact: true }).click();
+  expect((await ldrawDownload).suggestedFilename()).toContain('.ldr');
 });

@@ -15,6 +15,8 @@ import { diagnosticsReport, installDiagnostics, recordDiagnostic } from './diagn
 import { modelCatalog, type ModelConfig } from '../../atlas.config';
 import { exportBuildGuide, groupStepParts } from '../instructions/exportGuide';
 import { localCategory, localGroupName, useLocale, type Locale, type Translator } from './locale';
+import { LandingShowcase } from './LandingShowcase';
+import { ImageBrickStudio } from '../creator/ImageBrickStudio';
 
 declare global { interface Window { __atlas?: () => ReturnType<AtlasScene['snapshot']> } }
 const viewNames = (tr: Translator) => ({
@@ -488,7 +490,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
   return <div className="catalog-page landing-page">
     <header className="topbar landing-nav">
       <a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><Boxes size={23} /></span><strong>BRICK<span>ATLAS</span></strong></a>
-      <nav className="landing-links"><a href="#features">{tr('功能', 'Features')}</a><a href="#models">{tr('模型商店', 'Model shop')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('导入项目', 'Import')}</a></nav>
+      <nav className="landing-links"><a href="#features">{tr('功能', 'Features')}</a><a href="#models">{tr('模型商店', 'Model shop')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
       <LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} />
     </header>
     <main>
@@ -512,6 +514,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
         <div><Search size={22} /><strong>{tr('逐块理解', 'Inspect every brick')}</strong><span>{tr('型号、颜色、尺寸和来源', 'Part ID, color, dimensions, provenance')}</span></div>
         <div><FileDown size={22} /><strong>{tr('高清输出', 'High-resolution output')}</strong><span>{tr('最高 12K 图像与完整 PDF 说明书', 'Up to 12K imagery and complete PDF guides')}</span></div>
       </section>
+      <LandingShowcase locale={locale} tr={tr} />
       <section className="catalog-shell" id="models">
         <section className="catalog-heading"><div><span className="eyebrow">MODEL SHOP</span><h2>{tr('选择你的下一盒积木', 'Choose your next build')}</h2><p>{tr('点击任意模型进入探索，或直接开始逐步拼装。', 'Open any model to explore it, or jump straight into guided building.')}</p></div><dl><div><dt>{tr('项目', 'Models')}</dt><dd>{modelCatalog.length}</dd></div><div><dt>{tr('套装', 'Sets')}</dt><dd>{new Set(modelCatalog.map(model => model.setNumber)).size}</dd></div><div><dt>{tr('积木', 'Bricks')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.stats.instances, 0) || '—'}</dd></div></dl></section>
       <section className="model-grid" aria-label={tr('积木模型项目', 'Brick model projects')}>
@@ -550,8 +553,15 @@ function CreatorPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
     }));
   }
   return <div className="catalog-page creator-page">
-    <header className="topbar"><a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><Boxes size={23} /></span><strong>BRICK<span>ATLAS</span></strong></a><div className="top-divider" /><span className="workspace-label">Creator</span><nav className="top-actions"><a className="text-button" href={import.meta.env.BASE_URL}><Library size={16} />{tr('项目库', 'Library')}</a><LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} /></nav></header>
-    <main className="creator-shell"><section className="creator-workbench"><div><span className="eyebrow">LOCAL PROJECT IMPORT</span><h1>{tr('导入 LDraw 模型', 'Import an LDraw model')}</h1><p>{tr('选择 `.ldr` 或 `.mpd` 文件进行本地预检。文件不会上传；正式发布仍需完成零件依赖、许可与哈希构建。', 'Select an `.ldr` or `.mpd` file for local preflight. Files never leave your browser; publishing still requires dependency, license, and hash verification.')}</p></div><label className="upload-zone"><Upload size={28} /><strong>{tr('选择 LDraw 文件', 'Choose an LDraw file')}</strong><span>.ldr / .mpd</span><input type="file" accept=".ldr,.mpd,text/plain" onChange={event => inspectFile(event.target.files?.[0])} /></label>{report && <div className="import-report"><h2>{report.name}</h2><dl><div><dt>Type-1 {tr('引用', 'references')}</dt><dd>{report.references}</dd></div><div><dt>STEP {tr('标记', 'markers')}</dt><dd>{report.steps}</dd></div><div><dt>{tr('内嵌文件', 'Embedded files')}</dt><dd>{report.files}</dd></div></dl><p>{report.steps ? tr('检测到作者步骤，可进入资产审核与构建流程。', 'Author steps detected. The model can proceed to asset review and build.') : tr('未检测到 STEP；发布前需要明确标注为结构演示。', 'No STEP metadata found. Publish only as an explicitly labeled structural guide.')}</p></div>}</section></main>
+    <header className="topbar"><a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><Boxes size={23} /></span><strong>BRICK<span>ATLAS</span></strong></a><div className="top-divider" /><span className="workspace-label">{tr('图片创作工坊', 'Creator studio')}</span><nav className="top-actions"><a className="text-button" href={import.meta.env.BASE_URL}><Library size={16} />{tr('项目库', 'Library')}</a><LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} /></nav></header>
+    <main className="creator-shell creator-studio-shell">
+      <ImageBrickStudio locale={locale} tr={tr} />
+      <section className="ldraw-import-section">
+        <div><span className="eyebrow">LDRAW PROJECT IMPORT</span><h2>{tr('已有数字模型', 'Existing digital model')}</h2><p>{tr('本地预检 `.ldr` 或 `.mpd` 文件；文件不会上传。', 'Preflight an `.ldr` or `.mpd` file locally. The file never leaves your browser.')}</p></div>
+        <label className="upload-zone compact-upload"><Upload size={22} /><strong>{tr('选择 LDraw 文件', 'Choose an LDraw file')}</strong><span>.ldr / .mpd</span><input type="file" accept=".ldr,.mpd,text/plain" onChange={event => inspectFile(event.target.files?.[0])} /></label>
+        {report && <div className="import-report"><h2>{report.name}</h2><dl><div><dt>Type-1 {tr('引用', 'references')}</dt><dd>{report.references}</dd></div><div><dt>STEP {tr('标记', 'markers')}</dt><dd>{report.steps}</dd></div><div><dt>{tr('内嵌文件', 'Embedded files')}</dt><dd>{report.files}</dd></div></dl><p>{report.steps ? tr('检测到作者步骤，可进入资产审核与构建流程。', 'Author steps detected. The model can proceed to asset review and build.') : tr('未检测到 STEP；发布前需要明确标注为结构演示。', 'No STEP metadata found. Publish only as an explicitly labeled structural guide.')}</p></div>}
+      </section>
+    </main>
   </div>;
 }
 

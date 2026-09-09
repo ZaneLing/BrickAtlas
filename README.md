@@ -18,10 +18,10 @@ The application must be served through HTTP or HTTPS. It does not require a back
 
 ## Routes
 
-- `/` animated model store and project overview
+- `/` animated model store, floating brick hero, and scroll-driven live 3D build/explode story
 - `/explore/:modelId` model explorer
 - `/build/:modelId` animated build mode and printable guide
-- `/create` local LDraw preflight
+- `/create` local image-to-brick studio and LDraw preflight
 
 ## Capabilities
 
@@ -33,10 +33,26 @@ The application must be served through HTTP or HTTPS. It does not require a back
 - Animated build steps with playback, pause, previous/next navigation, static step views, and per-step parts lists.
 - Landscape A4 PDF build-guide export with cover, step number, required parts, quantities, rendered assembly view, and provenance disclosure.
 - Independent Full HD, 4K, 8K, and 12K image export.
-- Physically based plastic materials, clearcoat highlights, environment lighting, soft ground shadows, and up to 4x render density.
+- Physically based plastic materials, clearcoat highlights, environment lighting, soft ground shadows, color-aware edges, and up to 4x render density.
+- Local image conversion into a color-quantized, layered brick relief with a live 3D preview, build animation, exploded view, BOM CSV, and LDraw export.
 - Chinese and English interfaces with a persisted language preference.
 - Desktop-only product layout with a minimum 1180 px workspace width.
 - Recoverable errors for missing assets, invalid geometry, unavailable WebGL, and lost WebGL contexts.
+
+## Image to Bricks
+
+The Creator route provides a deterministic browser-only pipeline:
+
+1. Resize the image to a configurable stud grid.
+2. Estimate and optionally remove the background.
+3. Quantize visible pixels to a practical LDraw color palette.
+4. Infer a shallow relief from image contrast and luminance.
+5. Merge occupied cells into 1x1, 1x2, 1x3, and 1x4 bricks.
+6. Generate layer-based build steps, a material list, an interactive 3D model, and export files.
+
+This local mode is a buildable single-view relief, not a claim of recovering hidden geometry from one photograph. A full volumetric product pipeline should use image segmentation followed by a dedicated image-to-3D backend such as [TripoSR](https://github.com/VAST-AI-Research/TripoSR) or [Hunyuan3D 2.1](https://github.com/Tencent-Hunyuan/Hunyuan3D-2.1), then voxelize the watertight mesh, pack voxels into supported brick sizes, and validate support and connectivity before generating instructions. BrickLink Studio follows the same practical separation: images become mosaics, while OBJ/STL meshes become 3D sculptures.
+
+See [Image-to-Bricks Pipeline](docs/IMAGE_TO_BRICKS.md) for the implementation boundary, research references, and recommended volumetric service contract.
 
 ## Model Catalog
 
@@ -97,6 +113,7 @@ assets-built/                    Build, reference, reproducibility, and test rep
 public/models/<modelId>/         Deployable manifests, geometry chunks, previews, and credits
 scripts/                         Acquisition, build, validation, and benchmark pipeline
 src/app/                         Pages, localization, UI state integration, and diagnostics
+src/creator/                     Image sampling, color quantization, brick packing, BOM, and studio UI
 src/model/                       BrickModel and semantic types
 src/store/                       Persisted viewer state
 src/scene/                       Three.js rendering, picking, and part preview

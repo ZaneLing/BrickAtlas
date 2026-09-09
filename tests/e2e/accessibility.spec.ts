@@ -7,6 +7,11 @@ test('WCAG 2 A/AA checks pass on the model and detail surfaces', async ({ page, 
   const landing = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
   await testInfo.attach('axe-landing', { body: JSON.stringify(landing.violations, null, 2), contentType: 'application/json' });
   expect(landing.violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) }))).toEqual([]);
+  await page.goto('/create');
+  await page.getByRole('region', { name: '图片转积木工作台' }).waitFor();
+  const creator = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
+  await testInfo.attach('axe-creator', { body: JSON.stringify(creator.violations, null, 2), contentType: 'application/json' });
+  expect(creator.violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) }))).toEqual([]);
   await page.goto('/explore/5867');
   await page.getByText('模型已就绪', { exact: true }).waitFor();
   const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();

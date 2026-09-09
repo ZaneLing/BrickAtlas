@@ -41,8 +41,9 @@ export class PartPreviewScene {
       color: new Color(data.color), roughness: 0.28, metalness: 0.02,
       clearcoat: 0.28, clearcoatRoughness: 0.3, ior: 1.46,
     }));
-    const edges = new LineSegments(new EdgesGeometry(geometry, 22), new LineBasicMaterial({
-      color: 0x526159, transparent: true, opacity: 0.65,
+    const edgeColor = new Color(data.color).lerp(new Color(0x1f2937), 0.28);
+    const edges = new LineSegments(new EdgesGeometry(geometry, 34), new LineBasicMaterial({
+      color: edgeColor, transparent: true, opacity: 0.42,
     }));
     this.scene.add(mesh, edges);
     const key = new DirectionalLight(0xffffff, 3.2);
@@ -107,6 +108,7 @@ export class PartPreviewScene {
       if (mesh.material) (Array.isArray(mesh.material) ? mesh.material : [mesh.material]).forEach(material => material.dispose());
     });
     this.renderer.dispose();
+    this.renderer.forceContextLoss();
     this.renderer.domElement.remove();
   }
 }

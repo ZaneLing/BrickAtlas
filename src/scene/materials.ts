@@ -9,17 +9,25 @@ uniform float atlasWidth;
 uniform float atlasXray;
 varying float atlasVisibility;
 varying float atlasSelected;
-vec4 readAtlas() { return texture2D(atlasState, vec2((instanceIndex + 0.5) / atlasWidth, 0.25)); }
+varying vec3 atlasBrickColor;
+vec4 readAtlas() { return texture2D(atlasState, vec2((instanceIndex + 0.5) / atlasWidth, 1.0 / 6.0)); }
 `;
 const selectionDeclaration = `
 uniform float atlasXray;
 varying float atlasVisibility;
 varying float atlasSelected;
+varying vec3 atlasBrickColor;
 `;
 
 export function atlasMaterial(bucket: GeometryBucket, texture: DataTexture, count: number): Material {
   const { color, opacity, roughness, metalness } = bucket.material;
-  const shared = { color, opacity, transparent: opacity < 1, depthWrite: opacity >= 1 };
+  const isLine = bucket.kind !== 'mesh';
+  const shared = {
+    color: isLine ? '#ffffff' : color,
+    opacity: isLine ? Math.min(0.5, opacity) : opacity,
+    transparent: isLine || opacity < 1,
+    depthWrite: !isLine && opacity >= 1,
+  };
   const atlasUniforms = { xray: { value: 0 } };
   const material = bucket.kind === 'mesh'
     ? new MeshPhysicalMaterial({
@@ -38,7 +46,8 @@ export function atlasMaterial(bucket: GeometryBucket, texture: DataTexture, coun
     shader.vertexShader = shader.vertexShader.replace('void main() {', `void main() {
       vec4 state = readAtlas();
       atlasVisibility = state.w;
-      atlasSelected = texture2D(atlasState, vec2((instanceIndex + 0.5) / atlasWidth, 0.75)).x;
+      atlasSelected = texture2D(atlasState, vec2((instanceIndex + 0.5) / atlasWidth, 0.5)).x;
+      atlasBrickColor = texture2D(atlasState, vec2((instanceIndex + 0.5) / atlasWidth, 5.0 / 6.0)).rgb;
     `);
     if (bucket.kind === 'conditional') {
       shader.vertexShader = shader.vertexShader
@@ -54,11 +63,12 @@ export function atlasMaterial(bucket: GeometryBucket, texture: DataTexture, coun
     `);
     shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `
       #include <color_fragment>
+      ${isLine ? 'diffuseColor.rgb = mix(atlasBrickColor, vec3(0.08, 0.1, 0.14), 0.24);' : ''}
       diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.18, 0.52, 0.96), atlasSelected * 0.72);
       diffuseColor.a *= mix(1.0, 0.2, atlasXray * (1.0 - atlasSelected));
     `);
   };
-  material.customProgramCacheKey = () => `atlas-v1-${bucket.kind}`;
+  material.customProgramCacheKey = () => `atlas-v2-${bucket.kind}`;
   material.userData.atlas = { xray: atlasUniforms.xray, opacity };
   if (material instanceof MeshPhysicalMaterial) material.emissive = new Color(0);
   return material;
