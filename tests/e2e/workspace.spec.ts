@@ -101,7 +101,6 @@ test('build mode advances, animates and persists progress per project', async ({
   await expect(page.getByRole('region', { name: '本步所需零件' })).toContainText('本步所需零件');
   const stepPreview = page.getByAltText('第 1 步动态拼装图');
   await expect(stepPreview).toBeVisible();
-  expect(await stepPreview.evaluate(element => getComputedStyle(element).getPropertyValue('object-fit'))).toBe('contain');
   const firstFrame = await stepPreview.getAttribute('src');
   await expect.poll(async () => stepPreview.getAttribute('src')).not.toBe(firstFrame);
   await page.waitForTimeout(850);
@@ -109,6 +108,16 @@ test('build mode advances, animates and persists progress per project', async ({
   await page.reload();
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await expect(page.getByLabel('当前拼装步骤')).toHaveValue('1');
+  const accordion = page.getByRole('region', { name: '可折叠拼装步骤' });
+  const stepBricks = accordion.locator('.instruction-brick-step');
+  await expect(stepBricks).toHaveCount(51);
+  await expect(stepBricks.first()).toHaveAttribute('open', '');
+  await stepBricks.first().locator('summary').click();
+  await expect(stepBricks.first()).not.toHaveAttribute('open', '');
+  await stepBricks.nth(1).locator('summary').click();
+  await expect(page.getByLabel('当前拼装步骤')).toHaveValue('2');
+  await expect(stepBricks.nth(1)).toHaveAttribute('open', '');
+  await expect(stepBricks.first()).not.toHaveAttribute('open', '');
 });
 
 test('build canvas pans horizontally and vertically without moving the model base', async ({ page }) => {
@@ -230,7 +239,7 @@ test('editorial scene builds movable assemblies before final placement', async (
   await page.goto('/build/10159');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await expect(page.getByLabel('当前拼装步骤')).toHaveAttribute('max', '115');
-  const labels = await page.locator('.instruction-index button strong').allTextContents();
+  const labels = await page.locator('.instruction-brick-label strong').allTextContents();
   expect(labels.slice(0, 3).every(label => label.includes('airplane'))).toBe(true);
   expect(labels.slice(-11).every(label => label.includes('放置总成'))).toBe(true);
   const placement = await page.evaluate(async () => {
