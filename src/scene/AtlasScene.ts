@@ -60,6 +60,7 @@ export class AtlasScene {
   private assemblyProgress = 1;
   private assemblyIds = new Set<string>();
   private assemblyOrder = new Map<string, number>();
+  private settleFocusStep: number | null = null;
   private desiredTarget = new Vector3();
   private desiredPosition = new Vector3();
   private userDirection = new Vector3(-1, 0.7, 1);
@@ -212,6 +213,7 @@ export class AtlasScene {
   private controlStart = () => {
     this.interaction = true;
     this.cameraMoving = false;
+    this.settleFocusStep = null;
     if (this.panMode) this.renderer.domElement.style.cursor = 'grabbing';
     this.callbacks.hover(null, 0, 0);
   };
@@ -409,6 +411,7 @@ export class AtlasScene {
 
   focusBuildStep(step: number) {
     const instruction = this.manifest.instructions?.steps[step - 1];
+    this.settleFocusStep = instruction ? step : null;
     this.focusInstances(
       instruction?.motionInstanceIds ?? instruction?.instanceIds ?? [],
       instruction?.kind === 'placement' ? 1.45 : 1.7,
@@ -485,8 +488,24 @@ export class AtlasScene {
       if (!this.interaction) this.fit();
     }
     if (this.assemblyProgress < 1) {
+      const wasAnimating = this.assemblyProgress < 1;
+      const settleStep = this.settleFocusStep;
       this.assemblyProgress = Math.min(1, this.assemblyProgress + dt / 0.95);
       this.updateLayout();
+      if (
+        wasAnimating &&
+        this.assemblyProgress === 1 &&
+        settleStep !== null &&
+        settleStep === this.state.buildStep &&
+        !this.interaction
+      ) {
+        const step = this.manifest.instructions?.steps[settleStep - 1];
+        this.focusInstances(
+          step?.motionInstanceIds ?? step?.instanceIds ?? [],
+          step?.kind === 'placement' ? 1.45 : 1.7,
+        );
+        this.settleFocusStep = null;
+      }
     }
     if (this.cameraMoving && !this.interaction) {
       const t = 1 - Math.exp(-8 * dt);
@@ -697,7 +716,7 @@ export class AtlasScene {
   };
   private pointerUp = (event: PointerEvent) => {
     const distance = this.pointerStart.distanceTo(new Vector2(event.clientX, event.clientY));
-    if (!this.panMode && this.maxPointerDistance < 6 && distance < 6 && event.button === 0) {
+    if (this.maxPointerDistance < 6 && distance < 6 && event.button === 0) {
       const part = this.pick(event.clientX, event.clientY, event.altKey);
       this.onSelect(part?.instanceId ?? null);
     }

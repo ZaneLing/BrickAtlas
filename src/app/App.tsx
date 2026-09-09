@@ -78,7 +78,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   const [readyTime, setReadyTime] = useState<number | null>(null);
   const [notice, setNotice] = useState('');
   const [playing, setPlaying] = useState(false);
-  const [panMode, setPanMode] = useState(false);
+  const [panMode, setPanMode] = useState(mode === 'build');
   const [exportSize, setExportSize] = useState(3840);
   const [instructionFrames, setInstructionFrames] = useState<string[]>([]);
   const [instructionFrame, setInstructionFrame] = useState(0);
@@ -232,16 +232,26 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
     let cancelled = false;
     const urls: string[] = [];
     const timer = setTimeout(() => {
-      Promise.all([0, 0.18, 0.38, 0.62, 0.82, 1, 1, 1].map(progress =>
+      Promise.all([0, 0.12, 0.28, 0.46, 0.64, 0.8, 0.92, 1, 1, 1].map(progress =>
         sceneRef.current!.captureBuildStep(currentBuildStep, 560, 420, {
           progress,
           focusStep: true,
           shadows: false,
           motionInstanceId: activeStep?.kind === 'placement' ? undefined : activeStep?.instanceIds[0],
         }),
-      )).then(blobs => {
-        if (cancelled) return;
-        urls.push(...blobs.map(blob => URL.createObjectURL(blob)));
+      )).then(async blobs => {
+        const nextUrls = blobs.map(blob => URL.createObjectURL(blob));
+        await Promise.all(nextUrls.map(url => new Promise<void>(resolve => {
+          const image = new Image();
+          image.onload = () => resolve();
+          image.onerror = () => resolve();
+          image.src = url;
+        })));
+        if (cancelled) {
+          nextUrls.forEach(url => URL.revokeObjectURL(url));
+          return;
+        }
+        urls.push(...nextUrls);
         setInstructionFrame(0);
         setInstructionFrames(urls);
       }).catch(() => {});
@@ -254,13 +264,13 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   }, [mode, readyTime, currentBuildStep, activeStep]);
   useEffect(() => {
     if (instructionFrames.length < 2) return;
-    const timer = setInterval(() => setInstructionFrame(index => (index + 1) % instructionFrames.length), 145);
+    const timer = setInterval(() => setInstructionFrame(index => (index + 1) % instructionFrames.length), 300);
     return () => clearInterval(timer);
   }, [instructionFrames]);
 
   function reset() {
     resetViewer(mode);
-    setQuery(''); setDetailsOpen(true); setHover(null); setPanMode(false);
+    setQuery(''); setDetailsOpen(true); setHover(null); setPanMode(mode === 'build');
   }
   function toggleGroup(id: GroupId) {
     setState(s => ({ ...s, hiddenGroups: s.hiddenGroups.includes(id) ? s.hiddenGroups.filter(g => g !== id) : [...s.hiddenGroups, id] }));
@@ -478,9 +488,14 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
                   {isOpen && <div className="instruction-brick-panel" id={`instruction-step-panel-${stepNumber}`}>
                     <div>
                       <div className="instruction-static-frame instruction-motion-frame">
-                        {instructionFrames.length ? <img key={instructionFrame} src={instructionFrames[instructionFrame]} alt={tr(`第 ${currentBuildStep} 步动态拼装图`, `Animated build view for step ${currentBuildStep}`)} /> : <LoaderCircle className="spinner" size={24} />}
+                        {instructionFrames.length ? <img src={instructionFrames[instructionFrame]} decoding="sync" alt={tr(`第 ${currentBuildStep} 步动态拼装图`, `Animated build view for step ${currentBuildStep}`)} /> : <LoaderCircle className="spinner" size={24} />}
                         <span><Play size={10} />{tr('自动循环 · 聚焦本步', 'Auto loop · focused step')}</span>
                       </div>
+                      {instructionFrames.length > 1 && <div className="instruction-placement-diagram" role="img" aria-label={tr(`第 ${currentBuildStep} 步积木从起点到安装位置`, `Step ${currentBuildStep} brick path from start to final position`)}>
+                        <figure><img src={instructionFrames[0]} alt="" /><figcaption>{tr('起始位置', 'START')}</figcaption></figure>
+                        <span className="instruction-path-arrow" aria-hidden="true"><i /><ArrowRight size={16} /></span>
+                        <figure className="target"><img src={instructionFrames[instructionFrames.length - 1]} alt="" /><figcaption>{tr('最终位置', 'TARGET')}</figcaption></figure>
+                      </div>}
                       <div className="instruction-step-title"><span>{step.kind === 'placement' ? 'SUBASSEMBLY PLACEMENT' : manifest?.instructions?.provenance === 'source' ? 'OMR AUTHOR STEP' : 'EDITORIAL ASSEMBLY STEP'}</span><h2>{stepTitle(step)}</h2></div>
                       {step.kind === 'placement'
                         ? <section className="instruction-placement" aria-label={tr('总成放置', 'Subassembly placement')}><Layers3 size={24} /><strong>{tr('放置已完成的子装配', 'Place the completed subassembly')}</strong><span>{step.motionInstanceIds?.length ?? 0} {tr('块积木整体入位', 'bricks move into final position')}</span></section>

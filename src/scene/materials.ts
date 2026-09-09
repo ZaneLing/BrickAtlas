@@ -63,12 +63,15 @@ export function atlasMaterial(bucket: GeometryBucket, texture: DataTexture, coun
     `);
     shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `
       #include <color_fragment>
-      ${isLine ? 'diffuseColor.rgb = mix(atlasBrickColor, vec3(0.08, 0.1, 0.14), 0.24);' : ''}
-      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.18, 0.52, 0.96), atlasSelected * 0.72);
+      ${isLine
+        ? `diffuseColor.rgb = mix(atlasBrickColor, vec3(0.08, 0.1, 0.14), 0.24);
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.01, 0.12, 0.7), atlasSelected);
+      diffuseColor.a = mix(diffuseColor.a, 1.0, atlasSelected);`
+        : 'diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.18, 0.58, 1.0), atlasSelected * 0.24);'}
       diffuseColor.a *= mix(1.0, 0.2, atlasXray * (1.0 - atlasSelected));
     `);
   };
-  material.customProgramCacheKey = () => `atlas-v2-${bucket.kind}`;
+  material.customProgramCacheKey = () => `atlas-v3-${bucket.kind}`;
   material.userData.atlas = { xray: atlasUniforms.xray, opacity };
   if (material instanceof MeshPhysicalMaterial) material.emissive = new Color(0);
   return material;

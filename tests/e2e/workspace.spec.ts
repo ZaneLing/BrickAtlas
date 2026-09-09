@@ -101,8 +101,12 @@ test('build mode advances, animates and persists progress per project', async ({
   await expect(page.getByRole('region', { name: '本步所需零件' })).toContainText('本步所需零件');
   const stepPreview = page.getByAltText('第 1 步动态拼装图');
   await expect(stepPreview).toBeVisible();
+  await stepPreview.evaluate(element => { element.dataset.frameNode = 'stable'; });
+  const placementDiagram = page.getByRole('img', { name: '第 1 步积木从起点到安装位置' });
+  await expect(placementDiagram.locator('img')).toHaveCount(2);
   const firstFrame = await stepPreview.getAttribute('src');
   await expect.poll(async () => stepPreview.getAttribute('src')).not.toBe(firstFrame);
+  await expect(stepPreview).toHaveAttribute('data-frame-node', 'stable');
   await page.waitForTimeout(850);
   expect((await page.evaluate(() => window.__atlas?.().offsets))?.filter(offset => offset.some(value => Math.abs(value) > 0.01)).length).toBe(0);
   await page.reload();
@@ -124,7 +128,6 @@ test('build canvas pans horizontally and vertically without moving the model bas
   await page.goto('/build/5867');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   const panButton = page.getByRole('button', { name: '平移视图（上下左右拖动）' });
-  await panButton.click();
   await expect(panButton).toHaveAttribute('aria-pressed', 'true');
   await expect.poll(async () => page.evaluate(() => window.__atlas?.().panMode)).toBe(true);
 
