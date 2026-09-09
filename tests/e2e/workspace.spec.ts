@@ -1,0 +1,174 @@
+import { readFile } from 'node:fs/promises';
+import { expect, test } from '@playwright/test';
+
+test('catalog exposes eight projects, real previews and model parameters', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: '积木项目' })).toBeVisible();
+  await expect(page.locator('.model-card')).toHaveCount(8);
+  await expect(page.getByText('可拼装实例')).toBeVisible();
+  await expect(page.locator('.model-card-explore')).toHaveCount(8);
+  await expect(page.getByText('探索模型', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: '开始拼装' })).toHaveCount(8);
+  await expect(page.locator('.model-card-specs')).toHaveCount(8);
+  await expect(page.getByText('积木树').first()).toBeVisible();
+  await expect(page.locator('.model-art img')).toHaveCount(8);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('clicking a project card opens explore while the only command is build', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('.model-card-explore').first().click();
+  await expect(page).toHaveURL(/\/explore\/5867$/);
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+});
+
+test('additional project loads real geometry and supports search highlight and x-ray', async ({ page, isMobile }) => {
+  await page.goto('/explore/31027');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  await expect.poll(async () => page.evaluate(() => window.__atlas?.().loadedInstances)).toBe(67);
+  if (isMobile) {
+    await page.getByRole('button', { name: '结构与零件' }).click();
+    await page.getByLabel('搜索零件', { exact: true }).fill('wheel');
+    await page.getByRole('button', { name: '关闭结构面板' }).click();
+  } else {
+    await page.getByLabel('顶部搜索零件').fill('wheel');
+  }
+  await expect.poll(async () => page.evaluate(() => window.__atlas?.().selected.length)).toBe(0);
+  await page.getByRole('button', { name: 'X-Ray 透视模式' }).first().click();
+  await expect(page.getByRole('button', { name: 'X-Ray 透视模式' }).first()).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('build mode advances, animates and persists progress per project', async ({ page, isMobile }) => {
+  await page.goto('/build/5867');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '下一步' }).click();
+  await expect(page.getByLabel('当前拼装步骤')).toHaveValue('1');
+  await expect.poll(async () => page.evaluate(() => window.__atlas?.().visibleInstances)).toBe(6);
+  if (isMobile) {
+    await page.getByRole('button', { name: '打开步骤说明书' }).click();
+    await expect(page.getByRole('dialog', { name: '步骤说明书' })).toBeVisible();
+  } else {
+    await expect(page.getByRole('complementary', { name: '步骤说明书' })).toBeVisible();
+  }
+  await expect(page.getByRole('region', { name: '本步所需零件' })).toContainText('本步所需零件');
+  await expect(page.getByAltText('第 1 步静态拼装图')).toBeVisible();
+  await page.waitForTimeout(850);
+  expect((await page.evaluate(() => window.__atlas?.().offsets))?.filter(offset => offset.some(value => Math.abs(value) > 0.01)).length).toBe(0);
+  await page.reload();
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('当前拼装步骤')).toHaveValue('1');
+});
+
+test('step snapshots never resize or flash the live canvas and controls stay top-left', async ({ page }) => {
+  await page.goto('/build/5867');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  await page.evaluate(() => {
+    const canvas = document.querySelector('.canvas-host canvas')!;
+    (window as unknown as { __canvasMutations: string[] }).__canvasMutations = [];
+    new MutationObserver(records => {
+      (window as unknown as { __canvasMutations: string[] }).__canvasMutations.push(...records.map(record => record.attributeName ?? ''));
+    }).observe(canvas, { attributes: true, attributeFilter: ['width', 'height'] });
+  });
+  await page.getByLabel('下一步', { exact: true }).click();
+  await page.waitForTimeout(900);
+  await page.getByLabel('下一步', { exact: true }).click();
+  await page.waitForTimeout(900);
+  expect(await page.evaluate(() => (window as unknown as { __canvasMutations: string[] }).__canvasMutations)).toEqual([]);
+  const layout = await page.evaluate(() => {
+    const main = document.querySelector('.main-stage')!.getBoundingClientRect();
+    const dock = document.querySelector('.build-dock')!.getBoundingClientRect();
+    const canvas = document.querySelector('.canvas-host')!.getBoundingClientRect();
+    return { mainHeight: main.height, dockTop: dock.top - main.top, dockWidth: dock.width, canvasBottom: main.bottom - canvas.bottom };
+  });
+  expect(layout.dockTop).toBeLessThan(layout.mainHeight / 3);
+  expect(layout.dockWidth).toBeLessThanOrEqual(430);
+  expect(layout.canvasBottom).toBeLessThanOrEqual(1);
+});
+
+test('selected build brick opens an interactive geometry preview', async ({ page }) => {
+  await page.goto('/build/5867');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '下一步' }).click();
+  await expect.poll(async () => page.evaluate(() => window.__atlas?.().visibleInstances)).toBe(6);
+  await page.waitForTimeout(900);
+  const canvas = page.locator('.canvas-host canvas');
+  const point = await page.evaluate(() => {
+    const canvas = document.querySelector('.canvas-host canvas')!.getBoundingClientRect();
+    const dock = document.querySelector('.build-dock')!.getBoundingClientRect();
+    return window.__atlas!().projected.find(point => {
+      const x = canvas.left + point.x, y = canvas.top + point.y;
+      return x > canvas.left && x < canvas.right && y > canvas.top && y < canvas.bottom
+        && !(x >= dock.left && x <= dock.right && y >= dock.top && y <= dock.bottom);
+    })!;
+  });
+  await canvas.click({ position: { x: point.x, y: point.y } });
+  await expect.poll(async () => page.evaluate(() => window.__atlas?.().selected.length)).toBe(1);
+  const preview = page.getByRole('region', { name: '选中积木三维预览' });
+  await expect(preview).toBeVisible();
+  const previewCanvas = preview.getByRole('img', { name: '选中积木可旋转三维预览' });
+  await expect(previewCanvas).toBeVisible();
+  const before = await previewCanvas.screenshot();
+  const box = (await previewCanvas.boundingBox())!;
+  await page.mouse.move(box.x + box.width * 0.35, box.y + box.height * 0.5);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.55, { steps: 8 });
+  await page.mouse.up();
+  await page.waitForTimeout(250);
+  expect(await previewCanvas.screenshot()).not.toEqual(before);
+});
+
+test('build guide exports cover and one page per step', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chrome', 'One browser verifies the generated PDF payload.');
+  await page.goto('/build/31027');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '下一步' }).click();
+  await expect(page.getByAltText('第 1 步静态拼装图')).toBeVisible();
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: '导出完整说明书 PDF' }).click();
+  const file = await download;
+  const path = testInfo.outputPath(file.suggestedFilename());
+  await file.saveAs(path);
+  const payload = await readFile(path);
+  expect(file.suggestedFilename()).toBe('brick-atlas-31027-build-guide.pdf');
+  expect(payload.subarray(0, 4).toString()).toBe('%PDF');
+  expect((payload.toString('latin1').match(/\/Type \/Page\b/g) ?? [])).toHaveLength(13);
+});
+
+test('source-authored instruction model exposes OMR steps', async ({ page, isMobile }) => {
+  await page.goto('/build/31009');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('当前拼装步骤')).toHaveAttribute('max', '79');
+  if (isMobile) {
+    await page.getByLabel('下一步', { exact: true }).click();
+    await page.getByRole('button', { name: '打开步骤说明书' }).click();
+    await expect(page.getByText('OMR AUTHOR STEP', { exact: true })).toBeVisible();
+  } else {
+    await expect(page.getByText('OMR 源步骤', { exact: true })).toBeVisible();
+  }
+});
+
+test('complex train and truck models load all addressable bricks', async ({ page }) => {
+  for (const [id, count] of [['10014', 170], ['10156', 111]] as const) {
+    await page.goto(`/explore/${id}`);
+    await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+    await expect.poll(async () => page.evaluate(() => window.__atlas?.().loadedInstances)).toBe(count);
+  }
+});
+
+test('workspace navigation returns home and switches models', async ({ page, isMobile }) => {
+  await page.goto('/explore/5867');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  if (isMobile) await page.getByRole('button', { name: '结构与零件' }).click();
+  await page.getByLabel('切换模型').selectOption('31028');
+  await expect(page).toHaveURL(/\/explore\/31028$/);
+  await page.getByRole('link', { name: '返回项目库' }).click();
+  await expect(page).toHaveURL(/\/$/);
+});
+
+test('creator preflights a local MPD without uploading it', async ({ page }) => {
+  await page.goto('/create');
+  await page.locator('input[type=file]').setInputFiles('assets-source/set-original/31027-1.mpd');
+  await expect(page.getByRole('heading', { name: '31027-1.mpd' })).toBeVisible();
+  await expect(page.getByText('Type-1 引用')).toBeVisible();
+  await expect(page.getByText('结构演示', { exact: false })).toBeVisible();
+});

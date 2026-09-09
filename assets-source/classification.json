@@ -1,0 +1,30 @@
+{
+  "model": "5867",
+  "method": "Editorial functional grouping. Rules run in order; source submodels take priority. Coordinates are millimetres, +Y up. Not official instruction steps.",
+  "groups": [
+    { "id": "body", "name": "车身与车门", "color": "#e45252", "direction": [0, 55, 0] },
+    { "id": "chassis", "name": "底盘与连接", "color": "#848d95", "direction": [0, -32, 0] },
+    { "id": "wheels", "name": "轮胎与轮毂", "color": "#b392e0", "direction": [0, 0, 60] },
+    { "id": "cockpit", "name": "驾驶舱与玻璃", "color": "#59b3c0", "direction": [0, 85, 0] },
+    { "id": "front", "name": "引擎盖与前部", "color": "#dfb744", "direction": [-70, 30, 0] },
+    { "id": "rear", "name": "尾部与后窗", "color": "#64ac84", "direction": [70, 25, 0] }
+  ],
+  "rules": [
+    { "groupId": "rear", "path": "rear" },
+    { "groupId": "front", "path": "front" },
+    { "groupId": "body", "path": "door" },
+    { "groupId": "cockpit", "name": "windscreen|steering|seat" },
+    { "groupId": "cockpit", "colors": ["47", "40"], "yMin": 32 },
+    { "groupId": "cockpit", "colors": ["73"], "xMin": -45, "xMax": 45, "yMin": 8 },
+    { "groupId": "wheels", "name": "\\b(tyre|wheel)\\b" },
+    { "groupId": "chassis", "yMax": 16 },
+    { "groupId": "front", "xMax": -48 },
+    { "groupId": "rear", "xMin": 54 }
+  ],
+  "defaultGroup": "body",
+  "reviewNotes": [
+    "Steering wheel is classified before the generic wheel rule.",
+    "Source has no STEP metadata; no step numbers are inferred.",
+    "Rear window remains with its original rear submodel, not the cockpit group."
+  ]
+}
