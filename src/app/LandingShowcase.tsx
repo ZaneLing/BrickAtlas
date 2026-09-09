@@ -12,6 +12,18 @@ declare global {
   }
 }
 
+const BUILD_DURATION = 9000;
+const INSPECT_DURATION = 5000;
+const EXPLODE_OUT_DURATION = 3000;
+const EXPLODE_HOLD_DURATION = 1000;
+const EXPLODE_IN_DURATION = 3000;
+const ASSEMBLED_HOLD_DURATION = 1000;
+const INSPECT_END = BUILD_DURATION + INSPECT_DURATION;
+const EXPLODE_OUT_END = INSPECT_END + EXPLODE_OUT_DURATION;
+const EXPLODE_HOLD_END = EXPLODE_OUT_END + EXPLODE_HOLD_DURATION;
+const EXPLODE_IN_END = EXPLODE_HOLD_END + EXPLODE_IN_DURATION;
+const CYCLE_DURATION = EXPLODE_IN_END + ASSEMBLED_HOLD_DURATION;
+
 export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator }) {
   const sectionRef = useRef<HTMLElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
@@ -43,6 +55,8 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
         }, locale);
         scene.controls.enablePan = false;
         scene.controls.enableZoom = false;
+        scene.controls.enabled = false;
+        scene.controls.autoRotateSpeed = 1.25;
         scene.setState(sceneStateRef.current);
         sceneRef.current = scene;
         window.__landingAtlas = () => scene!.snapshot();
@@ -72,27 +86,48 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
         frame = requestAnimationFrame(update);
         return;
       }
-      const elapsed = reducedMotion ? 6000 : (time - cycleStarted) % 12000;
-      const progress = elapsed / 12000;
+      const elapsed = reducedMotion
+        ? BUILD_DURATION + INSPECT_DURATION / 2
+        : (time - cycleStarted) % CYCLE_DURATION;
+      const progress = elapsed / CYCLE_DURATION;
       section.style.setProperty('--story-progress', String(progress));
       const steps = scene.manifest.instructions?.steps.length ?? 1;
-      const nextStep = elapsed < 4500 ? Math.round(elapsed / 4500 * steps) : steps;
-      const nextPhase = elapsed < 4500 ? 'build' : elapsed < 7500 ? 'inspect' : 'explode';
-      const explosion = elapsed < 7500 ? 0
-        : elapsed < 10000 ? (elapsed - 7500) / 2500 * 0.72
-          : Math.max(0, 1 - (elapsed - 10000) / 2000) * 0.72;
-      if (nextPhase !== phaseRef.current) {
+      const nextStep = elapsed < BUILD_DURATION
+        ? Math.round(elapsed / BUILD_DURATION * steps)
+        : steps;
+      const nextPhase = elapsed < BUILD_DURATION
+        ? 'build'
+        : elapsed < INSPECT_END
+          ? 'inspect'
+          : 'explode';
+      const explosion = elapsed < INSPECT_END
+        ? 0
+        : elapsed < EXPLODE_OUT_END
+          ? (elapsed - INSPECT_END) / EXPLODE_OUT_DURATION
+          : elapsed < EXPLODE_HOLD_END
+            ? 1
+            : elapsed < EXPLODE_IN_END
+              ? 1 - (elapsed - EXPLODE_HOLD_END) / EXPLODE_IN_DURATION
+              : 0;
+      const phaseChanged = nextPhase !== phaseRef.current;
+      if (phaseChanged) {
         phaseRef.current = nextPhase;
         setPhase(nextPhase);
       }
       const stepChanged = nextStep !== stepRef.current;
-      if (stepChanged || Math.abs(sceneStateRef.current.explosion - explosion) > 0.005) {
+      const autoRotate = nextPhase === 'inspect';
+      if (
+        phaseChanged ||
+        stepChanged ||
+        sceneStateRef.current.autoRotate !== autoRotate ||
+        Math.abs(sceneStateRef.current.explosion - explosion) > 0.005
+      ) {
         stepRef.current = nextStep;
         sceneStateRef.current = {
           ...sceneStateRef.current,
           buildStep: nextStep,
           explosion,
-          autoRotate: nextPhase !== 'build',
+          autoRotate,
           assemblyRevision: sceneStateRef.current.assemblyRevision + Number(stepChanged),
         };
         scene.setState(sceneStateRef.current);
@@ -112,9 +147,9 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
   }, []);
 
   const phases = [
-    { id: 'build', icon: Play, title: tr('逐步拼装', 'Build step by step'), text: tr('零件按结构顺序入位', 'Bricks arrive in structural order') },
-    { id: 'inspect', icon: ScanSearch, title: tr('观察结构', 'Inspect the structure'), text: tr('自由旋转真实 LDraw 几何', 'Orbit true LDraw geometry') },
-    { id: 'explode', icon: Layers3, title: tr('三维拆分', 'Explode in 3D'), text: tr('分组展开内部连接关系', 'Reveal internal assemblies') },
+    { id: 'build', icon: Play, title: tr('逐步拼装', 'Build step by step'), text: tr('按清晰节奏逐组完成结构', 'Build each structural group at a clear pace') },
+    { id: 'inspect', icon: ScanSearch, title: tr('观察结构', 'Inspect the structure'), text: tr('模型按预设速度自动旋转', 'The model rotates automatically at a preset speed') },
+    { id: 'explode', icon: Layers3, title: tr('三维拆分', 'Explode in 3D'), text: tr('从完整装配展开至 100%，再收回', 'Expand from 0 to 100%, then return') },
   ] as const;
 
   return <section className="landing-story" ref={sectionRef} aria-label={tr('自动循环功能演示', 'Auto-playing feature demo')}>

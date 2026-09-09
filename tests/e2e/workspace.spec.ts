@@ -20,16 +20,39 @@ test('catalog exposes twelve projects, real previews and model parameters', asyn
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('landing showcase automatically builds and explodes a live 3D model', async ({ page }) => {
+test('landing showcase slowly builds, auto-rotates, and completes a full explode cycle', async ({ page }) => {
+  test.setTimeout(60000);
   await page.goto('/');
   const story = page.getByRole('region', { name: '自动循环功能演示' });
   await story.scrollIntoViewIfNeeded();
   await expect(story.locator('canvas')).toBeVisible();
   await expect(story.getByText('实时渲染')).toBeVisible();
   const initial = await page.evaluate(() => window.__landingAtlas?.().visibleInstances ?? 0);
-  await expect.poll(async () => page.evaluate(() => window.__landingAtlas?.().visibleInstances ?? 0)).toBeGreaterThan(initial);
-  await expect(story.getByText('三维拆分', { exact: true }).locator('..').locator('..')).toHaveClass(/active/, { timeout: 11000 });
-  await expect.poll(async () => page.evaluate(() => window.__landingAtlas?.().actualExplosion ?? 0), { timeout: 5000 }).toBeGreaterThan(0.35);
+  await page.waitForTimeout(2500);
+  const partialBuild = await page.evaluate(() => window.__landingAtlas?.().visibleInstances ?? 0);
+  expect(partialBuild).toBeGreaterThan(initial);
+  expect(partialBuild).toBeLessThan(278);
+
+  await expect(story.getByText('观察结构', { exact: true }).locator('..').locator('..')).toHaveClass(/active/, { timeout: 9000 });
+  await expect.poll(async () => page.evaluate(() => window.__landingAtlas?.().autoRotate)).toBe(true);
+  expect(await page.evaluate(() => window.__landingAtlas?.().controlsEnabled)).toBe(false);
+  const cameraBefore = (await page.evaluate(() => window.__landingAtlas!().camera))!;
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(camera => {
+    const next = window.__landingAtlas!().camera;
+    return Math.hypot(...next.map((value, index) => value - camera[index]));
+  }, cameraBefore)).toBeGreaterThan(0.1);
+
+  await expect(story.getByText('三维拆分', { exact: true }).locator('..').locator('..')).toHaveClass(/active/, { timeout: 6000 });
+  await expect.poll(async () => page.evaluate(() => window.__landingAtlas?.().autoRotate)).toBe(false);
+  await expect.poll(
+    async () => page.evaluate(() => window.__landingAtlas?.().actualExplosion ?? 0),
+    { timeout: 5000 },
+  ).toBeGreaterThan(0.95);
+  await expect.poll(
+    async () => page.evaluate(() => window.__landingAtlas?.().actualExplosion ?? 1),
+    { timeout: 6000 },
+  ).toBeLessThan(0.05);
 });
 
 test('language toggle translates the complete workspace and persists', async ({ page }) => {

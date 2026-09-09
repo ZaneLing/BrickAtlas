@@ -750,6 +750,10 @@ export class AtlasScene {
       camera: this.camera.position.toArray(),
       target: this.controls.target.toArray(),
       panMode: this.panMode,
+      buildStep: this.state.buildStep,
+      requestedExplosion: this.state.explosion,
+      autoRotate: this.controls.autoRotate,
+      controlsEnabled: this.controls.enabled,
     };
   }
 
