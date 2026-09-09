@@ -18,6 +18,7 @@ import { exportBuildGuide, groupStepParts } from '../instructions/exportGuide';
 import { localCategory, localGroupName, useLocale, type Locale, type Translator } from './locale';
 import { LandingShowcase } from './LandingShowcase';
 import { ImageBrickStudio } from '../creator/ImageBrickStudio';
+import { ComposeStudio } from '../composer/ComposeStudio';
 
 declare global { interface Window { __atlas?: () => ReturnType<AtlasScene['snapshot']> } }
 const viewNames = (tr: Translator) => ({
@@ -602,7 +603,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
   return <div className="catalog-page landing-page">
     <header className="topbar landing-nav">
       <a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><BrickAtlasMark /></span><strong>BRICK<span>ATLAS</span></strong></a>
-      <nav className="landing-links"><a href="#features">{tr('功能', 'Features')}</a><a href="#models">{tr('模型商店', 'Model shop')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
+      <nav className="landing-links"><a href="#features">{tr('功能', 'Features')}</a><a href="#models">{tr('模型商店', 'Model shop')}</a><a href={`${import.meta.env.BASE_URL}compose`}>{tr('组建', 'Compose')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
       <LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} />
     </header>
     <main>
@@ -615,7 +616,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
           <h1>Brick Atlas</h1>
           <h2>{tr('把每一块积木看清楚', 'See every brick. Build every idea.')}</h2>
           <p>{tr('旋转真实 LDraw 模型，拆解每个结构，逐步完成拼装，并导出属于你的说明书。', 'Rotate real LDraw models, inspect every assembly, build step by step, and export your own guide.')}</p>
-          <div className="hero-actions"><a className="hero-primary" href="#models"><Library size={17} />{tr('浏览模型', 'Browse models')}</a><a href={`${import.meta.env.BASE_URL}explore/5867`}><Rotate3D size={17} />{tr('打开旗舰模型', 'Open flagship model')}</a></div>
+          <div className="hero-actions"><a className="hero-primary" href={`${import.meta.env.BASE_URL}compose`}><Boxes size={17} />{tr('组建新世界', 'Compose a world')}</a><a href="#models"><Library size={17} />{tr('浏览模型', 'Browse models')}</a></div>
           <dl><div><dt>{tr('积木实例', 'Brick instances')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.stats.instances, 0) || '—'}</dd></div><div><dt>{tr('可探索项目', 'Models')}</dt><dd>{modelCatalog.length}</dd></div><div><dt>{tr('拼装步骤', 'Build steps')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.steps, 0) || '—'}</dd></div></dl>
         </div>
         <div className="hero-model-label"><strong>5867</strong><span>Super Speedster</span></div>
@@ -623,7 +624,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
       <section className="feature-band" id="features">
         <div><Rotate3D size={22} /><strong>{tr('真实 3D 探索', 'True 3D exploration')}</strong><span>{tr('自由旋转、缩放和拆解', 'Orbit, zoom, isolate, and explode')}</span></div>
         <div><BookOpen size={22} /><strong>{tr('动态拼装', 'Animated building')}</strong><span>{tr('步骤、零件和入位动画同步', 'Steps, parts, and motion stay in sync')}</span></div>
-        <div><Search size={22} /><strong>{tr('逐块理解', 'Inspect every brick')}</strong><span>{tr('型号、颜色、尺寸和来源', 'Part ID, color, dimensions, provenance')}</span></div>
+        <div><Boxes size={22} /><strong>{tr('自由组建', 'Free composition')}</strong><span>{tr('组件、场景和零件吸附到底板', 'Snap components, scenes, and parts to a base')}</span></div>
         <div><FileDown size={22} /><strong>{tr('高清输出', 'High-resolution output')}</strong><span>{tr('最高 12K 图像与完整 PDF 说明书', 'Up to 12K imagery and complete PDF guides')}</span></div>
       </section>
       <LandingShowcase locale={locale} tr={tr} />
@@ -677,12 +678,29 @@ function CreatorPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
   </div>;
 }
 
+function ComposePage({ locale, tr, toggleLocale }: { locale: Locale; tr: Translator; toggleLocale: () => void }) {
+  return <div className="catalog-page compose-page">
+    <header className="topbar">
+      <a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><BrickAtlasMark /></span><strong>BRICK<span>ATLAS</span></strong></a>
+      <div className="top-divider" />
+      <span className="workspace-label">{tr('自由组建工作台', 'DIY composition workspace')}</span>
+      <nav className="top-actions">
+        <a className="text-button" href={`${import.meta.env.BASE_URL}create`}><Plus size={16} />{tr('图片创作', 'Create')}</a>
+        <a className="text-button" href={import.meta.env.BASE_URL}><Library size={16} />{tr('项目库', 'Library')}</a>
+        <LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} />
+      </nav>
+    </header>
+    <main className="compose-shell"><ComposeStudio locale={locale} tr={tr} /></main>
+  </div>;
+}
+
 export default function App() {
   const { locale, tr, toggleLocale } = useLocale();
   useEffect(() => { document.title = tr('Brick Atlas｜积木世界', 'Brick Atlas | Build the world'); }, [tr]);
   const relative = location.pathname.slice(import.meta.env.BASE_URL.replace(/\/$/, '').length) || '/';
   if (relative === '/' || relative === '') return <CatalogPage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   if (relative === '/create' || relative === '/create/') return <CreatorPage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
+  if (relative === '/compose' || relative === '/compose/') return <ComposePage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   const match = /^\/(explore|build)\/([^/]+)\/?$/.exec(relative);
   const config = match ? modelCatalog.find(model => model.id === decodeURIComponent(match[2])) : null;
   if (match && config) return <ExplorerWorkspace config={config} mode={match[1] as 'explore' | 'build'} locale={locale} tr={tr} toggleLocale={toggleLocale} />;

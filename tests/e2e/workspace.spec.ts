@@ -350,6 +350,43 @@ test('creator preflights a local MPD without uploading it', async ({ page }) => 
   await expect(page.getByText('结构演示', { exact: false })).toBeVisible();
 });
 
+test('composer snaps reusable models and parts into a buildable saved scene', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chrome', 'The compose workflow is verified once in Chromium.');
+  await page.goto('/compose');
+  await expect(page.getByRole('region', { name: '组建工作台' })).toBeVisible();
+  await expect(page.getByRole('img', { name: '组建模型三维工作区' })).toBeVisible();
+  await page.getByRole('button', { name: '添加水上飞机' }).click();
+  await expect.poll(async () => page.evaluate(() => window.__composer?.().items)).toBe(1);
+  await expect.poll(async () => page.evaluate(() => window.__composer?.().bricks ?? 0)).toBeGreaterThan(100);
+
+  await page.getByRole('tab', { name: '场景' }).click();
+  await page.getByRole('button', { name: /大型场景底板/ }).click();
+  await expect(page.locator('.compose-tree-base')).toContainText('64 × 48 studs');
+  await page.getByRole('tab', { name: '零件' }).click();
+  await page.getByRole('button', { name: '添加基础砖 2×4' }).click();
+  await expect.poll(async () => page.evaluate(() => window.__composer?.().items)).toBe(2);
+  await page.getByRole('button', { name: '向右移动' }).click();
+  await page.getByRole('button', { name: '旋转 90 度' }).click();
+
+  await page.getByRole('tab', { name: '拼装', exact: true }).click();
+  await page.getByLabel('当前组建步骤').fill('1');
+  await expect.poll(async () => page.evaluate(() => window.__composer?.().step)).toBe(1);
+  await page.getByRole('button', { name: '下一步' }).click();
+  await expect.poll(async () => page.evaluate(() => window.__composer?.().step)).toBe(2);
+
+  await page.getByRole('tab', { name: '展开' }).click();
+  await page.getByLabel('组建展开程度').fill('100');
+  await expect.poll(async () => page.evaluate(() => window.__composer?.().explosion ?? 0)).toBeGreaterThan(0.95);
+  expect((await page.evaluate(() => window.__composer!())).drawCalls).toBeLessThan(100);
+
+  await page.getByRole('button', { name: '保存' }).click();
+  await page.reload();
+  await expect.poll(async () => page.evaluate(() => window.__composer?.().items)).toBe(2);
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'LDraw', exact: true }).click();
+  expect((await download).suggestedFilename()).toContain('.ldr');
+});
+
 test('image studio converts an image into bricks, steps, and exports', async ({ page }) => {
   await page.goto('/create');
   await expect(page.getByRole('region', { name: '图片转积木工作台' })).toBeVisible();

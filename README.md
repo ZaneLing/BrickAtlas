@@ -17,6 +17,7 @@ https://github.com/user-attachments/assets/1761f41d-e016-40c3-85f9-06102f5acc66
 - Select any brick to view its part number, color, dimensions, subassembly, and 3D shape.
 - Search, hide, isolate, highlight matching parts, and use X-Ray mode to inspect internal structure.
 - Follow step-by-step assembly with playback controls, focused placement animations, parts lists, and subassembly placement.
+- Compose original scenes from verified aircraft, boats, vehicles, buildings, characters, animals, baseplates, and loose bricks with stud-grid snapping and collision checks.
 - Export printable PDF build guides, BOM CSV files, LDraw files, and images up to 12K.
 - Crop one to three reference views and generate a budget-aware relief, hollow sculpture, or solid brick model with build steps and a material list.
 - Switch the complete interface between Chinese and English.
@@ -28,7 +29,12 @@ Brick Atlas is designed for desktop browsers with a workspace width of at least 
 - `/` model catalog and automatic 3D feature showcase
 - `/explore/:modelId` model explorer
 - `/build/:modelId` build instructions
+- `/compose` reusable component, baseplate, and loose-part scene composer
 - `/create` image-to-bricks studio and LDraw file preflight
+
+## Composition
+
+The Compose workspace turns catalog models into reusable components while retaining source attribution. Components snap to a selected baseplate on a stud grid, rotate in 90-degree increments, and are checked for bounds and footprint collisions. Loose bricks can be positioned at custom levels. A composition is saved locally and can be replayed as build steps, exploded in 3D, or exported as project JSON and LDraw.
 
 ## Run Locally
 

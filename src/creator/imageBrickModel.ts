@@ -8,8 +8,11 @@ export interface BrickPaletteColor {
 
 export interface ImageBrick {
   id: string;
-  partId: '3005' | '3004' | '3622' | '3010';
-  width: 1 | 2 | 3 | 4;
+  partId: string;
+  width: number;
+  depth?: number;
+  height?: number;
+  rotation?: 0 | 1 | 2 | 3;
   x: number;
   y: number;
   z: number;
@@ -21,8 +24,10 @@ export interface ImageBrick {
 
 export interface ImageBrickBomItem {
   key: string;
-  partId: ImageBrick['partId'];
-  width: ImageBrick['width'];
+  partId: string;
+  width: number;
+  depth?: number;
+  height?: number;
   colorId: string;
   colorCode: number;
   colorHex: string;
@@ -101,7 +106,7 @@ export const brickPalette: BrickPaletteColor[] = [
   { id: 'pink', code: 221, nameZh: '亮粉色', nameEn: 'Bright pink', hex: '#e4adc8' },
 ];
 
-const partByWidth: Record<ImageBrick['width'], ImageBrick['partId']> = {
+const partByWidth: Record<1 | 2 | 3 | 4, string> = {
   1: '3005',
   2: '3004',
   3: '3622',
@@ -158,16 +163,16 @@ function estimateBackground(data: Uint8ClampedArray, width: number, height: numb
   return total.map(value => Math.round(value / points.length)) as [number, number, number];
 }
 
-function partitionRun(start: number, end: number, reverse: boolean, maxWidth: ImageBrick['width'] = 4) {
-  const widths: ImageBrick['width'][] = [];
+function partitionRun(start: number, end: number, reverse: boolean, maxWidth = 4) {
+  const widths: (1 | 2 | 3 | 4)[] = [];
   let remaining = end - start;
   while (remaining > 0) {
-    const width = Math.min(maxWidth, remaining) as ImageBrick['width'];
+    const width = Math.min(maxWidth, remaining) as 1 | 2 | 3 | 4;
     widths.push(width);
     remaining -= width;
   }
   if (reverse) widths.reverse();
-  const segments: { start: number; width: ImageBrick['width'] }[] = [];
+  const segments: { start: number; width: 1 | 2 | 3 | 4 }[] = [];
   let cursor = start;
   for (const width of widths) {
     segments.push({ start: cursor, width });
@@ -449,7 +454,13 @@ export function imageBrickBuildToLdraw(build: ImageBrickBuild) {
   for (const brick of [...build.bricks].sort((a, b) => a.step - b.step || a.z - b.z || a.x - b.x)) {
     if (previousStep && brick.step !== previousStep) lines.push('0 STEP');
     previousStep = brick.step;
-    lines.push(`1 ${brick.colorCode} ${Math.round(brick.x * 20)} ${Math.round(-brick.y * 24)} ${Math.round(brick.z * 20)} 1 0 0 0 1 0 0 0 1 ${brick.partId}.dat`);
+    const matrices = [
+      '1 0 0 0 1 0 0 0 1',
+      '0 0 1 0 1 0 -1 0 0',
+      '-1 0 0 0 1 0 0 0 -1',
+      '0 0 -1 0 1 0 1 0 0',
+    ];
+    lines.push(`1 ${brick.colorCode} ${Math.round(brick.x * 20)} ${Math.round(-brick.y * 24)} ${Math.round(brick.z * 20)} ${matrices[brick.rotation ?? 0]} ${brick.partId}.dat`);
   }
   return `${lines.join('\n')}\n`;
 }

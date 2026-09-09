@@ -12,6 +12,11 @@ test('WCAG 2 A/AA checks pass on the model and detail surfaces', async ({ page, 
   const creator = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
   await testInfo.attach('axe-creator', { body: JSON.stringify(creator.violations, null, 2), contentType: 'application/json' });
   expect(creator.violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) }))).toEqual([]);
+  await page.goto('/compose');
+  await page.getByRole('region', { name: '组建工作台' }).waitFor();
+  const composer = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
+  await testInfo.attach('axe-composer', { body: JSON.stringify(composer.violations, null, 2), contentType: 'application/json' });
+  expect(composer.violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) }))).toEqual([]);
   await page.goto('/explore/5867');
   await page.getByText('模型已就绪', { exact: true }).waitFor();
   const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();

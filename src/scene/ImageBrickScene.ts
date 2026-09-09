@@ -1,7 +1,7 @@
 import {
   ACESFilmicToneMapping, AmbientLight, Box3, Color, CylinderGeometry, DirectionalLight,
   DynamicDrawUsage, Group, HemisphereLight, InstancedMesh, Matrix4, Mesh, MeshPhysicalMaterial,
-  MOUSE, PerspectiveCamera, PlaneGeometry, Scene, ShadowMaterial, SRGBColorSpace, Vector3, WebGLRenderer,
+  MOUSE, PerspectiveCamera, PlaneGeometry, Quaternion, Scene, ShadowMaterial, SRGBColorSpace, Vector3, WebGLRenderer,
   type BufferGeometry, type Material,
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -12,6 +12,7 @@ type VisualBrick = {
   brick: ImageBrick;
   base: Vector3;
   direction: Vector3;
+  rotation: Quaternion;
   enter: number;
   visible: boolean;
 };
@@ -23,11 +24,10 @@ type BodyBatch = {
 
 type StudBatch = {
   mesh: InstancedMesh;
-  studs: { visual: VisualBrick; offset: number }[];
+  studs: { visual: VisualBrick; offsetX: number; offsetZ: number }[];
 };
 
 const unit = 12;
-const brickHeight = unit * 1.16;
 const smooth = (value: number) => value * value * (3 - 2 * value);
 export type ImageBrickView = 'perspective' | 'front' | 'side' | 'top';
 
@@ -45,7 +45,7 @@ export class ImageBrickScene {
   private readonly matrix = new Matrix4();
   private readonly position = new Vector3();
   private readonly scale = new Vector3(1, 1, 1);
-  private readonly rotation = new Group().quaternion;
+  private readonly studOffset = new Vector3();
   private frame = 0;
   private lastTick = 0;
   private lastFrameMs = 0;
@@ -100,7 +100,7 @@ export class ImageBrickScene {
     this.renderer.domElement.setAttribute('aria-label', label);
   }
 
-  setBuild(build: ImageBrickBuild) {
+  setBuild(build: ImageBrickBuild, fit = true) {
     this.clearModel();
     this.build = build;
     this.currentStep = build.steps.length;
@@ -108,7 +108,11 @@ export class ImageBrickScene {
       const base = new Vector3(brick.x * unit, brick.y * unit, brick.z * unit);
       const direction = new Vector3(brick.x, 0.45 + brick.y * 0.22, brick.z);
       if (direction.lengthSq() < 0.01) direction.set(0, 1, 0);
-      return { brick, base, direction: direction.normalize(), enter: 1, visible: true };
+      const rotation = new Quaternion().setFromAxisAngle(
+        new Vector3(0, 1, 0),
+        (brick.rotation ?? 0) * Math.PI / 2,
+      );
+      return { brick, base, direction: direction.normalize(), rotation, enter: 1, visible: true };
     });
     const materials = new Map<string, MeshPhysicalMaterial>();
     const materialFor = (color: string) => {
@@ -128,13 +132,24 @@ export class ImageBrickScene {
     };
     const bodies = new Map<string, VisualBrick[]>();
     for (const visual of visuals) {
-      const key = `${visual.brick.width}:${visual.brick.colorHex}`;
+      const key = [
+        visual.brick.width,
+        visual.brick.depth ?? 1,
+        visual.brick.height ?? 1.16,
+        visual.brick.colorHex,
+      ].join(':');
       if (!bodies.has(key)) bodies.set(key, []);
       bodies.get(key)!.push(visual);
     }
     for (const [key, batchVisuals] of bodies) {
-      const width = Number(key.split(':')[0]);
-      const geometry = new RoundedBoxGeometry(width * unit - 0.7, brickHeight - 0.55, unit - 0.7, 2, 0.65);
+      const [width, depth, height] = key.split(':').map(Number);
+      const geometry = new RoundedBoxGeometry(
+        width * unit - 0.7,
+        height * unit - 0.55,
+        depth * unit - 0.7,
+        2,
+        0.65,
+      );
       this.disposableGeometries.add(geometry);
       const mesh = new InstancedMesh(geometry, materialFor(batchVisuals[0].brick.colorHex), batchVisuals.length);
       mesh.castShadow = true;
@@ -146,14 +161,17 @@ export class ImageBrickScene {
     }
     const studGeometry = new CylinderGeometry(unit * 0.3, unit * 0.3, unit * 0.16, 24);
     this.disposableGeometries.add(studGeometry);
-    const studs = new Map<string, { visual: VisualBrick; offset: number }[]>();
+    const studs = new Map<string, { visual: VisualBrick; offsetX: number; offsetZ: number }[]>();
     for (const visual of visuals) {
       if (!studs.has(visual.brick.colorHex)) studs.set(visual.brick.colorHex, []);
-      for (let index = 0; index < visual.brick.width; index++) {
-        studs.get(visual.brick.colorHex)!.push({
-          visual,
-          offset: (index - (visual.brick.width - 1) / 2) * unit,
-        });
+      for (let x = 0; x < visual.brick.width; x++) {
+        for (let z = 0; z < (visual.brick.depth ?? 1); z++) {
+          studs.get(visual.brick.colorHex)!.push({
+            visual,
+            offsetX: (x - (visual.brick.width - 1) / 2) * unit,
+            offsetZ: (z - ((visual.brick.depth ?? 1) - 1) / 2) * unit,
+          });
+        }
       }
     }
     for (const [color, batchStuds] of studs) {
@@ -173,7 +191,7 @@ export class ImageBrickScene {
     this.scene.add(ground);
     this.disposableGeometries.add(ground.geometry);
     this.disposableMaterials.add(ground.material as Material);
-    this.fitVisible(true);
+    if (fit) this.fitVisible(true);
     this.updateInstances();
   }
 
@@ -257,24 +275,30 @@ export class ImageBrickScene {
             .addScaledVector(visual.direction, spread)
             .add(new Vector3(0, arrival, 0));
         }
-        this.matrix.compose(this.position, this.rotation, this.scale);
+        this.matrix.compose(this.position, visual.rotation, this.scale);
         batch.mesh.setMatrixAt(index, this.matrix);
       });
       batch.mesh.instanceMatrix.needsUpdate = true;
     }
     for (const batch of this.studBatches) {
-      batch.studs.forEach(({ visual, offset }, index) => {
+      batch.studs.forEach(({ visual, offsetX, offsetZ }, index) => {
         if (!visual.visible) {
           this.scale.setScalar(0);
           this.position.copy(visual.base);
         } else {
           this.scale.setScalar(1);
           const arrival = (1 - smooth(visual.enter)) * unit * 7;
+          this.studOffset.set(offsetX, 0, offsetZ).applyQuaternion(visual.rotation);
           this.position.copy(visual.base)
             .addScaledVector(visual.direction, spread)
-            .add(new Vector3(offset, brickHeight / 2 + unit * 0.08 + arrival, 0));
+            .add(this.studOffset)
+            .add(new Vector3(
+              0,
+              (visual.brick.height ?? 1.16) * unit / 2 + unit * 0.08 + arrival,
+              0,
+            ));
         }
-        this.matrix.compose(this.position, this.rotation, this.scale);
+        this.matrix.compose(this.position, visual.rotation, this.scale);
         batch.mesh.setMatrixAt(index, this.matrix);
       });
       batch.mesh.instanceMatrix.needsUpdate = true;
@@ -296,7 +320,12 @@ export class ImageBrickScene {
     const box = new Box3();
     for (const visual of visuals) {
       const center = visual.base.clone().addScaledVector(visual.direction, spread);
-      const half = new Vector3(visual.brick.width * unit / 2, brickHeight / 2, unit / 2);
+      const rotated = (visual.brick.rotation ?? 0) % 2 === 1;
+      const half = new Vector3(
+        (rotated ? visual.brick.depth ?? 1 : visual.brick.width) * unit / 2,
+        (visual.brick.height ?? 1.16) * unit / 2,
+        (rotated ? visual.brick.width : visual.brick.depth ?? 1) * unit / 2,
+      );
       box.expandByPoint(center.clone().sub(half));
       box.expandByPoint(center.clone().add(half));
     }
