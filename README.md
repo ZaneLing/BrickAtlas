@@ -2,6 +2,8 @@
 
 Brick Atlas is an unofficial desktop workspace for exploring LDraw models, inspecting individual bricks, and following animated build instructions.
 
+[Watch the 30-second build and explode demo](docs/media/brick-atlas-build-explode-demo.webm).
+
 ## Features
 
 - Browse 12 traceable models with high-resolution, physically based 3D rendering.

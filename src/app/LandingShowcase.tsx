@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Box, Layers3, Play, ScanSearch } from 'lucide-react';
+import { Box, Layers3, Play } from 'lucide-react';
 import type { Locale, Translator } from './locale';
 import type { AtlasManifest, ExplorerState } from '../model/types';
 import { initialState } from '../model/types';
@@ -12,14 +12,14 @@ declare global {
   }
 }
 
-const BUILD_DURATION = 9000;
-const INSPECT_DURATION = 5000;
-const EXPLODE_OUT_DURATION = 3000;
+const BUILD_DURATION = 18000;
+const COMPLETE_HOLD_DURATION = 1500;
+const EXPLODE_OUT_DURATION = 3500;
 const EXPLODE_HOLD_DURATION = 1000;
-const EXPLODE_IN_DURATION = 3000;
-const ASSEMBLED_HOLD_DURATION = 1000;
-const INSPECT_END = BUILD_DURATION + INSPECT_DURATION;
-const EXPLODE_OUT_END = INSPECT_END + EXPLODE_OUT_DURATION;
+const EXPLODE_IN_DURATION = 3500;
+const ASSEMBLED_HOLD_DURATION = 2500;
+const EXPLODE_START = BUILD_DURATION + COMPLETE_HOLD_DURATION;
+const EXPLODE_OUT_END = EXPLODE_START + EXPLODE_OUT_DURATION;
 const EXPLODE_HOLD_END = EXPLODE_OUT_END + EXPLODE_HOLD_DURATION;
 const EXPLODE_IN_END = EXPLODE_HOLD_END + EXPLODE_IN_DURATION;
 const CYCLE_DURATION = EXPLODE_IN_END + ASSEMBLED_HOLD_DURATION;
@@ -30,8 +30,8 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
   const sceneRef = useRef<AtlasScene | null>(null);
   const sceneStateRef = useRef<ExplorerState>({ ...initialState, buildStep: 0, edges: false, grid: false, quality: 'high' });
   const stepRef = useRef(-1);
-  const phaseRef = useRef<'build' | 'inspect' | 'explode'>('build');
-  const [phase, setPhase] = useState<'build' | 'inspect' | 'explode'>('build');
+  const phaseRef = useRef<'build' | 'explode'>('build');
+  const [phase, setPhase] = useState<'build' | 'explode'>('build');
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
 
@@ -56,7 +56,6 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
         scene.controls.enablePan = false;
         scene.controls.enableZoom = false;
         scene.controls.enabled = false;
-        scene.controls.autoRotateSpeed = 1.25;
         scene.setState(sceneStateRef.current);
         sceneRef.current = scene;
         window.__landingAtlas = () => scene!.snapshot();
@@ -87,7 +86,7 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
         return;
       }
       const elapsed = reducedMotion
-        ? BUILD_DURATION + INSPECT_DURATION / 2
+        ? BUILD_DURATION + COMPLETE_HOLD_DURATION / 2
         : (time - cycleStarted) % CYCLE_DURATION;
       const progress = elapsed / CYCLE_DURATION;
       section.style.setProperty('--story-progress', String(progress));
@@ -95,15 +94,11 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
       const nextStep = elapsed < BUILD_DURATION
         ? Math.round(elapsed / BUILD_DURATION * steps)
         : steps;
-      const nextPhase = elapsed < BUILD_DURATION
-        ? 'build'
-        : elapsed < INSPECT_END
-          ? 'inspect'
-          : 'explode';
-      const explosion = elapsed < INSPECT_END
+      const nextPhase = elapsed < BUILD_DURATION ? 'build' : 'explode';
+      const explosion = elapsed < EXPLODE_START
         ? 0
         : elapsed < EXPLODE_OUT_END
-          ? (elapsed - INSPECT_END) / EXPLODE_OUT_DURATION
+          ? (elapsed - EXPLODE_START) / EXPLODE_OUT_DURATION
           : elapsed < EXPLODE_HOLD_END
             ? 1
             : elapsed < EXPLODE_IN_END
@@ -115,11 +110,9 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
         setPhase(nextPhase);
       }
       const stepChanged = nextStep !== stepRef.current;
-      const autoRotate = nextPhase === 'inspect';
       if (
         phaseChanged ||
         stepChanged ||
-        sceneStateRef.current.autoRotate !== autoRotate ||
         Math.abs(sceneStateRef.current.explosion - explosion) > 0.005
       ) {
         stepRef.current = nextStep;
@@ -127,7 +120,7 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
           ...sceneStateRef.current,
           buildStep: nextStep,
           explosion,
-          autoRotate,
+          autoRotate: false,
           assemblyRevision: sceneStateRef.current.assemblyRevision + Number(stepChanged),
         };
         scene.setState(sceneStateRef.current);
@@ -148,7 +141,6 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
 
   const phases = [
     { id: 'build', icon: Play, title: tr('逐步拼装', 'Build step by step'), text: tr('按清晰节奏逐组完成结构', 'Build each structural group at a clear pace') },
-    { id: 'inspect', icon: ScanSearch, title: tr('观察结构', 'Inspect the structure'), text: tr('模型按预设速度自动旋转', 'The model rotates automatically at a preset speed') },
     { id: 'explode', icon: Layers3, title: tr('三维拆分', 'Explode in 3D'), text: tr('从完整装配展开至 100%，再收回', 'Expand from 0 to 100%, then return') },
   ] as const;
 
