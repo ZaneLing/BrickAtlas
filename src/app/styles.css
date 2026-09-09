@@ -38,8 +38,18 @@ button { transition: background .18s, color .18s, border-color .18s, box-shadow 
 .topbar::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, var(--brick-red) 0 20%, var(--brick-yellow) 20% 40%, var(--brick-blue) 40% 60%, var(--brick-cyan) 60% 80%, var(--brick-pink) 80%); }
 .brand { display: flex; align-items: center; gap: 10px; }
 .brand-mark { width: 34px; height: 34px; position: relative; border-radius: 6px; background: #202a44; color: #fff; display: grid; place-items: center; box-shadow: inset 0 -4px 0 #10172b, 0 3px 0 #11192c; transition: translate .18s, box-shadow .18s; }
-.brand-mark::before { content: ""; position: absolute; top: -4px; left: 7px; width: 6px; height: 6px; border-radius: 50%; background: #42506d; box-shadow: 14px 0 #42506d; }
 .brand:hover .brand-mark { translate: 0 -1px; box-shadow: inset 0 -4px 0 #10172b, 0 4px 0 #11192c; }
+.brick-atlas-mark { width: 26px; height: 25px; position: relative; display: block; }
+.brick-mark-piece { position: absolute; width: 12px; height: 8px; border-radius: 2px; box-shadow: inset 0 -2px 0 #0000002b, 0 2px 2px #080d1980; }
+.brick-mark-piece::before { content: ""; position: absolute; top: -2px; left: 2px; width: 3px; height: 3px; border-radius: 50%; background: #ffffff90; box-shadow: 5px 0 #ffffff70; }
+.brick-mark-red { left: 1px; top: 4px; background: #ed443b; animation: mark-red 4s cubic-bezier(.22, 1, .36, 1) infinite; }
+.brick-mark-yellow { right: 1px; top: 4px; background: #f2c330; animation: mark-yellow 4s cubic-bezier(.22, 1, .36, 1) infinite; }
+.brick-mark-blue { left: 1px; bottom: 2px; background: #3976d5; animation: mark-blue 4s cubic-bezier(.22, 1, .36, 1) infinite; }
+.brick-mark-cyan { right: 1px; bottom: 2px; background: #24a6b7; animation: mark-cyan 4s cubic-bezier(.22, 1, .36, 1) infinite; }
+@keyframes mark-red { 0%, 100% { transform: translate(-4px, -3px) rotate(-8deg); } 18%, 78% { transform: translate(0, 0); } }
+@keyframes mark-yellow { 0%, 100% { transform: translate(4px, -4px) rotate(8deg); } 22%, 78% { transform: translate(0, 0); } }
+@keyframes mark-blue { 0%, 100% { transform: translate(-4px, 4px) rotate(7deg); } 26%, 78% { transform: translate(0, 0); } }
+@keyframes mark-cyan { 0%, 100% { transform: translate(4px, 4px) rotate(-7deg); } 30%, 78% { transform: translate(0, 0); } }
 .brand strong { font-size: 19px; font-weight: 780; white-space: nowrap; }
 .brand strong span { font-weight: 380; margin-left: 4px; }
 .top-divider { height: 24px; width: 1px; background: var(--border); }
@@ -1108,5 +1118,6 @@ button { transition: background .18s, color .18s, border-color .18s, box-shadow 
 
 @media (prefers-reduced-motion: reduce) {
   .brick-burst-piece { display: none !important; }
+  .brick-mark-piece { animation: none; }
   .model-card, .model-art img, .feature-band > div, .feature-band svg, .story-phases > div::after { transition: none; }
 }

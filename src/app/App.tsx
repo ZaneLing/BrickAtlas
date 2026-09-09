@@ -10,6 +10,7 @@ import { PartPreviewScene } from '../scene/PartPreview';
 import { colorLabels, searchInstances, visibleInstances, type AtlasManifest, type ExplorerState, type GroupId, type PartInstance } from '../model/types';
 import { BrickModel } from '../model/BrickModel';
 import { useViewerStore } from '../store/viewerStore';
+import { BrickAtlasMark } from '../ui/BrickAtlasMark';
 import { IconButton, Modal } from '../ui/Controls';
 import { diagnosticsReport, installDiagnostics, recordDiagnostic } from './diagnostics';
 import { modelCatalog, type ModelConfig } from '../../atlas.config';
@@ -329,7 +330,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
     <header className="topbar">
       <a href={import.meta.env.BASE_URL} className="icon-button workspace-back" aria-label={tr('返回项目库', 'Back to library')} title={tr('返回项目库', 'Back to library')}><ArrowLeft size={18} /></a>
       <a href={import.meta.env.BASE_URL} className="brand" aria-label={tr('Brick Atlas 首页', 'Brick Atlas home')}>
-        <span className="brand-mark"><Boxes size={23} strokeWidth={1.6} /></span>
+        <span className="brand-mark"><BrickAtlasMark /></span>
         <strong>BRICK<span>ATLAS</span></strong>
       </a>
       <div className="top-divider" />
@@ -588,7 +589,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
   }, []);
   return <div className="catalog-page landing-page">
     <header className="topbar landing-nav">
-      <a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><Boxes size={23} /></span><strong>BRICK<span>ATLAS</span></strong></a>
+      <a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><BrickAtlasMark /></span><strong>BRICK<span>ATLAS</span></strong></a>
       <nav className="landing-links"><a href="#features">{tr('功能', 'Features')}</a><a href="#models">{tr('模型商店', 'Model shop')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
       <LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} />
     </header>
@@ -652,7 +653,7 @@ function CreatorPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
     }));
   }
   return <div className="catalog-page creator-page">
-    <header className="topbar"><a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><Boxes size={23} /></span><strong>BRICK<span>ATLAS</span></strong></a><div className="top-divider" /><span className="workspace-label">{tr('图片创作工坊', 'Creator studio')}</span><nav className="top-actions"><a className="text-button" href={import.meta.env.BASE_URL}><Library size={16} />{tr('项目库', 'Library')}</a><LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} /></nav></header>
+    <header className="topbar"><a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><BrickAtlasMark /></span><strong>BRICK<span>ATLAS</span></strong></a><div className="top-divider" /><span className="workspace-label">{tr('图片创作工坊', 'Creator studio')}</span><nav className="top-actions"><a className="text-button" href={import.meta.env.BASE_URL}><Library size={16} />{tr('项目库', 'Library')}</a><LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} /></nav></header>
     <main className="creator-shell creator-studio-shell">
       <ImageBrickStudio locale={locale} tr={tr} />
       <section className="ldraw-import-section">

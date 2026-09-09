@@ -1,8 +1,24 @@
-# Brick Atlas
+<p align="center">
+  <img src="docs/media/brick-atlas-mark.svg" width="760" alt="Brick Atlas animated brick mark">
+</p>
 
-Brick Atlas is an unofficial desktop workspace for exploring LDraw models, inspecting individual bricks, and following animated build instructions.
+<h1 align="center">Brick Atlas</h1>
 
-[Watch the 46-second 2K Super Speedster exploration and build demo](docs/media/brick-atlas-build-explode-demo.webm).
+<p align="center">
+  An unofficial desktop workspace for exploring LDraw models, inspecting individual bricks, and following animated build instructions.
+</p>
+
+<p align="center">
+  <a href="docs/media/brick-atlas-demo-4k.mp4">
+    <img src="docs/media/brick-atlas-readme-preview.gif" width="960" alt="Brick Atlas Super Speedster demo">
+  </a>
+</p>
+
+<p align="center">
+  <a href="docs/media/brick-atlas-demo-4k.mp4"><strong>4K MP4 · Mobile compatible</strong></a>
+  &nbsp;·&nbsp;
+  <a href="docs/media/brick-atlas-build-explode-demo.webm">2K WebM</a>
+</p>
 
 ## Features
 
