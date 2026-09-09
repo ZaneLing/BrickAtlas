@@ -207,6 +207,7 @@ for (const group of modelGroups) {
     return { kind: bucket.kind, material: bucket.material, attributes };
   });
   const compressed = gzipSync(Buffer.concat(parts), { level: 9 });
+  compressed[9] = 255; // Normalize the platform-specific gzip OS header byte.
   const digest = hash(compressed);
   const file = `${group.id}.${digest.slice(0, 12)}.bin`;
   await writeFile(`${out}/${file}`, compressed);
