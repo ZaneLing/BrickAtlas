@@ -70,6 +70,10 @@ export interface AssemblyStep {
   sourceFile: string;
   sourceStep: number | null;
   instanceIds: string[];
+  kind?: 'parts' | 'placement';
+  assemblyId?: string;
+  motionInstanceIds?: string[];
+  stagingOffset?: Vec3;
 }
 export interface InstructionPlan {
   provenance: 'source' | 'editorial';

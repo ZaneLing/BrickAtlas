@@ -79,12 +79,14 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   const [notice, setNotice] = useState('');
   const [playing, setPlaying] = useState(false);
   const [exportSize, setExportSize] = useState(3840);
-  const [instructionPreview, setInstructionPreview] = useState('');
+  const [instructionFrames, setInstructionFrames] = useState<string[]>([]);
+  const [instructionFrame, setInstructionFrame] = useState(0);
   const [guideExport, setGuideExport] = useState<{ current: number; total: number } | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<AtlasScene | null>(null);
   const manifestRef = useRef<AtlasManifest | null>(null);
   const focusAfter = useRef(false);
+  const focusStepAfter = useRef<number | null>(null);
   useEffect(installDiagnostics, []);
   useEffect(() => { if (error) recordDiagnostic('model-error', { message: error }); }, [error]);
 
@@ -146,6 +148,10 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   useEffect(() => {
     sceneRef.current?.setState(state);
     if (focusAfter.current) { sceneRef.current?.focusSelection(); focusAfter.current = false; }
+    if (focusStepAfter.current !== null) {
+      sceneRef.current?.focusBuildStep(focusStepAfter.current);
+      focusStepAfter.current = null;
+    }
   }, [state, manifest]);
   useEffect(() => { sceneRef.current?.setLocale(locale); }, [locale]);
   useEffect(() => {
@@ -171,10 +177,11 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
       : 'The source has no STEP metadata. This is an editorial structural guide, not an official instruction sequence.';
   const stepTitle = useCallback((step: (typeof steps)[number]) => {
     if (locale === 'zh') return step.title;
-    const part = manifest?.instances.find(item => step.instanceIds.includes(item.instanceId));
+    const ids = step.motionInstanceIds ?? step.instanceIds;
+    const part = manifest?.instances.find(item => ids.includes(item.instanceId));
     const group = part ? manifest?.groups.find(item => item.id === part.groupId) : null;
     const section = group && part ? localGroupName(locale, part.groupId, group.name) : 'Assembly';
-    return `${section} · ${manifest?.instructions?.provenance === 'source' ? `Source step ${step.sourceStep ?? ''}`.trim() : 'Structural layer'}`;
+    return `${section} · ${step.kind === 'placement' ? 'Place subassembly' : manifest?.instructions?.provenance === 'source' ? `Source step ${step.sourceStep ?? ''}`.trim() : 'Build subassembly'}`;
   }, [locale, manifest, steps]);
   const resultGroups = useMemo(() => {
     const map = new Map<string, PartInstance[]>();
@@ -199,29 +206,45 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   useEffect(() => {
     if (!playing || mode !== 'build') return;
     if (currentBuildStep >= steps.length) { setPlaying(false); return; }
-    const timer = setTimeout(() => patch({ buildStep: currentBuildStep + 1, assemblyRevision: state.assemblyRevision + 1 }), 1150);
+    const timer = setTimeout(() => {
+      focusStepAfter.current = currentBuildStep + 1;
+      patch({ buildStep: currentBuildStep + 1, assemblyRevision: state.assemblyRevision + 1 });
+    }, 1150);
     return () => clearTimeout(timer);
   }, [playing, mode, currentBuildStep, steps.length, patch, state.assemblyRevision]);
   useEffect(() => {
     if (mode !== 'build' || !readyTime || currentBuildStep < 1 || !sceneRef.current) {
-      setInstructionPreview('');
+      setInstructionFrames([]);
       return;
     }
     let cancelled = false;
-    let url = '';
+    const urls: string[] = [];
     const timer = setTimeout(() => {
-      sceneRef.current?.captureBuildStep(currentBuildStep, 720, 540).then(blob => {
+      Promise.all([0, 0.18, 0.38, 0.62, 0.82, 1, 1, 1].map(progress =>
+        sceneRef.current!.captureBuildStep(currentBuildStep, 560, 420, {
+          progress,
+          focusStep: true,
+          shadows: false,
+          motionInstanceId: activeStep?.kind === 'placement' ? undefined : activeStep?.instanceIds[0],
+        }),
+      )).then(blobs => {
         if (cancelled) return;
-        url = URL.createObjectURL(blob);
-        setInstructionPreview(url);
+        urls.push(...blobs.map(blob => URL.createObjectURL(blob)));
+        setInstructionFrame(0);
+        setInstructionFrames(urls);
       }).catch(() => {});
     }, 180);
     return () => {
       cancelled = true;
       clearTimeout(timer);
-      if (url) URL.revokeObjectURL(url);
+      urls.forEach(url => URL.revokeObjectURL(url));
     };
-  }, [mode, readyTime, currentBuildStep]);
+  }, [mode, readyTime, currentBuildStep, activeStep]);
+  useEffect(() => {
+    if (instructionFrames.length < 2) return;
+    const timer = setInterval(() => setInstructionFrame(index => (index + 1) % instructionFrames.length), 145);
+    return () => clearInterval(timer);
+  }, [instructionFrames]);
 
   function reset() {
     resetViewer(mode);
@@ -254,6 +277,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   }
   function setBuildStep(step: number) {
     const next = Math.max(0, Math.min(steps.length, step));
+    focusStepAfter.current = next || null;
     patch({ buildStep: next, explosion: 0, autoRotate: false, isolation: null, assemblyRevision: state.assemblyRevision + 1 });
   }
   async function exportInstructions() {
@@ -382,7 +406,9 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
           </div>
           <div className="step-parts">{currentBuildStep === 0
             ? <span>{tr('整理零件并选择“下一步”开始', 'Sort the bricks and choose Next')}</span>
-            : <><strong>{tr('本步', 'This step')} {activeStepParts?.length ?? 0} {tr('件', 'bricks')}</strong>{activeStepParts?.slice(0, 4).map(part => <button key={part.instanceId} onClick={() => selectPart(part.instanceId, true)}><span style={{ background: part.colorHex }} />{part.partNumber}</button>)}{(activeStepParts?.length ?? 0) > 4 && <span>+{activeStepParts!.length - 4}</span>}</>}
+            : activeStep?.kind === 'placement'
+              ? <strong>{tr('放置已完成的子装配', 'Place the completed subassembly')}</strong>
+              : <><strong>{tr('本步', 'This step')} {activeStepParts?.length ?? 0} {tr('件', 'bricks')}</strong>{activeStepParts?.slice(0, 4).map(part => <button key={part.instanceId} onClick={() => selectPart(part.instanceId, true)}><span style={{ background: part.colorHex }} />{part.partNumber}</button>)}{(activeStepParts?.length ?? 0) > 4 && <span>+{activeStepParts!.length - 4}</span>}</>}
           </div>
           <p className="instruction-note">{instructionDisclaimer}</p>
         </section> : <section className="explosion-dock" aria-label={tr('拆解控制', 'Explode controls')}>
@@ -398,21 +424,23 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
           {mode === 'build' ? <div className="instruction-sidebar">
             <div className="instruction-page-heading"><span>STEP</span><strong>{currentBuildStep || '—'}</strong><small>/ {steps.length}</small></div>
             {currentBuildStep === 0 ? <div className="instruction-start"><BookOpen size={32} /><h2>{tr('准备开始拼装', 'Ready to build')}</h2><p>{tr('整理零件，点击“下一步”查看第一张说明页和入位动画。', 'Sort your bricks, then choose Next to see the first guide page and placement animation.')}</p><button className="primary-button" onClick={() => setBuildStep(1)}>{tr('进入第 1 步', 'Start step 1')}<ArrowRight size={16} /></button></div> : <>
-              <div className="instruction-static-frame">
-                {instructionPreview ? <img src={instructionPreview} alt={tr(`第 ${currentBuildStep} 步静态拼装图`, `Static build view for step ${currentBuildStep}`)} /> : <LoaderCircle className="spinner" size={24} />}
-                <span>{tr('本步新增积木以高亮色显示', 'New bricks are highlighted')}</span>
+              <div className="instruction-static-frame instruction-motion-frame">
+                {instructionFrames.length ? <img key={instructionFrame} src={instructionFrames[instructionFrame]} alt={tr(`第 ${currentBuildStep} 步动态拼装图`, `Animated build view for step ${currentBuildStep}`)} /> : <LoaderCircle className="spinner" size={24} />}
+                <span><Play size={10} />{tr('自动循环 · 聚焦本步', 'Auto loop · focused step')}</span>
               </div>
-              <div className="instruction-step-title"><span>{manifest?.instructions?.provenance === 'source' ? 'OMR AUTHOR STEP' : 'EDITORIAL STRUCTURE STEP'}</span><h2>{activeStep ? stepTitle(activeStep) : ''}</h2></div>
-              <section className="instruction-parts" aria-label={tr('本步所需零件', 'Parts for this step')}>
-                <h3>{tr('本步所需零件', 'Parts for this step')} <span>{activeStepParts?.length ?? 0}</span></h3>
-                {activePartGroups.map(group => <button key={group.key} onClick={() => selectPart(group.instanceIds[0], true)}>
-                  <span className="instruction-part-swatch" style={{ background: group.colorHex }}><Box size={18} color={['15', '19', '47', '71'].includes(manifest?.instances.find(part => part.instanceId === group.instanceIds[0])?.colorCode ?? '') ? '#53615b' : '#fff'} /></span>
-                  <span><strong>{group.quantity}× {group.partNumber}</strong><small>{group.name}<br />{group.colorName}</small></span>
-                </button>)}
-              </section>
+              <div className="instruction-step-title"><span>{activeStep?.kind === 'placement' ? 'SUBASSEMBLY PLACEMENT' : manifest?.instructions?.provenance === 'source' ? 'OMR AUTHOR STEP' : 'EDITORIAL ASSEMBLY STEP'}</span><h2>{activeStep ? stepTitle(activeStep) : ''}</h2></div>
+              {activeStep?.kind === 'placement'
+                ? <section className="instruction-placement" aria-label={tr('总成放置', 'Subassembly placement')}><Layers3 size={24} /><strong>{tr('放置已完成的子装配', 'Place the completed subassembly')}</strong><span>{activeStep.motionInstanceIds?.length ?? 0} {tr('块积木整体入位', 'bricks move into final position')}</span></section>
+                : <section className="instruction-parts" aria-label={tr('本步所需零件', 'Parts for this step')}>
+                  <h3>{tr('本步所需零件', 'Parts for this step')} <span>{activeStepParts?.length ?? 0}</span></h3>
+                  {activePartGroups.map(group => <button key={group.key} onClick={() => selectPart(group.instanceIds[0], true)}>
+                    <span className="instruction-part-swatch" style={{ background: group.colorHex }}><Box size={18} color={['15', '19', '47', '71'].includes(manifest?.instances.find(part => part.instanceId === group.instanceIds[0])?.colorCode ?? '') ? '#53615b' : '#fff'} /></span>
+                    <span><strong>{group.quantity}× {group.partNumber}</strong><small>{group.name}<br />{group.colorName}</small></span>
+                  </button>)}
+                </section>}
               <div className="instruction-side-nav"><button disabled={currentBuildStep === 1} onClick={() => setBuildStep(currentBuildStep - 1)}><ArrowLeft size={16} />{tr('上一步', 'Previous')}</button><button disabled={currentBuildStep === steps.length} onClick={() => setBuildStep(currentBuildStep + 1)}>{tr('下一步', 'Next')}<ArrowRight size={16} /></button></div>
             </>}
-            <section className="instruction-index"><h3>{tr('步骤目录', 'Step index')}</h3><div>{steps.map((step, index) => <button key={step.id} className={currentBuildStep === index + 1 ? 'current' : ''} onClick={() => setBuildStep(index + 1)}><span>{index + 1}</span><strong>{stepTitle(step)}</strong><small>{step.instanceIds.length} {tr('件', 'pcs')}</small></button>)}</div></section>
+            <section className="instruction-index"><h3>{tr('步骤目录', 'Step index')}</h3><div>{steps.map((step, index) => <button key={step.id} className={currentBuildStep === index + 1 ? 'current' : ''} onClick={() => setBuildStep(index + 1)}><span>{index + 1}</span><strong>{stepTitle(step)}</strong><small>{step.kind === 'placement' ? tr('总成', 'place') : `${step.instanceIds.length} ${tr('件', 'pcs')}`}</small></button>)}</div></section>
             <button className="primary-button guide-export" disabled={!!guideExport || loading} onClick={exportInstructions}>{guideExport ? <LoaderCircle className="spinner" size={16} /> : <FileDown size={16} />}{guideExport ? tr(`正在生成 ${guideExport.current} / ${guideExport.total}`, `Generating ${guideExport.current} / ${guideExport.total}`) : tr('导出完整说明书 PDF', 'Export complete PDF guide')}</button>
             <p className="guide-disclaimer">{instructionDisclaimer}</p>
           </div> : selected ? <>

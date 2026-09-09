@@ -20,25 +20,16 @@ test('catalog exposes twelve projects, real previews and model parameters', asyn
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('landing scroll story builds and explodes a live 3D model', async ({ page }) => {
+test('landing showcase automatically builds and explodes a live 3D model', async ({ page }) => {
   await page.goto('/');
-  const story = page.getByRole('region', { name: '滚动式功能演示' });
+  const story = page.getByRole('region', { name: '自动循环功能演示' });
   await story.scrollIntoViewIfNeeded();
   await expect(story.locator('canvas')).toBeVisible();
   await expect(story.getByText('实时渲染')).toBeVisible();
-  const scrollStory = (progress: number) => page.evaluate(value => {
-    const section = document.querySelector('.landing-story')!;
-    const top = section.getBoundingClientRect().top + scrollY;
-    scrollTo(0, top + (section.clientHeight - innerHeight) * value);
-  }, progress);
-  await scrollStory(0.25);
-  await expect.poll(async () => page.evaluate(() => {
-    const count = window.__landingAtlas?.().visibleInstances ?? 0;
-    return count > 0 && count < 278;
-  })).toBe(true);
-  await scrollStory(0.9);
-  await expect(story.getByText('三维拆分', { exact: true }).locator('..').locator('..')).toHaveClass(/active/);
-  await expect.poll(async () => page.evaluate(() => window.__landingAtlas?.().actualExplosion ?? 0)).toBeGreaterThan(0.35);
+  const initial = await page.evaluate(() => window.__landingAtlas?.().visibleInstances ?? 0);
+  await expect.poll(async () => page.evaluate(() => window.__landingAtlas?.().visibleInstances ?? 0)).toBeGreaterThan(initial);
+  await expect(story.getByText('三维拆分', { exact: true }).locator('..').locator('..')).toHaveClass(/active/, { timeout: 11000 });
+  await expect.poll(async () => page.evaluate(() => window.__landingAtlas?.().actualExplosion ?? 0), { timeout: 5000 }).toBeGreaterThan(0.35);
 });
 
 test('language toggle translates the complete workspace and persists', async ({ page }) => {
@@ -90,7 +81,10 @@ test('build mode advances, animates and persists progress per project', async ({
   await expect.poll(async () => page.evaluate(() => window.__atlas?.().visibleInstances)).toBe(6);
   await expect(page.getByRole('complementary', { name: '步骤说明书' })).toBeVisible();
   await expect(page.getByRole('region', { name: '本步所需零件' })).toContainText('本步所需零件');
-  await expect(page.getByAltText('第 1 步静态拼装图')).toBeVisible();
+  const stepPreview = page.getByAltText('第 1 步动态拼装图');
+  await expect(stepPreview).toBeVisible();
+  const firstFrame = await stepPreview.getAttribute('src');
+  await expect.poll(async () => stepPreview.getAttribute('src')).not.toBe(firstFrame);
   await page.waitForTimeout(850);
   expect((await page.evaluate(() => window.__atlas?.().offsets))?.filter(offset => offset.some(value => Math.abs(value) > 0.01)).length).toBe(0);
   await page.reload();
@@ -161,7 +155,7 @@ test('build guide exports cover and one page per step', async ({ page }, testInf
   await page.goto('/build/31027');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: '下一步' }).click();
-  await expect(page.getByAltText('第 1 步静态拼装图')).toBeVisible();
+  await expect(page.getByAltText('第 1 步动态拼装图')).toBeVisible();
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: '导出完整说明书 PDF' }).click();
   const file = await download;
@@ -178,6 +172,31 @@ test('source-authored instruction model exposes OMR steps', async ({ page }) => 
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await expect(page.getByLabel('当前拼装步骤')).toHaveAttribute('max', '79');
   await expect(page.getByText('OMR 源步骤', { exact: true })).toBeVisible();
+});
+
+test('editorial scene builds movable assemblies before final placement', async ({ page }) => {
+  await page.goto('/build/10159');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('当前拼装步骤')).toHaveAttribute('max', '115');
+  const labels = await page.locator('.instruction-index button strong').allTextContents();
+  expect(labels.slice(0, 3).every(label => label.includes('airplane'))).toBe(true);
+  expect(labels.slice(-11).every(label => label.includes('放置总成'))).toBe(true);
+  const placement = await page.evaluate(async () => {
+    const manifest = await fetch('/models/10159/manifest.json').then(response => response.json());
+    const index = manifest.instructions.steps.findIndex((step: { kind?: string }) => step.kind === 'placement');
+    const instanceId = manifest.instructions.steps[index].motionInstanceIds[0];
+    return { step: index + 1, partIndex: manifest.instances.findIndex((part: { instanceId: string }) => part.instanceId === instanceId) };
+  });
+  await page.getByLabel('当前拼装步骤').fill(String(placement.step - 1));
+  await expect.poll(async () => page.evaluate(index =>
+    Math.max(...window.__atlas!().offsets[index].map(value => Math.abs(value))), placement.partIndex,
+  )).toBeGreaterThan(1);
+  await page.getByLabel('当前拼装步骤').fill(String(placement.step));
+  await expect(page.getByRole('region', { name: '总成放置' })).toBeVisible();
+  await expect(page.getByAltText(`第 ${placement.step} 步动态拼装图`)).toBeVisible();
+  await expect.poll(async () => page.evaluate(index =>
+    Math.max(...window.__atlas!().offsets[index].map(value => Math.abs(value))), placement.partIndex,
+  )).toBeLessThan(0.1);
 });
 
 test('complex train and truck models load all addressable bricks', async ({ page }) => {

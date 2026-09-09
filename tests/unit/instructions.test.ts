@@ -28,6 +28,39 @@ describe('instruction plans', () => {
     expect(plan.steps.flatMap(step => step.instanceIds)).toEqual(['brick_000001']);
   });
 
+  it('builds movable subassemblies before scene foundations and places them last', () => {
+    const files = splitMpd(`0 FILE airport.ldr
+${licensed}
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 airplane.ldr
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 runway.ldr
+0 FILE airplane.ldr
+0 Airplane
+${licensed}
+1 4 0 -24 0 1 0 0 0 1 0 0 0 1 brick.dat
+1 4 20 0 0 1 0 0 0 1 0 0 0 1 brick.dat
+0 FILE runway.ldr
+0 Runway
+${licensed}
+1 4 0 0 0 1 0 0 0 1 0 0 0 1 brick.dat
+${part}`);
+    const semantic = buildManifest(files, 'airport.ldr', colors, () => 'body');
+    semantic.instances.forEach((instance, index) => {
+      instance.bounds = { min: [index * 8, index * 4, 0], max: [index * 8 + 8, index * 4 + 8, 8] };
+    });
+    const plan = instructionPlan(files, 'airport.ldr', { instances: semantic.instances, groups });
+    expect(plan.steps.map(step => step.title)).toEqual([
+      'Airplane · 子装配',
+      'Runway · 子装配',
+      'Airplane · 放置总成',
+    ]);
+    expect(plan.steps.at(-1)).toMatchObject({
+      kind: 'placement',
+      instanceIds: [],
+      motionInstanceIds: ['brick_000001', 'brick_000002'],
+    });
+    expect(plan.steps.flatMap(step => step.instanceIds)).toHaveLength(3);
+  });
+
   it('groups instruction callouts by part and color', () => {
     const files = splitMpd(`0 FILE main.ldr\n${licensed}\n1 4 0 0 0 1 0 0 0 1 0 0 0 1 brick.dat\n1 4 20 0 0 1 0 0 0 1 0 0 0 1 brick.dat\n${part}`);
     const semantic = buildManifest(files, 'main.ldr', colors, () => 'body');

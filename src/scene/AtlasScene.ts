@@ -58,6 +58,7 @@ export class AtlasScene {
   private actualExplosion = 0;
   private assemblyProgress = 1;
   private assemblyIds = new Set<string>();
+  private assemblyOrder = new Map<string, number>();
   private desiredTarget = new Vector3();
   private desiredPosition = new Vector3();
   private userDirection = new Vector3(-1, 0.7, 1);
@@ -72,6 +73,7 @@ export class AtlasScene {
   private lineObjects: LineSegments[] = [];
   private environment: import('three').WebGLRenderTarget;
   private captureRenderer: WebGLRenderer | null = null;
+  private placementByInstance = new Map<string, { step: number; offset: Vector3 }>();
   private onSelect: Callbacks['select'];
   private onHover: Callbacks['hover'];
 
@@ -144,6 +146,12 @@ export class AtlasScene {
     this.texture.magFilter = NearestFilter;
     this.texture.needsUpdate = true;
     this.offsets = manifest.instances.map(() => new Vector3());
+    manifest.instructions?.steps.forEach((step, index) => {
+      if (step.kind !== 'placement' || !step.stagingOffset) return;
+      for (const id of step.motionInstanceIds ?? []) {
+        this.placementByInstance.set(id, { step: index + 1, offset: new Vector3(...step.stagingOffset) });
+      }
+    });
     this.visible = manifest.instances;
     this.inventory = inventoryLayout(this.visible, 1);
     this.observer = new ResizeObserver(this.resize);
@@ -253,6 +261,7 @@ export class AtlasScene {
   setState(state: ExplorerState) {
     const previous = this.state;
     this.state = state;
+    const activeStep = state.buildStep ? this.manifest.instructions?.steps[state.buildStep - 1] : undefined;
     const visibilityChanged = previous.hiddenGroups.join() !== state.hiddenGroups.join()
       || previous.hiddenBrickIds.join() !== state.hiddenBrickIds.join()
       || previous.isolation?.join() !== state.isolation?.join()
@@ -261,10 +270,13 @@ export class AtlasScene {
     const assemblyChanged = previous.buildStep !== state.buildStep || previous.assemblyRevision !== state.assemblyRevision;
     if (assemblyChanged && state.buildStep !== null && state.buildStep > 0
       && (previous.buildStep === null || state.buildStep >= (previous.buildStep ?? 0))) {
-      this.assemblyIds = new Set(this.manifest.instructions?.steps[state.buildStep - 1]?.instanceIds ?? []);
+      const ids = activeStep?.motionInstanceIds ?? activeStep?.instanceIds ?? [];
+      this.assemblyIds = new Set(ids);
+      this.assemblyOrder = new Map(ids.map((id, index) => [id, index]));
       this.assemblyProgress = this.reducedMotion ? 1 : 0;
     } else if (assemblyChanged) {
       this.assemblyIds.clear();
+      this.assemblyOrder.clear();
       this.assemblyProgress = 1;
     }
     this.visible = visibleInstances(this.manifest, state);
@@ -277,6 +289,7 @@ export class AtlasScene {
       }[state.view]).normalize();
     }
     for (const line of this.lineObjects) line.visible = state.edges && state.quality !== 'low';
+    this.renderer.shadowMap.enabled = state.buildStep === null;
     const pixelRatio = state.quality === 'low' ? 1 : state.quality === 'ultra' ? 4
       : state.quality === 'high' ? 3 : Math.min(Math.max(devicePixelRatio, 2), 3);
     if (this.renderer.getPixelRatio() !== pixelRatio) this.renderer.setPixelRatio(pixelRatio);
@@ -295,18 +308,27 @@ export class AtlasScene {
 
   private updateLayout() {
     const visible = new Set(this.visible.map(p => p.instanceId));
-    const currentStep = this.state.buildStep && this.manifest.instructions
-      ? this.manifest.instructions.steps[this.state.buildStep - 1]?.instanceIds ?? [] : [];
+    const activeStep = this.state.buildStep && this.manifest.instructions
+      ? this.manifest.instructions.steps[this.state.buildStep - 1] : undefined;
+    const currentStep = activeStep?.motionInstanceIds ?? activeStep?.instanceIds ?? [];
     const selected = new Set([...this.state.selection, ...this.state.highlightedBrickIds, ...(this.state.highlightStep ? currentStep : [])]);
     const n = this.manifest.instances.length;
     for (const part of this.manifest.instances) {
       const offset = new Vector3(...explosionOffset(part, this.actualExplosion, this.manifest, this.inventory));
-      if (this.assemblyProgress < 1 && this.assemblyIds.has(part.instanceId)) {
+      const placement = this.state.buildStep === null ? undefined : this.placementByInstance.get(part.instanceId);
+      if (placement && this.state.buildStep! <= placement.step) {
+        const amount = this.state.buildStep === placement.step ? 1 - smoothstep(this.assemblyProgress) : 1;
+        offset.addScaledVector(placement.offset, amount);
+      }
+      if (this.assemblyProgress < 1 && this.assemblyIds.has(part.instanceId) && activeStep?.kind !== 'placement') {
         const direction = new Vector3(...(this.manifest.groups.find(group => group.id === part.groupId)?.direction ?? [0, 1, 0]));
         direction.y += 55;
         if (!direction.lengthSq()) direction.set(0, 1, 0);
         const size = new Vector3(...part.bounds.max).sub(new Vector3(...part.bounds.min)).length();
-        offset.add(direction.normalize().multiplyScalar(Math.max(70, size * 2.5) * (1 - smoothstep(this.assemblyProgress))));
+        const order = this.assemblyOrder.get(part.instanceId) ?? 0;
+        const span = 1 + Math.max(0, this.assemblyIds.size - 1) * 0.12;
+        const localProgress = Math.max(0, Math.min(1, this.assemblyProgress * span - order * 0.12));
+        offset.add(direction.normalize().multiplyScalar(Math.max(70, size * 2.5) * (1 - smoothstep(localProgress))));
       }
       this.offsets[part.index].copy(offset);
       this.stateData.set([offset.x, offset.y, offset.z, Number(visible.has(part.instanceId))], part.index * 4);
@@ -316,7 +338,7 @@ export class AtlasScene {
     this.metrics.visibleInstances = this.visible.filter(p => this.loaded.has(p.groupId)).length;
     this.metrics.actualExplosion = this.actualExplosion;
     this.grid.visible = this.state.grid && this.actualExplosion < 0.02;
-    this.ground.visible = this.actualExplosion < 0.98;
+    this.ground.visible = this.state.buildStep === null && this.actualExplosion < 0.98;
     this.controls.mouseButtons.LEFT = this.actualExplosion > 0.98 ? MOUSE.PAN : MOUSE.ROTATE;
     this.controls.enableRotate = this.actualExplosion < 0.98;
     this.dirty = true;
@@ -362,12 +384,48 @@ export class AtlasScene {
   }
 
   focusSelection() {
-    const chosen = this.visible.filter(p => this.state.selection.includes(p.instanceId));
+    this.focusInstances(this.state.selection, 1.5, true);
+  }
+
+  focusBuildStep(step: number) {
+    const instruction = this.manifest.instructions?.steps[step - 1];
+    this.focusInstances(
+      instruction?.motionInstanceIds ?? instruction?.instanceIds ?? [],
+      instruction?.kind === 'placement' ? 1.35 : 1.55,
+      true,
+      instruction?.kind === 'placement',
+    );
+  }
+
+  private focusInstances(ids: string[], padding: number, useOffsets = false, includeFinal = false) {
+    const selected = new Set(ids);
+    const chosen = this.manifest.instances.filter(part => selected.has(part.instanceId));
     if (!chosen.length) return;
-    const visible = this.visible;
-    this.visible = chosen;
-    this.fit();
-    this.visible = visible;
+    const box = new Box3();
+    for (const part of chosen) {
+      const bounds = new Box3(new Vector3(...part.bounds.min), new Vector3(...part.bounds.max));
+      if (!useOffsets || includeFinal) box.union(bounds);
+      if (useOffsets) box.union(bounds.clone().translate(this.offsets[part.index]));
+    }
+    box.getCenter(this.desiredTarget);
+    const direction = this.userDirection.clone().normalize();
+    const camera = new PerspectiveCamera(34, this.camera.aspect);
+    camera.position.copy(this.desiredTarget).add(direction);
+    camera.lookAt(this.desiredTarget);
+    camera.updateMatrixWorld();
+    const local = box.clone().translate(this.desiredTarget.clone().negate()).applyMatrix4(new Matrix4().makeRotationFromQuaternion(camera.quaternion).invert());
+    const tan = Math.tan(34 * Math.PI / 360);
+    const distance = Math.max(
+      Math.max(local.max.y, -local.min.y) / tan,
+      Math.max(local.max.x, -local.min.x) / tan / this.camera.aspect,
+      14,
+    ) * padding + local.max.z;
+    this.camera.fov = 34;
+    this.camera.updateProjectionMatrix();
+    this.desiredPosition.copy(this.desiredTarget).addScaledVector(direction, distance);
+    this.cameraMoving = true;
+    this.fitRequested = false;
+    this.dirty = true;
   }
 
   zoom(factor: number) {
@@ -391,7 +449,7 @@ export class AtlasScene {
       if (!this.interaction) this.fit();
     }
     if (this.assemblyProgress < 1) {
-      this.assemblyProgress = Math.min(1, this.assemblyProgress + dt / 0.75);
+      this.assemblyProgress = Math.min(1, this.assemblyProgress + dt / 0.95);
       this.updateLayout();
     }
     if (this.cameraMoving && !this.interaction) {
@@ -466,11 +524,17 @@ export class AtlasScene {
     return this.renderBlob(width, height, 'image/png');
   }
 
-  async captureBuildStep(step: number, width = 960, height = 720) {
+  async captureBuildStep(
+    step: number,
+    width = 960,
+    height = 720,
+    options: { progress?: number; focusStep?: boolean; shadows?: boolean; motionInstanceId?: string } = {},
+  ) {
     const savedState = this.state;
     const savedExplosion = this.actualExplosion;
     const savedProgress = this.assemblyProgress;
     const savedIds = this.assemblyIds;
+    const savedOrder = this.assemblyOrder;
     const savedCamera = this.camera.position.clone();
     const savedTarget = this.controls.target.clone();
     const savedDirection = this.userDirection.clone();
@@ -482,35 +546,57 @@ export class AtlasScene {
     const savedFitRequested = this.fitRequested;
     const savedInventory = this.inventory;
     const savedEnvironment = this.scene.environment;
+    const savedGroundVisible = this.ground.visible;
+    const activeStep = this.manifest.instructions?.steps[step - 1];
     const capture = this.captureRenderer ??= new WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
     capture.outputColorSpace = SRGBColorSpace;
     capture.toneMapping = ACESFilmicToneMapping;
     capture.toneMappingExposure = this.renderer.toneMappingExposure;
-    capture.shadowMap.enabled = true;
+    capture.shadowMap.enabled = options.shadows ?? true;
     capture.shadowMap.type = PCFSoftShadowMap;
     capture.setPixelRatio(1);
     capture.setSize(width, height, false);
     capture.setClearColor('#ffffff');
     this.state = {
       ...savedState, buildStep: step, explosion: 0, autoRotate: false, grid: false,
-      background: 'white', selection: [], highlightedBrickIds: [], highlightStep: true,
+      background: 'white', selection: [], highlightedBrickIds: [], highlightStep: false,
     };
     this.actualExplosion = 0;
-    this.assemblyProgress = 1;
-    this.assemblyIds = new Set(this.manifest.instructions?.steps[step - 1]?.instanceIds ?? []);
+    this.assemblyProgress = options.focusStep ? 0 : options.progress ?? 1;
+    const motionIds = options.motionInstanceId
+      ? [options.motionInstanceId]
+      : activeStep?.motionInstanceIds ?? activeStep?.instanceIds ?? [];
+    this.assemblyIds = new Set(motionIds);
+    this.assemblyOrder = new Map(motionIds.map((id, index) => [id, index]));
     this.visible = visibleInstances(this.manifest, this.state);
     this.inventory = inventoryLayout(this.visible, width / height);
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.updateLayout();
-    this.fit(true);
+    if (options.focusStep) this.focusInstances(
+      [...this.assemblyIds],
+      activeStep?.kind === 'placement' ? 1.35 : 1.55,
+      true,
+      activeStep?.kind === 'placement',
+    );
+    else this.fit(true);
+    if (options.focusStep) {
+      this.camera.position.copy(this.desiredPosition);
+      this.controls.target.copy(this.desiredTarget);
+      this.controls.update();
+      this.cameraMoving = false;
+      this.assemblyProgress = options.progress ?? 1;
+      this.updateLayout();
+    }
     this.scene.environment = null;
+    this.ground.visible = options.shadows ?? true;
     capture.render(this.scene, this.camera);
     const dataUrl = capture.domElement.toDataURL('image/jpeg', 0.84);
     this.state = savedState;
     this.actualExplosion = savedExplosion;
     this.assemblyProgress = savedProgress;
     this.assemblyIds = savedIds;
+    this.assemblyOrder = savedOrder;
     this.visible = visibleInstances(this.manifest, savedState);
     this.camera.position.copy(savedCamera);
     this.controls.target.copy(savedTarget);
@@ -523,6 +609,7 @@ export class AtlasScene {
     this.fitRequested = savedFitRequested;
     this.inventory = savedInventory;
     this.scene.environment = savedEnvironment;
+    this.ground.visible = savedGroundVisible;
     this.camera.updateProjectionMatrix();
     this.controls.update();
     this.renderer.setClearColor({ studio: '#f4f5f8', white: '#ffffff', dark: '#171c2c' }[savedState.background]);

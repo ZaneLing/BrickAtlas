@@ -101,11 +101,17 @@ function stepPage(
   doc.setTextColor(31, 48, 39);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
-  doc.text('NEW PARTS', 10, 28);
+  doc.text(step.kind === 'placement' ? 'PLACE ASSEMBLY' : 'NEW PARTS', 10, 28);
   doc.setFontSize(7);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(91, 111, 100);
-  doc.text(`${step.instanceIds.length} brick${step.instanceIds.length === 1 ? '' : 's'} in this step`, 10, 35);
+  const itemCount = step.kind === 'placement' ? step.motionInstanceIds?.length ?? 0 : step.instanceIds.length;
+  doc.text(
+    step.kind === 'placement'
+      ? `${itemCount} brick subassembly moves into place`
+      : `${itemCount} brick${itemCount === 1 ? '' : 's'} in this step`,
+    10, 35,
+  );
   let y = 46;
   for (const group of groups) {
     const [r, g, b] = hexRgb(group.colorHex);
@@ -152,7 +158,7 @@ export async function exportBuildGuide(
   cover(doc, config, manifest);
   for (let index = 0; index < manifest.instructions.steps.length; index++) {
     const step = manifest.instructions.steps[index];
-    const parts = step.instanceIds
+    const parts = (step.kind === 'placement' ? [] : step.instanceIds)
       .map(id => manifest.instances.find(part => part.instanceId === id))
       .filter((part): part is PartInstance => !!part);
     const frame = await scene.captureBuildStep(index + 1, 1120, 800);

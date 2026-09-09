@@ -12,14 +12,13 @@ declare global {
   }
 }
 
-const clamp = (value: number) => Math.max(0, Math.min(1, value));
-
 export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator }) {
   const sectionRef = useRef<HTMLElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<AtlasScene | null>(null);
   const sceneStateRef = useRef<ExplorerState>({ ...initialState, buildStep: 0, edges: false, grid: false, quality: 'high' });
   const stepRef = useRef(-1);
+  const phaseRef = useRef<'build' | 'inspect' | 'explode'>('build');
   const [phase, setPhase] = useState<'build' | 'inspect' | 'explode'>('build');
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
@@ -64,21 +63,28 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
   }, [locale]);
 
   useEffect(() => {
-    let frame = 0;
-    const update = () => {
-      frame = 0;
+    let frame = 0, active = false, cycleStarted = performance.now();
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const update = (time: number) => {
       const section = sectionRef.current;
       const scene = sceneRef.current;
-      if (!section || !scene) return;
-      const rect = section.getBoundingClientRect();
-      const travel = Math.max(1, rect.height - innerHeight);
-      const progress = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0.58 : clamp(-rect.top / travel);
+      if (!section || !scene || (!active && !reducedMotion)) {
+        frame = requestAnimationFrame(update);
+        return;
+      }
+      const elapsed = reducedMotion ? 6000 : (time - cycleStarted) % 12000;
+      const progress = elapsed / 12000;
       section.style.setProperty('--story-progress', String(progress));
       const steps = scene.manifest.instructions?.steps.length ?? 1;
-      const nextStep = progress < 0.5 ? Math.round(clamp(progress / 0.46) * steps) : steps;
-      const nextPhase = progress < 0.46 ? 'build' : progress < 0.67 ? 'inspect' : 'explode';
-      const explosion = progress < 0.67 ? 0 : clamp((progress - 0.67) / 0.3) * 0.72;
-      if (nextPhase !== phase) setPhase(nextPhase);
+      const nextStep = elapsed < 4500 ? Math.round(elapsed / 4500 * steps) : steps;
+      const nextPhase = elapsed < 4500 ? 'build' : elapsed < 7500 ? 'inspect' : 'explode';
+      const explosion = elapsed < 7500 ? 0
+        : elapsed < 10000 ? (elapsed - 7500) / 2500 * 0.72
+          : Math.max(0, 1 - (elapsed - 10000) / 2000) * 0.72;
+      if (nextPhase !== phaseRef.current) {
+        phaseRef.current = nextPhase;
+        setPhase(nextPhase);
+      }
       const stepChanged = nextStep !== stepRef.current;
       if (stepChanged || Math.abs(sceneStateRef.current.explosion - explosion) > 0.005) {
         stepRef.current = nextStep;
@@ -91,19 +97,19 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
         };
         scene.setState(sceneStateRef.current);
       }
+      frame = requestAnimationFrame(update);
     };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-    update();
-    addEventListener('scroll', schedule, { passive: true });
-    addEventListener('resize', schedule);
+    const observer = new IntersectionObserver(([entry]) => {
+      active = entry.isIntersecting;
+      if (active) cycleStarted = performance.now();
+    }, { threshold: 0.12 });
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    frame = requestAnimationFrame(update);
     return () => {
-      removeEventListener('scroll', schedule);
-      removeEventListener('resize', schedule);
+      observer.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [phase]);
+  }, []);
 
   const phases = [
     { id: 'build', icon: Play, title: tr('逐步拼装', 'Build step by step'), text: tr('零件按结构顺序入位', 'Bricks arrive in structural order') },
@@ -111,10 +117,10 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
     { id: 'explode', icon: Layers3, title: tr('三维拆分', 'Explode in 3D'), text: tr('分组展开内部连接关系', 'Reveal internal assemblies') },
   ] as const;
 
-  return <section className="landing-story" ref={sectionRef} aria-label={tr('滚动式功能演示', 'Scroll-driven feature demo')}>
+  return <section className="landing-story" ref={sectionRef} aria-label={tr('自动循环功能演示', 'Auto-playing feature demo')}>
     <div className="landing-story-sticky">
       <div className="story-copy">
-        <span className="eyebrow">SCROLL TO BUILD</span>
+        <span className="eyebrow">AUTOMATED BUILD CYCLE</span>
         <h2>{tr('从第一块，到完整结构', 'From the first brick to the full structure')}</h2>
         <div className="story-phases">
           {phases.map((item, index) => {

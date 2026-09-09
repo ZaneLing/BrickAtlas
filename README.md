@@ -18,7 +18,7 @@ The application must be served through HTTP or HTTPS. It does not require a back
 
 ## Routes
 
-- `/` animated model store, floating brick hero, and scroll-driven live 3D build/explode story
+- `/` animated model store, floating brick hero, and auto-looping live 3D build/explode story
 - `/explore/:modelId` model explorer
 - `/build/:modelId` animated build mode and printable guide
 - `/create` local image-to-brick studio and LDraw preflight
@@ -30,7 +30,8 @@ The application must be served through HTTP or HTTPS. It does not require a back
 - A persisted Zustand viewer store for selection, visibility, isolation, explosion, X-Ray, quality, and build progress.
 - Orbit controls, zoom, five preset views, auto rotation, exploded structure, and per-instance inventory layout.
 - Part search, direct selection, hide, isolate, Where Used, dimensions, subassemblies, and source traceability.
-- Animated build steps with playback, pause, previous/next navigation, static step views, and per-step parts lists.
+- Animated build steps with playback, pause, previous/next navigation, focused looping step previews, and per-step parts lists.
+- Editorial instructions build independent subassemblies separately and add explicit final-placement steps for scene models.
 - Landscape A4 PDF build-guide export with cover, step number, required parts, quantities, rendered assembly view, and provenance disclosure.
 - Independent Full HD, 4K, 8K, and 12K image export.
 - Physically based plastic materials, clearcoat highlights, environment lighting, soft ground shadows, color-aware edges, and up to 4x render density.
