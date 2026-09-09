@@ -83,6 +83,7 @@ test('build mode advances, animates and persists progress per project', async ({
   await expect(page.getByRole('region', { name: '本步所需零件' })).toContainText('本步所需零件');
   const stepPreview = page.getByAltText('第 1 步动态拼装图');
   await expect(stepPreview).toBeVisible();
+  expect(await stepPreview.evaluate(element => getComputedStyle(element).getPropertyValue('object-fit'))).toBe('contain');
   const firstFrame = await stepPreview.getAttribute('src');
   await expect.poll(async () => stepPreview.getAttribute('src')).not.toBe(firstFrame);
   await page.waitForTimeout(850);
@@ -90,6 +91,39 @@ test('build mode advances, animates and persists progress per project', async ({
   await page.reload();
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await expect(page.getByLabel('当前拼装步骤')).toHaveValue('1');
+});
+
+test('build canvas pans horizontally and vertically without moving the model base', async ({ page }) => {
+  await page.goto('/build/5867');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  const panButton = page.getByRole('button', { name: '平移视图（上下左右拖动）' });
+  await panButton.click();
+  await expect(panButton).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(async () => page.evaluate(() => window.__atlas?.().panMode)).toBe(true);
+
+  const canvas = page.locator('.canvas-host canvas');
+  const box = (await canvas.boundingBox())!;
+  const start = { x: box.x + box.width * 0.62, y: box.y + box.height * 0.55 };
+  const initialTarget = (await page.evaluate(() => window.__atlas!().target))!;
+
+  await page.mouse.move(start.x, start.y);
+  await page.mouse.down();
+  await page.mouse.move(start.x + 90, start.y, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(async () => page.evaluate(target => {
+    const next = window.__atlas!().target;
+    return Math.hypot(...next.map((value, index) => value - target[index]));
+  }, initialTarget)).toBeGreaterThan(0.1);
+
+  const horizontalTarget = (await page.evaluate(() => window.__atlas!().target))!;
+  await page.mouse.move(start.x, start.y);
+  await page.mouse.down();
+  await page.mouse.move(start.x, start.y - 80, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(async () => page.evaluate(target => {
+    const next = window.__atlas!().target;
+    return Math.hypot(...next.map((value, index) => value - target[index]));
+  }, horizontalTarget)).toBeGreaterThan(0.1);
 });
 
 test('step snapshots never resize or flash the live canvas and controls stay top-left', async ({ page }) => {

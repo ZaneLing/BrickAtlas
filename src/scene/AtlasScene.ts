@@ -55,6 +55,7 @@ export class AtlasScene {
   private fitRequested = true;
   private cameraMoving = false;
   private interaction = false;
+  private panMode = false;
   private actualExplosion = 0;
   private assemblyProgress = 1;
   private assemblyIds = new Set<string>();
@@ -130,6 +131,9 @@ export class AtlasScene {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.09;
+    this.controls.enablePan = true;
+    this.controls.screenSpacePanning = true;
+    this.controls.panSpeed = 1;
     this.controls.minDistance = 8;
     this.controls.maxDistance = 6000;
     this.controls.autoRotateSpeed = 0.65;
@@ -193,13 +197,29 @@ export class AtlasScene {
     this.locale = locale;
     this.renderer.domElement.setAttribute('aria-label', `${this.manifest.model.title} ${this.text('交互式三维模型', 'interactive 3D model')}`);
   }
+  setPanMode(enabled: boolean) {
+    this.panMode = enabled;
+    this.controls.mouseButtons.LEFT = enabled || this.actualExplosion > 0.98 ? MOUSE.PAN : MOUSE.ROTATE;
+    this.controls.enableRotate = !enabled && this.actualExplosion < 0.98;
+    this.renderer.domElement.style.cursor = enabled ? 'grab' : '';
+    this.dirty = true;
+  }
   private invalidate = () => { this.dirty = true; };
   private motionChanged = () => {
     this.reducedMotion = this.motionPreference.matches;
     this.setState(this.state);
   };
-  private controlStart = () => { this.interaction = true; this.cameraMoving = false; this.callbacks.hover(null, 0, 0); };
-  private controlEnd = () => { this.interaction = false; this.userDirection.copy(this.camera.position).sub(this.controls.target).normalize(); };
+  private controlStart = () => {
+    this.interaction = true;
+    this.cameraMoving = false;
+    if (this.panMode) this.renderer.domElement.style.cursor = 'grabbing';
+    this.callbacks.hover(null, 0, 0);
+  };
+  private controlEnd = () => {
+    this.interaction = false;
+    this.renderer.domElement.style.cursor = this.panMode ? 'grab' : '';
+    this.userDirection.copy(this.camera.position).sub(this.controls.target).normalize();
+  };
 
   private resize = () => {
     const { width, height } = this.host.getBoundingClientRect();
@@ -339,8 +359,8 @@ export class AtlasScene {
     this.metrics.actualExplosion = this.actualExplosion;
     this.grid.visible = this.state.grid && this.actualExplosion < 0.02;
     this.ground.visible = this.state.buildStep === null && this.actualExplosion < 0.98;
-    this.controls.mouseButtons.LEFT = this.actualExplosion > 0.98 ? MOUSE.PAN : MOUSE.ROTATE;
-    this.controls.enableRotate = this.actualExplosion < 0.98;
+    this.controls.mouseButtons.LEFT = this.panMode || this.actualExplosion > 0.98 ? MOUSE.PAN : MOUSE.ROTATE;
+    this.controls.enableRotate = !this.panMode && this.actualExplosion < 0.98;
     this.dirty = true;
   }
 
@@ -391,9 +411,9 @@ export class AtlasScene {
     const instruction = this.manifest.instructions?.steps[step - 1];
     this.focusInstances(
       instruction?.motionInstanceIds ?? instruction?.instanceIds ?? [],
-      instruction?.kind === 'placement' ? 1.35 : 1.55,
+      instruction?.kind === 'placement' ? 1.45 : 1.7,
       true,
-      instruction?.kind === 'placement',
+      true,
     );
   }
 
@@ -432,6 +452,22 @@ export class AtlasScene {
     const delta = this.camera.position.clone().sub(this.controls.target).multiplyScalar(factor);
     if (delta.length() < this.controls.minDistance || delta.length() > this.controls.maxDistance) return;
     this.camera.position.copy(this.controls.target).add(delta);
+    this.cameraMoving = false;
+    this.controls.update();
+    this.dirty = true;
+  }
+
+  pan(deltaX: number, deltaY: number) {
+    const height = Math.max(1, this.renderer.domElement.clientHeight);
+    const distance = this.camera.position.distanceTo(this.controls.target);
+    const scale = 2 * distance * Math.tan(this.camera.fov * Math.PI / 360) / height;
+    const right = new Vector3(1, 0, 0).applyQuaternion(this.camera.quaternion);
+    const up = new Vector3(0, 1, 0).applyQuaternion(this.camera.quaternion);
+    const shift = right.multiplyScalar(-deltaX * scale).add(up.multiplyScalar(deltaY * scale));
+    this.camera.position.add(shift);
+    this.controls.target.add(shift);
+    this.desiredPosition.add(shift);
+    this.desiredTarget.add(shift);
     this.cameraMoving = false;
     this.controls.update();
     this.dirty = true;
@@ -575,9 +611,9 @@ export class AtlasScene {
     this.updateLayout();
     if (options.focusStep) this.focusInstances(
       [...this.assemblyIds],
-      activeStep?.kind === 'placement' ? 1.35 : 1.55,
+      activeStep?.kind === 'placement' ? 1.55 : 1.9,
       true,
-      activeStep?.kind === 'placement',
+      true,
     );
     else this.fit(true);
     if (options.focusStep) {
@@ -650,13 +686,18 @@ export class AtlasScene {
   private pointerMove = (event: PointerEvent) => {
     if (this.pointerActive) this.maxPointerDistance = Math.max(this.maxPointerDistance, this.pointerStart.distanceTo(new Vector2(event.clientX, event.clientY)));
     if (this.pointerActive) return;
+    if (this.panMode) {
+      this.renderer.domElement.style.cursor = 'grab';
+      this.onHover(null, 0, 0);
+      return;
+    }
     const part = this.pick(event.clientX, event.clientY, event.altKey);
-    this.renderer.domElement.style.cursor = part ? 'pointer' : 'grab';
+    this.renderer.domElement.style.cursor = part ? 'pointer' : '';
     this.onHover(part, event.clientX, event.clientY);
   };
   private pointerUp = (event: PointerEvent) => {
     const distance = this.pointerStart.distanceTo(new Vector2(event.clientX, event.clientY));
-    if (this.maxPointerDistance < 6 && distance < 6 && event.button === 0) {
+    if (!this.panMode && this.maxPointerDistance < 6 && distance < 6 && event.button === 0) {
       const part = this.pick(event.clientX, event.clientY, event.altKey);
       this.onSelect(part?.instanceId ?? null);
     }
@@ -669,6 +710,10 @@ export class AtlasScene {
   private keydown = (event: KeyboardEvent) => {
     if (event.key === '+' || event.key === '=') { event.preventDefault(); this.zoom(0.85); }
     if (event.key === '-') { event.preventDefault(); this.zoom(1.15); }
+    if (event.key === 'ArrowUp') { event.preventDefault(); this.pan(0, 32); }
+    if (event.key === 'ArrowDown') { event.preventDefault(); this.pan(0, -32); }
+    if (event.key === 'ArrowLeft') { event.preventDefault(); this.pan(32, 0); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); this.pan(-32, 0); }
     if (event.key === 'Escape') this.onSelect(null);
   };
   private attachEvents() {
@@ -703,6 +748,8 @@ export class AtlasScene {
       inventoryCells: this.inventory.cells,
       offsets: this.offsets.map(v => v.toArray()),
       camera: this.camera.position.toArray(),
+      target: this.controls.target.toArray(),
+      panMode: this.panMode,
     };
   }
 

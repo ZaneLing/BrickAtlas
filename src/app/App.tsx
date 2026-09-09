@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowDownToLine, ArrowLeft, ArrowRight, Box, Boxes, Check, ChevronDown, ChevronRight,
-  BookOpen, CircleDot, Crosshair, Expand, ExternalLink, Eye, EyeOff, FileDown, Focus, Grid2X2, Info, Layers3,
+  BookOpen, CircleDot, Crosshair, Expand, ExternalLink, Eye, EyeOff, FileDown, Focus, Grid2X2, Hand, Info, Layers3,
   Languages, Library, LoaderCircle, Minus, Pause, Play, Plus, Rotate3D, RotateCcw, Search, Settings2, ShieldCheck,
   SkipBack, SkipForward, Upload, X,
 } from 'lucide-react';
@@ -78,6 +78,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   const [readyTime, setReadyTime] = useState<number | null>(null);
   const [notice, setNotice] = useState('');
   const [playing, setPlaying] = useState(false);
+  const [panMode, setPanMode] = useState(false);
   const [exportSize, setExportSize] = useState(3840);
   const [instructionFrames, setInstructionFrames] = useState<string[]>([]);
   const [instructionFrame, setInstructionFrame] = useState(0);
@@ -154,6 +155,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
     }
   }, [state, manifest]);
   useEffect(() => { sceneRef.current?.setLocale(locale); }, [locale]);
+  useEffect(() => { sceneRef.current?.setPanMode(panMode); }, [panMode, readyTime]);
   useEffect(() => {
     if (!notice) return;
     const timeout = setTimeout(() => setNotice(''), 2500);
@@ -248,7 +250,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
 
   function reset() {
     resetViewer(mode);
-    setQuery(''); setDetailsOpen(true); setHover(null);
+    setQuery(''); setDetailsOpen(true); setHover(null); setPanMode(false);
   }
   function toggleGroup(id: GroupId) {
     setState(s => ({ ...s, hiddenGroups: s.hiddenGroups.includes(id) ? s.hiddenGroups.filter(g => g !== id) : [...s.hiddenGroups, id] }));
@@ -376,6 +378,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
           <div className="view-select"><Box size={16} /><select aria-label={tr('模型视角', 'Model view')} value={state.view} onChange={e => patch({ view: e.target.value as ExplorerState['view'], revision: state.revision + 1 })}>{Object.entries(viewNames(tr)).map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select><ChevronDown size={12} /></div>
           <div className="toolbar-divider" />
           <IconButton label={tr('自动旋转', 'Auto rotate')} active={state.autoRotate} disabled={state.explosion >= 0.98} onClick={() => patch({ autoRotate: !state.autoRotate })}><Rotate3D size={18} /></IconButton>
+          <IconButton label={tr('平移视图（上下左右拖动）', 'Pan view in any direction')} active={panMode} onClick={() => { setPanMode(value => !value); patch({ autoRotate: false }); }}><Hand size={17} /></IconButton>
           <IconButton label={tr('适配全部可见零件', 'Fit visible bricks')} onClick={() => patch({ revision: state.revision + 1 })}><Expand size={18} /></IconButton>
           <IconButton label={tr('零件边线', 'Part edges')} active={state.edges} onClick={() => patch({ edges: !state.edges })}><Box size={17} /></IconButton>
           <IconButton label={tr('X-Ray 透视模式', 'X-Ray mode')} active={state.xray} onClick={() => patch({ xray: !state.xray })}><Eye size={17} /></IconButton>
