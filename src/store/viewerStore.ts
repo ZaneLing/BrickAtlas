@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { initialState, type ExplorerState } from '../model/types';
+import { readLocal, writeLocal } from '../app/storage';
 
 type BuildProgress = Record<string, number>;
 interface ViewerStore {
@@ -40,7 +41,8 @@ export const useViewerStore = create<ViewerStore>()(persist(set => ({
   }),
   update: updater => set(state => {
     const viewer = updater(state.viewer);
-    return { viewer, ...aliases(viewer) };
+    return { viewer, ...aliases(viewer), buildProgress: viewer.buildStep !== null && state.activeModelId
+      ? { ...state.buildProgress, [state.activeModelId]: viewer.buildStep } : state.buildProgress };
   }),
   loadModel: (modelId, mode, stepCount) => set(state => {
     const saved = Math.min(state.buildProgress[modelId] ?? 0, stepCount);
@@ -49,9 +51,15 @@ export const useViewerStore = create<ViewerStore>()(persist(set => ({
   }),
   reset: mode => set(state => {
     const viewer = { ...initialState, buildStep: mode === 'build' ? 0 : null, revision: state.viewer.revision + 1 };
-    return { viewer, ...aliases(viewer) };
+    return { viewer, ...aliases(viewer), buildProgress: mode === 'build' && state.activeModelId
+      ? { ...state.buildProgress, [state.activeModelId]: 0 } : state.buildProgress };
   }),
 }), {
   name: 'brick-atlas-viewer',
+  storage: createJSONStorage(() => ({
+    getItem: readLocal,
+    setItem: (key, value) => { writeLocal(key, value); },
+    removeItem: key => { try { localStorage.removeItem(key); } catch { /* Storage can be disabled. */ } },
+  })),
   partialize: state => ({ buildProgress: state.buildProgress }),
 }));

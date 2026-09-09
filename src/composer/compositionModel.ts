@@ -1,4 +1,6 @@
 import type { AtlasManifest } from '../model/types';
+import { Matrix4 } from 'three';
+import { modelCatalog } from '../../atlas.config';
 import {
   brickPalette,
   type ImageBrick,
@@ -33,6 +35,8 @@ export interface ComposerBrick {
   z: number;
   colorCode: number;
   colorHex: string;
+  originalMatrix?: number[];
+  shape?: ImageBrick['shape'];
 }
 
 export interface ComposerItem {
@@ -80,7 +84,10 @@ const brick = (
   z: number,
   colorCode: number,
   colorHex: string,
-): ComposerBrick => ({ partId, width, depth, height, x, y, z, colorCode, colorHex });
+): ComposerBrick => ({
+  partId, width, depth, height, x, y, z, colorCode, colorHex,
+  shape: partId === '3069b' ? 'tile' : partId === '3062b' ? 'round' : partId === '3039' || partId === '54200' ? 'slope' : 'box',
+});
 
 const miniFigure = [
   brick('970c00', 2, 1, 1.2, 0, 2.7, 0, 1, '#0055bf'),
@@ -150,19 +157,21 @@ export function sourceBricksFromManifest(manifest: AtlasManifest): ComposerBrick
   const centerX = (min[0] + max[0]) / 2;
   const centerZ = (min[2] + max[2]) / 2;
   return manifest.instances.map(part => {
-    const sizeX = Math.max(1, part.bounds.max[0] - part.bounds.min[0]);
-    const sizeY = Math.max(3.2, part.bounds.max[1] - part.bounds.min[1]);
-    const sizeZ = Math.max(1, part.bounds.max[2] - part.bounds.min[2]);
+    const sizeX = part.bounds.max[0] - part.bounds.min[0];
+    const sizeY = part.bounds.max[1] - part.bounds.min[1];
+    const sizeZ = part.bounds.max[2] - part.bounds.min[2];
+    const normalization = new Matrix4().makeTranslation(-centerX, -min[1] + 3.2, -centerZ);
     return {
       partId: part.partNumber,
-      width: Math.max(1, Math.min(4, Math.round(sizeX / 20))),
-      depth: Math.max(1, Math.min(4, Math.round(sizeZ / 20))),
-      height: Math.max(0.35, Math.min(3.5, sizeY / 12)),
-      x: ((part.bounds.min[0] + part.bounds.max[0]) / 2 - centerX) / 20,
-      y: ((part.bounds.min[1] + part.bounds.max[1]) / 2 - min[1]) / 12 + 0.34,
-      z: ((part.bounds.min[2] + part.bounds.max[2]) / 2 - centerZ) / 20,
+      width: Math.max(0.01, sizeX / 8),
+      depth: Math.max(0.01, sizeZ / 8),
+      height: Math.max(0.01, sizeY / 8),
+      x: ((part.bounds.min[0] + part.bounds.max[0]) / 2 - centerX) / 8,
+      y: ((part.bounds.min[1] + part.bounds.max[1]) / 2 - min[1]) / 8 + 0.4,
+      z: ((part.bounds.min[2] + part.bounds.max[2]) / 2 - centerZ) / 8,
       colorCode: Number(part.colorCode) || 0,
       colorHex: part.colorHex,
+      originalMatrix: normalization.multiply(new Matrix4().fromArray(part.originalMatrix)).toArray(),
     };
   });
 }
@@ -174,7 +183,15 @@ export function rotatedFootprint(item: Pick<ComposerItem, 'footprint' | 'rotatio
 }
 
 function rectanglesOverlap(a: ComposerItem, b: ComposerItem) {
-  if ((a.kind === 'part' || b.kind === 'part') && a.level !== b.level) return false;
+  const vertical = (item: ComposerItem) => {
+    const bottom = Math.min(...item.bricks.map(brick => brick.y - brick.height / 2));
+    const top = Math.max(...item.bricks.map(brick => brick.y + brick.height / 2));
+    return [bottom + item.level * 0.4, top + item.level * 0.4];
+  };
+  if (a.bricks.length && b.bricks.length) {
+    const [amin, amax] = vertical(a), [bmin, bmax] = vertical(b);
+    if (amax <= bmin + 0.01 || bmax <= amin + 0.01) return false;
+  }
   const [aw, ad] = rotatedFootprint(a);
   const [bw, bd] = rotatedFootprint(b);
   return Math.abs(a.x - b.x) < (aw + bw) / 2
@@ -182,6 +199,9 @@ function rectanglesOverlap(a: ComposerItem, b: ComposerItem) {
 }
 
 export function canPlaceItem(project: CompositionProject, candidate: ComposerItem, ignoreId?: string) {
+  if (![candidate.x, candidate.z, candidate.level].every(Number.isFinite)
+    || !Number.isInteger(candidate.level) || candidate.level < 0 || candidate.level > 60
+    || ![0, 1, 2, 3].includes(candidate.rotation)) return false;
   const base = baseplateCatalog.find(item => item.id === project.baseplateId) ?? baseplateCatalog[0];
   const [width, depth] = rotatedFootprint(candidate);
   if (
@@ -228,7 +248,12 @@ export function createComposerItem(
   bricks = asset.bricks ?? [],
   sourceUrl?: string,
 ): ComposerItem | null {
-  const placement = findOpenPlacement(project, asset.footprint);
+  const footprint: [number, number] = asset.modelId && bricks.length
+    ? [
+      Math.ceil(2 * Math.max(...bricks.map(brick => Math.abs(brick.x) + brick.width / 2))),
+      Math.ceil(2 * Math.max(...bricks.map(brick => Math.abs(brick.z) + brick.depth / 2))),
+    ] : asset.footprint;
+  const placement = findOpenPlacement(project, footprint);
   if (!placement) return null;
   return {
     id: `item_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
@@ -242,8 +267,11 @@ export function createComposerItem(
     z: placement.z,
     level: 0,
     rotation: 0,
-    footprint: asset.footprint,
-    bricks,
+    footprint,
+    bricks: asset.kind === 'part' ? bricks.map(source => {
+      const height = /^(3023|3020|3069b)$/.test(source.partId) ? 0.4 : 1.2;
+      return { ...source, height, y: 0.4 + height / 2 };
+    }) : bricks,
   };
 }
 
@@ -262,12 +290,12 @@ function baseplateBricks(base: BaseplatePreset): ImageBrick[] {
       const depth = Math.min(4, base.depth - z);
       result.push({
         id: `base_${x}_${z}`,
-        partId: '3811',
+        partId: '3031',
         width,
         depth,
-        height: 0.28,
+        height: 0.4,
         x: x + width / 2 - base.width / 2,
-        y: 0.14,
+        y: 0.2,
         z: z + depth / 2 - base.depth / 2,
         colorId: `base-${base.colorCode}`,
         colorCode: base.colorCode,
@@ -279,28 +307,52 @@ function baseplateBricks(base: BaseplatePreset): ImageBrick[] {
   return result;
 }
 
-export function createCompositionBuild(project: CompositionProject): ImageBrickBuild {
+export function createCompositionBuild(
+  project: CompositionProject,
+  manifests: ReadonlyMap<string, AtlasManifest> = new Map(),
+): ImageBrickBuild {
   const base = baseplateCatalog.find(item => item.id === project.baseplateId) ?? baseplateCatalog[0];
   const bricks = baseplateBricks(base);
+  const sourceGroups: NonNullable<ImageBrickBuild['sourceGroups']> = [];
   project.items.forEach((item, itemIndex) => {
+    const placement = new Matrix4().makeTranslation(item.x * 8, item.level * 3.2, item.z * 8)
+      .multiply(new Matrix4().makeRotationY(item.rotation * Math.PI / 2));
+    const ids: string[] = [];
     item.bricks.forEach((source, brickIndex) => {
       const [localX, localZ] = rotatePoint(source.x, source.z, item.rotation);
+      const id = `${item.id}_${String(brickIndex + 1).padStart(4, '0')}`;
+      ids.push(id);
       bricks.push({
-        id: `${item.id}_${String(brickIndex + 1).padStart(4, '0')}`,
+        id,
         partId: source.partId,
         width: source.width,
         depth: source.depth,
         height: source.height,
         rotation: item.rotation,
         x: item.x + localX,
-        y: source.y + item.level * 1.16,
+        y: source.y + item.level * 0.4,
         z: item.z + localZ,
         colorId: `ldraw-${source.colorCode}`,
         colorCode: source.colorCode,
         colorHex: source.colorHex,
         step: itemIndex + 2,
+        shape: source.shape,
+        ldrawMatrix: source.originalMatrix
+          ? new Matrix4().makeScale(2.5, -2.5, -2.5).multiply(placement)
+            .multiply(new Matrix4().fromArray(source.originalMatrix)).toArray()
+          : undefined,
       });
     });
+    const manifest = item.sourceModelId ? manifests.get(item.sourceModelId) : undefined;
+    if (manifest) {
+      const { min, max } = manifest.bounds;
+      const normalization = new Matrix4().makeTranslation(-(min[0] + max[0]) / 2, -min[1] + 3.2, -(min[2] + max[2]) / 2);
+      sourceGroups.push({
+        modelId: item.sourceModelId!,
+        matrix: new Matrix4().makeScale(1.5, 1.5, 1.5).multiply(placement).multiply(normalization).toArray(),
+        brickIds: ids,
+      });
+    }
   });
   const steps = [
     { id: 1, layer: 0, rowStart: 0, rowEnd: base.depth - 1, brickIds: bricks.filter(item => item.step === 1).map(item => item.id) },
@@ -345,6 +397,11 @@ export function createCompositionBuild(project: CompositionProject): ImageBrickB
     sourceHeight: base.depth,
     backgroundHex: base.colorHex,
     bricks,
+    sourceGroups,
+    credits: [...new Set(project.items.map(item => item.sourceModelId))].flatMap(id => {
+      const source = modelCatalog.find(model => model.id === id);
+      return source ? [`${source.title}; ${source.author}; ${source.license}; ${source.sourceUrl}; transformed into a composition`] : [];
+    }),
     steps,
     bom: [...bom.values()].sort((a, b) => b.quantity - a.quantity || a.key.localeCompare(b.key)),
   };
@@ -354,9 +411,33 @@ export function parseCompositionProject(value: string | null): CompositionProjec
   if (!value) return createCompositionProject();
   try {
     const parsed = JSON.parse(value) as CompositionProject;
-    if (parsed.version !== 1 || !Array.isArray(parsed.items)) return createCompositionProject();
+    if (parsed.version !== 1 || !Array.isArray(parsed.items) || parsed.items.length > 200
+      || typeof parsed.name !== 'string' || typeof parsed.id !== 'string'
+      || !baseplateCatalog.some(base => base.id === parsed.baseplateId)
+      || new Set(parsed.items.map(item => item?.id)).size !== parsed.items.length
+      || !parsed.items.every(item =>
+        item && typeof item.id === 'string' && typeof item.nameZh === 'string' && typeof item.nameEn === 'string'
+        && composerAssets.some(asset => asset.id === item.assetId)
+        && [item.x, item.z, item.level].every(Number.isFinite)
+        && [0, 1, 2, 3].includes(item.rotation)
+        && Array.isArray(item.footprint) && item.footprint.length === 2 && item.footprint.every(n => Number.isFinite(n) && n > 0)
+        && Array.isArray(item.bricks) && item.bricks.length > 0 && item.bricks.length <= 5000
+        && item.bricks.every(brick =>
+          brick && /^[\w-]+$/.test(brick.partId) && /^#[0-9a-f]{6}$/i.test(brick.colorHex)
+          && [brick.width, brick.depth, brick.height].every(n => Number.isFinite(n) && n > 0)
+          && [brick.x, brick.y, brick.z, brick.colorCode].every(Number.isFinite)
+          && (!brick.originalMatrix || brick.originalMatrix.length === 16 && brick.originalMatrix.every(Number.isFinite)),
+        ),
+      )) return createCompositionProject();
     return parsed;
   } catch {
     return createCompositionProject();
   }
+}
+
+export function changeBaseplate(project: CompositionProject, baseplateId: string): CompositionProject | null {
+  if (!baseplateCatalog.some(base => base.id === baseplateId)) return null;
+  const next = { ...project, baseplateId, updatedAt: Date.now() };
+  // Never relocate, rotate or delete an assembly as a side effect of changing its base.
+  return next.items.every(item => canPlaceItem(next, item, item.id)) ? next : null;
 }

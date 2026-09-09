@@ -95,4 +95,28 @@ describe('image brick relief generation', () => {
       }
     }
   });
+
+  it('keeps fused colors within the requested palette size and offsets running bonds', () => {
+    const data = new Uint8ClampedArray(12 * 4 * 4);
+    for (let i = 0; i < 48; i++) data.set([i * 37 % 256, i * 71 % 256, i * 113 % 256, 255], i * 4);
+    const options = { width: 12, maxDepth: 1, maxColors: 4, removeBackground: false, backgroundThreshold: 12, method: 'relief' as const, bond: 'running' as const, brickBudget: 500 };
+    const build = createBrickRelief(data, 12, 4, options);
+    expect(new Set(build.bricks.map(brick => brick.colorCode)).size).toBeLessThanOrEqual(4);
+    for (let i = 0; i < 48; i++) data.set([200, 20, 10, 255], i * 4);
+    const running = createBrickRelief(data, 12, 4, options);
+    const stacked = createBrickRelief(data, 12, 4, { ...options, bond: 'stacked' });
+    expect(running.bricks.map(brick => brick.x)).not.toEqual(stacked.bricks.map(brick => brick.x));
+  });
+
+  it('exports brick tops at 24 LDU per layer without injecting metadata lines', () => {
+    const build = createDemoBrickBuild();
+    build.name = 'demo\n1 injected';
+    build.bricks = [
+      { ...build.bricks[0], x: 0, z: 0, y: 0.6, step: 1 },
+      { ...build.bricks[0], x: 0, z: 0, y: 1.8, step: 2 },
+    ];
+    const lines = imageBrickBuildToLdraw(build).split('\n').filter(line => line.startsWith('1 '));
+    expect(lines).toHaveLength(2);
+    expect(lines.map(line => Number(line.split(' ')[3]))).toEqual([-24, -48]);
+  });
 });

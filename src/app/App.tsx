@@ -702,7 +702,9 @@ export default function App() {
   if (relative === '/create' || relative === '/create/') return <CreatorPage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   if (relative === '/compose' || relative === '/compose/') return <ComposePage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   const match = /^\/(explore|build)\/([^/]+)\/?$/.exec(relative);
-  const config = match ? modelCatalog.find(model => model.id === decodeURIComponent(match[2])) : null;
+  let modelId = '';
+  try { modelId = match ? decodeURIComponent(match[2]) : ''; } catch { /* Invalid URL is a missing project, not an application crash. */ }
+  const config = modelCatalog.find(model => model.id === modelId);
   if (match && config) return <ExplorerWorkspace config={config} mode={match[1] as 'explore' | 'build'} locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   return <div className="route-error"><Boxes size={38} /><h1>{tr('项目不存在', 'Project not found')}</h1><a className="primary-button" href={import.meta.env.BASE_URL}>{tr('返回项目库', 'Back to library')}</a></div>;
 }

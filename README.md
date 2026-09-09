@@ -36,6 +36,8 @@ Brick Atlas is designed for desktop browsers with a workspace width of at least 
 
 The Compose workspace turns catalog models into reusable components while retaining source attribution. Components snap to a selected baseplate on a stud grid, rotate in 90-degree increments, and are checked for bounds and footprint collisions. Loose bricks can be positioned at custom levels. A composition is saved locally and can be replayed as build steps, exploded in 3D, or exported as project JSON and LDraw.
 
+Catalog components retain their original geometry and transforms. Composition steps currently place whole components; connection strength, stud compatibility and physical buildability are not certified. Procedural character and loose-part previews remain simplified.
+
 ## Run Locally
 
 Use Node.js 22 or newer:
@@ -63,6 +65,8 @@ Code is MIT licensed. Model and LDraw part licenses remain separate. Brick Atlas
 
 ```bash
 npm run check
-npm run test:e2e
-npm audit --omit=dev
+npm run test:e2e -- --project=desktop-chrome
+npm audit
 ```
+
+See [Engineering Audit](docs/ENGINEERING_AUDIT.md) for test coverage, measured performance and remaining limitations.

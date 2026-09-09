@@ -1,5 +1,6 @@
 import {
-  ACESFilmicToneMapping, AmbientLight, Box3, Color, CylinderGeometry, DirectionalLight,
+  ACESFilmicToneMapping, AmbientLight, Box3, Color, CylinderGeometry, DirectionalLight, DataTexture,
+  FloatType, RGBAFormat, NearestFilter, LineSegments, Matrix3, BoxGeometry,
   DynamicDrawUsage, Group, HemisphereLight, InstancedMesh, Matrix4, Mesh, MeshPhysicalMaterial,
   MOUSE, PerspectiveCamera, PlaneGeometry, Quaternion, Scene, ShadowMaterial, SRGBColorSpace, Vector3, WebGLRenderer,
   type BufferGeometry, type Material,
@@ -7,6 +8,8 @@ import {
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import type { ImageBrick, ImageBrickBuild } from '../creator/imageBrickModel';
+import { atlasMaterial } from './materials';
+import type { SourceGeometry } from './sourceGeometry';
 
 type VisualBrick = {
   brick: ImageBrick;
@@ -40,6 +43,12 @@ export class ImageBrickScene {
   private readonly observer: ResizeObserver;
   private readonly bodyBatches: BodyBatch[] = [];
   private readonly studBatches: StudBatch[] = [];
+  private visuals: VisualBrick[] = [];
+  private readonly sourceBatches: { visuals: VisualBrick[]; texture: DataTexture; data: Float32Array }[] = [];
+  private sources: ReadonlyMap<string, SourceGeometry> = new Map();
+  private buildRevision = 0;
+  private renderedFrames = 0;
+  private instanceDirty = false;
   private readonly disposableGeometries = new Set<BufferGeometry>();
   private readonly disposableMaterials = new Set<Material>();
   private readonly matrix = new Matrix4();
@@ -100,10 +109,13 @@ export class ImageBrickScene {
     this.renderer.domElement.setAttribute('aria-label', label);
   }
 
+  setSources(sources: ReadonlyMap<string, SourceGeometry>) { this.sources = sources; }
+
   setBuild(build: ImageBrickBuild, fit = true) {
     this.clearModel();
     this.build = build;
     this.currentStep = build.steps.length;
+    this.buildRevision++;
     const visuals = build.bricks.map(brick => {
       const base = new Vector3(brick.x * unit, brick.y * unit, brick.z * unit);
       const direction = new Vector3(brick.x, 0.45 + brick.y * 0.22, brick.z);
@@ -114,6 +126,8 @@ export class ImageBrickScene {
       );
       return { brick, base, direction: direction.normalize(), rotation, enter: 1, visible: true };
     });
+    this.visuals = visuals;
+    const sourceIds = new Set(build.sourceGroups?.flatMap(group => group.brickIds) ?? []);
     const materials = new Map<string, MeshPhysicalMaterial>();
     const materialFor = (color: string) => {
       let material = materials.get(color);
@@ -132,10 +146,12 @@ export class ImageBrickScene {
     };
     const bodies = new Map<string, VisualBrick[]>();
     for (const visual of visuals) {
+      if (sourceIds.has(visual.brick.id)) continue;
       const key = [
         visual.brick.width,
         visual.brick.depth ?? 1,
-        visual.brick.height ?? 1.16,
+        visual.brick.height ?? 1.2,
+        visual.brick.shape ?? 'box',
         visual.brick.colorHex,
       ].join(':');
       if (!bodies.has(key)) bodies.set(key, []);
@@ -143,13 +159,23 @@ export class ImageBrickScene {
     }
     for (const [key, batchVisuals] of bodies) {
       const [width, depth, height] = key.split(':').map(Number);
-      const geometry = new RoundedBoxGeometry(
+      const shape = batchVisuals[0].brick.shape;
+      const geometry = shape === 'round' ? new CylinderGeometry(width * unit / 2 - 0.35, width * unit / 2 - 0.35, height * unit - 0.55, 24)
+        : shape === 'slope' ? new BoxGeometry(width * unit - 0.7, height * unit - 0.55, depth * unit - 0.7)
+        : new RoundedBoxGeometry(
         width * unit - 0.7,
         height * unit - 0.55,
         depth * unit - 0.7,
         2,
         0.65,
       );
+      if (shape === 'slope') {
+        const position = geometry.getAttribute('position');
+        for (let index = 0; index < position.count; index++) {
+          if (position.getY(index) > 0 && position.getZ(index) > 0) position.setY(index, -height * unit / 2 + unit * 0.4);
+        }
+        geometry.computeVertexNormals();
+      }
       this.disposableGeometries.add(geometry);
       const mesh = new InstancedMesh(geometry, materialFor(batchVisuals[0].brick.colorHex), batchVisuals.length);
       mesh.castShadow = true;
@@ -163,6 +189,7 @@ export class ImageBrickScene {
     this.disposableGeometries.add(studGeometry);
     const studs = new Map<string, { visual: VisualBrick; offsetX: number; offsetZ: number }[]>();
     for (const visual of visuals) {
+      if (sourceIds.has(visual.brick.id) || visual.brick.shape === 'tile' || visual.brick.shape === 'slope') continue;
       if (!studs.has(visual.brick.colorHex)) studs.set(visual.brick.colorHex, []);
       for (let x = 0; x < visual.brick.width; x++) {
         for (let z = 0; z < (visual.brick.depth ?? 1); z++) {
@@ -182,6 +209,44 @@ export class ImageBrickScene {
       this.model.add(mesh);
       this.studBatches.push({ mesh, studs: batchStuds });
     }
+    const byId = new Map(visuals.map(visual => [visual.brick.id, visual]));
+    for (const group of build.sourceGroups ?? []) {
+      const source = this.sources.get(group.modelId);
+      if (!source) throw new Error(`Source geometry not loaded: ${group.modelId}`);
+      const count = group.brickIds.length;
+      const data = new Float32Array(count * 12);
+      const texture = new DataTexture(data, count, 3, RGBAFormat, FloatType);
+      texture.minFilter = texture.magFilter = NearestFilter;
+      const sourceVisuals = group.brickIds.map(id => byId.get(id)!);
+      sourceVisuals.forEach((visual, index) => {
+        const color = new Color(visual.brick.colorHex);
+        data.set([color.r, color.g, color.b, 1], count * 8 + index * 4);
+      });
+      this.sourceBatches.push({ visuals: sourceVisuals, data, texture });
+      const transform = new Matrix4().fromArray(group.matrix);
+      const directionTransform = new Matrix3().setFromMatrix4(transform);
+      for (const bucket of source.buckets) {
+        const geometry = bucket.geometry.clone();
+        geometry.applyMatrix4(transform);
+        for (const name of ['control0', 'control1', 'direction']) {
+          const attribute = geometry.getAttribute(name);
+          if (!attribute) continue;
+          const vector = new Vector3();
+          for (let index = 0; index < attribute.count; index++) {
+            vector.fromBufferAttribute(attribute, index);
+            if (name === 'direction') vector.applyMatrix3(directionTransform);
+            else vector.applyMatrix4(transform);
+            attribute.setXYZ(index, vector.x, vector.y, vector.z);
+          }
+        }
+        const material = atlasMaterial(bucket.definition, texture, count);
+        const mesh = bucket.definition.kind === 'mesh' ? new Mesh(geometry, material) : new LineSegments(geometry, material);
+        mesh.frustumCulled = false;
+        this.model.add(mesh);
+        this.disposableGeometries.add(geometry);
+        this.disposableMaterials.add(material);
+      }
+    }
     const groundSize = Math.max(build.width, build.height) * unit * 2.3;
     const ground = new Mesh(new PlaneGeometry(groundSize, groundSize), new ShadowMaterial({ color: 0x283247, opacity: 0.13 }));
     ground.rotation.x = -Math.PI / 2;
@@ -193,20 +258,20 @@ export class ImageBrickScene {
     this.disposableMaterials.add(ground.material as Material);
     if (fit) this.fitVisible(true);
     this.updateInstances();
+    this.dirty = true;
   }
 
   setBuildStep(step: number, animate = true) {
     if (!this.build) return;
     const next = Math.max(0, Math.min(this.build.steps.length, Math.round(step)));
-    for (const batch of this.bodyBatches) {
-      for (const visual of batch.visuals) {
+    for (const visual of this.visuals) {
         const wasVisible = visual.visible;
         visual.visible = visual.brick.step <= next;
         if (animate && visual.visible && !wasVisible) visual.enter = 0;
         if (!visual.visible) visual.enter = 1;
-      }
     }
     this.currentStep = next;
+    this.instanceDirty = true;
     this.dirty = true;
   }
 
@@ -255,8 +320,8 @@ export class ImageBrickScene {
     this.setAutoRotate(false);
     const ids = new Set(this.build.steps.find(item => item.id === step)?.brickIds ?? []);
     this.frameVisuals(
-      this.bodyBatches.flatMap(batch => batch.visuals).filter(visual => ids.has(visual.brick.id)),
-      5,
+      this.visuals.filter(visual => ids.has(visual.brick.id)),
+      1.65,
       false,
     );
   }
@@ -272,8 +337,8 @@ export class ImageBrickScene {
           this.scale.setScalar(1);
           const arrival = (1 - smooth(visual.enter)) * unit * 7;
           this.position.copy(visual.base)
-            .addScaledVector(visual.direction, spread)
-            .add(new Vector3(0, arrival, 0));
+            .addScaledVector(visual.direction, spread);
+          this.position.y += arrival;
         }
         this.matrix.compose(this.position, visual.rotation, this.scale);
         batch.mesh.setMatrixAt(index, this.matrix);
@@ -291,24 +356,29 @@ export class ImageBrickScene {
           this.studOffset.set(offsetX, 0, offsetZ).applyQuaternion(visual.rotation);
           this.position.copy(visual.base)
             .addScaledVector(visual.direction, spread)
-            .add(this.studOffset)
-            .add(new Vector3(
-              0,
-              (visual.brick.height ?? 1.16) * unit / 2 + unit * 0.08 + arrival,
-              0,
-            ));
+            .add(this.studOffset);
+          this.position.y += (visual.brick.height ?? 1.2) * unit / 2 + unit * 0.08 + arrival;
         }
         this.matrix.compose(this.position, visual.rotation, this.scale);
         batch.mesh.setMatrixAt(index, this.matrix);
       });
       batch.mesh.instanceMatrix.needsUpdate = true;
     }
+    for (const batch of this.sourceBatches) {
+      batch.visuals.forEach((visual, index) => {
+        this.position.copy(visual.direction).multiplyScalar(spread);
+        this.position.y += (1 - smooth(visual.enter)) * unit * 7;
+        batch.data.set([this.position.x, this.position.y, this.position.z, Number(visual.visible)], index * 4);
+      });
+      batch.texture.needsUpdate = true;
+    }
+    this.instanceDirty = false;
   }
 
   fitVisible(immediate = false) {
     if (!this.build) return;
     this.frameVisuals(
-      this.bodyBatches.flatMap(batch => batch.visuals).filter(visual => visual.visible),
+      this.visuals.filter(visual => visual.visible),
       1.28,
       immediate,
     );
@@ -323,7 +393,7 @@ export class ImageBrickScene {
       const rotated = (visual.brick.rotation ?? 0) % 2 === 1;
       const half = new Vector3(
         (rotated ? visual.brick.depth ?? 1 : visual.brick.width) * unit / 2,
-        (visual.brick.height ?? 1.16) * unit / 2,
+        (visual.brick.height ?? 1.2) * unit / 2,
         (rotated ? visual.brick.width : visual.brick.depth ?? 1) * unit / 2,
       );
       box.expandByPoint(center.clone().sub(half));
@@ -369,6 +439,10 @@ export class ImageBrickScene {
     if (this.disposed) return;
     const { width, height } = this.host.getBoundingClientRect();
     if (!width || !height) return;
+    const gl = this.renderer.getContext();
+    const viewport = gl.getParameter(gl.MAX_VIEWPORT_DIMS) as Int32Array;
+    const limit = this.renderer.capabilities.maxTextureSize;
+    this.renderer.setPixelRatio(Math.min(3, limit / width, limit / height, viewport[0] / width, viewport[1] / height, Math.sqrt(16_000_000 / (width * height))));
     this.renderer.setSize(width, height, false);
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
@@ -398,15 +472,13 @@ export class ImageBrickScene {
     } else {
       this.actualExplosion = this.explosion;
     }
-    for (const batch of this.bodyBatches) {
-      for (const visual of batch.visuals) {
+    for (const visual of this.visuals) {
         if (visual.visible && visual.enter < 1) {
           visual.enter = Math.min(1, visual.enter + dt / 0.55);
           moving = true;
         }
-      }
     }
-    if (moving) {
+    if (moving || this.instanceDirty) {
       this.updateInstances();
       this.dirty = true;
     }
@@ -423,6 +495,7 @@ export class ImageBrickScene {
       this.renderer.render(this.scene, this.camera);
       const frameMs = performance.now() - before;
       this.lastFrameMs = frameMs;
+      this.renderedFrames++;
       this.dirty = false;
     }
     this.frame = requestAnimationFrame(this.tick);
@@ -432,7 +505,11 @@ export class ImageBrickScene {
     return {
       bricks: this.build?.bricks.length ?? 0,
       steps: this.build?.steps.length ?? 0,
-      visible: this.bodyBatches.flatMap(batch => batch.visuals).filter(visual => visual.visible).length,
+      visible: this.visuals.filter(visual => visual.visible).length,
+      drawnInstances: this.bodyBatches.reduce((sum, batch) => sum + batch.visuals.filter((_, i) => batch.mesh.instanceMatrix.array[i * 16] !== 0 || batch.mesh.instanceMatrix.array[i * 16 + 1] !== 0 || batch.mesh.instanceMatrix.array[i * 16 + 2] !== 0).length, 0) + this.sourceBatches.reduce((sum, batch) => sum + batch.visuals.filter((_, i) => batch.data[i * 4 + 3] === 1).length, 0),
+      buildRevision: this.buildRevision,
+      renderedFrames: this.renderedFrames,
+      sourceModels: this.sourceBatches.length,
       step: this.currentStep,
       explosion: this.actualExplosion,
       method: this.build?.method ?? 'relief',
@@ -453,11 +530,17 @@ export class ImageBrickScene {
   }
 
   private clearModel() {
-    for (const child of [...this.model.children]) this.model.remove(child);
+    for (const child of [...this.model.children]) {
+      if (child instanceof InstancedMesh) child.dispose();
+      this.model.remove(child);
+    }
     const ground = this.scene.getObjectByName('image-brick-ground');
     if (ground) this.scene.remove(ground);
     this.bodyBatches.length = 0;
     this.studBatches.length = 0;
+    this.visuals = [];
+    this.sourceBatches.forEach(batch => batch.texture.dispose());
+    this.sourceBatches.length = 0;
     this.disposableGeometries.forEach(geometry => geometry.dispose());
     this.disposableMaterials.forEach(material => material.dispose());
     this.disposableGeometries.clear();

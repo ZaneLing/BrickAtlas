@@ -138,7 +138,7 @@ function stepPage(
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(70, 91, 79);
   doc.setFontSize(6.5);
-  doc.text('New bricks are highlighted green.', 75, 198);
+  doc.text('New bricks retain their color with blue emphasis.', 75, 198);
   doc.text(
     manifest.instructions!.provenance === 'source' ? 'OMR AUTHOR STEP' : 'EDITORIAL STRUCTURE STEP',
     285, 198, { align: 'right' },
@@ -158,11 +158,21 @@ export async function exportBuildGuide(
   cover(doc, config, manifest);
   for (let index = 0; index < manifest.instructions.steps.length; index++) {
     const step = manifest.instructions.steps[index];
+    const byId = new Map(manifest.instances.map(part => [part.instanceId, part]));
     const parts = (step.kind === 'placement' ? [] : step.instanceIds)
-      .map(id => manifest.instances.find(part => part.instanceId === id))
+      .map(id => byId.get(id))
       .filter((part): part is PartInstance => !!part);
     const frame = await scene.captureBuildStep(index + 1, 1120, 800);
-    stepPage(doc, config, manifest, index, await blobDataUrl(frame), groupStepParts(parts));
+    const image = await blobDataUrl(frame);
+    const groups = groupStepParts(parts);
+    // Keep every part row inside the printable page; repeat the step on overflow sheets.
+    for (let offset = 0; offset < Math.max(1, groups.length); offset += 11) {
+      stepPage(doc, config, manifest, index, image, groups.slice(offset, offset + 11));
+      if (offset) {
+        doc.setFontSize(7);
+        doc.text(`PARTS CONTINUED (${Math.floor(offset / 11) + 1})`, 10, 202);
+      }
+    }
     onProgress(index + 1, manifest.instructions.steps.length);
   }
   return doc.output('blob');

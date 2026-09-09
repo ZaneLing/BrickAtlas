@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { GroupId } from '../model/types';
+import { readLocal, writeLocal } from './storage';
 
 export type Locale = 'zh' | 'en';
 export type Translator = (zh: string, en: string) => string;
 
 export function useLocale() {
-  const [locale, setLocale] = useState<Locale>(() => localStorage.getItem('brick-atlas-locale') === 'en' ? 'en' : 'zh');
+  const [locale, setLocale] = useState<Locale>(() => readLocal('brick-atlas-locale') === 'en' ? 'en' : 'zh');
   useEffect(() => {
-    localStorage.setItem('brick-atlas-locale', locale);
+    writeLocal('brick-atlas-locale', locale);
     document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
   }, [locale]);
   const tr = useCallback<Translator>((zh, en) => locale === 'zh' ? zh : en, [locale]);

@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import AdmZip from 'adm-zip';
+import { readZip } from './readZip';
 import { gzipSync } from 'node:zlib';
 import { Box3, BufferAttribute, Matrix3, Matrix4, Mesh, Vector3, type Material } from 'three';
 import { LDrawLoader } from 'three/addons/loaders/LDrawLoader.js';
@@ -40,9 +40,9 @@ const files = splitMpd(source);
 const rootName = [...files.keys()][0];
 const libraryRoot = 'assets-source/ldraw-library/locked';
 const zipPath = 'assets-source/ldraw-library/complete.zip';
-const zip = existsSync(zipPath) && !process.argv.includes('--offline') ? new AdmZip(zipPath) : null;
-if (zip && hash(await readFile(zipPath)) !== libraryResource.sha256) throw new Error('Library hash differs from lock');
-const entries = new Map(zip?.getEntries().map(e => [normalize(e.entryName.replace(/^ldraw\//, '')), e]) ?? []);
+const zip = existsSync(zipPath) && !process.argv.includes('--offline') ? await readFile(zipPath) : null;
+if (zip && hash(zip) !== libraryResource.sha256) throw new Error('Library hash differs from lock');
+const entries = new Map((zip ? await readZip(zip) : []).map(e => [normalize(e.entryName.replace(/^ldraw\//, '')), e]));
 const libraryLockPath = 'assets-source/library-lock.json';
 const libraryLock: Record<string, string> = existsSync(libraryLockPath) ? JSON.parse(await readFile(libraryLockPath, 'utf8')) : {};
 
@@ -50,14 +50,14 @@ async function libraryFile(name: string) {
   const path = `${libraryRoot}/${name}`;
   if (existsSync(path)) {
     const text = await readFile(path, 'utf8');
-    const expected = libraryLock[name] ?? (entries.has(normalize(name)) ? hash(entries.get(normalize(name))!.getData()) : null);
+    const expected = libraryLock[name] ?? (entries.has(normalize(name)) ? hash(await entries.get(normalize(name))!.getData()) : null);
     if (!expected || expected !== hash(text)) throw new Error(`Library lock mismatch: ${name}`);
     libraryLock[name] = expected;
     return text;
   }
   const entry = entries.get(normalize(name));
   if (!entry) throw new Error(`Missing library file ${name}; run npm run acquire`);
-  const text = entry.getData().toString('utf8');
+  const text = (await entry.getData()).toString('utf8');
   libraryLock[name] = hash(text);
   await mkdir(path.slice(0, path.lastIndexOf('/')), { recursive: true });
   await writeFile(path, text);

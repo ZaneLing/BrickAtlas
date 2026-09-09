@@ -72,16 +72,16 @@ export function atlasMaterial(bucket: GeometryBucket, texture: DataTexture, coun
     `);
   };
   material.customProgramCacheKey = () => `atlas-v3-${bucket.kind}`;
-  material.userData.atlas = { xray: atlasUniforms.xray, opacity };
+  material.userData.atlas = { xray: atlasUniforms.xray, opacity, isLine };
   if (material instanceof MeshPhysicalMaterial) material.emissive = new Color(0);
   return material;
 }
 
 export function setAtlasXray(material: Material, enabled: boolean) {
-  const atlas = material.userData.atlas as { xray: { value: number }; opacity: number } | undefined;
+  const atlas = material.userData.atlas as { xray: { value: number }; opacity: number; isLine: boolean } | undefined;
   if (!atlas) return;
   atlas.xray.value = enabled ? 1 : 0;
-  material.transparent = enabled || atlas.opacity < 1;
-  material.depthWrite = !enabled && atlas.opacity >= 1;
+  material.transparent = atlas.isLine || enabled || atlas.opacity < 1;
+  material.depthWrite = !atlas.isLine && !enabled && atlas.opacity >= 1;
   material.needsUpdate = true;
 }

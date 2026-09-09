@@ -9,7 +9,7 @@ import { ImageBrickScene, type ImageBrickView } from '../scene/ImageBrickScene';
 import { IconButton } from '../ui/Controls';
 import { centeredSquare, ImageCropEditor, type CropRect, type ImageSource, type ImageViewRole } from './ImageCropEditor';
 import {
-  createBrickModelFromViews, createDemoBrickBuild, imageBrickBuildToLdraw,
+  createDemoBrickBuild, imageBrickBuildToLdraw,
   type ImageBrickBuild, type ImageBrickOptions, type ImageBrickViews,
 } from './imageBrickModel';
 
@@ -67,17 +67,36 @@ async function sampleSource(source: ImageSource, size: number) {
 async function generateBuild(
   sources: Partial<Record<ImageViewRole, ImageSource>>,
   options: ImageBrickOptions,
+  signal: AbortSignal,
 ) {
   if (!sources.front) throw new Error('A front view is required');
   let resolution = options.width;
   let result: ImageBrickBuild | null = null;
-  for (let attempt = 0; attempt < 4; attempt++) {
+  while (resolution >= 12) {
+    signal.throwIfAborted();
     const sampled = {} as Partial<ImageBrickViews>;
     for (const role of roles) {
       if (sources[role]) sampled[role] = await sampleSource(sources[role]!, resolution);
     }
-    result = createBrickModelFromViews(sampled as ImageBrickViews, { ...options, width: resolution }, sources.front.file.name.replace(/\.[^.]+$/, ''));
-    if (result.bricks.length <= options.brickBudget || resolution <= 12) break;
+    signal.throwIfAborted();
+    result = await new Promise<ImageBrickBuild>((resolve, reject) => {
+      const worker = new Worker(new URL('../workers/image.worker.ts', import.meta.url), { type: 'module' });
+      const cleanup = () => { worker.terminate(); signal.removeEventListener('abort', abort); };
+      const abort = () => { cleanup(); reject(new DOMException('Cancelled', 'AbortError')); };
+      signal.addEventListener('abort', abort, { once: true });
+      worker.onerror = event => { cleanup(); reject(new Error(event.message)); };
+      worker.onmessage = ({ data }) => {
+        cleanup();
+        if (data.error) reject(new Error(data.error)); else resolve(data.build);
+      };
+      worker.postMessage({
+        views: sampled as ImageBrickViews,
+        options: { ...options, width: resolution },
+        name: sources.front!.file.name.replace(/\.[^.]+$/, ''),
+      });
+    });
+    if (result.bricks.length <= options.brickBudget) break;
+    if (resolution <= 12) throw new Error(`Minimum resolution needs ${result.bricks.length} bricks; budget is ${options.brickBudget}.`);
     const dimensions = options.method === 'relief' ? 2 : 3;
     const ratio = Math.pow(options.brickBudget / result.bricks.length, 1 / dimensions);
     resolution = Math.max(12, Math.floor(resolution * Math.min(0.88, ratio * 0.94)));
@@ -89,6 +108,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
   const hostRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<ImageBrickScene | null>(null);
   const sourcesRef = useRef<Partial<Record<ImageViewRole, ImageSource>>>({});
+  const uploadVersions = useRef({ front: 0, top: 0, side: 0 });
   const [sources, setSources] = useState<Partial<Record<ImageViewRole, ImageSource>>>({});
   const [options, setOptions] = useState(initialOptions);
   const [build, setBuild] = useState<ImageBrickBuild>(() => createDemoBrickBuild());
@@ -108,6 +128,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
     sourcesRef.current = sources;
   }, [sources]);
   useEffect(() => () => {
+    roles.forEach(role => uploadVersions.current[role]++);
     Object.values(sourcesRef.current).forEach(source => URL.revokeObjectURL(source.url));
   }, []);
 
@@ -116,8 +137,6 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
     const scene = new ImageBrickScene(hostRef.current, tr('图片生成的积木三维模型', 'Image-generated brick model'));
     sceneRef.current = scene;
     window.__imageBricks = () => scene.snapshot();
-    scene.setBuild(build);
-    scene.setBuildStep(step, false);
     return () => {
       scene.dispose();
       sceneRef.current = null;
@@ -152,12 +171,13 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
   }, [playing, build.steps.length, step]);
 
   useEffect(() => {
-    if (!sources.front) return;
+    if (!sources.front) { setProcessing(false); return; }
     let active = true;
+    const abort = new AbortController();
     setProcessing(true);
     setError('');
     const timer = window.setTimeout(() => {
-      generateBuild(sources, options)
+      generateBuild(sources, options, abort.signal)
         .then(next => {
           if (!active) return;
           if (!next.bricks.length) throw new Error(tr('没有识别到主体，请调整框选区域或背景阈值。', 'No subject found. Adjust the crop or background threshold.'));
@@ -176,6 +196,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
     }, 180);
     return () => {
       active = false;
+      abort.abort();
       window.clearTimeout(timer);
     };
   }, [sources, options, tr]);
@@ -195,11 +216,22 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
 
   async function acceptFile(role: ImageViewRole, next?: File) {
     if (!next) return;
+    const version = ++uploadVersions.current[role];
     if (!next.type.startsWith('image/')) {
       setError(tr('请选择 PNG、JPEG 或 WebP 图片。', 'Choose a PNG, JPEG, or WebP image.'));
       return;
     }
+    if (next.size > 25 * 1024 * 1024) {
+      setError(tr('图片不能超过 25 MB。', 'Image must not exceed 25 MB.'));
+      return;
+    }
+    try {
     const bitmap = await createImageBitmap(next);
+    if (version !== uploadVersions.current[role]) { bitmap.close(); return; }
+    if (bitmap.width * bitmap.height > 40_000_000) {
+      bitmap.close();
+      throw new Error(tr('图片不能超过 4000 万像素。', 'Image must not exceed 40 megapixels.'));
+    }
     const source: ImageSource = {
       file: next,
       url: URL.createObjectURL(next),
@@ -213,6 +245,9 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
       return { ...current, [role]: source };
     });
     if (role !== 'front') setOptions(current => ({ ...current, method: current.method === 'relief' ? 'hollow' : current.method }));
+    } catch {
+      if (version === uploadVersions.current[role]) setError(tr('图片解码失败，请选择有效的 PNG、JPEG 或 WebP。', 'Could not decode the image. Choose a valid PNG, JPEG, or WebP.'));
+    }
   }
 
   function updateCrop(role: ImageViewRole, crop: CropRect) {
@@ -220,6 +255,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
   }
 
   function removeSource(role: ImageViewRole) {
+    uploadVersions.current[role]++;
     setSources(current => {
       if (!current[role]) return current;
       URL.revokeObjectURL(current[role]!.url);
@@ -236,6 +272,9 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
       setStep(demo.steps.length);
       setOpenStep(null);
       setError('');
+      setProcessing(false);
+      setPlaying(false);
+      setExplosion(0);
     }
   }
 
@@ -301,7 +340,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
         <div><strong>{colorCount}</strong><span>{tr('颜色', 'Colors')}</span></div>
         <div><strong>{build.viewCount}</strong><span>{tr('视图', 'Views')}</span></div>
       </div>
-      {build.sourceWidth < options.width && <div className="creator-status">{tr(`为满足 ${options.brickBudget} 块预算，分辨率自动调整为 ${build.sourceWidth}`, `Resolution adjusted to ${build.sourceWidth} to fit the ${options.brickBudget}-brick budget`)}</div>}
+      {sources.front && !error && build.sourceWidth < options.width && <div className="creator-status">{tr(`为满足 ${options.brickBudget} 块预算，分辨率自动调整为 ${build.sourceWidth}`, `Resolution adjusted to ${build.sourceWidth} to fit the ${options.brickBudget}-brick budget`)}</div>}
       {processing && <div className="creator-status" role="status">{tr('正在融合视图并生成积木模型…', 'Fusing views and generating the brick model...')}</div>}
       {error && <div className="creator-error" role="alert">{error}</div>}
       <div className="creator-export-row">

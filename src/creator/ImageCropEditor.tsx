@@ -1,4 +1,4 @@
-import { useRef, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react';
 import { Crop, ImagePlus, Maximize2, X } from 'lucide-react';
 import type { Translator } from '../app/locale';
 
@@ -37,6 +37,8 @@ export function ImageCropEditor({
   tr: Translator;
 }) {
   const frameRef = useRef<HTMLDivElement>(null);
+  const cancelDrag = useRef<(() => void) | null>(null);
+  useEffect(() => () => cancelDrag.current?.(), []);
   const labels = {
     front: tr('正视图', 'Front'),
     top: tr('俯视图', 'Top'),
@@ -47,6 +49,7 @@ export function ImageCropEditor({
     if (!source || !frameRef.current) return;
     event.preventDefault();
     event.stopPropagation();
+    cancelDrag.current?.();
     const bounds = frameRef.current.getBoundingClientRect();
     const startX = event.clientX;
     const startY = event.clientY;
@@ -62,7 +65,8 @@ export function ImageCropEditor({
         });
         return;
       }
-      const minimum = Math.max(24, Math.min(source.width, source.height) * 0.18);
+      const maximum = Math.min(source.width - origin.x, source.height - origin.y);
+      const minimum = Math.min(maximum, Math.max(1, Math.min(source.width, source.height) * 0.18));
       const size = Math.max(
         minimum,
         Math.min(
@@ -77,6 +81,7 @@ export function ImageCropEditor({
       window.removeEventListener('pointerup', finish);
       window.removeEventListener('pointercancel', finish);
     };
+    cancelDrag.current = finish;
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', finish);
     window.addEventListener('pointercancel', finish);
@@ -98,7 +103,7 @@ export function ImageCropEditor({
     <div
       className="crop-source-frame"
       ref={frameRef}
-      style={source ? { aspectRatio: `${source.width} / ${source.height}` } : undefined}
+      style={source ? { aspectRatio: `${source.width} / ${source.height}`, width: `min(100%, ${170 * source.width / source.height}px)` } : undefined}
     >
       {source ? <>
         <img src={source.url} alt={tr(`${labels[role]}原图`, `${labels[role]} source`)} />
@@ -122,7 +127,7 @@ export function ImageCropEditor({
         aria-label={tr(`上传${labels[role]}`, `Upload ${labels[role].toLowerCase()} view`)}
         type="file"
         accept="image/png,image/jpeg,image/webp"
-        onChange={event => onFile(event.target.files?.[0])}
+        onChange={event => { onFile(event.target.files?.[0]); event.target.value = ''; }}
       />
     </div>
     {source && <footer>

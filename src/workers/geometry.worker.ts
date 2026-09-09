@@ -26,8 +26,23 @@ self.onmessage = async (event: MessageEvent<{ base: string; chunks: GeometryChun
       const hex = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
       if (hex !== chunk.sha256) throw new Error(`Asset checksum mismatch: ${chunk.url}`);
       const stream = new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip'));
-      const buffer = await new Response(stream).arrayBuffer();
-      if (buffer.byteLength > 128 * 1024 * 1024) throw new Error('Geometry exceeds memory budget');
+      const decoded = stream.getReader();
+      const output: Uint8Array[] = [];
+      let outputLength = 0;
+      while (true) {
+        const { value, done } = await decoded.read();
+        if (done) break;
+        outputLength += value.byteLength;
+        if (outputLength > 128 * 1024 * 1024) {
+          await decoded.cancel();
+          throw new Error('Geometry exceeds memory budget');
+        }
+        output.push(value);
+      }
+      const bytes = new Uint8Array(outputLength);
+      let position = 0;
+      for (const piece of output) { bytes.set(piece, position); position += piece.byteLength; }
+      const buffer = bytes.buffer;
       self.postMessage({ type: 'chunk', groupId: chunk.groupId, buffer }, { transfer: [buffer] });
     }
     self.postMessage({ type: 'complete' });
