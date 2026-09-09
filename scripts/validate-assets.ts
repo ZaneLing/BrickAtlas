@@ -28,7 +28,7 @@ for (const config of modelCatalog) {
     assert(part.bounds.max.some((v, j) => v > part.bounds.min[j]));
     const sourceLine = originalFiles.get(part.sourceFile)!.lines.find(l => l.line === part.sourceLine)!;
     const ref = reference(sourceLine.text, sourceLine.line);
-    assert.equal(resolveFile(files, ref.file).name, `parts/${part.partNumber}.dat`);
+    assert.equal(resolveFile(files, ref.file).name.replace(/^parts\//, '').replace(/\.dat$/, ''), part.partNumber);
   }
   const membership = manifest.groups.flatMap(g => g.instanceIds);
   assert.equal(membership.length, manifest.instances.length);

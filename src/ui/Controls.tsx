@@ -14,7 +14,7 @@ export function Modal({ title, onClose, children }: { title: string; onClose: ()
   }, []);
   return <dialog ref={ref} aria-label={title} onCancel={onClose} onClick={e => { if (e.target === ref.current) onClose(); }} className="modal">
     <div className="modal-inner">
-      <header><h2>{title}</h2><IconButton label="关闭弹窗" onClick={onClose}><X size={18} /></IconButton></header>
+      <header><h2>{title}</h2><IconButton label={localStorage.getItem('brick-atlas-locale') === 'en' ? 'Close dialog' : '关闭弹窗'} onClick={onClose}><X size={18} /></IconButton></header>
       {children}
     </div>
   </dialog>;

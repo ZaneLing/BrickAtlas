@@ -8,7 +8,8 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: s
     recordDiagnostic('react-error', { message: error.message, componentStack: info.componentStack });
   }
   render() {
-    if (this.state.error) return <main className="app"><div className="loading-state error-state" role="alert"><h1>Brick Atlas</h1><p>应用出现异常：{this.state.error}</p><button className="primary-button" onClick={() => location.reload()}>重新加载</button></div></main>;
+    const english = localStorage.getItem('brick-atlas-locale') === 'en';
+    if (this.state.error) return <main className="app"><div className="loading-state error-state" role="alert"><h1>Brick Atlas</h1><p>{english ? 'Application error' : '应用出现异常'}：{this.state.error}</p><button className="primary-button" onClick={() => location.reload()}>{english ? 'Reload' : '重新加载'}</button></div></main>;
     return this.props.children;
   }
 }

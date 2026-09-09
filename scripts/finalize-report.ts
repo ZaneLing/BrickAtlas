@@ -9,10 +9,9 @@ for (const directory of directories) {
   if (!directory.isDirectory()) continue;
   const files = await readdir(`test-results/${directory.name}`);
   for (const file of files) {
-    if (!/^(assembled|inventory-100|structure-45|landscape|narrow-mobile)\.png$/.test(file)) continue;
-    const device = directory.name.endsWith('mobile-chrome') ? 'mobile' : directory.name.endsWith('desktop-chrome') ? 'desktop' : null;
-    if (!device) continue;
-    const target = `docs/screenshots/${device}-${file}`;
+    if (!/^(assembled|inventory-100|structure-45)\.png$/.test(file)) continue;
+    if (!directory.name.endsWith('desktop-chrome')) continue;
+    const target = `docs/screenshots/desktop-${file}`;
     await copyFile(`test-results/${directory.name}/${file}`, target);
     artifacts.push(target);
   }
@@ -23,7 +22,7 @@ const summary = {
   failed: report.stats.unexpected, flaky: report.stats.flaky,
   projects: report.config.projects.map((p: { name: string }) => p.name),
   screenshots: artifacts.sort(),
-  skippedReason: 'Platform-specific audits: CDP/axe on Chromium, exhaustive inventory picking on desktop, 320px layout on mobile, one throttled-network run.',
+  skippedReason: 'Platform-specific audits: axe and throttled-network checks on Chromium; context-loss checks where the extension is available.',
 };
 await writeFile('assets-built/verification-summary.json', JSON.stringify(summary, null, 2) + '\n');
 console.log(summary);

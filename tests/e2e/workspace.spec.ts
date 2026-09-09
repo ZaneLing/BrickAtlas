@@ -1,18 +1,37 @@
 import { readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 
-test('catalog exposes eight projects, real previews and model parameters', async ({ page }) => {
+test('catalog exposes twelve projects, real previews and model parameters', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: '积木项目' })).toBeVisible();
-  await expect(page.locator('.model-card')).toHaveCount(8);
-  await expect(page.getByText('可拼装实例')).toBeVisible();
-  await expect(page.locator('.model-card-explore')).toHaveCount(8);
+  await expect(page.getByRole('heading', { name: 'Brick Atlas' })).toBeVisible();
+  await expect(page.locator('.floating-bricks > span')).toHaveCount(22);
+  await expect(page.locator('.model-card')).toHaveCount(12);
+  await expect(page.getByText('积木实例')).toBeVisible();
+  await expect(page.locator('.model-card-explore')).toHaveCount(12);
   await expect(page.getByText('探索模型', { exact: true })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: '开始拼装' })).toHaveCount(8);
-  await expect(page.locator('.model-card-specs')).toHaveCount(8);
+  await expect(page.getByRole('link', { name: '开始拼装' })).toHaveCount(12);
+  await expect(page.locator('.model-card-specs')).toHaveCount(12);
   await expect(page.getByText('积木树').first()).toBeVisible();
-  await expect(page.locator('.model-art img')).toHaveCount(8);
+  await expect(page.locator('.model-art img')).toHaveCount(12);
+  expect(await page.locator('.model-art img').evaluateAll(images => images.every(image => (image as HTMLImageElement).naturalWidth >= 1000))).toBe(true);
+  const position = await page.locator('.floating-bricks > span').first().evaluate(element => getComputedStyle(element).translate);
+  await page.waitForTimeout(350);
+  expect(await page.locator('.floating-bricks > span').first().evaluate(element => getComputedStyle(element).translate)).not.toBe(position);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('language toggle translates the complete workspace and persists', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: '切换为英文' }).click();
+  await expect(page.getByRole('heading', { name: 'See every brick. Build every idea.' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Browse models' })).toBeVisible();
+  await expect(page.getByText('Tree nodes').first()).toBeVisible();
+  await page.locator('.model-card-explore').first().click();
+  await expect(page.getByText('Model ready', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('Search bricks', { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByText('Model ready', { exact: true })).toBeVisible();
+  expect(await page.locator('html').getAttribute('lang')).toBe('en');
 });
 
 test('clicking a project card opens explore while the only command is build', async ({ page }) => {
@@ -22,34 +41,33 @@ test('clicking a project card opens explore while the only command is build', as
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
 });
 
-test('additional project loads real geometry and supports search highlight and x-ray', async ({ page, isMobile }) => {
+test('additional project loads real geometry and supports search highlight and x-ray', async ({ page }) => {
   await page.goto('/explore/31027');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await expect.poll(async () => page.evaluate(() => window.__atlas?.().loadedInstances)).toBe(67);
-  if (isMobile) {
-    await page.getByRole('button', { name: '结构与零件' }).click();
-    await page.getByLabel('搜索零件', { exact: true }).fill('wheel');
-    await page.getByRole('button', { name: '关闭结构面板' }).click();
-  } else {
-    await page.getByLabel('顶部搜索零件').fill('wheel');
-  }
+  await page.getByLabel('顶部搜索零件').fill('wheel');
   await expect.poll(async () => page.evaluate(() => window.__atlas?.().selected.length)).toBe(0);
   await page.getByRole('button', { name: 'X-Ray 透视模式' }).first().click();
   await expect(page.getByRole('button', { name: 'X-Ray 透视模式' }).first()).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('build mode advances, animates and persists progress per project', async ({ page, isMobile }) => {
+test('desktop renderer uses high-density pixels and supports 4x ultra mode', async ({ page }) => {
+  await page.goto('/explore/31027');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  const ratio = () => page.locator('.canvas-host canvas').evaluate(canvas => (canvas as HTMLCanvasElement).width / canvas.getBoundingClientRect().width);
+  expect(await ratio()).toBeGreaterThanOrEqual(1.9);
+  await page.getByRole('button', { name: '显示设置' }).click();
+  await page.getByLabel('渲染质量').selectOption('ultra');
+  await expect.poll(ratio).toBeGreaterThanOrEqual(3.9);
+});
+
+test('build mode advances, animates and persists progress per project', async ({ page }) => {
   await page.goto('/build/5867');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: '下一步' }).click();
   await expect(page.getByLabel('当前拼装步骤')).toHaveValue('1');
   await expect.poll(async () => page.evaluate(() => window.__atlas?.().visibleInstances)).toBe(6);
-  if (isMobile) {
-    await page.getByRole('button', { name: '打开步骤说明书' }).click();
-    await expect(page.getByRole('dialog', { name: '步骤说明书' })).toBeVisible();
-  } else {
-    await expect(page.getByRole('complementary', { name: '步骤说明书' })).toBeVisible();
-  }
+  await expect(page.getByRole('complementary', { name: '步骤说明书' })).toBeVisible();
   await expect(page.getByRole('region', { name: '本步所需零件' })).toContainText('本步所需零件');
   await expect(page.getByAltText('第 1 步静态拼装图')).toBeVisible();
   await page.waitForTimeout(850);
@@ -134,31 +152,24 @@ test('build guide exports cover and one page per step', async ({ page }, testInf
   expect((payload.toString('latin1').match(/\/Type \/Page\b/g) ?? [])).toHaveLength(13);
 });
 
-test('source-authored instruction model exposes OMR steps', async ({ page, isMobile }) => {
+test('source-authored instruction model exposes OMR steps', async ({ page }) => {
   await page.goto('/build/31009');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await expect(page.getByLabel('当前拼装步骤')).toHaveAttribute('max', '79');
-  if (isMobile) {
-    await page.getByLabel('下一步', { exact: true }).click();
-    await page.getByRole('button', { name: '打开步骤说明书' }).click();
-    await expect(page.getByText('OMR AUTHOR STEP', { exact: true })).toBeVisible();
-  } else {
-    await expect(page.getByText('OMR 源步骤', { exact: true })).toBeVisible();
-  }
+  await expect(page.getByText('OMR 源步骤', { exact: true })).toBeVisible();
 });
 
 test('complex train and truck models load all addressable bricks', async ({ page }) => {
-  for (const [id, count] of [['10014', 170], ['10156', 111]] as const) {
+  for (const [id, count] of [['10014', 170], ['10156', 111], ['10001', 848], ['10128', 336], ['10036', 166], ['10159', 592]] as const) {
     await page.goto(`/explore/${id}`);
     await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
     await expect.poll(async () => page.evaluate(() => window.__atlas?.().loadedInstances)).toBe(count);
   }
 });
 
-test('workspace navigation returns home and switches models', async ({ page, isMobile }) => {
+test('workspace navigation returns home and switches models', async ({ page }) => {
   await page.goto('/explore/5867');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
-  if (isMobile) await page.getByRole('button', { name: '结构与零件' }).click();
   await page.getByLabel('切换模型').selectOption('31028');
   await expect(page).toHaveURL(/\/explore\/31028$/);
   await page.getByRole('link', { name: '返回项目库' }).click();

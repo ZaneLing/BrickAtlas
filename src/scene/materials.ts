@@ -1,4 +1,4 @@
-import { Color, DataTexture, DoubleSide, LineBasicMaterial, MeshStandardMaterial, type Material } from 'three';
+import { Color, DataTexture, DoubleSide, LineBasicMaterial, MeshPhysicalMaterial, type Material } from 'three';
 import { LDrawConditionalLineMaterial } from 'three/addons/materials/LDrawConditionalLineMaterial.js';
 import type { GeometryBucket } from '../model/types';
 
@@ -22,7 +22,10 @@ export function atlasMaterial(bucket: GeometryBucket, texture: DataTexture, coun
   const shared = { color, opacity, transparent: opacity < 1, depthWrite: opacity >= 1 };
   const atlasUniforms = { xray: { value: 0 } };
   const material = bucket.kind === 'mesh'
-    ? new MeshStandardMaterial({ ...shared, roughness: Math.max(0.27, roughness), metalness: Math.min(0.45, metalness), side: DoubleSide })
+    ? new MeshPhysicalMaterial({
+      ...shared, roughness: Math.max(0.24, roughness), metalness: Math.min(0.3, metalness),
+      clearcoat: opacity < 1 ? 0.08 : 0.24, clearcoatRoughness: 0.32, ior: 1.46, side: DoubleSide,
+    })
     : bucket.kind === 'conditional'
       ? new LDrawConditionalLineMaterial(shared)
       : new LineBasicMaterial(shared);
@@ -51,13 +54,13 @@ export function atlasMaterial(bucket: GeometryBucket, texture: DataTexture, coun
     `);
     shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `
       #include <color_fragment>
-      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.15, 0.72, 0.54), atlasSelected * 0.7);
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.18, 0.52, 0.96), atlasSelected * 0.72);
       diffuseColor.a *= mix(1.0, 0.2, atlasXray * (1.0 - atlasSelected));
     `);
   };
   material.customProgramCacheKey = () => `atlas-v1-${bucket.kind}`;
   material.userData.atlas = { xray: atlasUniforms.xray, opacity };
-  if (material instanceof MeshStandardMaterial) material.emissive = new Color(0);
+  if (material instanceof MeshPhysicalMaterial) material.emissive = new Color(0);
   return material;
 }
 

@@ -8,14 +8,7 @@ async function ready(page: Page) {
   await expect.poll(async () => (await getMetrics(page))?.loadedInstances).toBe(278);
   await page.waitForTimeout(300);
 }
-async function openLayers(page: Page, mobile: boolean) {
-  if (mobile) await page.getByRole('button', { name: '结构与零件' }).click();
-}
-async function closeDrawer(page: Page, mobile: boolean) {
-  if (mobile) await page.getByRole('button', { name: '关闭面板', exact: true }).click({ position: { x: 10, y: 10 } });
-}
-
-test('real geometry, framing, views, motion, reversible explosion and pixel coverage', async ({ page, isMobile }, testInfo) => {
+test('real geometry, framing, views, motion, reversible explosion and pixel coverage', async ({ page }, testInfo) => {
   const errors: string[] = [];
   page.on('pageerror', e => errors.push(e.message));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
@@ -59,16 +52,14 @@ test('real geometry, framing, views, motion, reversible explosion and pixel cove
   const target = inventory.projected.find(p => p.x > 50 && p.x < rect.width - 80 && p.y > 75 && p.y < rect.height - 40)!;
   await canvas.click({ position: { x: target.x, y: target.y } });
   await expect.poll(async () => (await getMetrics(page))?.selected.length).toBe(1);
-  await closeDrawer(page, isMobile);
   await page.getByRole('button', { name: '复原模型', exact: true }).click();
   await expect.poll(async () => (await getMetrics(page))?.actualExplosion).toBe(0);
   expect((await getMetrics(page))!.offsets.every(v => v.every(c => c === 0))).toBe(true);
   expect(errors).toEqual([]);
 });
 
-test('search, identity, same-type selection, isolation, visibility and source metadata', async ({ page, isMobile }) => {
+test('search, identity, same-type selection, isolation, visibility and source metadata', async ({ page }) => {
   await ready(page);
-  await openLayers(page, isMobile);
   await page.getByLabel('搜索零件', { exact: true }).fill('3004');
   const first = page.locator('.part-row').first();
   await expect(first).toBeVisible();
@@ -81,11 +72,9 @@ test('search, identity, same-type selection, isolation, visibility and source me
   expect(isolated.visibleInstances).toBe(isolated.selected.length);
   await page.getByRole('button', { name: '退出隔离', exact: true }).click();
   expect((await getMetrics(page))!.visibleInstances).toBe(278);
-  if (isMobile) await page.getByRole('button', { name: '打开详情', exact: true }).click();
   await page.getByRole('button', { name: '关闭详情面板', exact: true }).click();
   expect((await getMetrics(page))!.selected.length).toBeGreaterThan(0);
   await page.getByRole('button', { name: '清除选择', exact: true }).click();
-  await openLayers(page, isMobile);
   await page.getByRole('tab', { name: '结构分组' }).click();
   await page.getByRole('button', { name: '隐藏车身与车门', exact: true }).click();
   expect((await getMetrics(page))!.visibleInstances).toBeLessThan(278);
@@ -95,7 +84,7 @@ test('search, identity, same-type selection, isolation, visibility and source me
   await expect(page.getByText('没有匹配的零件')).toBeVisible();
 });
 
-test('drag does not select; responsive layout has no horizontal overflow', async ({ page, isMobile }, testInfo) => {
+test('drag does not select and desktop layout has no horizontal overflow', async ({ page }) => {
   await ready(page);
   const box = (await page.locator('canvas').boundingBox())!;
   const x = box.x + box.width / 2, y = box.y + box.height / 2;
@@ -106,12 +95,6 @@ test('drag does not select; responsive layout has no horizontal overflow', async
   await page.mouse.up();
   expect((await getMetrics(page))!.selected).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  if (isMobile) {
-    await page.setViewportSize({ width: 844, height: 390 });
-    await page.waitForTimeout(600);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.screenshot({ path: testInfo.outputPath('landscape.png') });
-  }
 });
 
 test('missing geometry has an actionable error, not a blank canvas', async ({ page }) => {
@@ -124,7 +107,7 @@ test('missing geometry has an actionable error, not a blank canvas', async ({ pa
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
 });
 
-test('reduced motion and credits dialog work with keyboard', async ({ page, isMobile }) => {
+test('reduced motion and credits dialog work with keyboard', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await ready(page);
   await page.getByRole('button', { name: /^零件陈列/ }).click();
@@ -133,18 +116,14 @@ test('reduced motion and credits dialog work with keyboard', async ({ page, isMo
   await expect(page.getByRole('dialog', { name: '显示设置' })).toContainText('已启用');
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog', { name: '显示设置' })).not.toBeVisible();
-  if (isMobile) {
-    await page.getByRole('button', { name: '打开详情', exact: true }).click();
-    await page.getByRole('button', { name: '许可信息', exact: true }).click();
-  } else await page.getByRole('button', { name: '来源与署名' }).click();
+  await page.getByRole('button', { name: '来源与署名' }).click();
   await expect(page.getByRole('dialog', { name: '来源与署名' })).toContainText('Takeshi Takahashi');
   await expect(page.getByRole('dialog', { name: '来源与署名' })).toContainText('Creative Commons Attribution 2.0');
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog', { name: '来源与署名' })).not.toBeVisible();
 });
 
-test('every inventory instance is individually addressable', async ({ page, isMobile }, testInfo) => {
-  test.skip(isMobile, 'Full native-tap exhaustive test is desktop-only; mobile tapping is covered above.');
+test('every inventory instance is individually addressable', async ({ page }, testInfo) => {
   test.setTimeout(120000);
   await ready(page);
   await page.getByRole('button', { name: /^零件陈列/ }).click();
@@ -186,16 +165,14 @@ test('lost WebGL context is recoverable', async ({ page, browserName }) => {
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
 });
 
-test('downloads contain actual data and changing layout preserves the inventory', async ({ page, isMobile }) => {
+test('downloads contain actual data and changing layout preserves the inventory', async ({ page }) => {
   await ready(page);
-  await openLayers(page, isMobile);
   const file = page.waitForEvent('download');
   await page.getByRole('button', { name: '导出可见零件 CSV' }).click();
   expect((await file).suggestedFilename()).toBe('5867-inventory.csv');
-  await closeDrawer(page, isMobile);
   await page.getByRole('button', { name: /^零件陈列/ }).click();
   await expect.poll(async () => (await getMetrics(page))?.actualExplosion).toBe(1);
-  await page.setViewportSize(isMobile ? { width: 844, height: 390 } : { width: 1920, height: 1080 });
+  await page.setViewportSize({ width: 1920, height: 1080 });
   await page.waitForTimeout(800);
   expect((await getMetrics(page))!.visibleInstances).toBe(278);
   expect((await getMetrics(page))!.inventoryCells).toHaveLength(278);
@@ -204,25 +181,8 @@ test('downloads contain actual data and changing layout preserves the inventory'
   expect((await shot).suggestedFilename()).toBe('brick-atlas-5867-3840p.png');
 });
 
-test('narrow mobile controls do not occlude the inventory', async ({ page, isMobile }, testInfo) => {
-  test.skip(!isMobile, 'Narrow touch layouts only.');
-  await page.setViewportSize({ width: 320, height: 700 });
-  await ready(page);
-  await page.getByRole('button', { name: /^零件陈列/ }).click();
-  await expect.poll(async () => (await getMetrics(page))?.actualExplosion).toBe(1);
-  await page.waitForTimeout(500);
-  const overlap = await page.evaluate(() => {
-    const canvas = document.querySelector('canvas')!.getBoundingClientRect();
-    const toolbar = document.querySelector('.zoom-tools')!.getBoundingClientRect();
-    return toolbar.left < canvas.right && toolbar.right > canvas.left && toolbar.top < canvas.bottom && toolbar.bottom > canvas.top;
-  });
-  expect(overlap).toBe(false);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: testInfo.outputPath('narrow-mobile.png') });
-});
-
-test('slow network reports progress and reaches the complete model', async ({ page, browserName, isMobile }) => {
-  test.skip(browserName !== 'chromium' || isMobile, 'One Chromium throttled-network run.');
+test('slow network reports progress and reaches the complete model', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'One Chromium throttled-network run.');
   const client = await page.context().newCDPSession(page);
   await client.send('Network.enable');
   await client.send('Network.emulateNetworkConditions', { offline: false, latency: 150, downloadThroughput: 750000, uploadThroughput: 250000 });

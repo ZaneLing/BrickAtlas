@@ -1,7 +1,8 @@
 import {
   ACESFilmicToneMapping, AmbientLight, Box3, BufferAttribute, BufferGeometry, DataTexture, DirectionalLight, DoubleSide,
   FloatType, GridHelper, Group, HemisphereLight, LineSegments, Matrix4, Mesh, MeshBasicMaterial,
-  MOUSE, NearestFilter, PerspectiveCamera, PMREMGenerator, Raycaster, RGBAFormat,
+  MOUSE, NearestFilter, PCFSoftShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Raycaster, RGBAFormat,
+  ShadowMaterial,
   Scene, SRGBColorSpace, Vector2, Vector3, WebGLRenderer, type Intersection, type Material,
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -37,7 +38,8 @@ export class AtlasScene {
   };
   private state: ExplorerState = initialState;
   private model = new Group();
-  private grid = new GridHelper(600, 30, 0xced6d2, 0xe3e8e5);
+  private grid = new GridHelper(600, 30, 0xc8ceda, 0xe3e6ec);
+  private ground: Mesh;
   private texture: DataTexture;
   private stateData: Float32Array;
   private visible: PartInstance[] = [];
@@ -62,8 +64,7 @@ export class AtlasScene {
   private raycaster = new Raycaster();
   private pointerStart = new Vector2();
   private maxPointerDistance = 0;
-  private pointers = new Set<number>();
-  private multiTouch = false;
+  private pointerActive = false;
   private lastTick = 0;
   private started = performance.now();
   private motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
@@ -74,27 +75,47 @@ export class AtlasScene {
   private onSelect: Callbacks['select'];
   private onHover: Callbacks['hover'];
 
-  constructor(private host: HTMLElement, readonly brickModel: BrickModel, private callbacks: Callbacks) {
+  constructor(private host: HTMLElement, readonly brickModel: BrickModel, private callbacks: Callbacks, private locale: 'zh' | 'en' = 'zh') {
     const manifest = brickModel.manifest;
     this.onSelect = callbacks.select;
     this.onHover = callbacks.hover;
     this.renderer = new WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
-    this.renderer.setClearColor('#f2f5f3');
+    this.renderer.setClearColor('#f4f5f8');
     this.renderer.outputColorSpace = SRGBColorSpace;
     this.renderer.toneMapping = ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.05;
-    this.renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 768 ? 1.5 : 2));
-    this.renderer.domElement.setAttribute('aria-label', `${manifest.model.title} 交互式三维模型`);
+    this.renderer.toneMappingExposure = 1.12;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = PCFSoftShadowMap;
+    this.renderer.setPixelRatio(Math.min(Math.max(devicePixelRatio, 2), 3));
+    this.renderer.domElement.setAttribute('aria-label', `${manifest.model.title} ${this.text('交互式三维模型', 'interactive 3D model')}`);
     this.renderer.domElement.setAttribute('role', 'img');
     this.renderer.domElement.tabIndex = 0;
     host.appendChild(this.renderer.domElement);
-    this.scene.add(this.model, this.grid, new HemisphereLight(0xffffff, 0xc6d0c9, 2.3), new AmbientLight(0xffffff, 0.3));
+    const extent = new Vector3(...manifest.bounds.max).sub(new Vector3(...manifest.bounds.min));
+    const groundSize = Math.max(600, extent.length() * 3);
+    this.ground = new Mesh(new PlaneGeometry(groundSize, groundSize), new ShadowMaterial({ color: 0x273342, opacity: 0.13 }));
+    this.ground.rotation.x = -Math.PI / 2;
+    this.ground.position.y = manifest.bounds.min[1] - 0.7;
+    this.ground.receiveShadow = true;
+    this.scene.add(this.model, this.grid, this.ground, new HemisphereLight(0xffffff, 0x8292ae, 2), new AmbientLight(0xffffff, 0.2));
     const key = new DirectionalLight(0xffffff, 3.3);
     key.position.set(-100, 180, 130);
+    key.castShadow = true;
+    key.shadow.mapSize.set(2048, 2048);
+    const shadowExtent = Math.max(180, extent.length());
+    key.shadow.camera.left = -shadowExtent;
+    key.shadow.camera.right = shadowExtent;
+    key.shadow.camera.top = shadowExtent;
+    key.shadow.camera.bottom = -shadowExtent;
+    key.shadow.camera.near = 1;
+    key.shadow.camera.far = shadowExtent * 6;
+    key.shadow.bias = -0.00015;
     this.scene.add(key);
-    const fill = new DirectionalLight(0xe7edff, 1.5);
+    const fill = new DirectionalLight(0xdde7ff, 1.65);
     fill.position.set(100, 60, -130);
-    this.scene.add(fill);
+    const rim = new DirectionalLight(0xffdfca, 1.15);
+    rim.position.set(20, 80, 170);
+    this.scene.add(fill, rim);
     const pmrem = new PMREMGenerator(this.renderer);
     const room = new RoomEnvironment();
     this.environment = pmrem.fromScene(room, 0.04);
@@ -132,7 +153,7 @@ export class AtlasScene {
     this.worker.onmessage = event => {
       if (this.disposed) return;
       const data = event.data;
-      if (data.type === 'progress') callbacks.progress(Math.min(98, data.downloaded / manifest.stats.compressedBytes * 100), '读取模型几何');
+      if (data.type === 'progress') callbacks.progress(Math.min(98, data.downloaded / manifest.stats.compressedBytes * 100), this.text('读取模型几何', 'Loading model geometry'));
       if (data.type === 'chunk') {
         try {
           this.addChunk(data.groupId, data.buffer);
@@ -143,18 +164,23 @@ export class AtlasScene {
       }
       if (data.type === 'complete') {
         this.metrics.readyMs = performance.now() - this.started;
-        callbacks.progress(100, '模型就绪');
+        callbacks.progress(100, this.text('模型就绪', 'Model ready'));
         callbacks.ready();
         this.worker.terminate();
       }
       if (data.type === 'error') { callbacks.error(data.message); this.worker.terminate(); }
     };
-    this.worker.onerror = error => callbacks.error(error.message || '模型解码工作线程失败');
+    this.worker.onerror = error => callbacks.error(error.message || this.text('模型解码工作线程失败', 'Geometry worker failed'));
     this.worker.postMessage({ base: new URL(`${import.meta.env.BASE_URL}models/${manifest.model.id}/`, location.href).href, chunks: manifest.chunks });
     this.frame = requestAnimationFrame(this.tick);
   }
 
   get manifest() { return this.brickModel.manifest; }
+  private text(zh: string, en: string) { return this.locale === 'zh' ? zh : en; }
+  setLocale(locale: 'zh' | 'en') {
+    this.locale = locale;
+    this.renderer.domElement.setAttribute('aria-label', `${this.manifest.model.title} ${this.text('交互式三维模型', 'interactive 3D model')}`);
+  }
   private invalidate = () => { this.dirty = true; };
   private motionChanged = () => {
     this.reducedMotion = this.motionPreference.matches;
@@ -191,6 +217,7 @@ export class AtlasScene {
       const object = bucket.kind === 'mesh'
         ? new Mesh(geometry, material)
         : new LineSegments(geometry, material);
+      if (bucket.kind === 'mesh' && bucket.material.opacity >= 1) object.castShadow = true;
       geometry.computeBoundingSphere();
       // Vertices move in the shader; static geometry bounds must never cull them.
       object.frustumCulled = false;
@@ -246,15 +273,15 @@ export class AtlasScene {
       }[state.view]).normalize();
     }
     for (const line of this.lineObjects) line.visible = state.edges && state.quality !== 'low';
-    const pixelRatio = state.quality === 'low' ? 1 : state.quality === 'ultra' ? 3
-      : state.quality === 'high' ? 2 : Math.min(devicePixelRatio, innerWidth < 768 ? 1.5 : 2);
+    const pixelRatio = state.quality === 'low' ? 1 : state.quality === 'ultra' ? 4
+      : state.quality === 'high' ? 3 : Math.min(Math.max(devicePixelRatio, 2), 3);
     if (this.renderer.getPixelRatio() !== pixelRatio) this.renderer.setPixelRatio(pixelRatio);
     if (previous.xray !== state.xray) this.model.traverse(object => {
       const material = (object as Mesh).material;
       if (material) (Array.isArray(material) ? material : [material]).forEach(item => setAtlasXray(item, state.xray));
     });
     if (previous.background !== state.background) {
-      this.renderer.setClearColor({ studio: '#f2f5f3', white: '#ffffff', dark: '#18201c' }[state.background]);
+    this.renderer.setClearColor({ studio: '#f4f5f8', white: '#ffffff', dark: '#171c2c' }[state.background]);
     }
     if (previous.explosion !== state.explosion || viewChanged || visibilityChanged) this.fitRequested = true;
     if (this.reducedMotion) this.actualExplosion = state.explosion;
@@ -285,6 +312,7 @@ export class AtlasScene {
     this.metrics.visibleInstances = this.visible.filter(p => this.loaded.has(p.groupId)).length;
     this.metrics.actualExplosion = this.actualExplosion;
     this.grid.visible = this.state.grid && this.actualExplosion < 0.02;
+    this.ground.visible = this.actualExplosion < 0.98;
     this.controls.mouseButtons.LEFT = this.actualExplosion > 0.98 ? MOUSE.PAN : MOUSE.ROTATE;
     this.controls.enableRotate = this.actualExplosion < 0.98;
     this.dirty = true;
@@ -403,7 +431,7 @@ export class AtlasScene {
     const candidate = allowGlass ? hits[0] : hits.find(h => !h.transparent) ?? hits[0];
     if (candidate) return candidate.part;
     if (this.actualExplosion > 0.98) {
-      let closest: PartInstance | null = null, distance = innerWidth < 768 ? 24 : 12;
+      let closest: PartInstance | null = null, distance = 12;
       for (const part of this.visible) {
         if (!this.loaded.has(part.groupId)) continue;
         const projected = this.projectPart(part);
@@ -454,6 +482,8 @@ export class AtlasScene {
     capture.outputColorSpace = SRGBColorSpace;
     capture.toneMapping = ACESFilmicToneMapping;
     capture.toneMappingExposure = this.renderer.toneMappingExposure;
+    capture.shadowMap.enabled = true;
+    capture.shadowMap.type = PCFSoftShadowMap;
     capture.setPixelRatio(1);
     capture.setSize(width, height, false);
     capture.setClearColor('#ffffff');
@@ -491,7 +521,7 @@ export class AtlasScene {
     this.scene.environment = savedEnvironment;
     this.camera.updateProjectionMatrix();
     this.controls.update();
-    this.renderer.setClearColor({ studio: '#f2f5f3', white: '#ffffff', dark: '#18201c' }[savedState.background]);
+    this.renderer.setClearColor({ studio: '#f4f5f8', white: '#ffffff', dark: '#171c2c' }[savedState.background]);
     this.updateLayout();
     const encoded = atob(dataUrl.slice(dataUrl.indexOf(',') + 1));
     const bytes = new Uint8Array(encoded.length);
@@ -501,7 +531,7 @@ export class AtlasScene {
 
   private async renderBlob(width: number, height: number, type: 'image/png' | 'image/jpeg', quality?: number) {
     const max = this.renderer.capabilities.maxTextureSize;
-    if (width > max || height > max) throw new Error(`设备最大导出边长为 ${max}px`);
+    if (width > max || height > max) throw new Error(this.text(`设备最大导出边长为 ${max}px`, `Maximum export dimension on this device is ${max}px`));
     const oldSize = this.renderer.getSize(new Vector2());
     const oldRatio = this.renderer.getPixelRatio();
     const oldAspect = this.camera.aspect;
@@ -511,7 +541,7 @@ export class AtlasScene {
     this.camera.updateProjectionMatrix();
     this.renderer.render(this.scene, this.camera);
     const blob = await new Promise<Blob>((resolve, reject) => this.renderer.domElement.toBlob(
-      value => value ? resolve(value) : reject(new Error('图像编码失败')), type, quality,
+      value => value ? resolve(value) : reject(new Error(this.text('图像编码失败', 'Image encoding failed'))), type, quality,
     ));
     this.renderer.setPixelRatio(oldRatio);
     this.renderer.setSize(oldSize.x, oldSize.y, false);
@@ -522,30 +552,28 @@ export class AtlasScene {
   }
 
   private pointerDown = (event: PointerEvent) => {
-    this.pointers.add(event.pointerId);
-    if (this.pointers.size > 1) this.multiTouch = true;
+    this.pointerActive = true;
     this.pointerStart.set(event.clientX, event.clientY);
     this.maxPointerDistance = 0;
   };
   private pointerMove = (event: PointerEvent) => {
-    if (this.pointers.size) this.maxPointerDistance = Math.max(this.maxPointerDistance, this.pointerStart.distanceTo(new Vector2(event.clientX, event.clientY)));
-    if (this.pointers.size || event.pointerType === 'touch') return;
+    if (this.pointerActive) this.maxPointerDistance = Math.max(this.maxPointerDistance, this.pointerStart.distanceTo(new Vector2(event.clientX, event.clientY)));
+    if (this.pointerActive) return;
     const part = this.pick(event.clientX, event.clientY, event.altKey);
     this.renderer.domElement.style.cursor = part ? 'pointer' : 'grab';
     this.onHover(part, event.clientX, event.clientY);
   };
   private pointerUp = (event: PointerEvent) => {
     const distance = this.pointerStart.distanceTo(new Vector2(event.clientX, event.clientY));
-    if (!this.multiTouch && this.maxPointerDistance < 6 && distance < 6 && event.button === 0) {
+    if (this.maxPointerDistance < 6 && distance < 6 && event.button === 0) {
       const part = this.pick(event.clientX, event.clientY, event.altKey);
       this.onSelect(part?.instanceId ?? null);
     }
-    this.pointers.delete(event.pointerId);
-    if (!this.pointers.size) this.multiTouch = false;
+    this.pointerActive = false;
   };
-  private pointerCancel = (event: PointerEvent) => { this.pointers.delete(event.pointerId); if (!this.pointers.size) this.multiTouch = false; };
+  private pointerCancel = () => { this.pointerActive = false; };
   private pointerLeave = () => this.onHover(null, 0, 0);
-  private contextLost = (event: Event) => { event.preventDefault(); this.metrics.contextLost = true; this.callbacks.error('WebGL 上下文丢失，请重新加载模型。'); };
+  private contextLost = (event: Event) => { event.preventDefault(); this.metrics.contextLost = true; this.callbacks.error(this.text('WebGL 上下文丢失，请重新加载模型。', 'WebGL context lost. Reload the model.')); };
   private contextRestored = () => { this.metrics.contextLost = false; this.dirty = true; };
   private keydown = (event: KeyboardEvent) => {
     if (event.key === '+' || event.key === '=') { event.preventDefault(); this.zoom(0.85); }

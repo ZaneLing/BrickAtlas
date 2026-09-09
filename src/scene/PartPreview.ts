@@ -1,6 +1,6 @@
 import {
   AmbientLight, BufferAttribute, BufferGeometry, Color, DirectionalLight, EdgesGeometry,
-  LineBasicMaterial, LineSegments, Mesh, MeshStandardMaterial, PerspectiveCamera, Scene,
+  LineBasicMaterial, LineSegments, Mesh, MeshPhysicalMaterial, PerspectiveCamera, Scene,
   Sphere, SRGBColorSpace, Vector3, WebGLRenderer,
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -19,11 +19,11 @@ export class PartPreviewScene {
   private frame = 0;
   private disposed = false;
 
-  constructor(private host: HTMLElement, data: PartPreviewData) {
+  constructor(private host: HTMLElement, data: PartPreviewData, label = 'Selected brick interactive 3D preview') {
     this.renderer.setClearColor('#f4f7f5');
     this.renderer.outputColorSpace = SRGBColorSpace;
-    this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    this.renderer.domElement.setAttribute('aria-label', '选中积木可旋转三维预览');
+    this.renderer.setPixelRatio(Math.min(Math.max(devicePixelRatio, 2), 3));
+    this.renderer.domElement.setAttribute('aria-label', label);
     this.renderer.domElement.setAttribute('role', 'img');
     host.appendChild(this.renderer.domElement);
 
@@ -37,8 +37,9 @@ export class PartPreviewScene {
     geometry.computeBoundingBox();
     geometry.computeBoundingSphere();
 
-    const mesh = new Mesh(geometry, new MeshStandardMaterial({
-      color: new Color(data.color), roughness: 0.34, metalness: 0.02,
+    const mesh = new Mesh(geometry, new MeshPhysicalMaterial({
+      color: new Color(data.color), roughness: 0.28, metalness: 0.02,
+      clearcoat: 0.28, clearcoatRoughness: 0.3, ior: 1.46,
     }));
     const edges = new LineSegments(new EdgesGeometry(geometry, 22), new LineBasicMaterial({
       color: 0x526159, transparent: true, opacity: 0.65,
