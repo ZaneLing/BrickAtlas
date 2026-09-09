@@ -12,13 +12,13 @@ https://github.com/user-attachments/assets/1761f41d-e016-40c3-85f9-06102f5acc66
 
 ## Features
 
-- Browse 12 traceable models with high-resolution, physically based 3D rendering.
+- Browse 15 traceable models with high-resolution, physically based 3D rendering.
 - Rotate, zoom, pan, switch views, auto-rotate, and inspect exploded assemblies.
 - Select any brick to view its part number, color, dimensions, subassembly, and 3D shape.
 - Search, hide, isolate, highlight matching parts, and use X-Ray mode to inspect internal structure.
 - Follow step-by-step assembly with playback controls, focused placement animations, parts lists, and subassembly placement.
 - Export printable PDF build guides, BOM CSV files, LDraw files, and images up to 12K.
-- Convert an uploaded image into a layered brick relief with a live 3D model, build steps, exploded view, and material list.
+- Crop one to three reference views and generate a budget-aware relief, hollow sculpture, or solid brick model with build steps and a material list.
 - Switch the complete interface between Chinese and English.
 
 Brick Atlas is designed for desktop browsers with a workspace width of at least 1180 px.
@@ -45,7 +45,7 @@ On macOS, `Start.command` and `npm run start:local` are also available.
 
 ## Image Conversion
 
-The Creator produces a buildable single-view brick relief from an image. Recovering hidden geometry and generating a complete volumetric model from one photograph requires a dedicated image-to-3D backend. See [Image-to-Bricks Pipeline](docs/IMAGE_TO_BRICKS.md) for that extended design.
+The Creator supports manual square crops plus front, top, and side silhouette fusion. A single image still produces a relief; additional views can produce a hollow or solid visual hull. Recovering truly hidden geometry still requires a dedicated image-to-3D backend. See [Image-to-Bricks Pipeline](docs/IMAGE_TO_BRICKS.md) for that extended design.
 
 ## Models and Licenses
 

@@ -1,7 +1,7 @@
 import {
-  ACESFilmicToneMapping, AmbientLight, Color, CylinderGeometry, DirectionalLight,
+  ACESFilmicToneMapping, AmbientLight, Box3, Color, CylinderGeometry, DirectionalLight,
   DynamicDrawUsage, Group, HemisphereLight, InstancedMesh, Matrix4, Mesh, MeshPhysicalMaterial,
-  PerspectiveCamera, PlaneGeometry, Scene, ShadowMaterial, SRGBColorSpace, Vector3, WebGLRenderer,
+  MOUSE, PerspectiveCamera, PlaneGeometry, Scene, ShadowMaterial, SRGBColorSpace, Vector3, WebGLRenderer,
   type BufferGeometry, type Material,
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -29,6 +29,7 @@ type StudBatch = {
 const unit = 12;
 const brickHeight = unit * 1.16;
 const smooth = (value: number) => value * value * (3 - 2 * value);
+export type ImageBrickView = 'perspective' | 'front' | 'side' | 'top';
 
 export class ImageBrickScene {
   private readonly scene = new Scene();
@@ -47,8 +48,14 @@ export class ImageBrickScene {
   private readonly rotation = new Group().quaternion;
   private frame = 0;
   private lastTick = 0;
+  private lastFrameMs = 0;
   private disposed = false;
   private dirty = true;
+  private cameraMoving = false;
+  private panMode = false;
+  private view: ImageBrickView = 'perspective';
+  private readonly desiredPosition = new Vector3();
+  private readonly desiredTarget = new Vector3();
   private currentStep = 0;
   private explosion = 0;
   private actualExplosion = 0;
@@ -81,6 +88,8 @@ export class ImageBrickScene {
     this.controls.autoRotateSpeed = 0.55;
     this.controls.enablePan = false;
     this.controls.addEventListener('change', this.invalidate);
+    this.controls.addEventListener('start', this.controlStart);
+    this.controls.addEventListener('end', this.controlEnd);
     this.observer = new ResizeObserver(this.resize);
     this.observer.observe(host);
     this.resize();
@@ -164,7 +173,7 @@ export class ImageBrickScene {
     this.scene.add(ground);
     this.disposableGeometries.add(ground.geometry);
     this.disposableMaterials.add(ground.material as Material);
-    this.fit();
+    this.fitVisible(true);
     this.updateInstances();
   }
 
@@ -190,7 +199,48 @@ export class ImageBrickScene {
 
   setAutoRotate(enabled: boolean) {
     this.controls.autoRotate = enabled;
+    if (!enabled) {
+      const damping = this.controls.enableDamping;
+      this.controls.enableDamping = false;
+      this.controls.update();
+      this.controls.enableDamping = damping;
+    }
     this.dirty = true;
+  }
+
+  setPanMode(enabled: boolean) {
+    this.panMode = enabled;
+    this.controls.enablePan = enabled;
+    this.controls.enableRotate = !enabled;
+    this.controls.mouseButtons.LEFT = enabled ? MOUSE.PAN : MOUSE.ROTATE;
+    this.renderer.domElement.style.cursor = enabled ? 'grab' : '';
+  }
+
+  setView(view: ImageBrickView) {
+    if (this.view === view) return;
+    this.view = view;
+    this.fitVisible();
+  }
+
+  zoom(factor: number) {
+    const delta = this.camera.position.clone().sub(this.controls.target).multiplyScalar(factor);
+    if (delta.length() < this.controls.minDistance || delta.length() > this.controls.maxDistance) return;
+    this.camera.position.copy(this.controls.target).add(delta);
+    this.desiredPosition.copy(this.camera.position);
+    this.cameraMoving = false;
+    this.controls.update();
+    this.dirty = true;
+  }
+
+  focusStep(step: number) {
+    if (!this.build) return;
+    this.setAutoRotate(false);
+    const ids = new Set(this.build.steps.find(item => item.id === step)?.brickIds ?? []);
+    this.frameVisuals(
+      this.bodyBatches.flatMap(batch => batch.visuals).filter(visual => ids.has(visual.brick.id)),
+      5,
+      false,
+    );
   }
 
   private updateInstances() {
@@ -231,18 +281,58 @@ export class ImageBrickScene {
     }
   }
 
-  private fit() {
+  fitVisible(immediate = false) {
     if (!this.build) return;
-    const span = Math.max(this.build.width, this.build.height) * unit;
-    this.camera.position.set(span * 0.72, span * 0.82, span * 0.9);
-    this.camera.near = Math.max(0.1, span / 200);
-    this.camera.far = span * 12;
-    this.controls.target.set(0, this.build.maxDepth * brickHeight * 0.35, 0);
-    this.camera.lookAt(this.controls.target);
+    this.frameVisuals(
+      this.bodyBatches.flatMap(batch => batch.visuals).filter(visual => visual.visible),
+      1.28,
+      immediate,
+    );
+  }
+
+  private frameVisuals(visuals: VisualBrick[], padding: number, immediate = false) {
+    if (!visuals.length) return;
+    const spread = smooth(this.actualExplosion) * unit * 5.5;
+    const box = new Box3();
+    for (const visual of visuals) {
+      const center = visual.base.clone().addScaledVector(visual.direction, spread);
+      const half = new Vector3(visual.brick.width * unit / 2, brickHeight / 2, unit / 2);
+      box.expandByPoint(center.clone().sub(half));
+      box.expandByPoint(center.clone().add(half));
+    }
+    const center = box.getCenter(new Vector3());
+    const size = box.getSize(new Vector3());
+    const direction = {
+      perspective: new Vector3(0.72, 0.82, 0.9),
+      front: new Vector3(0, 0.08, 1),
+      side: new Vector3(1, 0.08, 0),
+      top: new Vector3(0, 1, 0.001),
+    }[this.view].normalize();
+    const camera = new PerspectiveCamera(this.camera.fov, this.camera.aspect);
+    camera.position.copy(center).add(direction);
+    camera.lookAt(center);
+    camera.updateMatrixWorld();
+    const local = box.clone().translate(center.clone().negate())
+      .applyMatrix4(new Matrix4().makeRotationFromQuaternion(camera.quaternion).invert());
+    const tan = Math.tan(this.camera.fov * Math.PI / 360);
+    const distance = Math.max(
+      Math.max(local.max.y, -local.min.y) / tan,
+      Math.max(local.max.x, -local.min.x) / tan / this.camera.aspect,
+      unit * 3,
+    ) * padding + Math.max(0, local.max.z);
+    this.camera.near = Math.max(0.1, distance / 200);
+    this.camera.far = Math.max(distance * 12, size.length() * 8);
     this.camera.updateProjectionMatrix();
-    this.controls.minDistance = span * 0.45;
-    this.controls.maxDistance = span * 3.2;
-    this.controls.update();
+    this.desiredTarget.copy(center);
+    this.desiredPosition.copy(center).addScaledVector(direction, distance);
+    this.controls.minDistance = Math.max(unit * 2, distance * 0.08);
+    this.controls.maxDistance = Math.max(unit * 20, distance * 4);
+    this.cameraMoving = !immediate;
+    if (immediate) {
+      this.camera.position.copy(this.desiredPosition);
+      this.controls.target.copy(this.desiredTarget);
+      this.controls.update();
+    }
     this.dirty = true;
   }
 
@@ -258,6 +348,13 @@ export class ImageBrickScene {
 
   private invalidate = () => {
     this.dirty = true;
+  };
+  private controlStart = () => {
+    this.cameraMoving = false;
+    if (this.panMode) this.renderer.domElement.style.cursor = 'grabbing';
+  };
+  private controlEnd = () => {
+    this.renderer.domElement.style.cursor = this.panMode ? 'grab' : '';
   };
 
   private tick = (time: number) => {
@@ -284,9 +381,19 @@ export class ImageBrickScene {
       this.updateInstances();
       this.dirty = true;
     }
+    if (this.cameraMoving) {
+      const amount = 1 - Math.exp(-8 * dt);
+      this.camera.position.lerp(this.desiredPosition, amount);
+      this.controls.target.lerp(this.desiredTarget, amount);
+      if (this.camera.position.distanceTo(this.desiredPosition) < 0.02) this.cameraMoving = false;
+      this.dirty = true;
+    }
     if (this.controls.update(dt)) this.dirty = true;
     if (this.dirty) {
+      const before = performance.now();
       this.renderer.render(this.scene, this.camera);
+      const frameMs = performance.now() - before;
+      this.lastFrameMs = frameMs;
       this.dirty = false;
     }
     this.frame = requestAnimationFrame(this.tick);
@@ -295,10 +402,24 @@ export class ImageBrickScene {
   snapshot() {
     return {
       bricks: this.build?.bricks.length ?? 0,
+      steps: this.build?.steps.length ?? 0,
       visible: this.bodyBatches.flatMap(batch => batch.visuals).filter(visual => visual.visible).length,
       step: this.currentStep,
       explosion: this.actualExplosion,
+      method: this.build?.method ?? 'relief',
+      viewCount: this.build?.viewCount ?? 0,
+      brickBudget: this.build?.brickBudget ?? 0,
       pixelRatio: this.renderer.getPixelRatio(),
+      bodyBatches: this.bodyBatches.length,
+      studBatches: this.studBatches.length,
+      drawCalls: this.renderer.info.render.calls,
+      triangles: this.renderer.info.render.triangles,
+      frameMs: this.lastFrameMs,
+      camera: this.camera.position.toArray(),
+      target: this.controls.target.toArray(),
+      cameraMoving: this.cameraMoving,
+      panMode: this.panMode,
+      view: this.view,
     };
   }
 
@@ -319,6 +440,8 @@ export class ImageBrickScene {
     cancelAnimationFrame(this.frame);
     this.observer.disconnect();
     this.controls.removeEventListener('change', this.invalidate);
+    this.controls.removeEventListener('start', this.controlStart);
+    this.controls.removeEventListener('end', this.controlEnd);
     this.controls.dispose();
     this.clearModel();
     this.renderer.dispose();

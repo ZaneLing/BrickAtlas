@@ -12,6 +12,7 @@ describe('LDraw semantic parser', () => {
     const files = splitMpd(`0 FILE Main Model.ldr\n${license}\n${ref('PARTS\\Brick.dat', '4')}\n${part}`);
     expect([...files.keys()]).toEqual(['main model.ldr', 'parts/brick.dat']);
     expect(reference(ref('some model.ldr'), 42).file).toBe('some model.ldr');
+    expect(reference(ref('brick.dat', '4294967295'), 43).color).toBe('16');
     expect(dependencyClosure(files, 'main model.ldr')).toHaveLength(2);
   });
   it('composes transforms, inherits colors and steps, retains duplicate instances', () => {

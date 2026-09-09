@@ -80,6 +80,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   const [notice, setNotice] = useState('');
   const [playing, setPlaying] = useState(false);
   const [panMode, setPanMode] = useState(mode === 'build');
+  const [followBuildStep, setFollowBuildStep] = useState(false);
   const [exportSize, setExportSize] = useState(3840);
   const [instructionFrames, setInstructionFrames] = useState<string[]>([]);
   const [instructionFrame, setInstructionFrame] = useState(0);
@@ -220,11 +221,11 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
     if (!playing || mode !== 'build') return;
     if (currentBuildStep >= steps.length) { setPlaying(false); return; }
     const timer = setTimeout(() => {
-      focusStepAfter.current = currentBuildStep + 1;
+      focusStepAfter.current = followBuildStep ? currentBuildStep + 1 : null;
       patch({ buildStep: currentBuildStep + 1, assemblyRevision: state.assemblyRevision + 1 });
     }, 1150);
     return () => clearTimeout(timer);
-  }, [playing, mode, currentBuildStep, steps.length, patch, state.assemblyRevision]);
+  }, [playing, mode, currentBuildStep, steps.length, patch, state.assemblyRevision, followBuildStep]);
   useEffect(() => {
     if (mode !== 'build' || !readyTime || currentBuildStep < 1 || !sceneRef.current) {
       setInstructionFrames([]);
@@ -298,9 +299,9 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
       setNotice(cause instanceof Error ? cause.message : tr('高清导出失败', 'High-resolution export failed'));
     }
   }
-  function setBuildStep(step: number) {
+  function setBuildStep(step: number, focus = followBuildStep) {
     const next = Math.max(0, Math.min(steps.length, step));
-    focusStepAfter.current = next || null;
+    focusStepAfter.current = focus && next ? next : null;
     patch({ buildStep: next, explosion: 0, autoRotate: false, isolation: null, assemblyRevision: state.assemblyRevision + 1 });
   }
   function toggleInstructionStep(step: number) {
@@ -408,6 +409,17 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
           <div className="toolbar-divider" />
           <IconButton label={tr('自动旋转', 'Auto rotate')} active={state.autoRotate} disabled={state.explosion >= 0.98} onClick={() => patch({ autoRotate: !state.autoRotate })}><Rotate3D size={18} /></IconButton>
           <IconButton label={tr('平移视图（上下左右拖动）', 'Pan view in any direction')} active={panMode} onClick={() => { setPanMode(value => !value); patch({ autoRotate: false }); }}><Hand size={17} /></IconButton>
+          {mode === 'build' && <IconButton
+            label={tr('步骤镜头跟随', 'Step camera follow')}
+            active={followBuildStep}
+            onClick={() => {
+              setFollowBuildStep(value => {
+                const next = !value;
+                if (next && currentBuildStep > 0) sceneRef.current?.focusBuildStep(currentBuildStep);
+                return next;
+              });
+            }}
+          ><Crosshair size={17} /></IconButton>}
           <IconButton label={tr('适配全部可见零件', 'Fit visible bricks')} onClick={() => patch({ revision: state.revision + 1 })}><Expand size={18} /></IconButton>
           <IconButton label={tr('零件边线', 'Part edges')} active={state.edges} onClick={() => patch({ edges: !state.edges })}><Box size={17} /></IconButton>
           <IconButton label={tr('X-Ray 透视模式', 'X-Ray mode')} active={state.xray} onClick={() => patch({ xray: !state.xray })}><Eye size={17} /></IconButton>

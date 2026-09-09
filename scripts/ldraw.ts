@@ -47,7 +47,9 @@ export function reference(text: string, line: number): Reference {
   if (Math.abs(matrix.determinant()) < 1e-10) throw new Error(`Singular matrix at line ${line}`);
   const file = normalize(t.slice(14).join(' '));
   if (file.startsWith('/') || file.split('/').includes('..')) throw new Error(`Unsafe reference ${file}`);
-  return { color: t[1], matrix, file, line };
+  // Some OMR exports serialize the inherited-color sentinel -1 as uint32.
+  const color = t[1] === '4294967295' ? '16' : t[1];
+  return { color, matrix, file, line };
 }
 
 export function header(file: LDrawFile, key: string) {

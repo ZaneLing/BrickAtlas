@@ -44,6 +44,10 @@ export interface ImageBrickBuild {
   width: number;
   height: number;
   maxDepth: number;
+  method: ImageBrickMethod;
+  bond: ImageBrickBond;
+  viewCount: number;
+  brickBudget: number;
   sourceWidth: number;
   sourceHeight: number;
   backgroundHex: string;
@@ -58,6 +62,22 @@ export interface ImageBrickOptions {
   maxColors: number;
   removeBackground: boolean;
   backgroundThreshold: number;
+  method: ImageBrickMethod;
+  bond: ImageBrickBond;
+  brickBudget: number;
+}
+
+export type ImageBrickMethod = 'relief' | 'hollow' | 'solid';
+export type ImageBrickBond = 'running' | 'stacked' | 'reinforced';
+export interface SampledImage {
+  data: Uint8ClampedArray;
+  width: number;
+  height: number;
+}
+export interface ImageBrickViews {
+  front: SampledImage;
+  top?: SampledImage;
+  side?: SampledImage;
 }
 
 export const brickPalette: BrickPaletteColor[] = [
@@ -138,11 +158,11 @@ function estimateBackground(data: Uint8ClampedArray, width: number, height: numb
   return total.map(value => Math.round(value / points.length)) as [number, number, number];
 }
 
-function partitionRun(start: number, end: number, reverse: boolean) {
+function partitionRun(start: number, end: number, reverse: boolean, maxWidth: ImageBrick['width'] = 4) {
   const widths: ImageBrick['width'][] = [];
   let remaining = end - start;
   while (remaining > 0) {
-    const width = Math.min(4, remaining) as ImageBrick['width'];
+    const width = Math.min(maxWidth, remaining) as ImageBrick['width'];
     widths.push(width);
     remaining -= width;
   }
@@ -156,20 +176,20 @@ function partitionRun(start: number, end: number, reverse: boolean) {
   return segments;
 }
 
-export function createBrickRelief(
+type ImageCell = {
+  color: BrickPaletteColor;
+  depth: number;
+  rgb: readonly [number, number, number];
+};
+
+function analyzeImage(
   data: Uint8ClampedArray,
-  sourceWidth: number,
-  sourceHeight: number,
+  width: number,
+  height: number,
   options: ImageBrickOptions,
-  name = 'Image sculpture',
-): ImageBrickBuild {
-  if (sourceWidth < 1 || sourceHeight < 1 || data.length !== sourceWidth * sourceHeight * 4) {
+): { cells: (ImageCell | null)[]; background: [number, number, number] } {
+  if (width < 1 || height < 1 || data.length !== width * height * 4) {
     throw new Error('Invalid image pixel data');
-  }
-  const width = clamp(Math.round(options.width), 12, 48);
-  const height = clamp(Math.round(sourceHeight), 8, 48);
-  if (width !== sourceWidth || height !== sourceHeight) {
-    throw new Error(`Pixel data must already be sampled to ${width} x ${height}`);
   }
   const maxDepth = clamp(Math.round(options.maxDepth), 1, 6);
   const maxColors = clamp(Math.round(options.maxColors), 2, brickPalette.length);
@@ -201,46 +221,66 @@ export function createBrickRelief(
     .slice(0, maxColors)
     .map(([id]) => id);
   const selectedPalette = paletteLab.filter(item => selectedIds.includes(item.color.id));
-  const cells = pixels.map(pixel => {
+  return {
+    background,
+    cells: pixels.map(pixel => {
     if (!pixel.occupied) return null;
     const color = nearestColor(pixel.rgb, selectedPalette.length ? selectedPalette : paletteLab);
     const lightness = rgbToLab(pixel.rgb)[0] / 100;
     const relief = clamp(pixel.backgroundDistance / 65, 0, 1) * 0.45 + (1 - lightness) * 0.55;
-    return { color, depth: 1 + Math.round(relief * (maxDepth - 1)) };
-  });
+      return { color, depth: 1 + Math.round(relief * (maxDepth - 1)), rgb: pixel.rgb };
+    }),
+  };
+}
 
-  const rowBandSize = 3;
-  const rowBands = Math.ceil(height / rowBandSize);
+function buildFromVoxels(
+  voxels: Map<string, BrickPaletteColor>,
+  width: number,
+  height: number,
+  depth: number,
+  options: ImageBrickOptions,
+  name: string,
+  background: [number, number, number],
+  viewCount: number,
+  sourceWidth = width,
+  sourceHeight = height,
+) {
+  const bandSize = 3;
+  const depthBands = Math.ceil(depth / bandSize);
   const bricks: ImageBrick[] = [];
   let brickIndex = 0;
-  for (let layer = 0; layer < maxDepth; layer++) {
-    for (let row = 0; row < height; row++) {
+  for (let level = 0; level < height; level++) {
+    for (let row = 0; row < depth; row++) {
       let column = 0;
       while (column < width) {
-        const cell = cells[row * width + column];
-        if (!cell || cell.depth <= layer) {
+        const color = voxels.get(`${column}:${level}:${row}`);
+        if (!color) {
           column++;
           continue;
         }
         let end = column + 1;
         while (end < width) {
-          const next = cells[row * width + end];
-          if (!next || next.depth <= layer || next.color.id !== cell.color.id) break;
+          const next = voxels.get(`${end}:${level}:${row}`);
+          if (!next || next.id !== color.id) break;
           end++;
         }
-        for (const segment of partitionRun(column, end, layer % 2 === 1)) {
+        const reverse = options.bond === 'running'
+          ? (level + row) % 2 === 1
+          : options.bond === 'reinforced' && level % 2 === 1;
+        const maxWidth = options.bond === 'reinforced' && (level + row) % 3 === 0 ? 2 : 4;
+        for (const segment of partitionRun(column, end, reverse, maxWidth)) {
           brickIndex++;
-          const step = layer * rowBands + Math.floor(row / rowBandSize) + 1;
+          const step = level * depthBands + Math.floor(row / bandSize) + 1;
           bricks.push({
             id: `image_brick_${String(brickIndex).padStart(5, '0')}`,
             partId: partByWidth[segment.width],
             width: segment.width,
             x: segment.start + segment.width / 2 - width / 2,
-            y: layer * 1.2 + 0.6,
-            z: row - height / 2 + 0.5,
-            colorId: cell.color.id,
-            colorCode: cell.color.code,
-            colorHex: cell.color.hex,
+            y: level * 1.2 + 0.6,
+            z: row - depth / 2 + 0.5,
+            colorId: color.id,
+            colorCode: color.code,
+            colorHex: color.hex,
             step,
           });
         }
@@ -250,13 +290,13 @@ export function createBrickRelief(
   }
   const rawStepIds = [...new Set(bricks.map(brick => brick.step))].sort((a, b) => a - b);
   const steps = rawStepIds.map((rawId, index) => {
-    const layer = Math.floor((rawId - 1) / rowBands);
-    const band = (rawId - 1) % rowBands;
+    const layer = Math.floor((rawId - 1) / depthBands);
+    const band = (rawId - 1) % depthBands;
     return {
       id: index + 1,
       layer,
-      rowStart: band * rowBandSize,
-      rowEnd: Math.min(height, (band + 1) * rowBandSize) - 1,
+      rowStart: band * bandSize,
+      rowEnd: Math.min(depth, (band + 1) * bandSize) - 1,
       brickIds: bricks.filter(brick => brick.step === rawId).map(brick => brick.id),
     };
   });
@@ -285,7 +325,11 @@ export function createBrickRelief(
     name,
     width,
     height,
-    maxDepth,
+    maxDepth: depth,
+    method: options.method,
+    bond: options.bond,
+    viewCount,
+    brickBudget: options.brickBudget,
     sourceWidth,
     sourceHeight,
     backgroundHex,
@@ -293,6 +337,106 @@ export function createBrickRelief(
     steps,
     bom: [...bomMap.values()].sort((a, b) => b.quantity - a.quantity || a.key.localeCompare(b.key)),
   };
+}
+
+export function createBrickModelFromViews(
+  views: ImageBrickViews,
+  options: ImageBrickOptions,
+  name = 'Image sculpture',
+): ImageBrickBuild {
+  const { front } = views;
+  const width = clamp(Math.round(options.width), 12, 48);
+  if (front.width !== width || front.height < 1) {
+    throw new Error(`Front view must already be sampled to ${width}px wide`);
+  }
+  const frontAnalysis = analyzeImage(front.data, front.width, front.height, options);
+  const height = front.height;
+  const requestedDepth = options.method === 'relief'
+    ? clamp(Math.round(options.maxDepth), 1, 6)
+    : width;
+  const top = views.top ? analyzeImage(views.top.data, views.top.width, views.top.height, options) : null;
+  const side = views.side ? analyzeImage(views.side.data, views.side.width, views.side.height, options) : null;
+  const depth = Math.max(1, Math.min(requestedDepth, views.top?.height ?? width, views.side?.width ?? width));
+  const voxels = new Map<string, BrickPaletteColor>();
+
+  for (let sourceRow = 0; sourceRow < height; sourceRow++) {
+    const level = height - sourceRow - 1;
+    for (let x = 0; x < width; x++) {
+      const frontCell = frontAnalysis.cells[sourceRow * width + x];
+      if (!frontCell) continue;
+      for (let z = 0; z < depth; z++) {
+        let occupied = z < frontCell.depth;
+        const colors: (readonly number[])[] = [frontCell.rgb];
+        if (options.method !== 'relief') {
+          const topCell = top?.cells[z * views.top!.width + x];
+          const sideCell = side?.cells[sourceRow * views.side!.width + z];
+          occupied = Boolean(frontCell && (!top || topCell) && (!side || sideCell));
+          if (topCell) colors.push(topCell.rgb);
+          if (sideCell) colors.push(sideCell.rgb);
+        }
+        if (!occupied) continue;
+        const rgb = [0, 1, 2].map(channel =>
+          Math.round(colors.reduce((sum, color) => sum + color[channel], 0) / colors.length),
+        );
+        voxels.set(`${x}:${level}:${z}`, nearestColor(rgb));
+      }
+    }
+  }
+
+  if (options.method === 'hollow' && voxels.size) {
+    const solid = new Set(voxels.keys());
+    for (const key of [...voxels.keys()]) {
+      const [x, y, z] = key.split(':').map(Number);
+      const enclosed = [
+        `${x - 1}:${y}:${z}`, `${x + 1}:${y}:${z}`,
+        `${x}:${y - 1}:${z}`, `${x}:${y + 1}:${z}`,
+        `${x}:${y}:${z - 1}`, `${x}:${y}:${z + 1}`,
+      ].every(neighbor => solid.has(neighbor));
+      if (enclosed) voxels.delete(key);
+    }
+  }
+
+  let modelVoxels = voxels;
+  let modelWidth = width;
+  let modelHeight = height;
+  let modelDepth = depth;
+  if (voxels.size) {
+    const coordinates = [...voxels.keys()].map(key => key.split(':').map(Number));
+    const min = [0, 1, 2].map(axis => Math.min(...coordinates.map(point => point[axis])));
+    const max = [0, 1, 2].map(axis => Math.max(...coordinates.map(point => point[axis])));
+    modelWidth = max[0] - min[0] + 1;
+    modelHeight = max[1] - min[1] + 1;
+    modelDepth = max[2] - min[2] + 1;
+    modelVoxels = new Map([...voxels].map(([key, color]) => {
+      const [x, y, z] = key.split(':').map(Number);
+      return [`${x - min[0]}:${y - min[1]}:${z - min[2]}`, color];
+    }));
+  }
+
+  return buildFromVoxels(
+    modelVoxels,
+    modelWidth,
+    modelHeight,
+    modelDepth,
+    options,
+    name,
+    frontAnalysis.background,
+    1 + Number(Boolean(top)) + Number(Boolean(side)),
+    front.width,
+    front.height,
+  );
+}
+
+export function createBrickRelief(
+  data: Uint8ClampedArray,
+  sourceWidth: number,
+  sourceHeight: number,
+  options: ImageBrickOptions,
+  name = 'Image sculpture',
+): ImageBrickBuild {
+  return createBrickModelFromViews({
+    front: { data, width: sourceWidth, height: sourceHeight },
+  }, { ...options, method: 'relief' }, name);
 }
 
 export function imageBrickBuildToLdraw(build: ImageBrickBuild) {
@@ -340,5 +484,8 @@ export function createDemoBrickBuild() {
     maxColors: 6,
     removeBackground: true,
     backgroundThreshold: 12,
+    method: 'relief',
+    bond: 'running',
+    brickBudget: 1200,
   }, 'Brick Atlas demo');
 }

@@ -1,18 +1,18 @@
 import { readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 
-test('catalog exposes twelve projects, real previews and model parameters', async ({ page }) => {
+test('catalog exposes fifteen projects, real previews and model parameters', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Brick Atlas' })).toBeVisible();
   await expect(page.locator('.floating-bricks > span')).toHaveCount(22);
-  await expect(page.locator('.model-card')).toHaveCount(12);
+  await expect(page.locator('.model-card')).toHaveCount(15);
   await expect(page.getByText('积木实例')).toBeVisible();
-  await expect(page.locator('.model-card-explore')).toHaveCount(12);
+  await expect(page.locator('.model-card-explore')).toHaveCount(15);
   await expect(page.getByText('探索模型', { exact: true })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: '开始拼装' })).toHaveCount(12);
-  await expect(page.locator('.model-card-specs')).toHaveCount(12);
+  await expect(page.getByRole('link', { name: '开始拼装' })).toHaveCount(15);
+  await expect(page.locator('.model-card-specs')).toHaveCount(15);
   await expect(page.getByText('积木树').first()).toBeVisible();
-  await expect(page.locator('.model-art img')).toHaveCount(12);
+  await expect(page.locator('.model-art img')).toHaveCount(15);
   expect(await page.locator('.model-art img').evaluateAll(images => images.every(image => (image as HTMLImageElement).naturalWidth >= 1000))).toBe(true);
   const position = await page.locator('.floating-bricks > span').first().evaluate(element => getComputedStyle(element).translate);
   await page.waitForTimeout(350);
@@ -94,7 +94,7 @@ test('desktop renderer uses high-density pixels and supports 4x ultra mode', asy
 test('build mode advances, animates and persists progress per project', async ({ page }) => {
   await page.goto('/build/5867');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: '下一步' }).click();
+  await page.getByLabel('下一步', { exact: true }).click();
   await expect(page.getByLabel('当前拼装步骤')).toHaveValue('1');
   await expect.poll(async () => page.evaluate(() => window.__atlas?.().visibleInstances)).toBe(6);
   await expect(page.getByRole('complementary', { name: '步骤说明书' })).toBeVisible();
@@ -122,6 +122,34 @@ test('build mode advances, animates and persists progress per project', async ({
   await expect(page.getByLabel('当前拼装步骤')).toHaveValue('2');
   await expect(stepBricks.nth(1)).toHaveAttribute('open', '');
   await expect(stepBricks.first()).not.toHaveAttribute('open', '');
+});
+
+test('build steps preserve the user camera unless follow mode is enabled', async ({ page }) => {
+  await page.goto('/build/5867');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  await page.getByLabel('下一步', { exact: true }).click();
+  await page.waitForTimeout(1000);
+  await page.getByRole('button', { name: '放大模型' }).click();
+  await page.getByRole('button', { name: '放大模型' }).click();
+  const camera = (await page.evaluate(() => window.__atlas!().camera))!;
+  const target = (await page.evaluate(() => window.__atlas!().target))!;
+
+  await page.getByLabel('下一步', { exact: true }).click();
+  await page.waitForTimeout(1100);
+  expect(await page.evaluate(({ camera, target }) => {
+    const state = window.__atlas!();
+    return Math.max(
+      Math.hypot(...state.camera.map((value, index) => value - camera[index])),
+      Math.hypot(...state.target.map((value, index) => value - target[index])),
+    );
+  }, { camera, target })).toBeLessThan(0.05);
+
+  await page.getByRole('button', { name: '步骤镜头跟随' }).click();
+  await page.getByLabel('下一步', { exact: true }).click();
+  await expect.poll(async () => page.evaluate(before => {
+    const camera = window.__atlas!().camera;
+    return Math.hypot(...camera.map((value, index) => value - before[index]));
+  }, camera)).toBeGreaterThan(1);
 });
 
 test('build canvas pans horizontally and vertically without moving the model base', async ({ page }) => {
@@ -271,6 +299,40 @@ test('complex train and truck models load all addressable bricks', async ({ page
   }
 });
 
+test('large batched model expands completely without multiplying draw calls', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chrome', 'One Chromium GPU stress run is sufficient.');
+  test.setTimeout(90000);
+  await page.goto('/explore/10214');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible({ timeout: 60000 });
+  await expect.poll(async () => page.evaluate(() => window.__atlas?.().loadedInstances), { timeout: 60000 }).toBe(4281);
+  const assembled = (await page.evaluate(() => window.__atlas!()))!;
+  expect(assembled.drawCalls).toBeLessThan(650);
+  await page.getByRole('button', { name: /^零件陈列/ }).click();
+  await expect.poll(async () => page.evaluate(() => window.__atlas?.().actualExplosion), { timeout: 10000 }).toBe(1);
+  await expect.poll(
+    async () => page.evaluate(() => window.__atlas?.().framing.insideInstances),
+    { timeout: 10000 },
+  ).toBe(4281);
+  const inventory = (await page.evaluate(() => window.__atlas!()))!;
+  expect(inventory.visibleInstances).toBe(4281);
+  expect(inventory.framing.insideInstances).toBe(4281);
+  expect(inventory.drawCalls).toBeLessThan(650);
+  expect(inventory.frameMs).toBeLessThan(80);
+
+  await page.goto('/build/10214');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible({ timeout: 60000 });
+  const buildStarted = Date.now();
+  for (let step = 1; step <= 3; step++) {
+    await page.getByLabel('下一步', { exact: true }).click();
+    await expect(page.getByRole('slider', { name: '当前拼装步骤' })).toHaveValue(String(step));
+    await page.waitForTimeout(1050);
+  }
+  expect(Date.now() - buildStarted).toBeLessThan(8000);
+  const buildMetrics = (await page.evaluate(() => window.__atlas!()))!;
+  expect(buildMetrics.drawCalls).toBeLessThan(650);
+  expect(buildMetrics.frameMs).toBeLessThan(80);
+});
+
 test('workspace navigation returns home and switches models', async ({ page }) => {
   await page.goto('/explore/5867');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
@@ -291,15 +353,57 @@ test('creator preflights a local MPD without uploading it', async ({ page }) => 
 test('image studio converts an image into bricks, steps, and exports', async ({ page }) => {
   await page.goto('/create');
   await expect(page.getByRole('region', { name: '图片转积木工作台' })).toBeVisible();
-  await page.locator('input[accept^="image/"]').setInputFiles('public/models/5867/preview.png');
+  await page.getByLabel('上传正视图').setInputFiles('public/models/5867/preview.png');
   await expect(page.locator('.image-stage-heading strong')).toHaveText('preview');
   await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().bricks ?? 0)).toBeGreaterThan(20);
+  const crop = page.locator('.crop-source').first().locator('.crop-selection');
+  const cropBefore = await crop.getAttribute('style');
+  const cropBox = (await crop.boundingBox())!;
+  await page.mouse.move(cropBox.x + cropBox.width / 2, cropBox.y + cropBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(cropBox.x + cropBox.width / 2 - 35, cropBox.y + cropBox.height / 2, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(async () => crop.getAttribute('style')).not.toBe(cropBefore);
+
+  await page.getByLabel('上传俯视图').setInputFiles('public/models/5867/preview.png');
+  await page.getByLabel('上传侧视图').setInputFiles('public/models/5867/preview.png');
+  await page.getByLabel('生成方法').selectOption('hollow');
+  await page.getByLabel('积木预算').fill('800');
+  await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().viewCount)).toBe(3);
+  await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().method)).toBe('hollow');
+  await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().bricks ?? 9999)).toBeLessThanOrEqual(800);
+  await page.getByRole('tab', { name: '拼装步骤' }).click();
+  const createSteps = page.locator('.image-instruction-step');
+  await expect(createSteps).toHaveCount((await page.evaluate(() => window.__imageBricks!().steps))!);
+  await createSteps.first().locator('summary').click();
+  await expect(createSteps.first().getByRole('button', { name: '聚焦本步' })).toBeVisible();
   const canvas = page.getByRole('img', { name: '图片生成的积木三维模型' });
   await expect(canvas).toBeVisible();
   const ratio = await canvas.evaluate(element => (element as HTMLCanvasElement).width / element.getBoundingClientRect().width);
   expect(ratio).toBeGreaterThanOrEqual(1.9);
+  const createAutoRotate = page.getByRole('button', { name: '自动旋转' });
+  if (await createAutoRotate.getAttribute('aria-pressed') === 'true') await createAutoRotate.click();
   await page.getByLabel('拆分程度').fill('70');
   await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().explosion ?? 0)).toBeGreaterThan(0.6);
+  await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().cameraMoving)).toBe(false);
+  const metrics = (await page.evaluate(() => window.__imageBricks!()))!;
+  expect(metrics.drawCalls).toBeLessThan(80);
+  expect(metrics.bodyBatches + metrics.studBatches).toBeLessThan(80);
+  const camera = metrics.camera;
+  await page.getByRole('slider', { name: '当前拼装步骤' }).fill(String(Math.max(1, metrics.steps - 1)));
+  await page.getByRole('button', { name: '下一步' }).click();
+  await page.waitForTimeout(700);
+  expect(await page.evaluate(before => {
+    const camera = window.__imageBricks!().camera;
+    return Math.hypot(...camera.map((value, index) => value - before[index]));
+  }, camera)).toBeLessThan(0.05);
+  await page.getByRole('button', { name: '步骤镜头跟随' }).click();
+  await page.getByRole('button', { name: '回到开始' }).click();
+  await page.getByRole('button', { name: '下一步' }).click();
+  await expect.poll(async () => page.evaluate(before => {
+    const camera = window.__imageBricks!().camera;
+    return Math.hypot(...camera.map((value, index) => value - before[index]));
+  }, camera)).toBeGreaterThan(1);
   const bomDownload = page.waitForEvent('download');
   await page.getByRole('button', { name: 'BOM CSV' }).click();
   expect((await bomDownload).suggestedFilename()).toContain('-bom.csv');

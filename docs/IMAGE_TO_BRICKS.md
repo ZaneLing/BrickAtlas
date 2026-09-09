@@ -2,24 +2,28 @@
 
 ## What Ships in the Browser
 
-Brick Atlas includes a deterministic single-image relief generator at `/create`.
+Brick Atlas includes a deterministic local multi-view generator at `/create`.
 
 The browser:
 
-1. samples the image onto a configurable stud grid;
-2. estimates the background from corner pixels;
-3. maps visible pixels to a practical LDraw color palette;
-4. derives a shallow height field from contrast and luminance;
-5. packs occupied cells into 1x1, 1x2, 1x3, and 1x4 bricks;
-6. creates layer-based build steps and a bill of materials;
-7. renders the result as an interactive Three.js model; and
-8. exports BOM CSV and LDraw files.
+1. lets the user move and resize a square crop independently on each source image;
+2. accepts a required front view plus optional top and side views;
+3. samples each crop onto a common configurable stud grid;
+4. estimates the background from corner pixels;
+5. maps visible pixels to a practical LDraw color palette;
+6. derives either a shallow height field or a three-view visual hull;
+7. supports solid, hollow-shell, and relief generation;
+8. packs occupied cells into 1x1, 1x2, 1x3, and 1x4 bricks using stacked, running, or reinforced bonds;
+9. lowers sampling resolution automatically when needed to honor the requested brick budget;
+10. creates bottom-up build steps and a bill of materials;
+11. renders the result with batched Three.js instancing; and
+12. exports BOM CSV and LDraw files.
 
-No image is uploaded. The result is a buildable color relief, not a complete reconstruction of surfaces that were hidden from the camera.
+No image is uploaded. Multi-view output is a silhouette intersection, not a learned reconstruction of surfaces hidden from every supplied view.
 
 ## Why a Single Image Is Not Enough for Exact Geometry
 
-A photograph contains no direct evidence for the back, underside, internal supports, real scale, or occluded parts of an object. A model can infer plausible geometry, but it cannot guarantee an exact reconstruction from one view. Exact work requires calibrated multi-view photographs or an existing mesh.
+A photograph contains no direct evidence for the back, underside, internal supports, real scale, or occluded parts of an object. A model can infer plausible geometry, but it cannot guarantee an exact reconstruction from one view. Exact work requires calibrated multi-view photographs or an existing mesh. The browser workflow improves silhouette and depth agreement when front, top, and side views are supplied, but it does not infer unseen concavities.
 
 BrickLink Studio makes the same practical distinction:
 

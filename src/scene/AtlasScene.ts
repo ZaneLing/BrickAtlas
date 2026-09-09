@@ -62,7 +62,6 @@ export class AtlasScene {
   private assemblyProgress = 1;
   private assemblyIds = new Set<string>();
   private assemblyOrder = new Map<string, number>();
-  private settleFocusStep: number | null = null;
   private desiredTarget = new Vector3();
   private desiredPosition = new Vector3();
   private userDirection = new Vector3(-1, 0.7, 1);
@@ -215,7 +214,6 @@ export class AtlasScene {
   private controlStart = () => {
     this.interaction = true;
     this.cameraMoving = false;
-    this.settleFocusStep = null;
     if (this.panMode) this.renderer.domElement.style.cursor = 'grabbing';
     this.callbacks.hover(null, 0, 0);
   };
@@ -316,10 +314,10 @@ export class AtlasScene {
     const previous = this.state;
     this.state = state;
     const activeStep = state.buildStep ? this.manifest.instructions?.steps[state.buildStep - 1] : undefined;
-    const visibilityChanged = previous.hiddenGroups.join() !== state.hiddenGroups.join()
+    const filteredVisibilityChanged = previous.hiddenGroups.join() !== state.hiddenGroups.join()
       || previous.hiddenBrickIds.join() !== state.hiddenBrickIds.join()
-      || previous.isolation?.join() !== state.isolation?.join()
-      || previous.buildStep !== state.buildStep;
+      || previous.isolation?.join() !== state.isolation?.join();
+    const visibilityChanged = filteredVisibilityChanged || previous.buildStep !== state.buildStep;
     const viewChanged = previous.view !== state.view || previous.revision !== state.revision;
     const assemblyChanged = previous.buildStep !== state.buildStep || previous.assemblyRevision !== state.assemblyRevision;
     if (assemblyChanged && state.buildStep !== null && state.buildStep > 0
@@ -355,7 +353,7 @@ export class AtlasScene {
     if (previous.background !== state.background) {
     this.renderer.setClearColor({ studio: '#f4f5f8', white: '#ffffff', dark: '#171c2c' }[state.background]);
     }
-    if (previous.explosion !== state.explosion || viewChanged || visibilityChanged) this.fitRequested = true;
+    if (previous.explosion !== state.explosion || viewChanged || filteredVisibilityChanged) this.fitRequested = true;
     if (this.reducedMotion) this.actualExplosion = state.explosion;
     this.updateLayout();
     if (this.fitRequested) this.fit();
@@ -422,12 +420,13 @@ export class AtlasScene {
     const halfWidth = Math.max(viewBox.max.x - viewCenter.x, viewCenter.x - viewBox.min.x);
     const halfHeight = Math.max(viewBox.max.y - viewCenter.y, viewCenter.y - viewBox.min.y);
     const nearDepth = Math.max(0, viewBox.max.z - viewCenter.z);
-    const padding = 1.15 + inventoryMix * 0.13;
+    const padding = 1.15 + inventoryMix * 0.3;
     const fitDistance = Math.max(
       halfHeight / tan,
       halfWidth / tan / this.camera.aspect,
       20,
     ) * padding + nearDepth;
+    this.controls.maxDistance = Math.max(6000, fitDistance * 2);
     this.desiredPosition.copy(this.desiredTarget).addScaledVector(direction, fitDistance);
     this.cameraMoving = true;
     if (immediate || this.reducedMotion) {
@@ -446,7 +445,6 @@ export class AtlasScene {
 
   focusBuildStep(step: number) {
     const instruction = this.manifest.instructions?.steps[step - 1];
-    this.settleFocusStep = instruction ? step : null;
     this.focusInstances(
       instruction?.motionInstanceIds ?? instruction?.instanceIds ?? [],
       instruction?.kind === 'placement' ? 1.45 : 1.7,
@@ -523,24 +521,8 @@ export class AtlasScene {
       if (!this.interaction) this.fit();
     }
     if (this.assemblyProgress < 1) {
-      const wasAnimating = this.assemblyProgress < 1;
-      const settleStep = this.settleFocusStep;
       this.assemblyProgress = Math.min(1, this.assemblyProgress + dt / 0.95);
       this.updateLayout();
-      if (
-        wasAnimating &&
-        this.assemblyProgress === 1 &&
-        settleStep !== null &&
-        settleStep === this.state.buildStep &&
-        !this.interaction
-      ) {
-        const step = this.manifest.instructions?.steps[settleStep - 1];
-        this.focusInstances(
-          step?.motionInstanceIds ?? step?.instanceIds ?? [],
-          step?.kind === 'placement' ? 1.45 : 1.7,
-        );
-        this.settleFocusStep = null;
-      }
     }
     if (this.cameraMoving && !this.interaction) {
       const t = 1 - Math.exp(-8 * dt);
@@ -851,6 +833,7 @@ export class AtlasScene {
       offsets: this.offsets.map(v => v.toArray()),
       camera: this.camera.position.toArray(),
       target: this.controls.target.toArray(),
+      cameraMoving: this.cameraMoving,
       panMode: this.panMode,
       buildStep: this.state.buildStep,
       requestedExplosion: this.state.explosion,
