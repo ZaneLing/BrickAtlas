@@ -341,6 +341,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
       <div className="top-search"><Search size={16} /><input aria-label={tr('顶部搜索零件', 'Global brick search')} placeholder={tr('搜索 Part ID、名称、子装配', 'Search part ID, name, assembly')} value={query} onChange={event => setQuery(event.target.value)} /></div>
       <div className="top-actions">
         <a className="text-button source-button" href={import.meta.env.BASE_URL}><Library size={16} />{tr('项目库', 'Library')}</a>
+        <a className="icon-button" aria-label={tr('自由 DIY', 'Free DIY')} title={tr('自由 DIY', 'Free DIY')} href={`${import.meta.env.BASE_URL}diy`}><Boxes size={17} /></a>
         <a className="text-button source-button" href={`${import.meta.env.BASE_URL}${mode === 'build' ? 'explore' : 'build'}/${config.id}`}>{mode === 'build' ? <Layers3 size={16} /> : <BookOpen size={16} />}{mode === 'build' ? tr('探索', 'Explore') : tr('拼装', 'Build')}</a>
         {mode === 'build' && <button className="text-button source-button" disabled={!!guideExport || loading} onClick={exportInstructions}><FileDown size={16} />{tr('导出说明书', 'Export guide')}</button>}
         <IconButton label={tr('X-Ray 透视模式', 'X-Ray mode')} active={state.xray} onClick={() => patch({ xray: !state.xray })}><Eye size={18} /></IconButton>
@@ -617,7 +618,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
           <h1>Brick Atlas</h1>
           <h2>{tr('把每一块积木看清楚', 'See every brick. Build every idea.')}</h2>
           <p>{tr('旋转真实 LDraw 模型，拆解每个结构，逐步完成拼装，并导出属于你的说明书。', 'Rotate real LDraw models, inspect every assembly, build step by step, and export your own guide.')}</p>
-          <div className="hero-actions"><a className="hero-primary" href={`${import.meta.env.BASE_URL}compose`}><Boxes size={17} />{tr('组建新世界', 'Compose a world')}</a><a href="#models"><Library size={17} />{tr('浏览模型', 'Browse models')}</a></div>
+          <div className="hero-actions"><a className="hero-primary" href={`${import.meta.env.BASE_URL}diy`}><Boxes size={17} />{tr('自由拼积木', 'Build freely')}</a><a href="#models"><Library size={17} />{tr('浏览模型', 'Browse models')}</a></div>
           <dl><div><dt>{tr('积木实例', 'Brick instances')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.stats.instances, 0) || '—'}</dd></div><div><dt>{tr('可探索项目', 'Models')}</dt><dd>{modelCatalog.length}</dd></div><div><dt>{tr('拼装步骤', 'Build steps')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.steps, 0) || '—'}</dd></div></dl>
         </div>
         <div className="hero-model-label"><strong>5867</strong><span>Super Speedster</span></div>
@@ -625,7 +626,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
       <section className="feature-band" id="features">
         <div><Rotate3D size={22} /><strong>{tr('真实 3D 探索', 'True 3D exploration')}</strong><span>{tr('自由旋转、缩放和拆解', 'Orbit, zoom, isolate, and explode')}</span></div>
         <div><BookOpen size={22} /><strong>{tr('动态拼装', 'Animated building')}</strong><span>{tr('步骤、零件和入位动画同步', 'Steps, parts, and motion stay in sync')}</span></div>
-        <div><Boxes size={22} /><strong>{tr('自由组建', 'Free composition')}</strong><span>{tr('组件、场景和零件吸附到底板', 'Snap components, scenes, and parts to a base')}</span></div>
+        <div><Boxes size={22} /><strong>{tr('自由 DIY 与组建', 'Free DIY and composition')}</strong><span>{tr('逐砖拼搭，或把完整组件放入场景', 'Build brick by brick or compose complete models')}</span></div>
         <div><FileDown size={22} /><strong>{tr('高清输出', 'High-resolution output')}</strong><span>{tr('最高 12K 图像与完整 PDF 说明书', 'Up to 12K imagery and complete PDF guides')}</span></div>
       </section>
       <LandingShowcase locale={locale} tr={tr} />
@@ -667,7 +668,7 @@ function CreatorPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
     }));
   }
   return <div className="catalog-page creator-page">
-    <header className="topbar"><a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><BrickAtlasMark /></span><strong>BRICK<span>ATLAS</span></strong></a><div className="top-divider" /><span className="workspace-label">{tr('图片创作工坊', 'Creator studio')}</span><nav className="top-actions"><a className="text-button" href={import.meta.env.BASE_URL}><Library size={16} />{tr('项目库', 'Library')}</a><LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} /></nav></header>
+    <header className="topbar"><a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><BrickAtlasMark /></span><strong>BRICK<span>ATLAS</span></strong></a><div className="top-divider" /><span className="workspace-label">{tr('图片创作工坊', 'Creator studio')}</span><nav className="top-actions"><a className="text-button" href={`${import.meta.env.BASE_URL}diy`}><Boxes size={16} />{tr('自由 DIY', 'Free DIY')}</a><a className="text-button" href={`${import.meta.env.BASE_URL}compose`}><Layers3 size={16} />{tr('组建', 'Compose')}</a><a className="text-button" href={import.meta.env.BASE_URL}><Library size={16} />{tr('项目库', 'Library')}</a><LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} /></nav></header>
     <main className="creator-shell creator-studio-shell">
       <ImageBrickStudio locale={locale} tr={tr} />
       <section className="ldraw-import-section">

@@ -344,8 +344,8 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
       {processing && <div className="creator-status" role="status">{tr('正在融合视图并生成积木模型…', 'Fusing views and generating the brick model...')}</div>}
       {error && <div className="creator-error" role="alert">{error}</div>}
       <div className="creator-export-row">
-        <button onClick={exportBom}><ArrowDownToLine size={15} />BOM CSV</button>
-        <button onClick={() => download(imageBrickBuildToLdraw(build), `${build.name}.ldr`, 'text/plain;charset=utf-8')}><ArrowDownToLine size={15} />LDraw</button>
+        <button data-brick-effect="shatter" onClick={exportBom}><ArrowDownToLine size={15} />BOM CSV</button>
+        <button data-brick-effect="shatter" onClick={() => download(imageBrickBuildToLdraw(build), `${build.name}.ldr`, 'text/plain;charset=utf-8')}><ArrowDownToLine size={15} />LDraw</button>
       </div>
     </aside>
 

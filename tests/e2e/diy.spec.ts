@@ -50,6 +50,40 @@ test('mouse preview follows, stamps continuously, rotates, stacks, paints and un
   await expect.poll(() => page.evaluate(() => window.__diy!().count)).toBe(2);
 });
 
+test('expanded categories expose real shapes and tactile brick effects', async ({ page }) => {
+  await page.goto('/diy');
+  await expect(page.getByRole('tab', { name: /零件/ })).toContainText('78');
+  await page.getByRole('button', { name: /Technic 9/ }).click();
+  await expect(page.getByRole('button', { name: '选取Technic 孔砖 1×16' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '选取基础砖 2×4' })).toHaveCount(0);
+  await expect.poll(() => page.locator('.diy-part canvas').first().evaluate((canvas: HTMLCanvasElement) =>
+    canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data.some((value, i) => i % 4 === 3 && value > 0),
+  )).toBe(true);
+  const technic = page.getByRole('button', { name: '选取Technic 孔砖 1×4' });
+  await technic.click();
+  await expect(page.locator('.brick-shatter-piece')).toHaveCount(14);
+  await expect(page.locator('.brick-shatter-piece')).toHaveCount(0, { timeout: 1500 });
+  await page.getByRole('button', { name: /建筑件 6/ }).click();
+  await expect(page.getByRole('button', { name: '选取拱门 1×5×4' })).toBeVisible();
+  await page.getByRole('button', { name: /连接件 11/ }).click();
+  await expect(page.getByRole('button', { name: '选取Technic 摩擦销' })).toBeVisible();
+  await page.getByRole('button', { name: /全部 78/ }).click();
+  await page.getByLabel('搜索 DIY 素材').fill('clip');
+  await expect(page.locator('.diy-part')).toHaveCount(5);
+  await page.getByLabel('搜索 DIY 素材').fill('');
+  await page.getByRole('button', { name: '选取圆锥 2×2×2' }).click();
+  await placeAt(page);
+  await expect(page.locator('.brick-placement-ring')).toHaveCount(1);
+  await expect(page.locator('.brick-placement-ring')).toHaveCount(0, { timeout: 1500 });
+  expect(await page.evaluate(() => window.__diy!().bricks[0].partId)).toBe('3942c');
+  await page.getByRole('tab', { name: /小组件/ }).click();
+  await expect(page.getByRole('tab', { name: /小组件/ })).toContainText('12');
+  await page.getByRole('button', { name: '选取小树' }).click();
+  await placeAt(page, 8, 0);
+  await expect.poll(() => page.evaluate(() => window.__diy!().count)).toBe(4);
+  expect(await page.evaluate(() => [...new Set(window.__diy!().bricks.slice(1).map(brick => brick.color))].sort())).toEqual(['brown', 'green']);
+});
+
 test('dragging never places and collisions are rejected on a locked layer', async ({ page }) => {
   await page.goto('/diy');
   const point = await ground(page);
@@ -169,6 +203,16 @@ test('desktop screenshots contain geometry, thumbnails and accessible controls',
     await page.screenshot({ path });
     await testInfo.attach(`diy-${width}`, { path, contentType: 'image/png' });
     expect(await page.locator('.diy-part canvas').first().evaluate((canvas: HTMLCanvasElement) => canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data.some((value, i) => i % 4 === 3 && value > 0))).toBe(true);
+    if (width === 1440) {
+      await page.getByRole('tab', { name: /零件/ }).click();
+      await page.getByRole('button', { name: /Technic 9/ }).click();
+      await expect.poll(() => page.locator('.diy-part canvas').first().evaluate((canvas: HTMLCanvasElement) =>
+        canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data.some((value, i) => i % 4 === 3 && value > 0),
+      )).toBe(true);
+      const libraryPath = testInfo.outputPath('diy-1440-technic-library.png');
+      await page.screenshot({ path: libraryPath });
+      await testInfo.attach('diy-1440-technic-library', { path: libraryPath, contentType: 'image/png' });
+    }
   }
   expect(errors).toEqual([]);
   const axe = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();

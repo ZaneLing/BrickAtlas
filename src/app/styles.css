@@ -1234,14 +1234,92 @@ button { transition: background .18s, color .18s, border-color .18s, box-shadow 
   box-shadow: 4px 0 #ffffff70;
 }
 
+.brick-shatter-piece {
+  border-radius: 3px;
+  animation-name: brick-shatter;
+  animation-duration: .72s;
+  box-shadow: inset 0 -3px 0 #00000030, 0 5px 9px #202a4430;
+}
+
+.brick-placement-ring {
+  position: fixed;
+  z-index: 9998;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  translate: -50% -50%;
+  animation: brick-placement-ring .52s cubic-bezier(.18, .78, .22, 1) forwards;
+}
+
+button[data-brick-effect="shatter"],
+.primary-button,
+.secondary-button,
+.model-card-actions a,
+.creator-export-row button,
+.compose-export button {
+  position: relative;
+  overflow: visible;
+}
+
+button[data-brick-effect="shatter"]::before,
+.primary-button::before,
+.secondary-button::before,
+.model-card-actions a::before,
+.creator-export-row button::before,
+.compose-export button::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  left: 9px;
+  top: -4px;
+  width: 7px;
+  height: 5px;
+  border-radius: 50% 50% 2px 2px;
+  border: 1px solid #ffffff8a;
+  background: color-mix(in srgb, currentColor 16%, white);
+  box-shadow: 12px 0 color-mix(in srgb, currentColor 16%, white);
+  opacity: .82;
+  pointer-events: none;
+}
+
+[role="tab"] {
+  position: relative;
+}
+
+[role="tab"][aria-selected="true"] svg {
+  animation: tab-brick-lock .28s cubic-bezier(.22, 1, .36, 1);
+}
+
 @keyframes brick-burst {
   0% { opacity: 0; transform: translate(0, 0) rotate(0) scale(.7); }
   18% { opacity: 1; }
   100% { opacity: 0; transform: translate(var(--burst-x), var(--burst-y)) rotate(var(--burst-spin)) scale(.35); }
 }
 
+@keyframes brick-shatter {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0) scale(.8); }
+  10% { opacity: 1; }
+  46% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--burst-x), var(--burst-y)) rotate(var(--burst-spin)) scale(.28); }
+}
+
+@keyframes brick-placement-ring {
+  0% { opacity: .9; scale: .3; }
+  55% { opacity: .68; scale: 2.4; }
+  100% { opacity: 0; scale: 3.6; }
+}
+
+@keyframes tab-brick-lock {
+  0% { transform: translateY(-5px); }
+  65% { transform: translateY(2px); }
+  100% { transform: translateY(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .brick-burst-piece { display: none !important; }
+  .brick-burst-piece, .brick-placement-ring { display: none !important; }
   .brick-mark-piece { animation: none; }
   .model-card, .model-art img, .feature-band > div, .feature-band svg, .story-phases > div::after { transition: none; }
+  [role="tab"][aria-selected="true"] svg { animation: none; }
 }

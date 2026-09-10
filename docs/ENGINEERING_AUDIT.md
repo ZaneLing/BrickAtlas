@@ -2,7 +2,7 @@
 
 ## Scope and Evidence
 
-Reviewed the five workspaces (Landing, Explore, Build, Create, Compose), domain models, local persistence, image ingestion, Web Workers, geometry loading, LDraw/PDF exports, asset build scripts, and dependencies. There is **no API server, database, authentication service, or deployed backend** in this repository. Server-side coverage therefore means the Node asset pipeline and static application delivery, not invented service tests.
+Reviewed the six workspaces (Landing, Explore, Build, Create, Compose, Free DIY), domain models, local persistence, image ingestion, Web Workers, geometry loading, LDraw/PDF exports, asset build scripts, and dependencies. There is **no API server, database, authentication service, or deployed backend** in this repository. Server-side coverage therefore means the Node asset pipeline and static application delivery, not invented service tests.
 
 The intent is to retain the existing desktop workflow while removing data-loss, geometry-fidelity and rendering correctness defects. Two independent read-only validators checked the ten grouped findings against baseline `7b2dced`; confirmed defects were fixed. The assertion that basic 1xN LDraw bricks run along Z was rejected after inspecting the checked-in part definitions: these parts run along X. Unnecessary Compose rebuilds were confirmed, but the claim that the caller failed to invalidate rendering was rejected because its subsequent setters invalidate the scene.
 
@@ -60,9 +60,9 @@ flowchart LR
 
 ## Verification
 
-- `npm run check`: 15 model asset checks, hierarchical source comparison, 37 unit tests, TypeScript and production build.
-- Chrome-only E2E: 38 tests, including all 15 source models, checksum failure/recovery, actual GPU visibility, source fidelity, stale/corrupt input and existing workflows.
-- Visual inspection: screenshots and nonblank canvas-pixel checks for all five workspaces at 1180, 1440 and 3840 px widths. Build screenshots include a populated step. Screenshots are attached to the Playwright report under `test-results/`.
+- `npm run check`: 15 model asset checks, hierarchical source comparison, 48 unit tests, TypeScript and production build.
+- Chrome-only E2E: 44 tests, including all 15 source models, checksum failure/recovery, actual GPU visibility, source fidelity, DIY library/effects, stale/corrupt input and existing workflows.
+- Visual inspection: screenshots and nonblank canvas-pixel checks for all six workspaces at 1180, 1440 and 3840 px widths. Build screenshots include a populated step; DIY includes its Technic category. Screenshots are attached to the Playwright report under `test-results/`.
 - Axe WCAG 2 A/AA and 2.1 AA checks on Landing, Create, Compose, Explore and selected-part detail.
 - Complete dependency audit (including development dependencies): zero known vulnerabilities after remediation.
 - ZIP pipeline: rebuilt 31028 without asset changes and compared streamed 3004 bytes against the locked part.

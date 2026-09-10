@@ -13,8 +13,8 @@ import { DiyScene, type DiyHover } from './DiyScene';
 import { renderDiyThumbnails } from './diyGeometry';
 import {
   canRemove, commitDiy, diyBom, DiyIndex, diyParts, diyRecipes, diyToLdraw, emptyDiyProject,
-  parseDiyProject, recipeById, redoDiy, stampSize, undoDiy,
-  type DiyBrick, type DiyBrush, type DiyHistory, type DiyProject, type DiyTool, type Turn,
+  diyCategories, parseDiyProject, partById, recipeById, redoDiy, stampSize, undoDiy,
+  type DiyBrick, type DiyBrush, type DiyCategory, type DiyHistory, type DiyProject, type DiyTool, type Turn,
 } from './diyModel';
 import './diy.css';
 
@@ -45,6 +45,7 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
   const [autoHeight, setAutoHeight] = useState(true);
   const [layer, setLayer] = useState(0);
   const [tab, setTab] = useState<'parts' | 'components'>('parts');
+  const [category, setCategory] = useState<'all' | DiyCategory>('basic');
   const [query, setQuery] = useState('');
   const [topView, setTopView] = useState(false);
   const [notice, setNotice] = useState('');
@@ -64,8 +65,13 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
   const color = brickPalette.find(color => color.id === brush.color)!;
   const recipe = recipeById.get(brush.recipeId)!;
   const size = stampSize(brush);
-  const entries = useMemo(() => diyRecipes.filter(recipe => (tab === 'parts' ? recipe.parts.length === 1 : recipe.parts.length > 1)
-    && `${recipe.nameZh} ${recipe.nameEn} ${recipe.id}`.toLowerCase().includes(query.trim().toLowerCase())), [tab, query]);
+  const entries = useMemo(() => diyRecipes.filter(recipe => {
+    const single = recipe.parts.length === 1;
+    const part = single ? partById.get(recipe.parts[0].partId) : null;
+    const categoryMatch = tab === 'components' || category === 'all' || part?.category === category;
+    const text = `${recipe.nameZh} ${recipe.nameEn} ${recipe.id} ${part?.tags?.join(' ') ?? ''}`.toLowerCase();
+    return (tab === 'parts' ? single : !single) && categoryMatch && text.includes(query.trim().toLowerCase());
+  }), [tab, category, query]);
 
   const applyHistory = useCallback((next: DiyHistory) => {
     historyRef.current = next;
@@ -127,7 +133,7 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
         renderDiyThumbnails(entries.flatMap(recipe => {
           const canvas = library.current?.querySelector<HTMLCanvasElement>(`canvas[data-recipe="${recipe.id}"]`);
           return canvas ? [{ recipe, canvas }] : [];
-        }), color.hex);
+        }), color.id);
       } catch { /* The main canvas displays the actionable WebGL error. */ }
     }, 70);
     return () => clearTimeout(timer);
@@ -272,8 +278,15 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
           <button role="tab" aria-selected={tab === 'components'} onClick={() => setTab('components')}><Layers3 size={15} />{tr('小组件', 'Assemblies')}<small>{diyRecipes.length - diyParts.length}</small></button>
         </div>
         <label className="diy-search"><Search size={16} /><input value={query} onChange={event => setQuery(event.target.value)} aria-label={tr('搜索 DIY 素材', 'Search DIY library')} placeholder={tr('名称 / Part ID', 'Name / Part ID')} /></label>
+        {tab === 'parts' && <div className="diy-categories" role="group" aria-label={tr('DIY 零件分类', 'DIY part categories')}>
+          <button aria-pressed={category === 'all'} onClick={() => setCategory('all')}>{tr('全部', 'All')}<small>{diyParts.length}</small></button>
+          {diyCategories.map(item => <button key={item.id} aria-pressed={category === item.id} onClick={() => setCategory(item.id)}>
+            {locale === 'zh' ? item.nameZh : item.nameEn}<small>{diyParts.filter(part => part.category === item.id).length}</small>
+          </button>)}
+        </div>}
         <div className="diy-parts-grid" ref={library}>
           {entries.map(item => <button key={item.id} className={`diy-part ${brush.recipeId === item.id ? 'active' : ''}`} aria-pressed={brush.recipeId === item.id}
+            data-brick-effect="shatter"
             aria-label={tr(`选取${item.nameZh}`, `Pick ${item.nameEn}`)} onClick={() => { setBrush(brush => ({ ...brush, recipeId: item.id })); setTool('place'); }}>
             <canvas data-recipe={item.id} aria-hidden="true" />
             <strong>{locale === 'zh' ? item.nameZh : item.nameEn}</strong>
@@ -303,11 +316,11 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
     </div>
     {clearOpen && <Modal title={tr('清空当前 DIY？', 'Clear this DIY?')} onClose={() => setClearOpen(false)}>
       <div className="diy-confirm"><p>{tr(`移除 ${project.bricks.length} 块积木，此操作可以撤销。`, `Remove ${project.bricks.length} bricks. This action can be undone.`)}</p>
-        <button className="primary-button" onClick={() => { commit({ ...project, bricks: [] }); setSelectedId(null); setClearOpen(false); }}>{tr('确认清空', 'Confirm clear')}</button></div>
+        <button className="primary-button" data-brick-effect="shatter" onClick={() => { commit({ ...project, bricks: [] }); setSelectedId(null); setClearOpen(false); }}>{tr('确认清空', 'Confirm clear')}</button></div>
     </Modal>}
     {pendingImport && <Modal title={tr('打开另一个 DIY 项目？', 'Open another DIY project?')} onClose={() => setPendingImport(null)}>
       <div className="diy-confirm"><p>{pendingImport.name} · {pendingImport.bricks.length} {tr('块积木，替换后可撤销。', 'bricks. Replacement can be undone.')}</p>
-        <button className="primary-button" onClick={() => { commit(pendingImport); setPendingImport(null); setSelectedId(null); requestAnimationFrame(() => scene.current?.fit()); }}>{tr('打开项目', 'Open project')}</button></div>
+        <button className="primary-button" data-brick-effect="shatter" onClick={() => { commit(pendingImport); setPendingImport(null); setSelectedId(null); requestAnimationFrame(() => scene.current?.fit()); }}>{tr('打开项目', 'Open project')}</button></div>
     </Modal>}
   </div>;
 }

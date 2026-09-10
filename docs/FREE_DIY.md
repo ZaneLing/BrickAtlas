@@ -4,7 +4,8 @@
 
 `/diy` is a separate, desktop-only workspace for direct brick placement. It does not replace `/compose`, `/create`, `/explore` or `/build`.
 
-- Right-side library: 16 shapes and 18 colors; four multi-brick recipes (table, gateway, staircase, bench).
+- Right-side library: 78 traceable Part IDs, 18 colors and 12 multi-brick recipes, including furniture, street objects, plants and small structures.
+- Ten searchable categories: basic bricks, plates, tiles/grilles, slopes/curves, round parts, modified bricks, Technic, connectors, architecture and motion parts.
 - Pointer-following translucent preview and footprint outline, using the same geometry as placed bricks and library thumbnails.
 - Click to place repeatedly; dragging or right-dragging manipulates the camera without committing a brick.
 - Ninety-degree rotation and automatic stacking on existing brick tops; optional explicit plate layer.
@@ -34,12 +35,13 @@ A sparse column index checks occupied vertical intervals. A brick above ground n
 
 The baseplate has no fixed scene boundary, but browser resources and floating-point precision are finite. The current cap is 5,000 bricks, 50 undo snapshots, X/Z within +/-1,000,000 stud cells and Y within 0-3,000 plate layers. Normal nearby editing is the target; precision at coordinate extremes is not certified. The maximum zoom-out distance is 200 stud units; distant work remains accessible by panning.
 
-Procedural parts are recognizable editable representations, not full LDraw underside/tube meshes. The slope/round collision model uses conservative cell volumes. DIY assemblies are small prebuilt recipes, not full OMR catalog models. Exported LDraw references require a standard parts library.
+Procedural parts are recognizable editable representations, not full LDraw underside/tube meshes. Technic holes, clips, arches, fences, bars, wheels, dishes and propellers use category-specific procedural geometry, while collision still uses conservative stud-cell volumes. Every listed ID is checked against the repository's locked LDraw library. DIY assemblies are small prebuilt recipes, not full OMR catalog models. Exported LDraw references require a standard parts library.
 
 ## Verification
 
-- Unit tests cover rotations, negative/distant coordinates, occupied cells, top stacking, unsupported placements, smooth/slope attachment restrictions, all recipe rotations, protected deletion, undo/redo, malformed imports, geometry validity and LDraw coordinate conversion.
+- Unit tests cover library uniqueness and locked-file existence, category population, rotations, negative/distant coordinates, occupied cells, top stacking, unsupported placements, smooth/slope/jumper attachment restrictions, all recipe rotations, protected deletion, undo/redo, malformed imports, geometry validity and LDraw coordinate conversion.
 - Chrome mouse tests cover cursor preview movement, rotated stamping, stacking, recoloring, history, no placement during drag, collision rejection, atomic recipes, extended-ground placement, save/reload and file export/import.
 - A 2,500-brick fixture validates shape batching and retained editing under simulated storage quota failure.
 - Screenshots, nonblank pixel checks and thumbnail checks at 1180, 1440 and 3840 px desktop widths, plus axe WCAG 2 A/AA.
+- Library cards use their real procedural geometry. Selecting a card can use a full-card brick shatter, normal commands use a lighter stud burst, and successful canvas placement emits a color-matched lock ring. Reduced-motion preferences disable these effects.
 - Tests live in `tests/unit/diy.test.ts` and `tests/e2e/diy.spec.ts`. Measurements and screenshots are attached to the Playwright report; draw-call time is CPU submission, not GPU timer-query duration.

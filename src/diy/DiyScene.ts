@@ -268,6 +268,13 @@ export class DiyScene {
       if (this.hover.issue) return;
       const id = crypto.randomUUID();
       this.callbacks.place(stamp(this.brush, this.hover.x, this.hover.y, this.hover.z, id));
+      document.dispatchEvent(new CustomEvent('brick-atlas:placement', {
+        detail: {
+          x: event.clientX,
+          y: event.clientY,
+          color: brickPalette.find(color => color.id === this.brush.color)!.hex,
+        },
+      }));
     } else if ((this.tool === 'erase' || this.tool === 'paint') && this.hover.hitId) {
       this.callbacks.edit(this.hover.hitId, this.tool);
     } else this.callbacks.select(this.hover.hitId);

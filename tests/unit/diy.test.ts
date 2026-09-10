@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { existsSync } from 'node:fs';
 import {
-  canRemove, commitDiy, DIY_LIMIT, DiyIndex, diyRecipes, diyToLdraw, emptyDiyProject, footprint,
+  canRemove, commitDiy, DIY_LIMIT, DiyIndex, diyCategories, diyRecipes, diyToLdraw, emptyDiyProject, footprint,
   parseDiyProject, redoDiy, stamp, stampSize, undoDiy, type DiyBrush, type DiyHistory,
 } from '../../src/diy/diyModel';
 import { createDiyGeometry } from '../../src/diy/diyGeometry';
@@ -8,6 +9,14 @@ import { diyParts } from '../../src/diy/diyModel';
 
 const brush: DiyBrush = { recipeId: '3001', color: 'red', turn: 0 };
 describe('DIY placement', () => {
+  it('offers a broad, unique and traceable multi-category part library', () => {
+    expect(diyParts.length).toBeGreaterThanOrEqual(70);
+    expect(new Set(diyParts.map(part => part.id)).size).toBe(diyParts.length);
+    for (const category of diyCategories) {
+      expect(diyParts.filter(part => part.category === category.id).length, category.id).toBeGreaterThanOrEqual(4);
+    }
+    expect(diyParts.every(part => existsSync(`assets-source/ldraw-library/locked/parts/${part.id}.dat`))).toBe(true);
+  });
   it('snaps rotations on an unbounded stud grid including negative and distant coordinates', () => {
     const parts = stamp({ ...brush, turn: 1 }, -1002, 0, 4096, 'a');
     expect(parts[0]).toMatchObject({ x: -1002, y: 0, z: 4096, turn: 1 });
@@ -28,6 +37,9 @@ describe('DIY placement', () => {
     const slope = stamp({ ...brush, recipeId: '3039' }, 0, 0, 0);
     expect(new DiyIndex(slope).validate(stamp({ ...brush, recipeId: '3005' }, 0, 3, 0), 1)).toBeNull();
     expect(new DiyIndex(slope).validate(stamp({ ...brush, recipeId: '3005' }, 0, 3, 1), 1)).toBe('unsupported');
+    const jumper = stamp({ ...brush, recipeId: '87580' }, 0, 0, 0);
+    expect(new DiyIndex(jumper).validate(stamp({ ...brush, recipeId: '3005' }, 0, 1, 0), 1)).toBeNull();
+    expect(new DiyIndex(jumper).validate(stamp({ ...brush, recipeId: '3005' }, 1, 1, 1), 1)).toBe('unsupported');
   });
   it('keeps all assembly recipes supported at every quarter turn', () => {
     for (const recipe of diyRecipes) for (const turn of [0, 1, 2, 3] as const) {

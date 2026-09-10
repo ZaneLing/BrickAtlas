@@ -318,7 +318,7 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
               : <Boxes size={34} />}
           </div>
           <div><small>{locale === 'zh' ? asset.categoryZh : asset.categoryEn}</small><strong>{locale === 'zh' ? asset.nameZh : asset.nameEn}</strong><span>{asset.footprint[0]} × {asset.footprint[1]} studs</span></div>
-          <button disabled={!!loadingAsset || !sourcesReady} onClick={() => addAsset(asset)} aria-label={tr(`添加${asset.nameZh}`, `Add ${asset.nameEn}`)}>
+          <button data-brick-effect="shatter" disabled={!!loadingAsset || !sourcesReady} onClick={() => addAsset(asset)} aria-label={tr(`添加${asset.nameZh}`, `Add ${asset.nameEn}`)}>
             {loadingAsset === asset.id ? '...' : <Plus size={15} />}
           </button>
         </article>)}

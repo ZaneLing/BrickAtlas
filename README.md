@@ -21,6 +21,7 @@ https://github.com/user-attachments/assets/1761f41d-e016-40c3-85f9-06102f5acc66
 - Free-build in the DIY studio: choose a shape and color, preview it under the mouse, click to snap, and keep stacking on an extending baseplate.
 - Export printable PDF build guides, BOM CSV files, LDraw files, and images up to 12K.
 - Crop one to three reference views and generate a budget-aware relief, hollow sculpture, or solid brick model with build steps and a material list.
+- Use tactile brick controls with lightweight stud bursts, full-card shatter feedback and color-matched placement effects; reduced-motion preferences disable them.
 - Switch the complete interface between Chinese and English.
 
 Brick Atlas is designed for desktop browsers with a workspace width of at least 1180 px.
@@ -42,7 +43,7 @@ Catalog components retain their original geometry and transforms. Composition st
 
 ## Free DIY
 
-The independent DIY studio provides 16 brick shapes, 18 colors and four reusable small assemblies. It supports continuous mouse placement, 90-degree rotation, automatic stacking, collision and support checks, painting, removal, undo/redo, local autosave, JSON import/export, BOM CSV, LDraw and PNG export.
+The independent DIY studio provides 78 traceable parts across ten categories, 18 colors and 12 reusable small assemblies. It supports continuous mouse placement, 90-degree rotation, automatic stacking, collision and support checks, painting, removal, undo/redo, local autosave, JSON import/export, BOM CSV, LDraw and PNG export.
 
 The ground follows the camera instead of allocating an enormous board. Projects are currently limited to 5,000 bricks. Support checks prevent floating placements and unsupported deletion, but do not certify physical stability. DIY uses procedural brick geometry; it does not replace the source-model Compose workspace.
 
