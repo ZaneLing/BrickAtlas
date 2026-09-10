@@ -10,4 +10,4 @@ fi
 if [ ! -d node_modules ]; then
   npm ci
 fi
-exec npm run dev
+exec npm run start:local
