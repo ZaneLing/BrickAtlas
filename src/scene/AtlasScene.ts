@@ -646,7 +646,7 @@ export class AtlasScene {
     step: number,
     width = 960,
     height = 720,
-    options: { progress?: number; focusStep?: boolean; shadows?: boolean; motionInstanceId?: string } = {},
+    options: { progress?: number; focusStep?: boolean; shadows?: boolean; motionInstanceId?: string; format?: 'jpeg' | 'png'; focusPadding?: number } = {},
   ) {
     const savedState = this.state;
     const savedExplosion = this.actualExplosion;
@@ -693,7 +693,7 @@ export class AtlasScene {
     this.updateLayout();
     if (options.focusStep) this.focusInstances(
       [...this.assemblyIds],
-      activeStep?.kind === 'placement' ? 1.55 : 1.9,
+      options.focusPadding ?? (activeStep?.kind === 'placement' ? 1.55 : 1.9),
       true,
       true,
     );
@@ -709,7 +709,9 @@ export class AtlasScene {
     this.scene.environment = null;
     this.ground.visible = options.shadows ?? true;
     capture.render(this.scene, this.camera);
-    const dataUrl = capture.domElement.toDataURL('image/jpeg', 0.84);
+    const format = options.format ?? 'jpeg';
+    const mime = format === 'png' ? 'image/png' : 'image/jpeg';
+    const dataUrl = capture.domElement.toDataURL(mime, format === 'jpeg' ? 0.9 : undefined);
     this.state = savedState;
     this.actualExplosion = savedExplosion;
     this.assemblyProgress = savedProgress;
@@ -735,7 +737,7 @@ export class AtlasScene {
     const encoded = atob(dataUrl.slice(dataUrl.indexOf(',') + 1));
     const bytes = new Uint8Array(encoded.length);
     for (let index = 0; index < encoded.length; index++) bytes[index] = encoded.charCodeAt(index);
-    return new Blob([bytes], { type: 'image/jpeg' });
+    return new Blob([bytes], { type: mime });
   }
 
   private async renderBlob(width: number, height: number, type: 'image/png' | 'image/jpeg', quality?: number) {

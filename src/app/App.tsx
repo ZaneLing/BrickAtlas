@@ -3,7 +3,7 @@ import {
   ArrowDownToLine, ArrowLeft, ArrowRight, Box, Boxes, Check, ChevronDown, ChevronRight,
   BookOpen, CircleDot, Crosshair, Expand, ExternalLink, Eye, EyeOff, FileDown, Focus, Grid2X2, Hand, Info, Layers3,
   Languages, Library, LoaderCircle, Minus, Pause, Play, Plus, Rotate3D, RotateCcw, Search, Settings2, ShieldCheck,
-  SkipBack, SkipForward, Upload, X,
+  SkipBack, SkipForward, Upload, X, Maximize2, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen,
 } from 'lucide-react';
 import { AtlasScene } from '../scene/AtlasScene';
 import { PartPreviewScene } from '../scene/PartPreview';
@@ -41,11 +41,60 @@ function downloadBlob(blob: Blob, file: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+async function placementDiagram(start: Blob, target: Blob, startLabel: string, targetLabel: string) {
+  const [startImage, targetImage] = await Promise.all([createImageBitmap(start), createImageBitmap(target)]);
+  const canvas = document.createElement('canvas');
+  canvas.width = 2560;
+  canvas.height = 1120;
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('Canvas 2D is unavailable');
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  const panel = { width: 1080, height: 820, top: 90 };
+  const draw = (image: ImageBitmap, left: number) => {
+    const scale = Math.min(panel.width / image.width, panel.height / image.height);
+    const width = image.width * scale, height = image.height * scale;
+    context.drawImage(image, left + (panel.width - width) / 2, panel.top + (panel.height - height) / 2, width, height);
+    context.strokeStyle = '#d9e1ec';
+    context.lineWidth = 4;
+    context.strokeRect(left, panel.top, panel.width, panel.height);
+  };
+  draw(startImage, 70);
+  draw(targetImage, 1410);
+  startImage.close();
+  targetImage.close();
+  context.strokeStyle = '#2f69c4';
+  context.fillStyle = '#2f69c4';
+  context.lineWidth = 16;
+  context.lineCap = 'round';
+  context.beginPath();
+  context.moveTo(1195, 500);
+  context.lineTo(1360, 500);
+  context.stroke();
+  context.beginPath();
+  context.moveTo(1360, 500);
+  context.lineTo(1308, 460);
+  context.lineTo(1308, 540);
+  context.closePath();
+  context.fill();
+  context.font = '700 34px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+  context.fillStyle = '#27344d';
+  context.fillText(startLabel, 70, 1000);
+  context.fillText(targetLabel, 1410, 1000);
+  context.font = '500 24px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+  context.fillStyle = '#657188';
+  context.fillText('BRICK ATLAS · BUILD PLACEMENT', 70, 1060);
+  return new Promise<Blob>((resolve, reject) => canvas.toBlob(
+    blob => blob ? resolve(blob) : reject(new Error('Static diagram encoding failed')),
+    'image/png',
+  ));
+}
+
 function LanguageButton({ locale, onToggle, tr }: { locale: Locale; onToggle: () => void; tr: Translator }) {
   return <button className="language-button" onClick={onToggle} aria-label={tr('切换为英文', 'Switch to Chinese')} title={tr('切换为英文', 'Switch to Chinese')}><Languages size={14} /><span>{locale === 'zh' ? 'EN' : '中'}</span></button>;
 }
 
-function SelectedPartPreview({ scene, part, onClose, tr }: { scene: AtlasScene; part: PartInstance; onClose: () => void; tr: Translator }) {
+function SelectedPartPreview({ scene, part, quantity, onClose, tr }: { scene: AtlasScene; part: PartInstance; quantity: number; onClose: () => void; tr: Translator }) {
   const hostRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const data = scene.getPartPreview(part.instanceId);
@@ -56,7 +105,7 @@ function SelectedPartPreview({ scene, part, onClose, tr }: { scene: AtlasScene; 
   return <section className="part-preview-window" aria-label={tr('选中积木三维预览', 'Selected brick 3D preview')}>
     <header><span><Rotate3D size={14} />{part.partNumber}</span><IconButton label={tr('关闭积木预览', 'Close brick preview')} onClick={onClose}><X size={14} /></IconButton></header>
     <div className="part-preview-canvas" ref={hostRef} />
-    <footer><strong>{part.displayName}</strong><span><i style={{ background: part.colorHex }} />{tr(colorLabels[part.colorCode] ?? part.colorName, part.colorName)}</span></footer>
+    <footer><strong>{part.displayName}</strong><span><i style={{ background: part.colorHex }} />{tr(colorLabels[part.colorCode] ?? part.colorName, part.colorName)}</span><small>{part.partNumber} · {quantity}× · {part.bounds.max.map((value, index) => (value - part.bounds.min[index]).toFixed(1)).join(' × ')} mm</small></footer>
   </section>;
 }
 
@@ -75,6 +124,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   const [retry, setRetry] = useState(0);
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState<'structure' | 'parts'>('structure');
+  const [structureOpen, setStructureOpen] = useState(true);
   const [detailsOpen, setDetailsOpen] = useState(true);
   const [modal, setModal] = useState<'credits' | 'settings' | null>(null);
   const [hover, setHover] = useState<{ part: PartInstance; x: number; y: number } | null>(null);
@@ -84,9 +134,10 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   const [panMode, setPanMode] = useState(mode === 'build');
   const [followBuildStep, setFollowBuildStep] = useState(false);
   const [exportSize, setExportSize] = useState(3840);
-  const [instructionFrames, setInstructionFrames] = useState<string[]>([]);
-  const [instructionFrame, setInstructionFrame] = useState(0);
   const [openInstructionStep, setOpenInstructionStep] = useState<number | null>(null);
+  const [instructionDiagram, setInstructionDiagram] = useState<{ step: number; url: string } | null>(null);
+  const [instructionDiagramLoading, setInstructionDiagramLoading] = useState(false);
+  const [enlargedInstruction, setEnlargedInstruction] = useState<{ step: number; url: string } | null>(null);
   const [guideExport, setGuideExport] = useState<{ current: number; total: number } | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<AtlasScene | null>(null);
@@ -177,7 +228,6 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   const currentBuildStep = state.buildStep ?? 0;
   const activeStep = currentBuildStep > 0 ? steps[currentBuildStep - 1] : null;
   const activeStepParts = activeStep?.instanceIds.map(id => manifest?.instances.find(part => part.instanceId === id)).filter(Boolean) as PartInstance[] | undefined;
-  const activePartGroups = useMemo(() => groupStepParts(activeStepParts ?? []), [activeStepParts]);
   const instructionDisclaimer = locale === 'zh' ? manifest?.instructions?.disclaimer
     : manifest?.instructions?.provenance === 'source'
       ? 'Steps follow the OMR author metadata; page numbers do not match official printed instructions.'
@@ -210,15 +260,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   useEffect(() => {
     patch({ highlightedBrickIds: query ? results.map(part => part.instanceId) : [] });
   }, [query, results, patch]);
-  useEffect(() => {
-    if (mode !== 'build') return;
-    setOpenInstructionStep(currentBuildStep || null);
-    if (currentBuildStep < 1) return;
-    requestAnimationFrame(() => {
-      document.querySelector(`[data-instruction-step="${currentBuildStep}"]`)
-        ?.scrollIntoView({ block: 'nearest' });
-    });
-  }, [mode, currentBuildStep, config.id]);
+  useEffect(() => { setOpenInstructionStep(null); }, [config.id, mode]);
   useEffect(() => {
     if (!playing || mode !== 'build') return;
     if (currentBuildStep >= steps.length) { setPlaying(false); return; }
@@ -229,52 +271,53 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
     return () => clearTimeout(timer);
   }, [playing, mode, currentBuildStep, steps.length, patch, state.assemblyRevision, followBuildStep]);
   useEffect(() => {
-    if (mode !== 'build' || !readyTime || currentBuildStep < 1 || !sceneRef.current) {
-      setInstructionFrames([]);
+    if (mode !== 'build' || !readyTime || !openInstructionStep || !sceneRef.current) {
+      setInstructionDiagramLoading(false);
+      setInstructionDiagram(current => {
+        if (current) URL.revokeObjectURL(current.url);
+        return null;
+      });
       return;
     }
     let cancelled = false;
-    const urls: string[] = [];
+    let resultUrl = '';
+    const stepNumber = openInstructionStep;
+    const openedStep = steps[stepNumber - 1];
+    setInstructionDiagramLoading(true);
     const timer = setTimeout(() => {
-      Promise.all([0, 0.12, 0.28, 0.46, 0.64, 0.8, 0.92, 1, 1, 1].map(progress =>
-        sceneRef.current!.captureBuildStep(currentBuildStep, 560, 420, {
+      Promise.all([0, 1].map(progress =>
+        sceneRef.current!.captureBuildStep(stepNumber, 1280, 900, {
           progress,
           focusStep: true,
           shadows: false,
-          motionInstanceId: activeStep?.kind === 'placement' ? undefined : activeStep?.instanceIds[0],
+          format: 'png',
+          focusPadding: 1.12,
+          motionInstanceId: openedStep?.kind === 'placement' ? undefined : openedStep?.instanceIds[0],
         }),
-      )).then(async blobs => {
-        const nextUrls = blobs.map(blob => URL.createObjectURL(blob));
-        await Promise.all(nextUrls.map(url => new Promise<void>(resolve => {
-          const image = new Image();
-          image.onload = () => resolve();
-          image.onerror = () => resolve();
-          image.src = url;
-        })));
-        if (cancelled) {
-          nextUrls.forEach(url => URL.revokeObjectURL(url));
-          return;
-        }
-        urls.push(...nextUrls);
-        setInstructionFrame(0);
-        setInstructionFrames(urls);
-      }).catch(() => {});
+      )).then(blobs => placementDiagram(
+        blobs[0],
+        blobs[1],
+        tr('起始位置', 'START POSITION'),
+        tr('安装位置', 'INSTALL POSITION'),
+      )).then(blob => {
+        if (cancelled) return;
+        resultUrl = URL.createObjectURL(blob);
+        setInstructionDiagram(current => {
+          if (current) URL.revokeObjectURL(current.url);
+          return { step: stepNumber, url: resultUrl };
+        });
+      }).catch(() => {}).finally(() => { if (!cancelled) setInstructionDiagramLoading(false); });
     }, 180);
     return () => {
       cancelled = true;
       clearTimeout(timer);
-      urls.forEach(url => URL.revokeObjectURL(url));
+      if (resultUrl) URL.revokeObjectURL(resultUrl);
     };
-  }, [mode, readyTime, currentBuildStep, activeStep]);
-  useEffect(() => {
-    if (instructionFrames.length < 2) return;
-    const timer = setInterval(() => setInstructionFrame(index => (index + 1) % instructionFrames.length), 300);
-    return () => clearInterval(timer);
-  }, [instructionFrames]);
+  }, [mode, readyTime, openInstructionStep, steps, tr]);
 
   function reset() {
     resetViewer(mode);
-    setQuery(''); setDetailsOpen(true); setHover(null); setPanMode(mode === 'build');
+    setQuery(''); setStructureOpen(true); setDetailsOpen(true); setHover(null); setPanMode(mode === 'build');
   }
   function toggleGroup(id: GroupId) {
     setState(s => ({ ...s, hiddenGroups: s.hiddenGroups.includes(id) ? s.hiddenGroups.filter(g => g !== id) : [...s.hiddenGroups, id] }));
@@ -313,6 +356,9 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
     }
     setOpenInstructionStep(step);
     setBuildStep(step);
+    requestAnimationFrame(() => {
+      document.querySelector(`[data-instruction-step="${step}"]`)?.scrollIntoView({ block: 'nearest' });
+    });
   }
   async function exportInstructions() {
     if (!sceneRef.current || !manifest?.instructions) return;
@@ -352,9 +398,10 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
       </div>
     </header>
 
-    <div className={`workspace ${detailsOpen ? '' : 'details-collapsed'}`}>
+    <div className={`workspace ${structureOpen ? '' : 'structure-collapsed'} ${detailsOpen ? '' : 'details-collapsed'}`}>
       <aside className="sidebar left-sidebar" aria-label={tr('模型结构与搜索', 'Model structure and search')}>
         <div className="set-heading">
+          <IconButton className="collapse-structure" label={tr('折叠模型信息', 'Collapse model information')} onClick={() => setStructureOpen(false)}><PanelLeftClose size={17} /></IconButton>
           <div className="eyebrow"><span className="set-number">{config.id}</span><span>{config.theme.split(' ')[0].toUpperCase()} / {config.year}</span></div>
           <h1>{config.title}</h1>
           <div className="set-subtitle">{locale === 'zh' ? config.subtitle : config.title} <span className="tiny-divider" /> {config.theme.replace('Creator ', '')}</div>
@@ -406,7 +453,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
           <div className="stage-status"><span className={`status-dot ${loading ? 'loading-dot' : ''}`} />{error ? tr('载入失败', 'Load failed') : loading ? `${Math.floor(progress)}%` : `${visible.length} ${tr('个零件', 'bricks')}`}</div>
         </div>
         <div className="canvas-host" ref={stageRef} />
-        {selected && sceneRef.current && <SelectedPartPreview scene={sceneRef.current} part={selected} onClose={() => patch({ selection: [] })} tr={tr} />}
+        {selected && sceneRef.current && <SelectedPartPreview scene={sceneRef.current} part={selected} quantity={sameType.length} onClose={() => patch({ selection: [] })} tr={tr} />}
         <div className="viewport-toolbar" aria-label={tr('视角工具', 'View tools')}>
           <div className="view-select"><Box size={16} /><select aria-label={tr('模型视角', 'Model view')} value={state.view} onChange={e => patch({ view: e.target.value as ExplorerState['view'], revision: state.revision + 1 })}>{Object.entries(viewNames(tr)).map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select><ChevronDown size={12} /></div>
           <div className="toolbar-divider" />
@@ -433,7 +480,8 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
           <div />
           <IconButton label={tr('复原模型', 'Reset model')} onClick={reset}><RotateCcw size={17} /></IconButton>
         </div>
-        {!detailsOpen && <IconButton className="reopen-details" label={mode === 'build' ? tr('打开步骤说明书', 'Open build guide') : tr('打开详情面板', 'Open details')} onClick={() => setDetailsOpen(true)}>{mode === 'build' ? <BookOpen size={18} /> : <Info size={18} />}</IconButton>}
+        {!structureOpen && <IconButton className="reopen-structure" label={tr('打开模型信息', 'Open model information')} onClick={() => setStructureOpen(true)}><PanelLeftOpen size={18} /></IconButton>}
+        {!detailsOpen && <IconButton className="reopen-details" label={mode === 'build' ? tr('打开步骤说明书', 'Open build guide') : tr('打开详情面板', 'Open details')} onClick={() => setDetailsOpen(true)}>{mode === 'build' ? <PanelRightOpen size={18} /> : <Info size={18} />}</IconButton>}
         {state.isolation && <div className="isolation-indicator"><Focus size={14} />{tr('隔离中', 'Isolated')} · {visible.length} {tr('个零件', 'bricks')}<button aria-label={tr('退出隔离', 'Exit isolation')} title={tr('退出隔离', 'Exit isolation')} onClick={() => patch({ isolation: null })}><X size={15} /></button></div>}
         {state.selection.length > 0 && <div className="selection-indicator"><span className="status-dot" /><button onClick={() => setDetailsOpen(true)}>{tr('已选', 'Selected')} {state.selection.length} {tr('个零件', 'bricks')}</button><IconButton label={tr('清除选择', 'Clear selection')} onClick={() => patch({ selection: [] })}><X size={14} /></IconButton></div>}
         {!loading && !error && visible.length === 0 && mode !== 'build' && <div className="empty-stage"><EyeOff size={32} /><strong>{tr('所有零件已隐藏', 'All bricks are hidden')}</strong><button className="primary-button" onClick={() => patch({ hiddenGroups: [], hiddenBrickIds: [], isolation: null })}><Eye size={16} />{tr('显示全部', 'Show all')}</button></div>}
@@ -466,14 +514,14 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
       </main>
 
       <aside className="sidebar right-sidebar" aria-label={mode === 'build' ? tr('步骤说明书', 'Build guide') : tr('零件详情', 'Part details')}>
-        <header className="detail-header"><span>{mode === 'build' ? <BookOpen size={16} /> : <CircleDot size={16} />}{mode === 'build' ? tr('步骤说明书', 'Build guide') : selected ? tr('零件详情', 'Part details') : tr('套装档案', 'Model profile')}</span><IconButton label={tr('关闭详情面板', 'Close details')} onClick={() => setDetailsOpen(false)}><X size={17} /></IconButton></header>
+        <header className="detail-header"><span>{mode === 'build' ? <BookOpen size={16} /> : <CircleDot size={16} />}{mode === 'build' ? tr('步骤说明书', 'Build guide') : selected ? tr('零件详情', 'Part details') : tr('套装档案', 'Model profile')}</span><IconButton label={mode === 'build' ? tr('折叠步骤说明书', 'Collapse build guide') : tr('关闭详情面板', 'Close details')} onClick={() => { setDetailsOpen(false); if (mode === 'build') setOpenInstructionStep(null); }}>{mode === 'build' ? <PanelRightClose size={17} /> : <X size={17} />}</IconButton></header>
         <div className="detail-scroll">
           {mode === 'build' ? <div className="instruction-sidebar">
             <div className="instruction-guide-cover">
               <img src={`${base}preview.png`} alt="" />
               <div><span>{tr('积木拼装册', 'BRICK BUILD BOOK')}</span><div className="instruction-page-heading"><strong>{currentBuildStep || '—'}</strong><small>/ {steps.length}</small></div></div>
             </div>
-            {currentBuildStep === 0 && <div className="instruction-start"><BookOpen size={28} /><h2>{tr('准备开始拼装', 'Ready to build')}</h2><p>{tr('打开任意步骤积木，查看零件与入位动画。', 'Open any step brick to see its parts and placement animation.')}</p><button className="primary-button" onClick={() => setBuildStep(1)}>{tr('进入第 1 步', 'Start step 1')}<ArrowRight size={16} /></button></div>}
+            {currentBuildStep === 0 && <div className="instruction-start"><BookOpen size={28} /><h2>{tr('准备开始拼装', 'Ready to build')}</h2><p>{tr('中央模型展示动态拼装；手动打开步骤可查看零件和高清静态入位图。', 'The center model shows motion. Open a step manually for parts and its high-resolution placement diagram.')}</p><button className="primary-button" onClick={() => setBuildStep(1)}>{tr('进入第 1 步', 'Start step 1')}<ArrowRight size={16} /></button></div>}
             <section className="instruction-accordion" aria-label={tr('可折叠拼装步骤', 'Collapsible build steps')}>
               {steps.map((step, index) => {
                 const stepNumber = index + 1;
@@ -481,6 +529,9 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
                 const ids = step.motionInstanceIds ?? step.instanceIds;
                 const firstPart = manifest?.instances.find(part => ids.includes(part.instanceId));
                 const group = firstPart ? manifest?.groups.find(item => item.id === firstPart.groupId) : null;
+                const panelParts = ids.map(id => manifest?.instances.find(part => part.instanceId === id)).filter((part): part is PartInstance => !!part);
+                const panelGroups = groupStepParts(panelParts);
+                const diagram = instructionDiagram?.step === stepNumber ? instructionDiagram : null;
                 return <details
                   key={step.id}
                   data-instruction-step={stepNumber}
@@ -503,26 +554,26 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
                   </summary>
                   {isOpen && <div className="instruction-brick-panel" id={`instruction-step-panel-${stepNumber}`}>
                     <div>
-                      <div className="instruction-static-frame instruction-motion-frame">
-                        {instructionFrames.length ? <img src={instructionFrames[instructionFrame]} decoding="sync" alt={tr(`第 ${currentBuildStep} 步动态拼装图`, `Animated build view for step ${currentBuildStep}`)} /> : <LoaderCircle className="spinner" size={24} />}
-                        <span><Play size={10} />{tr('自动循环 · 聚焦本步', 'Auto loop · focused step')}</span>
-                      </div>
-                      {instructionFrames.length > 1 && <div className="instruction-placement-diagram" role="img" aria-label={tr(`第 ${currentBuildStep} 步积木从起点到安装位置`, `Step ${currentBuildStep} brick path from start to final position`)}>
-                        <figure><img src={instructionFrames[0]} alt="" /><figcaption>{tr('起始位置', 'START')}</figcaption></figure>
-                        <span className="instruction-path-arrow" aria-hidden="true"><i /><ArrowRight size={16} /></span>
-                        <figure className="target"><img src={instructionFrames[instructionFrames.length - 1]} alt="" /><figcaption>{tr('最终位置', 'TARGET')}</figcaption></figure>
-                      </div>}
-                      <div className="instruction-step-title"><span>{step.kind === 'placement' ? 'SUBASSEMBLY PLACEMENT' : manifest?.instructions?.provenance === 'source' ? 'OMR AUTHOR STEP' : 'EDITORIAL ASSEMBLY STEP'}</span><h2>{stepTitle(step)}</h2></div>
-                      {step.kind === 'placement'
-                        ? <section className="instruction-placement" aria-label={tr('总成放置', 'Subassembly placement')}><Layers3 size={24} /><strong>{tr('放置已完成的子装配', 'Place the completed subassembly')}</strong><span>{step.motionInstanceIds?.length ?? 0} {tr('块积木整体入位', 'bricks move into final position')}</span></section>
-                        : <section className="instruction-parts" aria-label={tr('本步所需零件', 'Parts for this step')}>
-                          <h3>{tr('本步所需零件', 'Parts for this step')} <span>{activeStepParts?.length ?? 0}</span></h3>
-                          {activePartGroups.map(partGroup => <button key={partGroup.key} onClick={() => selectPart(partGroup.instanceIds[0], true)}>
-                            <span className="instruction-part-swatch" style={{ background: partGroup.colorHex }}><Box size={18} color={['15', '19', '47', '71'].includes(manifest?.instances.find(part => part.instanceId === partGroup.instanceIds[0])?.colorCode ?? '') ? '#53615b' : '#fff'} /></span>
-                            <span><strong>{partGroup.quantity}× {partGroup.partNumber}</strong><small>{partGroup.name}<br />{partGroup.colorName}</small></span>
-                          </button>)}
-                        </section>}
-                      <div className="instruction-side-nav"><button disabled={stepNumber === 1} onClick={() => setBuildStep(stepNumber - 1)}><ArrowLeft size={16} />{tr('上一步', 'Previous')}</button><button disabled={stepNumber === steps.length} onClick={() => setBuildStep(stepNumber + 1)}>{tr('下一步', 'Next')}<ArrowRight size={16} /></button></div>
+                      <button
+                        className="instruction-static-frame instruction-diagram-button"
+                        disabled={!diagram}
+                        aria-label={tr(`放大第 ${stepNumber} 步高清入位图`, `Enlarge high-resolution placement diagram for step ${stepNumber}`)}
+                        onClick={() => diagram && setEnlargedInstruction(diagram)}
+                      >
+                        {diagram
+                          ? <img src={diagram.url} decoding="async" alt={tr(`第 ${stepNumber} 步从起始位置到安装位置的高清图示`, `High-resolution diagram from start to installation for step ${stepNumber}`)} />
+                          : instructionDiagramLoading
+                            ? <><LoaderCircle className="spinner" size={24} /><span>{tr('生成高清入位图…', 'Generating high-resolution diagram...')}</span></>
+                            : <span>{tr('静态图暂不可用', 'Static diagram unavailable')}</span>}
+                        {diagram && <span><Maximize2 size={12} />{tr('点击放大', 'Click to enlarge')}</span>}
+                      </button>
+                      <section className="instruction-parts" aria-label={tr('本步所需零件', 'Parts for this step')}>
+                        <h3>{step.kind === 'placement' ? tr('本总成所含零件', 'Parts in this assembly') : tr('本步所需零件', 'Parts for this step')} <span>{panelParts.length}</span></h3>
+                        {panelGroups.map(partGroup => <button key={partGroup.key} onClick={() => selectPart(partGroup.instanceIds[0], true)}>
+                          <span className="instruction-part-swatch" style={{ background: partGroup.colorHex }}><Box size={18} color={['15', '19', '47', '71'].includes(manifest?.instances.find(part => part.instanceId === partGroup.instanceIds[0])?.colorCode ?? '') ? '#53615b' : '#fff'} /></span>
+                          <span><strong>{partGroup.quantity}× {partGroup.partNumber}</strong><small>{partGroup.name}<br />{partGroup.colorName}</small></span>
+                        </button>)}
+                      </section>
                     </div>
                   </div>}
                 </details>;
@@ -550,6 +601,9 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
     <footer className="app-footer"><span><span className="status-dot" />{loading ? tr('模型载入中', 'Loading model') : error ? tr('资源异常', 'Asset error') : tr('模型已就绪', 'Model ready')}</span><span>LDraw · {manifest ? `${(manifest.stats.triangles / 1000).toFixed(1)}k ${tr('三角面', 'triangles')}` : '—'}</span><span>BRICK ATLAS <span className="footer-version">v1.1</span></span></footer>
     {hover && !loading && <div className="part-tooltip" style={{ left: Math.min(hover.x + 16, innerWidth - 260), top: Math.min(hover.y + 16, innerHeight - 80) }}><strong>{hover.part.partNumber}</strong><span>{hover.part.displayName}</span></div>}
     {notice && <div className="toast" role="status"><Check size={16} />{notice}</div>}
+    {enlargedInstruction && <Modal title={tr(`第 ${enlargedInstruction.step} 步高清入位图`, `Step ${enlargedInstruction.step} high-resolution placement diagram`)} onClose={() => setEnlargedInstruction(null)}>
+      <div className="instruction-diagram-modal"><img src={enlargedInstruction.url} alt={tr(`第 ${enlargedInstruction.step} 步从起始位置到安装位置的高清图示`, `High-resolution diagram from start to installation for step ${enlargedInstruction.step}`)} /><p>{tr('图像由当前模型几何直接渲染，箭头表示本轮零件或总成的安装方向。', 'Rendered directly from the current model geometry; the arrow shows the installation path for this step.')}</p></div>
+    </Modal>}
     {modal === 'settings' && <Modal title={tr('显示设置', 'Display settings')} onClose={() => setModal(null)}><div className="settings-content">
       <label>{tr('渲染质量', 'Render quality')}<select value={state.quality} onChange={e => patch({ quality: e.target.value as ExplorerState['quality'] })}><option value="auto">{tr('自动 · 根据屏幕调整', 'Auto · Match display')}</option><option value="high">{tr('高 · 3x 像素密度', 'High · 3x pixel density')}</option><option value="ultra">{tr('超清 · 4x 像素密度', 'Ultra · 4x pixel density')}</option><option value="low">{tr('性能 · 1x，无边线', 'Performance · 1x, no edges')}</option></select></label>
       <label>{tr('工作台背景', 'Workspace background')}<select value={state.background} onChange={e => patch({ background: e.target.value as ExplorerState['background'] })}><option value="studio">{tr('工作室灰', 'Studio gray')}</option><option value="white">{tr('纯白', 'White')}</option><option value="dark">{tr('深色', 'Dark')}</option></select></label>

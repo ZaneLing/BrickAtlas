@@ -16,7 +16,7 @@ https://github.com/user-attachments/assets/1761f41d-e016-40c3-85f9-06102f5acc66
 - Rotate, zoom, pan, switch views, auto-rotate, and inspect exploded assemblies.
 - Select any brick to view its part number, color, dimensions, subassembly, and 3D shape.
 - Search, hide, isolate, highlight matching parts, and use X-Ray mode to inspect internal structure.
-- Follow step-by-step assembly with playback controls, focused placement animations, parts lists, and subassembly placement.
+- Follow step-by-step assembly in the central 3D canvas. Manually opened guide blocks show clickable parts and one high-resolution start-to-install placement diagram.
 - Compose original scenes from verified aircraft, boats, vehicles, buildings, characters, animals, baseplates, and loose bricks with stud-grid snapping and collision checks.
 - Free-build in the DIY studio: choose a shape and color, preview it under the mouse, click to snap, and keep stacking on an extending baseplate.
 - Export printable PDF build guides, BOM CSV files, LDraw files, and images up to 12K.
@@ -40,6 +40,8 @@ Brick Atlas is designed for desktop browsers with a workspace width of at least 
 The Compose workspace turns catalog models into reusable components while retaining source attribution. Components snap to a selected baseplate on a stud grid, rotate in 90-degree increments, and are checked for bounds and footprint collisions. Loose bricks can be positioned at custom levels. A composition is saved locally and can be replayed as build steps, exploded in 3D, or exported as project JSON and LDraw.
 
 Catalog components retain their original geometry and transforms. Composition steps currently place whole components; connection strength, stud compatibility and physical buildability are not certified. Procedural character and loose-part previews remain simplified.
+
+Build controls animate only the central model. Guide accordions stay user-controlled and contain clickable parts plus one high-resolution start-to-install diagram. Both information sidebars can collapse to expand the model canvas. See [Build Workspace](docs/BUILD_WORKSPACE.md).
 
 ## Free DIY
 

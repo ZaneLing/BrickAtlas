@@ -91,37 +91,55 @@ test('desktop renderer uses high-density pixels and supports 4x ultra mode', asy
   await expect.poll(ratio).toBeGreaterThanOrEqual(3.9);
 });
 
-test('build mode advances, animates and persists progress per project', async ({ page }) => {
+test('build mode advances, animates and persists progress per project', async ({ page }, testInfo) => {
   await page.goto('/build/5867');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await page.getByLabel('下一步', { exact: true }).click();
   await expect(page.getByLabel('当前拼装步骤')).toHaveValue('1');
   await expect.poll(async () => page.evaluate(() => window.__atlas?.().visibleInstances)).toBe(6);
   await expect(page.getByRole('complementary', { name: '步骤说明书' })).toBeVisible();
+  const accordion = page.getByRole('region', { name: '可折叠拼装步骤' });
+  const stepBricks = accordion.locator('.instruction-brick-step');
+  await expect(stepBricks).toHaveCount(51);
+  await expect(accordion.locator('.instruction-brick-step[open]')).toHaveCount(0);
+  await stepBricks.first().locator('summary').click();
   await expect(page.getByRole('region', { name: '本步所需零件' })).toContainText('本步所需零件');
-  const stepPreview = page.getByAltText('第 1 步动态拼装图');
-  await expect(stepPreview).toBeVisible();
-  await stepPreview.evaluate(element => { element.dataset.frameNode = 'stable'; });
-  const placementDiagram = page.getByRole('img', { name: '第 1 步积木从起点到安装位置' });
-  await expect(placementDiagram.locator('img')).toHaveCount(2);
-  const firstFrame = await stepPreview.getAttribute('src');
-  await expect.poll(async () => stepPreview.getAttribute('src')).not.toBe(firstFrame);
-  await expect(stepPreview).toHaveAttribute('data-frame-node', 'stable');
+  const stepPreview = page.getByAltText('第 1 步从起始位置到安装位置的高清图示');
+  await expect(stepPreview).toBeVisible({ timeout: 20000 });
+  expect(await stepPreview.evaluate((image: HTMLImageElement) => [image.naturalWidth, image.naturalHeight])).toEqual([2560, 1120]);
+  await page.screenshot({ path: testInfo.outputPath('build-static-step.png') });
+  await expect(page.getByText('自动循环 · 聚焦本步')).toHaveCount(0);
+  await expect(page.getByAltText(/动态拼装图/)).toHaveCount(0);
+  await page.getByRole('button', { name: '放大第 1 步高清入位图' }).click();
+  await expect(page.getByRole('dialog', { name: '第 1 步高清入位图' })).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('build-static-step-enlarged.png') });
+  await page.getByRole('button', { name: '关闭弹窗' }).click();
+  await page.locator('.instruction-parts > button').first().click();
+  await expect(page.getByRole('region', { name: '选中积木三维预览' })).toBeVisible();
   await page.waitForTimeout(850);
   expect((await page.evaluate(() => window.__atlas?.().offsets))?.filter(offset => offset.some(value => Math.abs(value) > 0.01)).length).toBe(0);
   await page.reload();
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await expect(page.getByLabel('当前拼装步骤')).toHaveValue('1');
-  const accordion = page.getByRole('region', { name: '可折叠拼装步骤' });
-  const stepBricks = accordion.locator('.instruction-brick-step');
-  await expect(stepBricks).toHaveCount(51);
-  await expect(stepBricks.first()).toHaveAttribute('open', '');
-  await stepBricks.first().locator('summary').click();
   await expect(stepBricks.first()).not.toHaveAttribute('open', '');
+  await stepBricks.first().locator('summary').click();
+  await expect(stepBricks.first()).toHaveAttribute('open', '');
+  await page.getByLabel('下一步', { exact: true }).click();
+  await expect(page.getByLabel('当前拼装步骤')).toHaveValue('2');
+  await expect(stepBricks.first()).toHaveAttribute('open', '');
+  await expect(stepBricks.nth(1)).not.toHaveAttribute('open', '');
   await stepBricks.nth(1).locator('summary').click();
   await expect(page.getByLabel('当前拼装步骤')).toHaveValue('2');
   await expect(stepBricks.nth(1)).toHaveAttribute('open', '');
   await expect(stepBricks.first()).not.toHaveAttribute('open', '');
+  await stepBricks.nth(1).locator('summary').click();
+  await page.getByLabel('上一步', { exact: true }).click();
+  await expect(page.getByLabel('当前拼装步骤')).toHaveValue('1');
+  await expect(accordion.locator('.instruction-brick-step[open]')).toHaveCount(0);
+  await page.getByLabel('自动播放拼装').click();
+  await expect(page.getByLabel('当前拼装步骤')).toHaveValue('2', { timeout: 3000 });
+  await page.getByLabel('暂停自动拼装').click();
+  await expect(accordion.locator('.instruction-brick-step[open]')).toHaveCount(0);
 });
 
 test('build steps preserve the user camera unless follow mode is enabled', async ({ page }) => {
@@ -182,6 +200,25 @@ test('build canvas pans horizontally and vertically without moving the model bas
     const next = window.__atlas!().target;
     return Math.hypot(...next.map((value, index) => value - target[index]));
   }, horizontalTarget)).toBeGreaterThan(0.1);
+});
+
+test('both build sidebars collapse independently and release space to the model', async ({ page }, testInfo) => {
+  await page.goto('/build/5867');
+  await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
+  const stage = page.locator('.main-stage');
+  const initial = (await stage.boundingBox())!.width;
+  await page.getByRole('button', { name: '折叠模型信息' }).click();
+  await expect(page.getByRole('complementary', { name: '模型结构与搜索' })).toBeHidden();
+  const withoutLeft = (await stage.boundingBox())!.width;
+  expect(withoutLeft).toBeGreaterThan(initial + 200);
+  await page.getByRole('button', { name: '折叠步骤说明书' }).click();
+  await expect(page.getByRole('complementary', { name: '步骤说明书' })).toBeHidden();
+  expect((await stage.boundingBox())!.width).toBeGreaterThan(withoutLeft + 300);
+  await page.screenshot({ path: testInfo.outputPath('build-sidebars-collapsed.png') });
+  await page.getByRole('button', { name: '打开模型信息' }).click();
+  await page.getByRole('button', { name: '打开步骤说明书' }).click();
+  await expect(page.getByRole('complementary', { name: '模型结构与搜索' })).toBeVisible();
+  await expect(page.getByRole('complementary', { name: '步骤说明书' })).toBeVisible();
 });
 
 test('step snapshots never resize or flash the live canvas and controls stay top-left', async ({ page }) => {
@@ -247,7 +284,6 @@ test('build guide exports cover and one page per step', async ({ page }, testInf
   await page.goto('/build/31027');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: '下一步' }).click();
-  await expect(page.getByAltText('第 1 步动态拼装图')).toBeVisible();
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: '导出完整说明书 PDF' }).click();
   const file = await download;
@@ -284,8 +320,9 @@ test('editorial scene builds movable assemblies before final placement', async (
     Math.max(...window.__atlas!().offsets[index].map(value => Math.abs(value))), placement.partIndex,
   )).toBeGreaterThan(1);
   await page.getByLabel('当前拼装步骤').fill(String(placement.step));
-  await expect(page.getByRole('region', { name: '总成放置' })).toBeVisible();
-  await expect(page.getByAltText(`第 ${placement.step} 步动态拼装图`)).toBeVisible();
+  const accordion = page.getByRole('region', { name: '可折叠拼装步骤' });
+  await accordion.locator('.instruction-brick-step').nth(placement.step - 1).locator('summary').click();
+  await expect(page.getByAltText(`第 ${placement.step} 步从起始位置到安装位置的高清图示`)).toBeVisible({ timeout: 20000 });
   await expect.poll(async () => page.evaluate(index =>
     Math.max(...window.__atlas!().offsets[index].map(value => Math.abs(value))), placement.partIndex,
   )).toBeLessThan(0.1);

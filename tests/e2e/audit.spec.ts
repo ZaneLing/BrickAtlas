@@ -91,7 +91,8 @@ test('all workspace surfaces have visible pixels and accessible controls at desk
       if (route.startsWith('/explore') || route.startsWith('/build')) await page.getByText('模型已就绪', { exact: true }).waitFor();
       if (route.startsWith('/build')) {
         await page.getByRole('slider', { name: '当前拼装步骤' }).fill('1');
-        await page.getByAltText('第 1 步动态拼装图').waitFor();
+        await page.waitForTimeout(1000);
+        await expect(page.locator('.instruction-brick-step[open]')).toHaveCount(0);
       }
       if (route === '/compose') {
         await page.getByRole('button', { name: '添加水上飞机' }).click();
