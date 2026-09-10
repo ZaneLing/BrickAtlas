@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { createBrickModelFromViews, createBrickRelief, createDemoBrickBuild, imageBrickBuildToLdraw } from '../../src/creator/imageBrickModel';
+import {
+  createBrickModelFromViews, createBrickRelief, createEmptyBrickBuild,
+  imageBrickBuildToLdraw,
+} from '../../src/creator/imageBrickModel';
 
 function samplePixels() {
   const width = 12;
@@ -16,10 +19,13 @@ function samplePixels() {
 }
 
 describe('image brick relief generation', () => {
-  it('ships with a complete interactive demo model', () => {
-    const demo = createDemoBrickBuild();
-    expect(demo.bricks.length).toBeGreaterThan(20);
-    expect(Math.max(...demo.bricks.map(brick => brick.step))).toBe(demo.steps.length);
+  it('starts Create without a baked-in vehicle', () => {
+    expect(createEmptyBrickBuild()).toMatchObject({
+      bricks: [],
+      steps: [],
+      viewCount: 0,
+      reconstruction: 'empty',
+    });
   });
 
   it('quantizes, packs, steps, and inventories a sampled image deterministically', () => {
@@ -67,7 +73,7 @@ describe('image brick relief generation', () => {
   it('fuses three silhouettes into a bounded hollow sculpture', () => {
     const pixels = samplePixels();
     const view = { data: pixels.data, width: pixels.width, height: pixels.height };
-    const build = createBrickModelFromViews({ front: view, top: view, side: view }, {
+    const build = createBrickModelFromViews({ front: view, left: view, back: view }, {
       width: 12,
       maxDepth: 4,
       maxColors: 6,
@@ -96,6 +102,48 @@ describe('image brick relief generation', () => {
     }
   });
 
+  it('turns one real-photo silhouette into a centered volumetric sculpture', () => {
+    const pixels = samplePixels();
+    const depth = new Float32Array(pixels.width * pixels.height);
+    for (let y = 0; y < pixels.height; y++) {
+      for (let x = 0; x < pixels.width; x++) {
+        depth[y * pixels.width + x] = x / (pixels.width - 1);
+      }
+    }
+    const build = createBrickModelFromViews({
+      front: pixels,
+      frontDepth: { data: depth, width: pixels.width, height: pixels.height },
+    }, {
+      width: 12,
+      maxDepth: 8,
+      maxColors: 6,
+      removeBackground: true,
+      backgroundThreshold: 12,
+      method: 'solid',
+      bond: 'running',
+      brickBudget: 1200,
+    }, 'single-photo');
+    expect(build.reconstruction).toBe('depth-ai');
+    expect(build.maxDepth).toBeGreaterThan(2);
+    expect(new Set(build.bricks.map(brick => brick.z)).size).toBeGreaterThan(2);
+    expect(build.bricks.some(brick => (brick.depth ?? 1) === 2)).toBe(true);
+    const shell = createBrickModelFromViews({
+      front: pixels,
+      frontDepth: { data: depth, width: pixels.width, height: pixels.height },
+    }, {
+      width: 12,
+      maxDepth: 8,
+      maxColors: 6,
+      removeBackground: true,
+      backgroundThreshold: 12,
+      method: 'hollow',
+      bond: 'running',
+      brickBudget: 1200,
+    }, 'single-photo-shell');
+    expect(shell.bricks.length).toBeLessThan(build.bricks.length);
+    expect(new Set(shell.bricks.map(brick => brick.z)).size).toBeGreaterThan(2);
+  });
+
   it('keeps fused colors within the requested palette size and offsets running bonds', () => {
     const data = new Uint8ClampedArray(12 * 4 * 4);
     for (let i = 0; i < 48; i++) data.set([i * 37 % 256, i * 71 % 256, i * 113 % 256, 255], i * 4);
@@ -109,7 +157,17 @@ describe('image brick relief generation', () => {
   });
 
   it('exports brick tops at 24 LDU per layer without injecting metadata lines', () => {
-    const build = createDemoBrickBuild();
+    const pixels = samplePixels();
+    const build = createBrickRelief(pixels.data, pixels.width, pixels.height, {
+      width: pixels.width,
+      maxDepth: 2,
+      maxColors: 4,
+      removeBackground: true,
+      backgroundThreshold: 12,
+      method: 'relief',
+      bond: 'running',
+      brickBudget: 1200,
+    });
     build.name = 'demo\n1 injected';
     build.bricks = [
       { ...build.bricks[0], x: 0, z: 0, y: 0.6, step: 1 },

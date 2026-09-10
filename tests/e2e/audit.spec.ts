@@ -3,9 +3,16 @@ import { PNG } from 'pngjs';
 import { modelCatalog } from '../../atlas.config';
 
 test('Create and Compose restart updates the actual GPU state', async ({ page }) => {
+  test.setTimeout(120000);
   for (const route of ['/create', '/compose']) {
     await page.goto(route);
-    if (route === '/compose') {
+    if (route === '/create') {
+      await page.getByLabel('上传正视图').setInputFiles('public/models/5867/preview.png');
+      await expect.poll(
+        () => page.evaluate(() => window.__imageBricks?.().drawnInstances ?? 0),
+        { timeout: 90000 },
+      ).toBeGreaterThan(0);
+    } else {
       await page.getByRole('tab', { name: '拼装', exact: true }).click();
     }
     await page.getByRole('button', { name: '回到开始', exact: true }).click();
@@ -54,8 +61,16 @@ test('portrait cropping stays square on screen and supports re-upload after remo
   await page.getByLabel('上传正视图').setInputFiles(file);
   const crop = page.locator('.crop-selection').first();
   await expect(crop).toBeVisible();
-  const box = (await crop.boundingBox())!;
-  expect(Math.abs(box.width - box.height)).toBeLessThan(1);
+  const fullBox = (await crop.boundingBox())!;
+  expect(fullBox.height).toBeGreaterThan(fullBox.width * 2);
+  await page.mouse.move(fullBox.x + fullBox.width / 2, fullBox.y + fullBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(fullBox.x + fullBox.width / 2 + 4, fullBox.y + fullBox.height / 2, { steps: 2 });
+  await page.mouse.up();
+  await expect.poll(async () => {
+    const box = await crop.boundingBox();
+    return box ? Math.abs(box.width - box.height) : 999;
+  }).toBeLessThan(1);
   await page.getByRole('button', { name: '移除正视图' }).click();
   await page.getByLabel('上传正视图').setInputFiles(file);
   await expect(crop).toBeVisible();

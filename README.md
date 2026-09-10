@@ -36,7 +36,7 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
 - Compose original scenes from verified aircraft, boats, vehicles, buildings, characters, animals, baseplates, and loose bricks with stud-grid snapping and collision checks.
 - Free-build in the DIY studio: choose a shape and color, preview it under the mouse, click to snap, and keep stacking on an extending baseplate.
 - Export printable PDF build guides, BOM CSV files, LDraw files, and images up to 12K.
-- Crop one to three reference views and generate a budget-aware relief, hollow sculpture, or solid brick model with build steps and a material list.
+- Turn a real-object photo into a depth-aware 3D brick sculpture, or add left, back, and right views for a tighter multi-view reconstruction.
 - Use tactile brick controls with lightweight stud bursts, full-card shatter feedback and color-matched placement effects; reduced-motion preferences disable them.
 - Switch the complete interface between Chinese and English.
 
@@ -80,7 +80,7 @@ On macOS, `Start.command` and `npm run start:local` are also available.
 
 ## Image Conversion
 
-The Creator supports manual square crops plus front, top, and side silhouette fusion. A single image still produces a relief; additional views can produce a hollow or solid visual hull. Recovering truly hidden geometry still requires a dedicated image-to-3D backend. See [Image-to-Bricks Pipeline](docs/IMAGE_TO_BRICKS.md) for that extended design.
+The Creator preserves the full source photo by default and also supports manual square crops. One front image produces a Depth Anything V2-assisted 3D shell; optional left, back, and right views tighten the hollow or solid visual hull. See [Image-to-Bricks Pipeline](docs/IMAGE_TO_BRICKS.md) for limitations and implementation details.
 
 ## Models and Licenses
 

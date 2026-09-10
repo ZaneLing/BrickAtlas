@@ -396,6 +396,7 @@ export function createCompositionBuild(
     sourceWidth: base.width,
     sourceHeight: base.depth,
     backgroundHex: base.colorHex,
+    reconstruction: 'mesh-ai',
     bricks,
     sourceGroups,
     credits: [...new Set(project.items.map(item => item.sourceModelId))].flatMap(id => {

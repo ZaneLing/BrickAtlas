@@ -58,6 +58,7 @@ export interface ImageBrickBuild {
   sourceWidth: number;
   sourceHeight: number;
   backgroundHex: string;
+  reconstruction: 'empty' | 'relief' | 'shape-inflation' | 'depth-ai' | 'multi-view' | 'mesh-ai';
   bricks: ImageBrick[];
   bom: ImageBrickBomItem[];
   steps: ImageBrickStep[];
@@ -83,10 +84,17 @@ export interface SampledImage {
   width: number;
   height: number;
 }
+export interface SampledDepth {
+  data: Float32Array;
+  width: number;
+  height: number;
+}
 export interface ImageBrickViews {
   front: SampledImage;
-  top?: SampledImage;
-  side?: SampledImage;
+  left?: SampledImage;
+  back?: SampledImage;
+  right?: SampledImage;
+  frontDepth?: SampledDepth;
 }
 
 export const brickPalette: BrickPaletteColor[] = [
@@ -110,11 +118,14 @@ export const brickPalette: BrickPaletteColor[] = [
   { id: 'pink', code: 221, nameZh: '亮粉色', nameEn: 'Bright pink', hex: '#e4adc8' },
 ];
 
-const partByWidth: Record<1 | 2 | 3 | 4, string> = {
-  1: '3005',
-  2: '3004',
-  3: '3622',
-  4: '3010',
+const partByFootprint: Record<string, string> = {
+  '1x1': '3005',
+  '2x1': '3004',
+  '3x1': '3622',
+  '4x1': '3010',
+  '2x2': '3003',
+  '3x2': '3002',
+  '4x2': '3001',
 };
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
@@ -153,40 +164,159 @@ function nearestColor(rgb: readonly number[], palette = paletteLab) {
 }
 
 function estimateBackground(data: Uint8ClampedArray, width: number, height: number) {
-  const points = [
-    [0, 0], [width - 1, 0], [0, height - 1], [width - 1, height - 1],
-    [Math.min(1, width - 1), Math.min(1, height - 1)],
-    [Math.max(0, width - 2), Math.min(1, height - 1)],
-    [Math.min(1, width - 1), Math.max(0, height - 2)],
-    [Math.max(0, width - 2), Math.max(0, height - 2)],
-  ];
-  const total = points.reduce((sum, [x, y]) => {
-    const offset = (y * width + x) * 4;
-    return [sum[0] + data[offset], sum[1] + data[offset + 1], sum[2] + data[offset + 2]];
-  }, [0, 0, 0]);
-  return total.map(value => Math.round(value / points.length)) as [number, number, number];
+  let minX = width;
+  let minY = height;
+  let maxX = -1;
+  let maxY = -1;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (data[(y * width + x) * 4 + 3] <= 24) continue;
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    }
+  }
+  if (maxX < minX || maxY < minY) return [255, 255, 255] as [number, number, number];
+  const points: [number, number][] = [];
+  const stride = Math.max(1, Math.floor(Math.min(maxX - minX + 1, maxY - minY + 1) / 8));
+  for (let x = minX; x <= maxX; x += stride) {
+    points.push([x, minY], [x, maxY]);
+  }
+  for (let y = minY + stride; y < maxY - stride; y += stride) {
+    points.push([minX, y], [maxX, y]);
+  }
+  const channels = [0, 1, 2].map(channel => points.map(([x, y]) =>
+    data[(y * width + x) * 4 + channel],
+  ).sort((a, b) => a - b));
+  return channels.map(values => values[Math.floor(values.length / 2)] ?? 255) as [number, number, number];
 }
 
-function partitionRun(start: number, end: number, reverse: boolean, maxWidth = 4) {
-  const widths: (1 | 2 | 3 | 4)[] = [];
-  let remaining = end - start;
-  if (reverse && remaining > 1) {
-    const width = Math.min(2, remaining - 1) as 1 | 2;
-    widths.push(width);
-    remaining -= width;
+function foregroundMask(
+  data: Uint8ClampedArray,
+  width: number,
+  height: number,
+  background: [number, number, number],
+  threshold: number,
+) {
+  const backgroundLab = rgbToLab(background);
+  const pixelDistance = new Float32Array(width * height);
+  const alpha = new Uint8Array(width * height);
+  for (let index = 0; index < width * height; index++) {
+    const offset = index * 4;
+    alpha[index] = data[offset + 3];
+    pixelDistance[index] = distance(
+      rgbToLab([data[offset], data[offset + 1], data[offset + 2]]),
+      backgroundLab,
+    );
   }
-  while (remaining > 0) {
-    const width = Math.min(maxWidth, remaining) as 1 | 2 | 3 | 4;
-    widths.push(width);
-    remaining -= width;
+  const exterior = new Uint8Array(width * height);
+  const queue = new Int32Array(width * height);
+  let head = 0;
+  let tail = 0;
+  const seed = (x: number, y: number) => {
+    const index = y * width + x;
+    if (exterior[index] || (alpha[index] > 24 && pixelDistance[index] > threshold * 1.55)) return;
+    exterior[index] = 1;
+    queue[tail++] = index;
+  };
+  for (let x = 0; x < width; x++) {
+    seed(x, 0);
+    seed(x, height - 1);
   }
-  const segments: { start: number; width: 1 | 2 | 3 | 4 }[] = [];
-  let cursor = start;
-  for (const width of widths) {
-    segments.push({ start: cursor, width });
-    cursor += width;
+  for (let y = 1; y < height - 1; y++) {
+    seed(0, y);
+    seed(width - 1, y);
   }
-  return segments;
+  while (head < tail) {
+    const index = queue[head++];
+    const x = index % width;
+    const y = Math.floor(index / width);
+    const neighbors = [
+      x > 0 ? index - 1 : -1,
+      x + 1 < width ? index + 1 : -1,
+      y > 0 ? index - width : -1,
+      y + 1 < height ? index + width : -1,
+    ];
+    for (const next of neighbors) {
+      if (next < 0 || exterior[next]) continue;
+      if (alpha[next] <= 24 || pixelDistance[next] <= threshold * 1.2) {
+        exterior[next] = 1;
+        queue[tail++] = next;
+      }
+    }
+  }
+  const mask = new Uint8Array(width * height);
+  for (let index = 0; index < mask.length; index++) {
+    mask[index] = alpha[index] > 24
+      && !exterior[index]
+      && pixelDistance[index] >= threshold * 0.85
+      ? 1
+      : 0;
+  }
+  const occupied = mask.reduce((sum, value) => sum + value, 0);
+  if (occupied < Math.max(4, mask.length * 0.025)) {
+    for (let index = 0; index < mask.length; index++) mask[index] = alpha[index] > 24 ? 1 : 0;
+  }
+  return { mask, pixelDistance };
+}
+
+function distanceField(mask: Uint8Array, width: number, height: number) {
+  const result = new Float32Array(mask.length);
+  result.fill(Number.POSITIVE_INFINITY);
+  for (let index = 0; index < mask.length; index++) {
+    if (!mask[index]) result[index] = 0;
+  }
+  const diagonal = Math.SQRT2;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const index = y * width + x;
+      if (!mask[index]) continue;
+      if (x > 0) result[index] = Math.min(result[index], result[index - 1] + 1);
+      if (y > 0) result[index] = Math.min(result[index], result[index - width] + 1);
+      if (x > 0 && y > 0) result[index] = Math.min(result[index], result[index - width - 1] + diagonal);
+      if (x + 1 < width && y > 0) result[index] = Math.min(result[index], result[index - width + 1] + diagonal);
+    }
+  }
+  for (let y = height - 1; y >= 0; y--) {
+    for (let x = width - 1; x >= 0; x--) {
+      const index = y * width + x;
+      if (!mask[index]) continue;
+      if (x + 1 < width) result[index] = Math.min(result[index], result[index + 1] + 1);
+      if (y + 1 < height) result[index] = Math.min(result[index], result[index + width] + 1);
+      if (x + 1 < width && y + 1 < height) result[index] = Math.min(result[index], result[index + width + 1] + diagonal);
+      if (x > 0 && y + 1 < height) result[index] = Math.min(result[index], result[index + width - 1] + diagonal);
+    }
+  }
+  return result;
+}
+
+function sampleScalar(source: SampledDepth, x: number, y: number, width: number, height: number) {
+  const sx = clamp(Math.round((x + 0.5) / width * source.width - 0.5), 0, source.width - 1);
+  const sy = clamp(Math.round((y + 0.5) / height * source.height - 0.5), 0, source.height - 1);
+  return source.data[sy * source.width + sx];
+}
+
+function normalizedDepth(source: SampledDepth | undefined, mask: Uint8Array, width: number, height: number) {
+  if (!source) return null;
+  const sampled = new Float32Array(width * height);
+  const values: number[] = [];
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const index = y * width + x;
+      sampled[index] = sampleScalar(source, x, y, width, height);
+      if (mask[index] && Number.isFinite(sampled[index])) values.push(sampled[index]);
+    }
+  }
+  if (!values.length) return null;
+  values.sort((a, b) => a - b);
+  const low = values[Math.floor(values.length * 0.05)];
+  const high = values[Math.floor(values.length * 0.95)];
+  const range = Math.max(1e-5, high - low);
+  for (let index = 0; index < sampled.length; index++) {
+    sampled[index] = clamp((sampled[index] - low) / range, 0, 1);
+  }
+  return sampled;
 }
 
 type ImageCell = {
@@ -200,29 +330,28 @@ function analyzeImage(
   width: number,
   height: number,
   options: ImageBrickOptions,
-): { cells: (ImageCell | null)[]; background: [number, number, number] } {
+): { cells: (ImageCell | null)[]; mask: Uint8Array; background: [number, number, number] } {
   if (width < 1 || height < 1 || data.length !== width * height * 4) {
     throw new Error('Invalid image pixel data');
   }
-  const maxDepth = clamp(Math.round(options.maxDepth), 1, 6);
+  const maxDepth = clamp(Math.round(options.maxDepth), 1, 32);
   const maxColors = clamp(Math.round(options.maxColors), 2, brickPalette.length);
   const background = estimateBackground(data, width, height);
-  const backgroundLab = rgbToLab(background);
+  const foreground = options.removeBackground
+    ? foregroundMask(data, width, height, background, options.backgroundThreshold)
+    : {
+        mask: Uint8Array.from({ length: width * height }, (_, index) => data[index * 4 + 3] > 24 ? 1 : 0),
+        pixelDistance: new Float32Array(width * height),
+      };
   const pixels = Array.from({ length: width * height }, (_, index) => {
     const offset = index * 4;
     const rgb = [data[offset], data[offset + 1], data[offset + 2]] as const;
-    const alpha = data[offset + 3];
-    const backgroundDistance = distance(rgbToLab(rgb), backgroundLab);
     return {
       rgb,
-      alpha,
-      backgroundDistance,
-      occupied: alpha > 24 && (!options.removeBackground || backgroundDistance >= options.backgroundThreshold),
+      backgroundDistance: foreground.pixelDistance[index],
+      occupied: Boolean(foreground.mask[index]),
     };
   });
-  if (pixels.filter(pixel => pixel.occupied).length < Math.max(4, pixels.length * 0.025)) {
-    for (const pixel of pixels) pixel.occupied = pixel.alpha > 24;
-  }
   const frequency = new Map<string, number>();
   for (const pixel of pixels) {
     if (!pixel.occupied) continue;
@@ -236,11 +365,12 @@ function analyzeImage(
   const selectedPalette = paletteLab.filter(item => selectedIds.includes(item.color.id));
   return {
     background,
+    mask: foreground.mask,
     cells: pixels.map(pixel => {
-    if (!pixel.occupied) return null;
-    const color = nearestColor(pixel.rgb, selectedPalette.length ? selectedPalette : paletteLab);
-    const lightness = rgbToLab(pixel.rgb)[0] / 100;
-    const relief = clamp(pixel.backgroundDistance / 65, 0, 1) * 0.45 + (1 - lightness) * 0.55;
+      if (!pixel.occupied) return null;
+      const color = nearestColor(pixel.rgb, selectedPalette.length ? selectedPalette : paletteLab);
+      const lightness = rgbToLab(pixel.rgb)[0] / 100;
+      const relief = clamp(pixel.backgroundDistance / 65, 0, 1) * 0.35 + (1 - lightness) * 0.65;
       return { color, depth: 1 + Math.round(relief * (maxDepth - 1)), rgb: pixel.rgb };
     }),
   };
@@ -257,47 +387,60 @@ function buildFromVoxels(
   viewCount: number,
   sourceWidth = width,
   sourceHeight = height,
-) {
+  reconstruction: ImageBrickBuild['reconstruction'] = 'shape-inflation',
+): ImageBrickBuild {
   const bandSize = 3;
   const depthBands = Math.ceil(depth / bandSize);
   const bricks: ImageBrick[] = [];
+  const visited = new Set<string>();
   let brickIndex = 0;
   for (let level = 0; level < height; level++) {
     for (let row = 0; row < depth; row++) {
-      let column = 0;
-      while (column < width) {
+      for (let column = 0; column < width; column++) {
+        const originKey = `${column}:${level}:${row}`;
+        if (visited.has(originKey)) continue;
         const color = voxels.get(`${column}:${level}:${row}`);
-        if (!color) {
-          column++;
-          continue;
-        }
-        let end = column + 1;
-        while (end < width) {
-          const next = voxels.get(`${end}:${level}:${row}`);
-          if (!next || next.id !== color.id) break;
-          end++;
-        }
+        if (!color) continue;
         const reverse = options.bond === 'running'
           ? (level + row) % 2 === 1
           : options.bond === 'reinforced' && level % 2 === 1;
-        const maxWidth = options.bond === 'reinforced' && (level + row) % 3 === 0 ? 2 : 4;
-        for (const segment of partitionRun(column, end, reverse, maxWidth)) {
-          brickIndex++;
-          const step = level * depthBands + Math.floor(row / bandSize) + 1;
-          bricks.push({
-            id: `image_brick_${String(brickIndex).padStart(5, '0')}`,
-            partId: partByWidth[segment.width],
-            width: segment.width,
-            x: segment.start + segment.width / 2 - width / 2,
-            y: level * 1.2 + 0.6,
-            z: row - depth / 2 + 0.5,
-            colorId: color.id,
-            colorCode: color.code,
-            colorHex: color.hex,
-            step,
-          });
+        const candidates: [number, number][] = reverse
+          ? [[2, 2], [4, 2], [3, 2], [2, 1], [4, 1], [3, 1], [1, 1]]
+          : [[4, 2], [3, 2], [2, 2], [4, 1], [3, 1], [2, 1], [1, 1]];
+        const allowed = options.bond === 'reinforced' && (level + row) % 3 === 0
+          ? candidates.filter(([candidateWidth]) => candidateWidth <= 2)
+          : candidates;
+        const footprint = allowed.find(([candidateWidth, candidateDepth]) => {
+          if (column + candidateWidth > width || row + candidateDepth > depth) return false;
+          for (let dz = 0; dz < candidateDepth; dz++) {
+            for (let dx = 0; dx < candidateWidth; dx++) {
+              const key = `${column + dx}:${level}:${row + dz}`;
+              if (visited.has(key) || voxels.get(key)?.id !== color.id) return false;
+            }
+          }
+          return true;
+        }) ?? [1, 1];
+        const [brickWidth, brickDepth] = footprint;
+        for (let dz = 0; dz < brickDepth; dz++) {
+          for (let dx = 0; dx < brickWidth; dx++) {
+            visited.add(`${column + dx}:${level}:${row + dz}`);
+          }
         }
-        column = end;
+        brickIndex++;
+        const step = level * depthBands + Math.floor(row / bandSize) + 1;
+        bricks.push({
+          id: `image_brick_${String(brickIndex).padStart(5, '0')}`,
+          partId: partByFootprint[`${brickWidth}x${brickDepth}`],
+          width: brickWidth,
+          depth: brickDepth,
+          x: column + brickWidth / 2 - width / 2,
+          y: level * 1.2 + 0.6,
+          z: row + brickDepth / 2 - depth / 2,
+          colorId: color.id,
+          colorCode: color.code,
+          colorHex: color.hex,
+          step,
+        });
       }
     }
   }
@@ -325,6 +468,7 @@ function buildFromVoxels(
       key,
       partId: brick.partId,
       width: brick.width,
+      depth: brick.depth,
       colorId: brick.colorId,
       colorCode: brick.colorCode,
       colorHex: brick.colorHex,
@@ -346,9 +490,72 @@ function buildFromVoxels(
     sourceWidth,
     sourceHeight,
     backgroundHex,
+    reconstruction,
     bricks,
     steps,
     bom: [...bomMap.values()].sort((a, b) => b.quantity - a.quantity || a.key.localeCompare(b.key)),
+  };
+}
+
+function cellAt(
+  analysis: ReturnType<typeof analyzeImage>,
+  image: SampledImage,
+  x: number,
+  y: number,
+  targetWidth: number,
+  targetHeight: number,
+  flipX = false,
+) {
+  let sourceX = clamp(Math.floor((x + 0.5) / targetWidth * image.width), 0, image.width - 1);
+  if (flipX) sourceX = image.width - sourceX - 1;
+  const sourceY = clamp(Math.floor((y + 0.5) / targetHeight * image.height), 0, image.height - 1);
+  return analysis.cells[sourceY * image.width + sourceX];
+}
+
+function applySharedPalette(voxels: Map<string, BrickPaletteColor>, maxColors: number) {
+  const frequency = new Map<string, number>();
+  for (const color of voxels.values()) frequency.set(color.id, (frequency.get(color.id) ?? 0) + 1);
+  const selected = new Set(
+    [...frequency]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, clamp(Math.round(maxColors), 2, brickPalette.length))
+      .map(([id]) => id),
+  );
+  const palette = paletteLab.filter(item => selected.has(item.color.id));
+  for (const [key, color] of voxels) {
+    if (!selected.has(color.id)) voxels.set(key, nearestColor(hexToRgb(color.hex), palette));
+  }
+}
+
+function hollowVolume(voxels: Map<string, BrickPaletteColor>) {
+  if (!voxels.size) return;
+  const solid = new Set(voxels.keys());
+  for (const key of [...voxels.keys()]) {
+    const [x, y, z] = key.split(':').map(Number);
+    const enclosed = [
+      `${x - 1}:${y}:${z}`, `${x + 1}:${y}:${z}`,
+      `${x}:${y - 1}:${z}`, `${x}:${y + 1}:${z}`,
+      `${x}:${y}:${z - 1}`, `${x}:${y}:${z + 1}`,
+    ].every(neighbor => solid.has(neighbor));
+    if (enclosed) voxels.delete(key);
+  }
+}
+
+function trimVoxels(voxels: Map<string, BrickPaletteColor>, fallback: [number, number, number]) {
+  if (!voxels.size) {
+    return { voxels, width: fallback[0], height: fallback[1], depth: fallback[2] };
+  }
+  const coordinates = [...voxels.keys()].map(key => key.split(':').map(Number));
+  const min = [0, 1, 2].map(axis => Math.min(...coordinates.map(point => point[axis])));
+  const max = [0, 1, 2].map(axis => Math.max(...coordinates.map(point => point[axis])));
+  return {
+    width: max[0] - min[0] + 1,
+    height: max[1] - min[1] + 1,
+    depth: max[2] - min[2] + 1,
+    voxels: new Map([...voxels].map(([key, color]) => {
+      const [x, y, z] = key.split(':').map(Number);
+      return [`${x - min[0]}:${y - min[1]}:${z - min[2]}`, color];
+    })),
   };
 }
 
@@ -364,28 +571,75 @@ export function createBrickModelFromViews(
   }
   const frontAnalysis = analyzeImage(front.data, front.width, front.height, options);
   const height = front.height;
-  const requestedDepth = options.method === 'relief'
-    ? clamp(Math.round(options.maxDepth), 1, 6)
-    : width;
-  const top = views.top ? analyzeImage(views.top.data, views.top.width, views.top.height, options) : null;
-  const side = views.side ? analyzeImage(views.side.data, views.side.width, views.side.height, options) : null;
-  const depth = Math.max(1, Math.min(requestedDepth, views.top?.height ?? width, views.side?.width ?? width));
+  const depth = options.method === 'relief'
+    ? clamp(Math.round(options.maxDepth), 1, 8)
+    : clamp(Math.round(options.maxDepth), 4, width);
+  const left = views.left ? analyzeImage(views.left.data, views.left.width, views.left.height, options) : null;
+  const back = views.back ? analyzeImage(views.back.data, views.back.width, views.back.height, options) : null;
+  const right = views.right ? analyzeImage(views.right.data, views.right.width, views.right.height, options) : null;
+  const viewCount = 1 + Number(Boolean(left)) + Number(Boolean(back)) + Number(Boolean(right));
   const voxels = new Map<string, BrickPaletteColor>();
+  const shapeDistance = distanceField(frontAnalysis.mask, width, height);
+  const maximumDistance = Math.max(1, ...shapeDistance.filter(Number.isFinite));
+  const aiDepth = normalizedDepth(views.frontDepth, frontAnalysis.mask, width, height);
+  if (aiDepth) {
+    for (let pass = 0; pass < 2; pass++) {
+      const source = aiDepth.slice();
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const index = y * width + x;
+          if (!frontAnalysis.mask[index]) continue;
+          let total = 0;
+          let count = 0;
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              const nx = x + dx;
+              const ny = y + dy;
+              if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+              const neighbor = ny * width + nx;
+              if (!frontAnalysis.mask[neighbor]) continue;
+              total += source[neighbor];
+              count++;
+            }
+          }
+          if (count) aiDepth[index] = total / count;
+        }
+      }
+    }
+  }
 
   for (let sourceRow = 0; sourceRow < height; sourceRow++) {
     const level = height - sourceRow - 1;
     for (let x = 0; x < width; x++) {
-      const frontCell = frontAnalysis.cells[sourceRow * width + x];
+      const index = sourceRow * width + x;
+      const frontCell = frontAnalysis.cells[index];
       if (!frontCell) continue;
+      const shapeRadius = Math.pow(clamp(shapeDistance[index] / maximumDistance, 0, 1), 0.68);
+      const estimatedDepth = aiDepth?.[index] ?? 0.5;
       for (let z = 0; z < depth; z++) {
-        let occupied = z < frontCell.depth;
+        let occupied: boolean;
         const colors: (readonly number[])[] = [frontCell.rgb];
-        if (options.method !== 'relief') {
-          const topCell = top?.cells[z * views.top!.width + x];
-          const sideCell = side?.cells[sourceRow * views.side!.width + z];
-          occupied = Boolean(frontCell && (!top || topCell) && (!side || sideCell));
-          if (topCell) colors.push(topCell.rgb);
-          if (sideCell) colors.push(sideCell.rgb);
+        if (options.method === 'relief') {
+          occupied = z < Math.min(depth, frontCell.depth);
+        } else if (viewCount > 1) {
+          const leftCell = left && cellAt(left, views.left!, depth - z - 1, sourceRow, depth, height);
+          const rightCell = right && cellAt(right, views.right!, z, sourceRow, depth, height);
+          const backCell = back && cellAt(back, views.back!, width - x - 1, sourceRow, width, height);
+          occupied = Boolean((!left || leftCell) && (!right || rightCell) && (!back || backCell));
+          if (leftCell) colors.push(leftCell.rgb);
+          if (rightCell) colors.push(rightCell.rgb);
+          if (backCell) colors.push(backCell.rgb);
+        } else if (aiDepth && options.method === 'hollow') {
+          const surface = Math.round((1 - estimatedDepth) * Math.max(1, depth - 3));
+          const thickness = shapeRadius > 0.58 ? 3 : 2;
+          occupied = z >= surface && z < Math.min(depth, surface + thickness);
+        } else {
+          const halfDepth = Math.max(
+            1,
+            Math.round((0.12 + shapeRadius * 0.88) * (depth / 2) * (0.78 + estimatedDepth * 0.44)),
+          );
+          const center = (depth - 1) / 2 + Math.round((estimatedDepth - 0.5) * depth * 0.22);
+          occupied = z >= Math.floor(center - halfDepth) && z <= Math.ceil(center + halfDepth);
         }
         if (!occupied) continue;
         const rgb = [0, 1, 2].map(channel =>
@@ -396,57 +650,55 @@ export function createBrickModelFromViews(
     }
   }
 
-  // Apply a single shared palette after view fusion, not a separate palette per photo.
-  const frequency = new Map<string, number>();
-  for (const color of voxels.values()) frequency.set(color.id, (frequency.get(color.id) ?? 0) + 1);
-  const selected = new Set([...frequency].sort((a, b) => b[1] - a[1]).slice(0, options.maxColors).map(([id]) => id));
-  const palette = paletteLab.filter(item => selected.has(item.color.id));
-  for (const [key, color] of voxels) {
-    if (!selected.has(color.id)) voxels.set(key, nearestColor(hexToRgb(color.hex), palette));
-  }
+  applySharedPalette(voxels, options.maxColors);
+  if (options.method === 'hollow' && !(aiDepth && viewCount === 1)) hollowVolume(voxels);
+  const trimmed = trimVoxels(voxels, [width, height, depth]);
 
-  if (options.method === 'hollow' && voxels.size) {
-    const solid = new Set(voxels.keys());
-    for (const key of [...voxels.keys()]) {
-      const [x, y, z] = key.split(':').map(Number);
-      const enclosed = [
-        `${x - 1}:${y}:${z}`, `${x + 1}:${y}:${z}`,
-        `${x}:${y - 1}:${z}`, `${x}:${y + 1}:${z}`,
-        `${x}:${y}:${z - 1}`, `${x}:${y}:${z + 1}`,
-      ].every(neighbor => solid.has(neighbor));
-      if (enclosed) voxels.delete(key);
-    }
-  }
-
-  let modelVoxels = voxels;
-  let modelWidth = width;
-  let modelHeight = height;
-  let modelDepth = depth;
-  if (voxels.size) {
-    const coordinates = [...voxels.keys()].map(key => key.split(':').map(Number));
-    const min = [0, 1, 2].map(axis => Math.min(...coordinates.map(point => point[axis])));
-    const max = [0, 1, 2].map(axis => Math.max(...coordinates.map(point => point[axis])));
-    modelWidth = max[0] - min[0] + 1;
-    modelHeight = max[1] - min[1] + 1;
-    modelDepth = max[2] - min[2] + 1;
-    modelVoxels = new Map([...voxels].map(([key, color]) => {
-      const [x, y, z] = key.split(':').map(Number);
-      return [`${x - min[0]}:${y - min[1]}:${z - min[2]}`, color];
-    }));
-  }
-
-  return buildFromVoxels(
-    modelVoxels,
-    modelWidth,
-    modelHeight,
-    modelDepth,
+  const build = buildFromVoxels(
+    trimmed.voxels,
+    trimmed.width,
+    trimmed.height,
+    trimmed.depth,
     options,
     name,
     frontAnalysis.background,
-    1 + Number(Boolean(top)) + Number(Boolean(side)),
+    viewCount,
     front.width,
     front.height,
+    options.method === 'relief'
+      ? 'relief'
+      : viewCount > 1
+        ? 'multi-view'
+        : views.frontDepth
+          ? 'depth-ai'
+          : 'shape-inflation',
   );
+  if (views.frontDepth) {
+    build.credits = [
+      'Depth Anything V2 Small ONNX, Apache-2.0, revision 4472b7362082ad9968fee890ca0f1e5aca36b93d',
+    ];
+  }
+  return build;
+}
+
+export function createEmptyBrickBuild(): ImageBrickBuild {
+  return {
+    name: '',
+    width: 0,
+    height: 0,
+    maxDepth: 0,
+    method: 'hollow',
+    bond: 'running',
+    viewCount: 0,
+    brickBudget: 0,
+    sourceWidth: 0,
+    sourceHeight: 0,
+    backgroundHex: '#f2f4f8',
+    reconstruction: 'empty',
+    bricks: [],
+    bom: [],
+    steps: [],
+  };
 }
 
 export function createBrickRelief(
@@ -489,40 +741,4 @@ export function imageBrickBuildToLdraw(build: ImageBrickBuild) {
     }
   }
   return `${lines.join('\n')}\n`;
-}
-
-export function createDemoBrickBuild() {
-  const pattern = [
-    '.......YYYY.........',
-    '......YYYYYY........',
-    '..RRRRBBBBBBBBRR....',
-    '.RRRRRWWBBBBWWRRR...',
-    'RRRRRRBBBBBBBBRRRR..',
-    'RRRRRRRRRRRRRRRRRR..',
-    '...KKK......KKK.....',
-    '..KKKKK....KKKKK....',
-  ];
-  const colors: Record<string, readonly [number, number, number]> = {
-    '.': [245, 246, 248],
-    R: [201, 26, 9],
-    B: [0, 85, 191],
-    Y: [242, 205, 55],
-    W: [244, 244, 244],
-    K: [5, 19, 29],
-  };
-  const data = new Uint8ClampedArray(pattern.length * pattern[0].length * 4);
-  pattern.forEach((row, y) => [...row].forEach((token, x) => {
-    const offset = (y * row.length + x) * 4;
-    data.set([...colors[token], token === '.' ? 0 : 255], offset);
-  }));
-  return createBrickRelief(data, pattern[0].length, pattern.length, {
-    width: pattern[0].length,
-    maxDepth: 3,
-    maxColors: 6,
-    removeBackground: true,
-    backgroundThreshold: 12,
-    method: 'relief',
-    bond: 'running',
-    brickBudget: 1200,
-  }, 'Brick Atlas demo');
 }

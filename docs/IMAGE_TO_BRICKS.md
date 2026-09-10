@@ -1,29 +1,32 @@
 # Image-to-Bricks Pipeline
 
-## What Ships in the Browser
+## Browser Reconstruction
 
-Brick Atlas includes a deterministic local multi-view generator at `/create`.
+`/create` starts empty and converts the user's own real-object photographs. It no longer shows a fixed vehicle demo.
 
-The browser:
+The local pipeline:
 
-1. lets the user move and resize a square crop independently on each source image;
-2. accepts a required front view plus optional top and side views;
-3. samples each crop onto a common configurable stud grid;
-4. estimates the background from corner pixels;
-5. maps visible pixels to a practical LDraw color palette;
-6. derives either a shallow height field or a three-view visual hull;
-7. supports solid, hollow-shell, and relief generation;
-8. packs occupied cells into 1x1, 1x2, 1x3, and 1x4 bricks using stacked, running, or reinforced bonds;
-9. lowers sampling resolution automatically when needed to honor the requested brick budget;
-10. creates bottom-up build steps and a bill of materials;
-11. renders the result with batched Three.js instancing; and
-12. exports BOM CSV and LDraw files.
+1. accepts one required front photograph and optional left, back, and right photographs;
+2. preserves the complete image by default, with manual square cropping still available;
+3. runs the Apache-2.0 Depth Anything V2 Small ONNX model in a Web Worker;
+4. estimates and flood-fills the connected background while preserving transparent image masks;
+5. converts single-image depth into a smoothed 3D surface shell instead of a flat color relief;
+6. intersects aligned silhouettes when two to four views are supplied;
+7. supports hollow, solid, and low-profile relief output;
+8. quantizes colors in CIELAB space against the supported LDraw palette;
+9. packs voxels into 1x1 through 1x4 and 2x2 through 2x4 bricks;
+10. reduces resolution automatically to stay within the requested brick budget;
+11. creates stable brick IDs, bottom-up build steps, BOM data, and LDraw output; and
+12. renders the result with batched Three.js instancing.
 
-No image is uploaded. Multi-view output is a silhouette intersection, not a learned reconstruction of surfaces hidden from every supplied view.
+The depth model is downloaded once from the
+[ONNX community Depth Anything V2 Small repository](https://huggingface.co/onnx-community/depth-anything-v2-small)
+and is then handled by the browser cache. The URL is pinned to revision
+`4472b7362082ad9968fee890ca0f1e5aca36b93d`, and the worker verifies the model's SHA-256 before inference. Photos stay in the browser. If model loading is unavailable, the generator falls back to deterministic silhouette-distance reconstruction.
 
 ## Why a Single Image Is Not Enough for Exact Geometry
 
-A photograph contains no direct evidence for the back, underside, internal supports, real scale, or occluded parts of an object. A model can infer plausible geometry, but it cannot guarantee an exact reconstruction from one view. Exact work requires calibrated multi-view photographs or an existing mesh. The browser workflow improves silhouette and depth agreement when front, top, and side views are supplied, but it does not infer unseen concavities.
+A photograph contains no direct evidence for the back, underside, internal supports, real scale, or occluded parts of an object. Monocular depth supplies a plausible visible surface, not ground-truth hidden geometry. For better reconstruction, photograph the same stationary object from front, left, back, and right at a similar distance and height.
 
 BrickLink Studio makes the same practical distinction:
 
@@ -36,9 +39,9 @@ References:
 - [BrickLink Studio import formats](https://studiohelp.bricklink.com/hc/en-us/articles/6502277722647-Import-formats)
 - [Image2Lego paper](https://arxiv.org/abs/2108.08477)
 
-## Recommended Volumetric Architecture
+## Optional Cloud Reconstruction
 
-For a future full sculpture service:
+For higher-fidelity production reconstruction:
 
 1. Validate and normalize the upload.
 2. Segment the subject and remove the background.
@@ -52,15 +55,15 @@ For a future full sculpture service:
 
 Candidate reconstruction backends:
 
-- [TripoSR](https://github.com/VAST-AI-Research/TripoSR): MIT-licensed, single-image reconstruction, approximately 6 GB VRAM for its reference inference path.
-- [Hunyuan3D 2.1](https://github.com/Tencent-Hunyuan/Hunyuan3D-2.1): higher-end shape and texture pipeline with a custom community license that must be reviewed for the deployment region and product.
-- [Depth Anything V2](https://github.com/DepthAnything/Depth-Anything-V2): useful for depth-assisted reliefs, but a depth map alone does not recover a closed object.
+- Alibaba Cloud Model Studio Tripo supports single-image and ordered front/left/back/right multi-image GLB generation. It is the closest match for this workflow, but requires the Tripo product to be enabled for the Beijing-region key.
+- [TripoSR](https://github.com/VAST-AI-Research/TripoSR) is an MIT-licensed self-hosted alternative and needs substantially more compute than the browser path.
+- OpenRouter image models generate or edit raster images; they do not return a reliable watertight 3D mesh and are therefore not used as the geometry source.
 
 Open implementations such as [Bricked](https://github.com/evanesmiller/Bricked) and [BrickBuilder](https://github.com/jjohnson5253/brickbuilderai) use the same broad sequence: segmentation, reconstruction, voxelization, brick packing, and Three.js visualization.
 
 ## Suggested Service Contract
 
-The browser should upload images to a private job API rather than expose a model-provider key:
+Any cloud integration must upload images through a private job API rather than expose a provider key:
 
 ```text
 POST /api/image-builds

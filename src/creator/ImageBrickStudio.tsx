@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowDownToLine, ArrowLeft, ArrowRight, BookOpen, Box, ChevronDown, Crosshair,
-  Expand, Hand, Layers3, Minus, Pause, Play, Plus, Rotate3D, RotateCcw,
-  SkipBack, SkipForward,
+  Cpu, Expand, Hand, ImagePlus, Layers3, Minus, Pause, Play, Plus, Rotate3D,
+  RotateCcw, SkipBack, SkipForward,
 } from 'lucide-react';
 import type { Locale, Translator } from '../app/locale';
 import { ImageBrickScene, type ImageBrickView } from '../scene/ImageBrickScene';
 import { IconButton } from '../ui/Controls';
 import { centeredSquare, ImageCropEditor, type CropRect, type ImageSource, type ImageViewRole } from './ImageCropEditor';
+import { estimatePhotoDepth, type DepthPhase } from './depthEstimation';
 import {
-  createDemoBrickBuild, imageBrickBuildToLdraw,
-  type ImageBrickBuild, type ImageBrickOptions, type ImageBrickViews,
+  createEmptyBrickBuild, imageBrickBuildToLdraw,
+  type ImageBrickBuild, type ImageBrickOptions, type ImageBrickViews, type SampledDepth,
 } from './imageBrickModel';
 
 declare global {
@@ -21,16 +22,16 @@ declare global {
 
 const initialOptions: ImageBrickOptions = {
   width: 28,
-  maxDepth: 4,
+  maxDepth: 16,
   maxColors: 12,
   removeBackground: true,
   backgroundThreshold: 18,
-  method: 'relief',
+  method: 'hollow',
   bond: 'running',
-  brickBudget: 1800,
+  brickBudget: 2400,
 };
 
-const roles: ImageViewRole[] = ['front', 'top', 'side'];
+const roles: ImageViewRole[] = ['front', 'left', 'back', 'right'];
 
 function download(data: string, filename: string, type: string) {
   const url = URL.createObjectURL(new Blob([data], { type }));
@@ -49,17 +50,24 @@ async function sampleSource(source: ImageSource, size: number) {
   const context = canvas.getContext('2d', { willReadFrequently: true });
   if (!context) throw new Error('Canvas 2D is unavailable');
   context.clearRect(0, 0, size, size);
-  context.drawImage(
-    bitmap,
-    source.crop.x,
-    source.crop.y,
-    source.crop.size,
-    source.crop.size,
-    0,
-    0,
-    size,
-    size,
-  );
+  if (source.fit) {
+    const scale = Math.min(size / bitmap.width, size / bitmap.height);
+    const width = bitmap.width * scale;
+    const height = bitmap.height * scale;
+    context.drawImage(bitmap, (size - width) / 2, (size - height) / 2, width, height);
+  } else {
+    context.drawImage(
+      bitmap,
+      source.crop.x,
+      source.crop.y,
+      source.crop.size,
+      source.crop.size,
+      0,
+      0,
+      size,
+      size,
+    );
+  }
   bitmap.close();
   return { data: context.getImageData(0, 0, size, size).data, width: size, height: size };
 }
@@ -68,6 +76,7 @@ async function generateBuild(
   sources: Partial<Record<ImageViewRole, ImageSource>>,
   options: ImageBrickOptions,
   signal: AbortSignal,
+  frontDepth?: SampledDepth,
 ) {
   if (!sources.front) throw new Error('A front view is required');
   let resolution = options.width;
@@ -78,6 +87,7 @@ async function generateBuild(
     for (const role of roles) {
       if (sources[role]) sampled[role] = await sampleSource(sources[role]!, resolution);
     }
+    if (frontDepth) sampled.frontDepth = frontDepth;
     signal.throwIfAborted();
     result = await new Promise<ImageBrickBuild>((resolve, reject) => {
       const worker = new Worker(new URL('../workers/image.worker.ts', import.meta.url), { type: 'module' });
@@ -108,10 +118,10 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
   const hostRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<ImageBrickScene | null>(null);
   const sourcesRef = useRef<Partial<Record<ImageViewRole, ImageSource>>>({});
-  const uploadVersions = useRef({ front: 0, top: 0, side: 0 });
+  const uploadVersions = useRef<Record<ImageViewRole, number>>({ front: 0, left: 0, back: 0, right: 0 });
   const [sources, setSources] = useState<Partial<Record<ImageViewRole, ImageSource>>>({});
   const [options, setOptions] = useState(initialOptions);
-  const [build, setBuild] = useState<ImageBrickBuild>(() => createDemoBrickBuild());
+  const [build, setBuild] = useState<ImageBrickBuild>(() => createEmptyBrickBuild());
   const [step, setStep] = useState(build.steps.length);
   const [explosion, setExplosion] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -122,7 +132,23 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
   const [activePanel, setActivePanel] = useState<'parts' | 'steps'>('parts');
   const [openStep, setOpenStep] = useState<number | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [depthState, setDepthState] = useState<{
+    signature: string;
+    status: 'idle' | 'loading' | 'ready' | 'fallback';
+    phase?: DepthPhase;
+    depth?: SampledDepth;
+  }>({ signature: '', status: 'idle' });
   const [error, setError] = useState('');
+  const frontSignature = sources.front
+    ? [
+        sources.front.file.name,
+        sources.front.file.size,
+        sources.front.crop.x.toFixed(2),
+        sources.front.crop.y.toFixed(2),
+        sources.front.crop.size.toFixed(2),
+        sources.front.fit ? 'fit' : 'crop',
+      ].join(':')
+    : '';
 
   useEffect(() => {
     sourcesRef.current = sources;
@@ -171,13 +197,47 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
   }, [playing, build.steps.length, step]);
 
   useEffect(() => {
-    if (!sources.front) { setProcessing(false); return; }
+    if (!sources.front) {
+      setDepthState({ signature: '', status: 'idle' });
+      return;
+    }
+    const source = sources.front;
+    const signature = frontSignature;
+    let active = true;
+    const abort = new AbortController();
+    setDepthState({ signature, status: 'loading', phase: 'model' });
+    const timer = window.setTimeout(() => {
+      sampleSource(source, 518)
+        .then(image => estimatePhotoDepth(image, abort.signal, phase => {
+          if (active) setDepthState({ signature, status: 'loading', phase });
+        }))
+        .then(depth => {
+          if (active) setDepthState({ signature, status: 'ready', depth });
+        })
+        .catch(cause => {
+          if (!active || cause instanceof DOMException && cause.name === 'AbortError') return;
+          setDepthState({ signature, status: 'fallback' });
+        });
+    }, 360);
+    return () => {
+      active = false;
+      abort.abort();
+      window.clearTimeout(timer);
+    };
+  }, [frontSignature]);
+
+  useEffect(() => {
+    if (!sources.front) {
+      setProcessing(false);
+      return;
+    }
+    if (depthState.signature !== frontSignature || depthState.status === 'loading') return;
     let active = true;
     const abort = new AbortController();
     setProcessing(true);
     setError('');
     const timer = window.setTimeout(() => {
-      generateBuild(sources, options, abort.signal)
+      generateBuild(sources, options, abort.signal, depthState.depth)
         .then(next => {
           if (!active) return;
           if (!next.bricks.length) throw new Error(tr('没有识别到主体，请调整框选区域或背景阈值。', 'No subject found. Adjust the crop or background threshold.'));
@@ -199,7 +259,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
       abort.abort();
       window.clearTimeout(timer);
     };
-  }, [sources, options, tr]);
+  }, [sources, options, tr, frontSignature, depthState]);
 
   const brickCount = build.bricks.length;
   const colorCount = new Set(build.bricks.map(brick => brick.colorId)).size;
@@ -213,6 +273,14 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
     })).filter(item => item.quantity);
   }, [build, currentStep]);
   const viewCount = Object.values(sources).filter(Boolean).length;
+  const reconstructionLabel = {
+    empty: tr('等待照片', 'Waiting for photo'),
+    relief: tr('浅浮雕', 'Relief'),
+    'shape-inflation': tr('轮廓体积', 'Shape volume'),
+    'depth-ai': tr('AI 深度实体', 'AI depth volume'),
+    'multi-view': tr('多视图实体', 'Multi-view volume'),
+    'mesh-ai': tr('AI 网格体素', 'AI mesh voxels'),
+  }[build.reconstruction];
 
   async function acceptFile(role: ImageViewRole, next?: File) {
     if (!next) return;
@@ -238,6 +306,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
       width: bitmap.width,
       height: bitmap.height,
       crop: centeredSquare(bitmap.width, bitmap.height),
+      fit: true,
     };
     bitmap.close();
     setSources(current => {
@@ -251,7 +320,15 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
   }
 
   function updateCrop(role: ImageViewRole, crop: CropRect) {
-    setSources(current => current[role] ? { ...current, [role]: { ...current[role]!, crop } } : current);
+    setSources(current => current[role]
+      ? { ...current, [role]: { ...current[role]!, crop, fit: false } }
+      : current);
+  }
+
+  function updateFit(role: ImageViewRole, fit: boolean) {
+    setSources(current => current[role]
+      ? { ...current, [role]: { ...current[role]!, fit } }
+      : current);
   }
 
   function removeSource(role: ImageViewRole) {
@@ -261,15 +338,11 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
       URL.revokeObjectURL(current[role]!.url);
       const next = { ...current };
       delete next[role];
-      if (role !== 'front' && Object.values(next).filter(Boolean).length < 2) {
-        setOptions(value => ({ ...value, method: 'relief' }));
-      }
       return next;
     });
     if (role === 'front') {
-      const demo = createDemoBrickBuild();
-      setBuild(demo);
-      setStep(demo.steps.length);
+      setBuild(createEmptyBrickBuild());
+      setStep(0);
       setOpenStep(null);
       setError('');
       setProcessing(false);
@@ -291,7 +364,13 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
   function exportBom() {
     const rows = [
       ['partId', 'size', 'color', 'ldrawColor', 'quantity'],
-      ...build.bom.map(item => [item.partId, `1x${item.width}`, locale === 'zh' ? item.colorNameZh : item.colorNameEn, String(item.colorCode), String(item.quantity)]),
+      ...build.bom.map(item => [
+        item.partId,
+        `${item.width}x${item.depth ?? 1}`,
+        locale === 'zh' ? item.colorNameZh : item.colorNameEn,
+        String(item.colorCode),
+        String(item.quantity),
+      ]),
     ];
     download(rows.map(row => row.map(value => `"${value.replaceAll('"', '""')}"`).join(',')).join('\n'), `${build.name}-bom.csv`, 'text/csv;charset=utf-8');
   }
@@ -299,9 +378,9 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
   return <section className="image-studio" aria-label={tr('图片转积木工作台', 'Image to brick studio')}>
     <aside className="image-studio-controls">
       <div className="creator-title">
-        <span className="eyebrow">IMAGE TO BRICKS</span>
-        <h1>{tr('多视图积木工坊', 'Multi-view Brick Studio')}</h1>
-        <p>{tr('框选主体并融合正视、俯视与侧视轮廓', 'Crop the subject and fuse front, top, and side silhouettes')}</p>
+        <span className="eyebrow">PHOTO TO 3D BRICKS</span>
+        <h1>{tr('真实物体重建', 'Real-object reconstruction')}</h1>
+        <p>{tr('正面必需；左、后、右视图可提升隐藏结构还原', 'Front required; left, back, and right views improve hidden geometry')}</p>
       </div>
       <div className="crop-source-list">
         {roles.map(role => <ImageCropEditor
@@ -310,15 +389,16 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
           source={sources[role]}
           onFile={file => acceptFile(role, file)}
           onCrop={crop => updateCrop(role, crop)}
+          onFit={fit => updateFit(role, fit)}
           onRemove={() => removeSource(role)}
           tr={tr}
         />)}
       </div>
       <div className="image-option-selects">
         <label>{tr('生成方法', 'Generation method')}<select aria-label={tr('生成方法', 'Generation method')} value={options.method} onChange={event => setOptions(value => ({ ...value, method: event.target.value as ImageBrickOptions['method'] }))}>
-          <option value="relief">{tr('彩色浮雕', 'Color relief')}</option>
-          <option value="hollow" disabled={viewCount < 2}>{tr('空心立体外壳', 'Hollow sculpture')}</option>
-          <option value="solid" disabled={viewCount < 2}>{tr('实心视觉体', 'Solid visual hull')}</option>
+          <option value="hollow">{tr('空心外壳', 'Hollow sculpture')}</option>
+          <option value="solid">{tr('立体实体', 'Solid sculpture')}</option>
+          <option value="relief">{tr('浅浮雕', 'Low-profile relief')}</option>
         </select></label>
         <label>{tr('砌砖方式', 'Brick bond')}<select aria-label={tr('砌砖方式', 'Brick bond')} value={options.bond} onChange={event => setOptions(value => ({ ...value, bond: event.target.value as ImageBrickOptions['bond'] }))}>
           <option value="running">{tr('错缝拼接', 'Running bond')}</option>
@@ -329,7 +409,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
       <div className="image-controls-grid">
         <label><span>{tr('目标分辨率', 'Target resolution')}<b>{options.width}</b></span><input aria-label={tr('目标分辨率', 'Target resolution')} type="range" min={16} max={40} step={2} value={options.width} onChange={event => setOptions(value => ({ ...value, width: Number(event.target.value) }))} /></label>
         <label><span>{tr('积木预算', 'Brick budget')}<b>{options.brickBudget}</b></span><input aria-label={tr('积木预算', 'Brick budget')} type="range" min={300} max={5000} step={100} value={options.brickBudget} onChange={event => setOptions(value => ({ ...value, brickBudget: Number(event.target.value) }))} /></label>
-        <label><span>{tr('浮雕深度', 'Relief depth')}<b>{options.maxDepth}</b></span><input aria-label={tr('浮雕深度', 'Relief depth')} type="range" min={1} max={6} value={options.maxDepth} disabled={options.method !== 'relief'} onChange={event => setOptions(value => ({ ...value, maxDepth: Number(event.target.value) }))} /></label>
+        <label><span>{tr('模型厚度', 'Model depth')}<b>{options.maxDepth}</b></span><input aria-label={tr('模型厚度', 'Model depth')} type="range" min={4} max={32} step={2} value={options.maxDepth} onChange={event => setOptions(value => ({ ...value, maxDepth: Number(event.target.value) }))} /></label>
         <label><span>{tr('颜色数量', 'Color count')}<b>{options.maxColors}</b></span><input aria-label={tr('颜色数量', 'Color count')} type="range" min={4} max={18} value={options.maxColors} onChange={event => setOptions(value => ({ ...value, maxColors: Number(event.target.value) }))} /></label>
         <label><span>{tr('背景阈值', 'Background threshold')}<b>{options.backgroundThreshold}</b></span><input aria-label={tr('背景阈值', 'Background threshold')} type="range" min={4} max={42} value={options.backgroundThreshold} disabled={!options.removeBackground} onChange={event => setOptions(value => ({ ...value, backgroundThreshold: Number(event.target.value) }))} /></label>
       </div>
@@ -340,20 +420,38 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
         <div><strong>{colorCount}</strong><span>{tr('颜色', 'Colors')}</span></div>
         <div><strong>{build.viewCount}</strong><span>{tr('视图', 'Views')}</span></div>
       </div>
+      {sources.front && <div className={`creator-depth-state ${depthState.status}`}>
+        <Cpu size={15} />
+        <span>
+          <strong>{depthState.status === 'ready'
+            ? tr('AI 深度已应用', 'AI depth applied')
+            : depthState.status === 'fallback'
+              ? tr('几何回退已应用', 'Geometry fallback applied')
+              : depthState.phase === 'depth'
+                ? tr('正在估计真实深度', 'Estimating object depth')
+                : tr('正在载入深度模型', 'Loading depth model')}</strong>
+          <small>{tr(`${viewCount} / 4 个视角`, `${viewCount} / 4 views`)}</small>
+        </span>
+      </div>}
       {sources.front && !error && build.sourceWidth < options.width && <div className="creator-status">{tr(`为满足 ${options.brickBudget} 块预算，分辨率自动调整为 ${build.sourceWidth}`, `Resolution adjusted to ${build.sourceWidth} to fit the ${options.brickBudget}-brick budget`)}</div>}
       {processing && <div className="creator-status" role="status">{tr('正在融合视图并生成积木模型…', 'Fusing views and generating the brick model...')}</div>}
       {error && <div className="creator-error" role="alert">{error}</div>}
       <div className="creator-export-row">
-        <button data-brick-effect="shatter" onClick={exportBom}><ArrowDownToLine size={15} />BOM CSV</button>
-        <button data-brick-effect="shatter" onClick={() => download(imageBrickBuildToLdraw(build), `${build.name}.ldr`, 'text/plain;charset=utf-8')}><ArrowDownToLine size={15} />LDraw</button>
+        <button data-brick-effect="shatter" disabled={!brickCount} onClick={exportBom}><ArrowDownToLine size={15} />BOM CSV</button>
+        <button data-brick-effect="shatter" disabled={!brickCount} onClick={() => download(imageBrickBuildToLdraw(build), `${build.name}.ldr`, 'text/plain;charset=utf-8')}><ArrowDownToLine size={15} />LDraw</button>
       </div>
     </aside>
 
     <main className="image-studio-stage">
       <div className="image-stage-heading">
-        <div><span className="eyebrow">{sources.front ? tr('已生成模型', 'Generated model') : tr('交互演示', 'Interactive demo')}</span><strong>{build.name}</strong></div>
+        <div><span className="eyebrow">{sources.front ? tr('照片重建', 'Photo reconstruction') : tr('等待输入', 'Awaiting input')}</span><strong>{build.name || tr('上传真实物体照片', 'Upload a real-object photo')}</strong></div>
       </div>
       <div className="image-brick-canvas" ref={hostRef} />
+      {!sources.front && <div className="image-empty-state">
+        <ImagePlus size={34} />
+        <strong>{tr('从真实照片开始', 'Start with a real photo')}</strong>
+        <span>{tr('正面照片必需', 'Front view required')}</span>
+      </div>}
       <div className="image-viewport-toolbar" aria-label={tr('视角工具', 'View tools')}>
         <div className="view-select"><Box size={16} /><select aria-label={tr('模型视角', 'Model view')} value={view} onChange={event => setView(event.target.value as ImageBrickView)}>
           <option value="perspective">{tr('三分之四', 'Perspective')}</option>
@@ -370,7 +468,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
             sceneRef.current?.focusStep(step);
           }
         }}><Crosshair size={17} /></IconButton>
-        <IconButton label={tr('适配全部可见积木', 'Fit visible bricks')} onClick={() => sceneRef.current?.fitVisible()}><Expand size={17} /></IconButton>
+        <IconButton label={tr('适配全部可见积木', 'Fit visible bricks')} disabled={!brickCount} onClick={() => sceneRef.current?.fitVisible()}><Expand size={17} /></IconButton>
       </div>
       <div className="image-zoom-tools">
         <IconButton label={tr('放大模型', 'Zoom in')} onClick={() => sceneRef.current?.zoom(0.8)}><Plus size={17} /></IconButton>
@@ -384,7 +482,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
         }}><RotateCcw size={17} /></IconButton>
       </div>
       <section className="image-build-dock" aria-label={tr('拼装步骤控制', 'Build step controls')}>
-        <div className="dock-heading"><div><BookOpen size={17} /><strong>{currentStep ? tr(`第 ${step} 步`, `Step ${step}`) : tr('准备拼装', 'Ready to build')}</strong><span className="phase-name">{build.method === 'relief' ? tr('浮雕', 'Relief') : tr('多视图立体', 'Multi-view')}</span></div><output>{step}<span> / {build.steps.length}</span></output></div>
+        <div className="dock-heading"><div><BookOpen size={17} /><strong>{currentStep ? tr(`第 ${step} 步`, `Step ${step}`) : tr('准备拼装', 'Ready to build')}</strong><span className="phase-name">{reconstructionLabel}</span></div><output>{step}<span> / {build.steps.length}</span></output></div>
         <div className="step-controls">
           <IconButton label={tr('回到开始', 'Restart')} disabled={step === 0} onClick={() => setBuildStep(0)}><SkipBack size={16} /></IconButton>
           <IconButton label={tr('上一步', 'Previous step')} disabled={step === 0} onClick={() => setBuildStep(step - 1)}><ArrowLeft size={17} /></IconButton>
@@ -404,7 +502,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
       </div>
       <div className="image-result-scroll">
         {activePanel === 'parts'
-          ? build.bom.map(item => <div className="image-bom-row" key={item.key}><i style={{ background: item.colorHex }} /><span><strong>Brick 1 × {item.width}</strong><small>{locale === 'zh' ? item.colorNameZh : item.colorNameEn} · {item.partId}</small></span><b>× {item.quantity}</b></div>)
+          ? build.bom.map(item => <div className="image-bom-row" key={item.key}><i style={{ background: item.colorHex }} /><span><strong>Brick {item.width} × {item.depth ?? 1}</strong><small>{locale === 'zh' ? item.colorNameZh : item.colorNameEn} · {item.partId}</small></span><b>× {item.quantity}</b></div>)
           : build.steps.map(item => {
             const isOpen = openStep === item.id;
             const parts = build.bricks.filter(brick => item.brickIds.includes(brick.id));
@@ -430,6 +528,10 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
               </div>}
             </details>;
           })}
+        {!build.bricks.length && <div className="image-results-empty">
+          <Box size={28} />
+          <span>{tr('材料与步骤将在重建后出现', 'Materials and steps appear after reconstruction')}</span>
+        </div>}
       </div>
       <div className="image-current-step">
         <span>{tr('本步零件', 'Current step')}</span>

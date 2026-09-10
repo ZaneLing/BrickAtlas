@@ -425,11 +425,16 @@ test('composer snaps reusable models and parts into a buildable saved scene', as
 });
 
 test('image studio converts an image into bricks, steps, and exports', async ({ page }) => {
+  test.setTimeout(120000);
   await page.goto('/create');
   await expect(page.getByRole('region', { name: '图片转积木工作台' })).toBeVisible();
+  await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().bricks ?? -1)).toBe(0);
   await page.getByLabel('上传正视图').setInputFiles('public/models/5867/preview.png');
+  await expect.poll(
+    async () => page.evaluate(() => window.__imageBricks?.().bricks ?? 0),
+    { timeout: 90000 },
+  ).toBeGreaterThan(20);
   await expect(page.locator('.image-stage-heading strong')).toHaveText('preview');
-  await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().bricks ?? 0)).toBeGreaterThan(20);
   const crop = page.locator('.crop-source').first().locator('.crop-selection');
   const cropBefore = await crop.getAttribute('style');
   const cropBox = (await crop.boundingBox())!;
@@ -439,11 +444,14 @@ test('image studio converts an image into bricks, steps, and exports', async ({ 
   await page.mouse.up();
   await expect.poll(async () => crop.getAttribute('style')).not.toBe(cropBefore);
 
-  await page.getByLabel('上传俯视图').setInputFiles('public/models/5867/preview.png');
-  await page.getByLabel('上传侧视图').setInputFiles('public/models/5867/preview.png');
+  await page.getByLabel('上传左侧').setInputFiles('public/models/5867/preview.png');
+  await page.getByLabel('上传背面').setInputFiles('public/models/5867/preview.png');
   await page.getByLabel('生成方法').selectOption('hollow');
   await page.getByLabel('积木预算').fill('800');
-  await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().viewCount)).toBe(3);
+  await expect.poll(
+    async () => page.evaluate(() => window.__imageBricks?.().viewCount),
+    { timeout: 90000 },
+  ).toBe(3);
   await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().method)).toBe('hollow');
   await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().bricks ?? 9999)).toBeLessThanOrEqual(800);
   await page.getByRole('tab', { name: '拼装步骤' }).click();

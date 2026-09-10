@@ -247,7 +247,7 @@ export class ImageBrickScene {
         this.disposableMaterials.add(material);
       }
     }
-    const groundSize = Math.max(build.width, build.height) * unit * 2.3;
+    const groundSize = Math.max(build.width, build.height, build.maxDepth) * unit * 2.3;
     const ground = new Mesh(new PlaneGeometry(groundSize, groundSize), new ShadowMaterial({ color: 0x283247, opacity: 0.13 }));
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = -0.2;
@@ -379,7 +379,7 @@ export class ImageBrickScene {
     if (!this.build) return;
     this.frameVisuals(
       this.visuals.filter(visual => visual.visible),
-      1.28,
+      1.62,
       immediate,
     );
   }
@@ -513,8 +513,12 @@ export class ImageBrickScene {
       step: this.currentStep,
       explosion: this.actualExplosion,
       method: this.build?.method ?? 'relief',
+      reconstruction: this.build?.reconstruction ?? 'empty',
       viewCount: this.build?.viewCount ?? 0,
       brickBudget: this.build?.brickBudget ?? 0,
+      dimensions: this.build
+        ? [this.build.width, this.build.height, this.build.maxDepth]
+        : [0, 0, 0],
       pixelRatio: this.renderer.getPixelRatio(),
       bodyBatches: this.bodyBatches.length,
       studBatches: this.studBatches.length,

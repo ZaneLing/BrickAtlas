@@ -60,8 +60,8 @@ flowchart LR
 
 ## Verification
 
-- `npm run check`: 15 model asset checks, hierarchical source comparison, 48 unit tests, TypeScript and production build.
-- Chrome-only E2E: 44 tests, including all 15 source models, checksum failure/recovery, actual GPU visibility, source fidelity, DIY library/effects, stale/corrupt input and existing workflows.
+- `npm run check`: 15 model asset checks, hierarchical source comparison, 49 unit tests, TypeScript and production build.
+- Chrome-only E2E: 45 tests, including all 15 source models, checksum failure/recovery, actual GPU visibility, source fidelity, DIY library/effects, stale/corrupt input and existing workflows.
 - Visual inspection: screenshots and nonblank canvas-pixel checks for all six workspaces at 1180, 1440 and 3840 px widths. Build screenshots include a populated step; DIY includes its Technic category. Screenshots are attached to the Playwright report under `test-results/`.
 - Axe WCAG 2 A/AA and 2.1 AA checks on Landing, Create, Compose, Explore and selected-part detail.
 - Complete dependency audit (including development dependencies): zero known vulnerabilities after remediation.
@@ -77,7 +77,7 @@ The render-call samples measure CPU submission, **not GPU timer-query duration**
 - Catalog components now use real source geometry. Character/animal presets and procedural loose parts remain simplified representations, not independently certified physical designs.
 - Compose playback currently places one component per step. Full internal build sequences, per-brick picking, PDF guides, undo/redo and JSON re-import are not yet at parity with the model workspace.
 - Source geometry is cached per model; very large numbers of duplicated components will still increase draw calls and memory. No unlimited-complexity guarantee is made.
-- Multi-view generation intersects silhouettes, not AI reconstruction of unseen geometry. Reinforcement options are packing patterns, not engineering strength guarantees.
+- Single-photo generation uses monocular depth for the visible surface but still infers unseen geometry. Multi-view generation intersects aligned silhouettes. Reinforcement options are packing patterns, not engineering strength guarantees.
 - Old saved source components are rehydrated from canonical manifests without changing IDs or placement. Existing positions from the incorrect scale can overlap after correction; base switching rejects invalid scenes instead of dropping them.
 - PDF overflow handling and LDraw transforms have code-level/unit coverage; external LeoCAD/LDView and physical assembly verification remain outstanding.
 - No production HTTPS deployment, real-device matrix, backend load test or third-party penetration test was performed.

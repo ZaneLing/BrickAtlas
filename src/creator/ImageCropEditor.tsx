@@ -2,7 +2,7 @@ import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react
 import { Crop, ImagePlus, Maximize2, X } from 'lucide-react';
 import type { Translator } from '../app/locale';
 
-export type ImageViewRole = 'front' | 'top' | 'side';
+export type ImageViewRole = 'front' | 'left' | 'back' | 'right';
 export interface CropRect {
   x: number;
   y: number;
@@ -14,6 +14,7 @@ export interface ImageSource {
   width: number;
   height: number;
   crop: CropRect;
+  fit: boolean;
 }
 
 export function centeredSquare(width: number, height: number): CropRect {
@@ -26,6 +27,7 @@ export function ImageCropEditor({
   source,
   onFile,
   onCrop,
+  onFit,
   onRemove,
   tr,
 }: {
@@ -33,6 +35,7 @@ export function ImageCropEditor({
   source?: ImageSource;
   onFile: (file?: File) => void;
   onCrop: (crop: CropRect) => void;
+  onFit: (fit: boolean) => void;
   onRemove: () => void;
   tr: Translator;
 }) {
@@ -41,8 +44,9 @@ export function ImageCropEditor({
   useEffect(() => () => cancelDrag.current?.(), []);
   const labels = {
     front: tr('正视图', 'Front'),
-    top: tr('俯视图', 'Top'),
-    side: tr('侧视图', 'Side'),
+    left: tr('左侧', 'Left'),
+    back: tr('背面', 'Back'),
+    right: tr('右侧', 'Right'),
   };
 
   function startDrag(event: ReactPointerEvent, mode: 'move' | 'resize') {
@@ -53,7 +57,8 @@ export function ImageCropEditor({
     const bounds = frameRef.current.getBoundingClientRect();
     const startX = event.clientX;
     const startY = event.clientY;
-    const origin = source.crop;
+    const origin = source.fit ? centeredSquare(source.width, source.height) : source.crop;
+    if (source.fit) onFit(false);
     const move = (pointer: PointerEvent) => {
       const dx = (pointer.clientX - startX) / bounds.width * source.width;
       const dy = (pointer.clientY - startY) / bounds.height * source.height;
@@ -87,7 +92,12 @@ export function ImageCropEditor({
     window.addEventListener('pointercancel', finish);
   }
 
-  const cropStyle = source ? {
+  const cropStyle = source?.fit ? {
+    left: '0',
+    top: '0',
+    width: '100%',
+    height: '100%',
+  } : source ? {
     left: `${source.crop.x / source.width * 100}%`,
     top: `${source.crop.y / source.height * 100}%`,
     width: `${source.crop.size / source.width * 100}%`,
@@ -133,7 +143,7 @@ export function ImageCropEditor({
     {source && <footer>
       <span>{source.file.name}</span>
       <span className="crop-source-actions">
-        <button type="button" onClick={() => onCrop(centeredSquare(source.width, source.height))}>{tr('重置框选', 'Reset crop')}</button>
+        <button type="button" onClick={() => onFit(true)}>{tr('完整图片', 'Full image')}</button>
         <button type="button" aria-label={tr(`移除${labels[role]}`, `Remove ${labels[role].toLowerCase()} view`)} onClick={onRemove}><X size={11} /></button>
       </span>
     </footer>}
