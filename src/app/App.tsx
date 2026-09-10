@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowDownToLine, ArrowLeft, ArrowRight, Box, Boxes, Check, ChevronDown, ChevronRight,
+  ArrowDownToLine, ArrowLeft, ArrowRight, Box, Boxes, Check, CheckCircle2, ChevronDown, ChevronRight,
   BookOpen, CircleDot, Crosshair, Expand, ExternalLink, Eye, EyeOff, FileDown, Focus, Grid2X2, Hand, Info, Layers3,
-  Languages, Library, LoaderCircle, Minus, Pause, Play, Plus, Rotate3D, RotateCcw, Search, Settings2, ShieldCheck,
+  Gamepad2, Languages, Library, LoaderCircle, Minus, Pause, Play, Plus, Rotate3D, RotateCcw, Search, Settings2, ShieldCheck,
   SkipBack, SkipForward, Upload, X, Maximize2, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen,
 } from 'lucide-react';
 import { AtlasScene } from '../scene/AtlasScene';
@@ -20,6 +20,9 @@ import { LandingShowcase } from './LandingShowcase';
 import { ImageBrickStudio } from '../creator/ImageBrickStudio';
 import { ComposeStudio } from '../composer/ComposeStudio';
 import { DiyStudio } from '../diy/DiyStudio';
+import { AssemblyGame, AssemblyGameHub } from '../assembly/AssemblyGame';
+import { assemblyDifficulty, difficultyLabel } from '../assembly/difficulty';
+import { completedAssemblyModels } from '../assembly/progress';
 
 declare global { interface Window { __atlas?: () => ReturnType<AtlasScene['snapshot']> } }
 const viewNames = (tr: Translator) => ({
@@ -641,6 +644,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
     provenance: 'source' | 'editorial';
   };
   const [summaries, setSummaries] = useState<Record<string, CatalogSummary>>({});
+  const [completedModels] = useState(() => completedAssemblyModels());
   useEffect(() => {
     const abort = new AbortController();
     Promise.all(modelCatalog.map(async model => {
@@ -659,7 +663,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
   return <div className="catalog-page landing-page">
     <header className="topbar landing-nav">
       <a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><BrickAtlasMark /></span><strong>BRICK<span>ATLAS</span></strong></a>
-      <nav className="landing-links"><a href="#features">{tr('功能', 'Features')}</a><a href="#models">{tr('模型商店', 'Model shop')}</a><a href={`${import.meta.env.BASE_URL}diy`}>{tr('自由 DIY', 'Free DIY')}</a><a href={`${import.meta.env.BASE_URL}compose`}>{tr('组建', 'Compose')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
+      <nav className="landing-links"><a href="#features">{tr('功能', 'Features')}</a><a href="#models">{tr('模型商店', 'Model shop')}</a><a href={`${import.meta.env.BASE_URL}assemble`}>{tr('线上拼装', 'Assembly game')}</a><a href={`${import.meta.env.BASE_URL}diy`}>{tr('自由 DIY', 'Free DIY')}</a><a href={`${import.meta.env.BASE_URL}compose`}>{tr('组建', 'Compose')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
       <LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} />
     </header>
     <main>
@@ -672,7 +676,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
           <h1>Brick Atlas</h1>
           <h2>{tr('把每一块积木看清楚', 'See every brick. Build every idea.')}</h2>
           <p>{tr('旋转真实 LDraw 模型，拆解每个结构，逐步完成拼装，并导出属于你的说明书。', 'Rotate real LDraw models, inspect every assembly, build step by step, and export your own guide.')}</p>
-          <div className="hero-actions"><a className="hero-primary" href={`${import.meta.env.BASE_URL}diy`}><Boxes size={17} />{tr('自由拼积木', 'Build freely')}</a><a href="#models"><Library size={17} />{tr('浏览模型', 'Browse models')}</a></div>
+          <div className="hero-actions"><a className="hero-primary" href={`${import.meta.env.BASE_URL}assemble`}><Gamepad2 size={17} />{tr('开始拼装游戏', 'Play assembly game')}</a><a href={`${import.meta.env.BASE_URL}diy`}><Boxes size={17} />{tr('自由拼积木', 'Build freely')}</a><a href="#models"><Library size={17} />{tr('浏览模型', 'Browse models')}</a></div>
           <dl><div><dt>{tr('积木实例', 'Brick instances')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.stats.instances, 0) || '—'}</dd></div><div><dt>{tr('可探索项目', 'Models')}</dt><dd>{modelCatalog.length}</dd></div><div><dt>{tr('拼装步骤', 'Build steps')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.steps, 0) || '—'}</dd></div></dl>
         </div>
         <div className="hero-model-label"><strong>5867</strong><span>Super Speedster</span></div>
@@ -687,10 +691,14 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
       <section className="catalog-shell" id="models">
         <section className="catalog-heading"><div><span className="eyebrow">MODEL SHOP</span><h2>{tr('选择你的下一盒积木', 'Choose your next build')}</h2><p>{tr('点击任意模型进入探索，或直接开始逐步拼装。', 'Open any model to explore it, or jump straight into guided building.')}</p></div><dl><div><dt>{tr('项目', 'Models')}</dt><dd>{modelCatalog.length}</dd></div><div><dt>{tr('套装', 'Sets')}</dt><dd>{new Set(modelCatalog.map(model => model.setNumber)).size}</dd></div><div><dt>{tr('积木', 'Bricks')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.stats.instances, 0) || '—'}</dd></div></dl></section>
       <section className="model-grid" aria-label={tr('积木模型项目', 'Brick model projects')}>
-        {modelCatalog.map((model, index) => <article className="model-card" key={model.id}>
+        {modelCatalog.map((model, index) => {
+          const difficulty = assemblyDifficulty(model.id);
+          const gameComplete = completedModels.has(model.id);
+          return <article className={`model-card ${gameComplete ? 'game-completed' : ''}`} key={model.id}>
           <a className="model-card-explore" href={`${import.meta.env.BASE_URL}explore/${model.id}`} aria-label={tr(`探索 ${model.title}`, `Explore ${model.title}`)}>
-            <div className={`model-art art-${index % 5}`}><img src={`${import.meta.env.BASE_URL}models/${model.id}/preview.png`} alt={tr(`${model.title} 三维模型预览`, `${model.title} 3D model preview`)} /><Boxes size={42} aria-hidden="true" /></div>
+            <div className={`model-art art-${index % 5}`}><img src={`${import.meta.env.BASE_URL}models/${model.id}/preview.png`} alt={tr(`${model.title} 三维模型预览`, `${model.title} 3D model preview`)} /><Boxes size={42} aria-hidden="true" />{gameComplete && <span className="model-complete-badge"><CheckCircle2 size={20} />{tr('已拼完', 'Completed')}</span>}</div>
             <div className="model-card-body"><div className="eyebrow"><span className="set-number">{model.id}</span>{localCategory(locale, model.category)} / {model.year}</div><h3>{model.title}</h3><p>{locale === 'zh' ? model.subtitle : model.theme}</p>
+              <div className="model-difficulty"><span>{tr('难度', 'Difficulty')}</span><span aria-label={`${difficulty} / 5`}>{Array.from({ length: 5 }, (_, item) => <i className={item < difficulty ? 'filled' : ''} key={item} />)}</span><b>{difficultyLabel(difficulty, locale)}</b></div>
               <dl className="model-card-specs">
                 <div><dt>{tr('积木', 'Bricks')}</dt><dd>{summaries[model.id]?.stats.instances ?? '—'}</dd></div>
                 <div><dt>{tr('零件型号', 'Part types')}</dt><dd>{summaries[model.id]?.stats.uniqueParts ?? '—'}</dd></div>
@@ -701,8 +709,9 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
               </dl>
             </div>
           </a>
-          <div className="model-card-actions"><a className="primary-link" href={`${import.meta.env.BASE_URL}build/${model.id}`}><BookOpen size={16} />{tr('开始拼装', 'Start building')}</a></div>
-        </article>)}
+          <div className="model-card-actions"><a href={`${import.meta.env.BASE_URL}build/${model.id}`}><BookOpen size={16} />{tr('观看拼装', 'Guided build')}</a><a className="primary-link" href={`${import.meta.env.BASE_URL}assemble/${model.id}`}><Gamepad2 size={16} />{gameComplete ? tr('再次挑战', 'Play again') : tr('手动拼装', 'Assemble')}</a></div>
+        </article>;
+        })}
       </section>
       <p className="catalog-legal">{tr('非官方社区项目。模型来自 LDraw OMR；LEGO 是 LEGO Group 的商标。', 'Unofficial community project. Models are sourced from LDraw OMR. LEGO is a trademark of the LEGO Group.')}</p>
       </section>
@@ -759,6 +768,12 @@ export default function App() {
   if (relative === '/create' || relative === '/create/') return <CreatorPage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   if (relative === '/compose' || relative === '/compose/') return <ComposePage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   if (relative === '/diy' || relative === '/diy/') return <DiyStudio locale={locale} tr={tr} toggleLocale={toggleLocale} />;
+  if (relative === '/assemble' || relative === '/assemble/') return <AssemblyGameHub locale={locale} tr={tr} toggleLocale={toggleLocale} />;
+  const assemblyMatch = /^\/assemble\/([^/]+)\/?$/.exec(relative);
+  let assemblyModelId = '';
+  try { assemblyModelId = assemblyMatch ? decodeURIComponent(assemblyMatch[1]) : ''; } catch { /* Invalid URL falls through. */ }
+  const assemblyConfig = modelCatalog.find(model => model.id === assemblyModelId);
+  if (assemblyMatch && assemblyConfig) return <AssemblyGame config={assemblyConfig} locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   const match = /^\/(explore|build)\/([^/]+)\/?$/.exec(relative);
   let modelId = '';
   try { modelId = match ? decodeURIComponent(match[2]) : ''; } catch { /* Invalid URL is a missing project, not an application crash. */ }

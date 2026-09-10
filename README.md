@@ -33,6 +33,7 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
 - Select any brick to view its part number, color, dimensions, subassembly, and 3D shape.
 - Search, hide, isolate, highlight matching parts, and use X-Ray mode to inspect internal structure.
 - Follow step-by-step assembly in the central 3D canvas. Manually opened guide blocks show clickable parts and one high-resolution start-to-install placement diagram.
+- Play the manual assembly game: drag the correct current-step materials into the model, resume saved progress, and earn a completion mark.
 - Compose original scenes from verified aircraft, boats, vehicles, buildings, characters, animals, baseplates, and loose bricks with stud-grid snapping and collision checks.
 - Free-build in the DIY studio: choose a shape and color, preview it under the mouse, click to snap, and keep stacking on an extending baseplate.
 - Export printable PDF build guides, BOM CSV files, LDraw files, and images up to 12K.
@@ -47,6 +48,8 @@ Brick Atlas is designed for desktop browsers with a workspace width of at least 
 - `/` model catalog and automatic 3D feature showcase
 - `/explore/:modelId` model explorer
 - `/build/:modelId` build instructions
+- `/assemble` difficulty-ranked manual assembly catalog
+- `/assemble/:modelId` validated drag-and-drop assembly game
 - `/compose` reusable component, baseplate, and loose-part scene composer
 - `/diy` direct mouse-driven brick building on an extending stud grid
 - `/create` image-to-bricks studio and LDraw file preflight
@@ -58,6 +61,10 @@ The Compose workspace turns catalog models into reusable components while retain
 Catalog components retain their original geometry and transforms. Composition steps currently place whole components; connection strength, stud compatibility and physical buildability are not certified. Procedural character and loose-part previews remain simplified.
 
 Build controls animate only the central model. Guide accordions stay user-controlled and contain clickable parts plus one high-resolution start-to-install diagram. Both information sidebars can collapse to expand the model canvas. See [Build Workspace](docs/BUILD_WORKSPACE.md).
+
+The separate [Assembly Game](docs/ASSEMBLY_GAME.md) starts from zero, validates
+part type, color, quantity, and step order, and persists partial or completed
+models locally.
 
 ## Free DIY
 

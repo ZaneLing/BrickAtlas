@@ -2,7 +2,7 @@
 
 ## Scope and Evidence
 
-Reviewed the six workspaces (Landing, Explore, Build, Create, Compose, Free DIY), domain models, local persistence, image ingestion, Web Workers, geometry loading, LDraw/PDF exports, asset build scripts, and dependencies. There is **no API server, database, authentication service, or deployed backend** in this repository. Server-side coverage therefore means the Node asset pipeline and static application delivery, not invented service tests.
+Reviewed the seven workspaces (Landing, Explore, Build, Assembly Game, Create, Compose, Free DIY), domain models, local persistence, image ingestion, Web Workers, geometry loading, LDraw/PDF exports, asset build scripts, and dependencies. There is **no API server, database, authentication service, or deployed backend** in this repository. Server-side coverage therefore means the Node asset pipeline and static application delivery, not invented service tests.
 
 The intent is to retain the existing desktop workflow while removing data-loss, geometry-fidelity and rendering correctness defects. Two independent read-only validators checked the ten grouped findings against baseline `7b2dced`; confirmed defects were fixed. The assertion that basic 1xN LDraw bricks run along Z was rejected after inspecting the checked-in part definitions: these parts run along X. Unnecessary Compose rebuilds were confirmed, but the claim that the caller failed to invalidate rendering was rejected because its subsequent setters invalidate the scene.
 
@@ -60,9 +60,9 @@ flowchart LR
 
 ## Verification
 
-- `npm run check`: 15 model asset checks, hierarchical source comparison, 49 unit tests, TypeScript and production build.
-- Chrome-only E2E: 45 tests, including all 15 source models, checksum failure/recovery, actual GPU visibility, source fidelity, DIY library/effects, stale/corrupt input and existing workflows.
-- Visual inspection: screenshots and nonblank canvas-pixel checks for all six workspaces at 1180, 1440 and 3840 px widths. Build screenshots include a populated step; DIY includes its Technic category. Screenshots are attached to the Playwright report under `test-results/`.
+- `npm run check`: 15 model asset checks, hierarchical source comparison, 51 unit tests, TypeScript and production build.
+- Chrome-only E2E: 48 tests, including all 15 source models, manual part and subassembly validation/completion, checksum failure/recovery, actual GPU visibility, source fidelity, DIY library/effects, stale/corrupt input and existing workflows.
+- Visual inspection: screenshots and nonblank canvas-pixel checks for the original six workspaces at 1180, 1440 and 3840 px widths, plus the Assembly Game catalog and active drag/drop workspace at 1440 px. Build screenshots include a populated step; DIY includes its Technic category. Screenshots are attached to the Playwright report under `test-results/`.
 - Axe WCAG 2 A/AA and 2.1 AA checks on Landing, Create, Compose, Explore and selected-part detail.
 - Complete dependency audit (including development dependencies): zero known vulnerabilities after remediation.
 - ZIP pipeline: rebuilt 31028 without asset changes and compared streamed 3004 bytes against the locked part.
@@ -76,6 +76,7 @@ The render-call samples measure CPU submission, **not GPU timer-query duration**
 - Compose is still a scene editor, not a connection solver. Footprint/vertical checks do not prove stud/tube compatibility, structural stability, legal support or collision-free mechanical insertion.
 - Catalog components now use real source geometry. Character/animal presets and procedural loose parts remain simplified representations, not independently certified physical designs.
 - Compose playback currently places one component per step. Full internal build sequences, per-brick picking, PDF guides, undo/redo and JSON re-import are not yet at parity with the model workspace.
+- Assembly Game validates expected instance type, color, quantity, and step order; it does not certify physical reachability, clutch strength, or structural stability.
 - Source geometry is cached per model; very large numbers of duplicated components will still increase draw calls and memory. No unlimited-complexity guarantee is made.
 - Single-photo generation uses monocular depth for the visible surface but still infers unseen geometry. Multi-view generation intersects aligned silhouettes. Reinforcement options are packing patterns, not engineering strength guarantees.
 - Old saved source components are rehydrated from canonical manifests without changing IDs or placement. Existing positions from the incorrect scale can overlap after correction; base switching rejects invalid scenes instead of dropping them.

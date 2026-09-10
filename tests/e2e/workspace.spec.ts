@@ -9,7 +9,9 @@ test('catalog exposes fifteen projects, real previews and model parameters', asy
   await expect(page.getByText('积木实例')).toBeVisible();
   await expect(page.locator('.model-card-explore')).toHaveCount(15);
   await expect(page.getByText('探索模型', { exact: true })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: '开始拼装' })).toHaveCount(15);
+  await expect(page.getByRole('link', { name: '观看拼装' })).toHaveCount(15);
+  await expect(page.getByRole('link', { name: '手动拼装' })).toHaveCount(15);
+  await expect(page.locator('.model-difficulty')).toHaveCount(15);
   await expect(page.locator('.model-card-specs')).toHaveCount(15);
   await expect(page.getByText('积木树').first()).toBeVisible();
   await expect(page.locator('.model-art img')).toHaveCount(15);

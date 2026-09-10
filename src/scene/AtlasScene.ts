@@ -206,6 +206,12 @@ export class AtlasScene {
     this.renderer.domElement.style.cursor = enabled ? 'grab' : '';
     this.dirty = true;
   }
+  animateInstances(instanceIds: string[]) {
+    this.assemblyIds = new Set(instanceIds);
+    this.assemblyOrder = new Map(instanceIds.map((id, index) => [id, index]));
+    this.assemblyProgress = this.reducedMotion ? 1 : 0;
+    this.updateLayout();
+  }
   private invalidate = () => { this.dirty = true; };
   private motionChanged = () => {
     this.reducedMotion = this.motionPreference.matches;
@@ -310,7 +316,7 @@ export class AtlasScene {
     this.dirty = true;
   }
 
-  setState(state: ExplorerState) {
+  setState(state: ExplorerState, options: { preserveCamera?: boolean } = {}) {
     const previous = this.state;
     this.state = state;
     const activeStep = state.buildStep ? this.manifest.instructions?.steps[state.buildStep - 1] : undefined;
@@ -353,7 +359,7 @@ export class AtlasScene {
     if (previous.background !== state.background) {
     this.renderer.setClearColor({ studio: '#f4f5f8', white: '#ffffff', dark: '#171c2c' }[state.background]);
     }
-    if (previous.explosion !== state.explosion || viewChanged || filteredVisibilityChanged) this.fitRequested = true;
+    if (!options.preserveCamera && (previous.explosion !== state.explosion || viewChanged || filteredVisibilityChanged)) this.fitRequested = true;
     if (this.reducedMotion) this.actualExplosion = state.explosion;
     this.updateLayout();
     if (this.fitRequested) this.fit();
