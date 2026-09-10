@@ -48,4 +48,4 @@ npm run preview
 
 ## 本地服务器
 
-`Start.command` 前台启动，退出终端或 Ctrl+C 停止。`npm run start:local` 后台启动并输出自己的 PID，可用 `kill <PID>` 停止该项目进程，不应停止其他项目的服务器。脚本会先找空闲端口，避免复用或占用现有服务。
+`Start.command` 前台启动，退出终端或 Ctrl+C 停止。`npm run start:local` 后台启动并输出自己的 PID，可用 `kill <PID>` 停止该项目进程，不应停止其他项目的服务器。固定地址为 `http://127.0.0.1:5173`；脚本复用该地址的 Brick Atlas 服务，若被其他应用占用则明确报错，不自动递增端口。

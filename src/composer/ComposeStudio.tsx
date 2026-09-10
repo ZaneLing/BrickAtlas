@@ -3,13 +3,16 @@ import {
   ArrowDown, ArrowLeft, ArrowRight, ArrowUp, BookOpen, Boxes, Box,
   Check, Copy, Crosshair, Download, Expand, Grid2X2, Hand, Layers3,
   Minus, Pause, Play, Plus, Rotate3D, RotateCw, Save, SkipBack,
-  SkipForward, Trash2,
+  SkipForward, Trash2, Undo2, Redo2, Upload, Search,
 } from 'lucide-react';
 import type { Locale, Translator } from '../app/locale';
-import { readLocal, writeLocal } from '../app/storage';
+import { readLocal } from '../app/storage';
+import { useProjectHistory } from '../app/useProjectHistory';
+import { useProjectAutosave } from '../app/useProjectAutosave';
+import { ProjectShelf } from '../ui/ProjectShelf';
 import { loadSourceGeometry, type SourceGeometry } from '../scene/sourceGeometry';
 import { ImageBrickScene, type ImageBrickView } from '../scene/ImageBrickScene';
-import { IconButton } from '../ui/Controls';
+import { IconButton, Modal } from '../ui/Controls';
 import { brickPalette, imageBrickBuildToLdraw } from '../creator/imageBrickModel';
 import {
   baseplateCatalog,
@@ -18,7 +21,7 @@ import {
   composerAssets,
   createComposerItem,
   createCompositionBuild,
-  parseCompositionProject,
+  createCompositionProject, readCompositionProject,
   sourceBricksFromManifest,
   type ComposerAsset,
   type ComposerItem,
@@ -53,15 +56,21 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
   const hostRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<ImageBrickScene | null>(null);
   const fitNextBuild = useRef(true);
-  const [project, setProject] = useState<CompositionProject>(() =>
-    parseCompositionProject(readLocal(storageKey)),
-  );
+  const [loaded] = useState(() => {
+    const raw = readLocal(storageKey);
+    try { return { project: raw ? readCompositionProject(raw) : createCompositionProject(), invalid: false }; }
+    catch { return { project: createCompositionProject(), invalid: true }; }
+  });
+  const { project, setProject, hydrate, undo, redo, canUndo, canRedo } = useProjectHistory(loaded.project);
+  const autosave = useProjectAutosave(storageKey, project, loaded.invalid);
   const projectRef = useRef(project);
   projectRef.current = project;
   const loadingRef = useRef(false);
   const [sources, setSources] = useState<ReadonlyMap<string, SourceGeometry>>(new Map());
   const [sourceError, setSourceError] = useState('');
-  const [storageError, setStorageError] = useState(false);
+  const [query, setQuery] = useState('');
+  const [pendingImport, setPendingImport] = useState<CompositionProject | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
   const [selectedId, setSelectedId] = useState<string | null>(project.items[0]?.id ?? null);
   const [libraryTab, setLibraryTab] = useState<LibraryTab>('models');
   const [mode, setMode] = useState<ComposerMode>('edit');
@@ -79,6 +88,7 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
   const selected = project.items.find(item => item.id === selectedId) ?? null;
   const base = baseplateCatalog.find(item => item.id === project.baseplateId) ?? baseplateCatalog[0];
   const visibleAssets = composerAssets.filter(asset => {
+    if (!`${asset.nameZh} ${asset.nameEn} ${asset.id}`.toLowerCase().includes(query.trim().toLowerCase())) return false;
     if (libraryTab === 'models') return asset.kind === 'model';
     if (libraryTab === 'parts') return asset.kind === 'part';
     return asset.kind === 'character' || asset.kind === 'animal';
@@ -92,9 +102,8 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
       const loaded = new Map(sources);
       for (const id of missing) loaded.set(id, await loadSourceGeometry(id));
       if (cancelled) return;
-      setSources(loaded);
       // Upgrade saved box approximations from the canonical source without changing placement or IDs.
-      setProject(current => ({ ...current, items: current.items.map(item => {
+      const restored = { ...projectRef.current, items: projectRef.current.items.map(item => {
         const source = item.sourceModelId ? loaded.get(item.sourceModelId) : undefined;
         if (!source) return item;
         const bricks = sourceBricksFromManifest(source.manifest);
@@ -102,7 +111,11 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
           Math.ceil((source.manifest.bounds.max[0] - source.manifest.bounds.min[0]) / 8),
           Math.ceil((source.manifest.bounds.max[2] - source.manifest.bounds.min[2]) / 8),
         ] as [number, number] };
-      }) }));
+      }) };
+      readCompositionProject(JSON.stringify(restored));
+      setSources(loaded);
+      setSourceError('');
+      hydrate(() => restored);
     })().catch(error => { if (!cancelled) setSourceError(String(error)); });
     return () => { cancelled = true; };
   }, [project.items, sources]);
@@ -146,8 +159,22 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
     });
   }, [project.items.length, selectedId, mode, tr]);
   useEffect(() => {
-    setStorageError(!writeLocal(storageKey, JSON.stringify(project)));
-  }, [project]);
+    if (selectedId && !project.items.some(item => item.id === selectedId)) setSelectedId(null);
+    setStep(value => Math.min(value, project.items.length + 1));
+  }, [project.items, selectedId]);
+  useEffect(() => {
+    const keydown = (event: KeyboardEvent) => {
+      if ((event.target as HTMLElement)?.closest('input, textarea, select, dialog')) return;
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
+        event.preventDefault(); setPlaying(false); event.shiftKey ? redo() : undo();
+      }
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'y') {
+        event.preventDefault(); setPlaying(false); redo();
+      }
+    };
+    window.addEventListener('keydown', keydown);
+    return () => window.removeEventListener('keydown', keydown);
+  }, [undo, redo]);
   useEffect(() => { sceneRef.current?.setView(view); }, [view]);
   useEffect(() => { sceneRef.current?.setAutoRotate(autoRotate); }, [autoRotate]);
   useEffect(() => { sceneRef.current?.setPanMode(panMode); }, [panMode]);
@@ -192,7 +219,7 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
       }
       const item = createComposerItem(projectRef.current, asset, bricks, sourceUrl);
       if (!item) {
-        setNotice(tr('当前底板没有足够的连续空间', 'No contiguous space remains on this baseplate'));
+        setNotice(tr('底板空间不足，或达到 5,000 块 / 200 组件上限', 'No baseplate space, or the 5,000-brick / 200-component limit was reached'));
         return;
       }
       setProject(current => ({ ...current, items: [...current.items, item], updatedAt: Date.now() }));
@@ -264,9 +291,19 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
   }
 
   function saveProject() {
-    const saved = writeLocal(storageKey, JSON.stringify(project));
-    setStorageError(!saved);
+    const saved = autosave.save();
     if (saved) setNotice(tr('项目已保存在当前浏览器', 'Project saved in this browser'));
+  }
+  async function importProject(file?: File) {
+    if (!file) return;
+    try {
+      if (file.size > 4_000_000) throw new Error('size');
+      setPendingImport(readCompositionProject(await file.text()));
+    } catch { setNotice(tr('项目无效：请检查格式、碰撞、边界和零件预算', 'Invalid project: check format, collisions, boundaries and brick budget')); }
+  }
+  function restoreProject(next: CompositionProject) {
+    setPlaying(false); setMode('edit'); setSourceError(''); fitNextBuild.current = true;
+    setProject(next); setSelectedId(next.items[0]?.id ?? null);
   }
 
   const currentLabel = step === 1
@@ -280,7 +317,6 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
       <header>
         <span className="eyebrow">COMPONENT LIBRARY</span>
         <h1>{tr('组件库', 'Component library')}</h1>
-        <p>{tr('选择已验证模型、角色、动物或单个零件。', 'Choose verified models, characters, animals, or loose parts.')}</p>
       </header>
       <div className="compose-library-tabs" role="tablist">
         {([
@@ -291,6 +327,7 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
           <button key={id} role="tab" aria-selected={libraryTab === id} onClick={() => setLibraryTab(id)}>{label}</button>,
         )}
       </div>
+      <label className="diy-search"><Search size={16} /><input aria-label={tr('搜索组件', 'Search components')} value={query} onChange={event => setQuery(event.target.value)} placeholder={tr('名称 / 编号', 'Name / ID')} /></label>
       {libraryTab === 'scenes' && <div className="baseplate-library">
         {baseplateCatalog.map(item => <button
           key={item.id}
@@ -327,7 +364,7 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
 
     <main className="compose-stage">
       <header className="compose-stage-heading">
-        <div><span className="eyebrow">DIY MODEL COMPOSER</span><input aria-label={tr('项目名称', 'Project name')} value={project.name} onChange={event => setProject(current => ({ ...current, name: event.target.value, updatedAt: Date.now() }))} /></div>
+        <div><span className="eyebrow">DIY MODEL COMPOSER</span><input maxLength={100} aria-label={tr('项目名称', 'Project name')} value={project.name} onChange={event => setProject(current => ({ ...current, name: event.target.value, updatedAt: Date.now() }))} /></div>
         <div className="compose-mode-tabs" role="tablist">
           <button role="tab" aria-selected={mode === 'edit'} onClick={() => switchMode('edit')}><Grid2X2 size={15} />{tr('编辑', 'Edit')}</button>
           <button role="tab" aria-selected={mode === 'build'} onClick={() => switchMode('build')}><BookOpen size={15} />{tr('拼装', 'Build')}</button>
@@ -429,7 +466,15 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
         {selected.sourceUrl && <a href={selected.sourceUrl} target="_blank" rel="noreferrer">{tr('查看组件模型来源', 'View component source')}</a>}
       </section>}
       <footer className="compose-export">
-        {storageError && <p role="alert">{tr('浏览器存储不可用，请导出 JSON 保留项目。', 'Browser storage unavailable. Export JSON to keep your project.')}</p>}
+        <div className="compose-history-tools">
+          <IconButton label={tr('撤销', 'Undo')} disabled={!canUndo} onClick={() => { setPlaying(false); undo(); }}><Undo2 size={17} /></IconButton>
+          <IconButton label={tr('重做', 'Redo')} disabled={!canRedo} onClick={() => { setPlaying(false); redo(); }}><Redo2 size={17} /></IconButton>
+          <IconButton label={tr('导入组建项目', 'Import composition')} onClick={() => fileInput.current?.click()}><Upload size={17} /></IconButton>
+          <input type="file" hidden ref={fileInput} accept=".json" aria-label={tr('导入组建 JSON', 'Import composition JSON')} onChange={event => { void importProject(event.target.files?.[0]); event.target.value = ''; }} />
+          <ProjectShelf space="compose" name={project.name} serialize={() => JSON.stringify(projectRef.current)} restore={text => restoreProject(readCompositionProject(text))} tr={tr} />
+        </div>
+        {autosave.state === 'invalid' && <p role="alert">{tr('本地项目损坏，原始存档尚未覆盖。', 'Local project is invalid. Its original data has not been overwritten.')}</p>}
+        {autosave.state === 'error' && <p role="alert">{tr('浏览器存储不可用，请导出 JSON 保留项目。', 'Browser storage unavailable. Export JSON to keep your project.')}</p>}
         <dl>
           <div><dt>{tr('总积木', 'Bricks')}</dt><dd>{build.bricks.length}</dd></div>
           <div><dt>{tr('步骤', 'Steps')}</dt><dd>{build.steps.length}</dd></div>
@@ -439,8 +484,13 @@ export function ComposeStudio({ locale, tr }: { locale: Locale; tr: Translator }
           <button onClick={saveProject}><Save size={15} />{tr('保存', 'Save')}</button>
           <button onClick={() => download(JSON.stringify(project, null, 2), `${project.name}.brick-atlas.json`, 'application/json')}><Download size={15} />JSON</button>
           <button disabled={!sourcesReady} onClick={() => download(imageBrickBuildToLdraw({ ...build, name: project.name }), `${project.name}.ldr`, 'text/plain')}><Download size={15} />LDraw</button>
+          <button disabled={!sourcesReady} onClick={() => download(['partId,colorCode,quantity', ...build.bom.map(item => `${item.partId},${item.colorCode},${item.quantity}`)].join('\n'), `${project.name}-bom.csv`, 'text/csv')}><Download size={15} />BOM</button>
         </div>
       </footer>
     </aside>
+    {pendingImport && <Modal title={tr('打开组建项目？', 'Open composition?')} onClose={() => setPendingImport(null)}>
+      <div className="diy-confirm"><p>{pendingImport.name} · {tr('替换当前场景，可撤销。', 'Replace the current scene. This can be undone.')}</p>
+        <button className="primary-button" onClick={() => { restoreProject(pendingImport); setPendingImport(null); }}>{tr('打开项目', 'Open project')}</button></div>
+    </Modal>}
   </section>;
 }

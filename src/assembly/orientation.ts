@@ -1,4 +1,4 @@
-import type { PartInstance } from '../model/types';
+import type { AssemblyStep, PartInstance } from '../model/types';
 
 export type QuarterTurn = 0 | 1 | 2 | 3;
 
@@ -81,4 +81,63 @@ export function groupAssemblyMaterials(parts: PartInstance[]): AssemblyMaterialG
     || a.partNumber.localeCompare(b.partNumber)
     || a.requiredTurn - b.requiredTurn,
   );
+}
+
+export interface AssemblyStepAudit {
+  ok: boolean;
+  missingIds: string[];
+  unexpectedIds: string[];
+  wrongOrientationIds: string[];
+  wrongPositionIds: string[];
+}
+
+export function auditAssemblyStep(
+  step: AssemblyStep,
+  parts: PartInstance[],
+  placedIds: string[],
+  placedTurns: Record<string, QuarterTurn>,
+  placedPositions: Record<string, [number, number, number]> = {},
+  assemblyPlaced = false,
+): AssemblyStepAudit {
+  if (step.kind === 'placement') {
+    return {
+      ok: assemblyPlaced,
+      missingIds: assemblyPlaced ? [] : [step.id],
+      unexpectedIds: [],
+      wrongOrientationIds: [],
+      wrongPositionIds: [],
+    };
+  }
+  const expected = new Set(step.instanceIds);
+  const placed = new Set(placedIds);
+  const missingIds = step.instanceIds.filter(id => !placed.has(id));
+  const unexpectedIds = [...placed].filter(id => !expected.has(id));
+  const byId = new Map(parts.map(part => [part.instanceId, part]));
+  const wrongOrientationIds = step.instanceIds.filter(id => {
+    const part = byId.get(id);
+    return !part || partRotationIsRelevant(part) && placedTurns[id] !== 0;
+  });
+  const wrongPositionIds = step.instanceIds.filter(id => {
+    const part = byId.get(id);
+    const position = placedPositions[id];
+    if (!part || !position) return true;
+    const target = [0, 1, 2].map(axis =>
+      (part.bounds.min[axis] + part.bounds.max[axis]) / 2);
+    return Math.hypot(
+      position[0] - target[0],
+      position[1] - target[1],
+      position[2] - target[2],
+    ) > 5;
+  });
+  return {
+    ok: placed.size === placedIds.length
+      && !missingIds.length
+      && !unexpectedIds.length
+      && !wrongOrientationIds.length
+      && !wrongPositionIds.length,
+    missingIds,
+    unexpectedIds,
+    wrongOrientationIds,
+    wrongPositionIds,
+  };
 }

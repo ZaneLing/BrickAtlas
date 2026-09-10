@@ -4,9 +4,9 @@ import { expect, test } from '@playwright/test';
 test('catalog exposes fifteen projects, real previews and model parameters', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Brick Atlas' })).toBeVisible();
-  await expect(page.locator('.floating-bricks > span')).toHaveCount(22);
+  await expect(page.getByRole('navigation', { name: '选择积木空间' }).getByRole('link')).toHaveCount(4);
   await expect(page.locator('.model-card')).toHaveCount(15);
-  await expect(page.getByText('积木实例')).toBeVisible();
+  await expect(page.getByRole('searchbox', { name: '搜索模型' })).toBeVisible();
   await expect(page.locator('.model-card-explore')).toHaveCount(15);
   await expect(page.getByText('探索模型', { exact: true })).toHaveCount(0);
   await expect(page.getByRole('link', { name: '观看拼装' })).toHaveCount(15);
@@ -16,9 +16,6 @@ test('catalog exposes fifteen projects, real previews and model parameters', asy
   await expect(page.getByText('积木树').first()).toBeVisible();
   await expect(page.locator('.model-art img')).toHaveCount(15);
   expect(await page.locator('.model-art img').evaluateAll(images => images.every(image => (image as HTMLImageElement).naturalWidth >= 1000))).toBe(true);
-  const position = await page.locator('.floating-bricks > span').first().evaluate(element => getComputedStyle(element).translate);
-  await page.waitForTimeout(350);
-  expect(await page.locator('.floating-bricks > span').first().evaluate(element => getComputedStyle(element).translate)).not.toBe(position);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole('button', { name: '切换为英文' }).click();
   await expect(page.locator('.brick-burst-piece')).toHaveCount(10);
@@ -55,8 +52,8 @@ test('landing showcase slowly builds and completes a full explode cycle', async 
 test('language toggle translates the complete workspace and persists', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: '切换为英文' }).click();
-  await expect(page.getByRole('heading', { name: 'See every brick. Build every idea.' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Browse models' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Choose your next build' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Models', exact: true })).toBeVisible();
   await expect(page.getByText('Tree nodes').first()).toBeVisible();
   await page.locator('.model-card-explore').first().click();
   await expect(page.getByText('Model ready', { exact: true })).toBeVisible();
@@ -66,9 +63,9 @@ test('language toggle translates the complete workspace and persists', async ({ 
   expect(await page.locator('html').getAttribute('lang')).toBe('en');
 });
 
-test('clicking a project card opens explore while the only command is build', async ({ page }) => {
+test('clicking a specific project card opens its explore workspace', async ({ page }) => {
   await page.goto('/');
-  await page.locator('.model-card-explore').first().click();
+  await page.getByRole('link', { name: '探索 Super Speedster', exact: true }).click();
   await expect(page).toHaveURL(/\/explore\/5867$/);
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
 });

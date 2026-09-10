@@ -84,6 +84,7 @@ export interface InstructionPlan {
 export interface ExplorerState {
   hiddenGroups: GroupId[];
   hiddenBrickIds: string[];
+  ghostBrickIds: string[];
   selection: string[];
   highlightedBrickIds: string[];
   isolation: string[] | null;
@@ -102,7 +103,7 @@ export interface ExplorerState {
 }
 
 export const initialState: ExplorerState = {
-  hiddenGroups: [], hiddenBrickIds: [], selection: [], highlightedBrickIds: [], isolation: null, explosion: 0,
+  hiddenGroups: [], hiddenBrickIds: [], ghostBrickIds: [], selection: [], highlightedBrickIds: [], isolation: null, explosion: 0,
   autoRotate: false, edges: true, quality: 'high', view: 'perspective', revision: 0,
   buildStep: null, highlightStep: true, grid: true, background: 'studio', assemblyRevision: 0, xray: false,
 };

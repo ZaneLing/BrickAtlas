@@ -34,9 +34,17 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
   const [phase, setPhase] = useState<'build' | 'explode'>('build');
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
+  const [started, setStarted] = useState(false);
 
   useEffect(() => {
-    if (!hostRef.current) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setStarted(true); observer.disconnect(); }
+    }, { rootMargin: '200px' });
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!hostRef.current || !started) return;
     const abort = new AbortController();
     let scene: AtlasScene | null = null;
     fetch(`${import.meta.env.BASE_URL}models/5867/manifest.json`, { signal: abort.signal })
@@ -69,7 +77,7 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
       sceneRef.current = null;
       delete window.__landingAtlas;
     };
-  }, []);
+  }, [started]);
 
   useEffect(() => {
     sceneRef.current?.setLocale(locale);

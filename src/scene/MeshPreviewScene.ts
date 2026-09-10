@@ -14,7 +14,7 @@ import {
   WebGLRenderer,
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { disposeObject, loadEmbeddedGlb } from './gltfResources';
 
 export class MeshPreviewScene {
   private readonly scene = new Scene();
@@ -30,6 +30,8 @@ export class MeshPreviewScene {
   private frame = 0;
   private disposed = false;
   private triangleCount = 0;
+  private loadVersion = 0;
+  private active = false;
 
   constructor(private readonly host: HTMLElement, label: string) {
     this.renderer.setClearColor(new Color('#eef2f6'), 1);
@@ -63,10 +65,18 @@ export class MeshPreviewScene {
   setLabel(label: string) {
     this.renderer.domElement.setAttribute('aria-label', label);
   }
+  setActive(active: boolean) { this.active = active; }
+  setAutoRotate(value: boolean) { this.controls.autoRotate = value; }
+  setPanMode(value: boolean) { this.controls.enableRotate = !value; this.controls.screenSpacePanning = value; }
+  zoom(factor: number) {
+    this.camera.position.sub(this.controls.target).multiplyScalar(factor).add(this.controls.target);
+    this.controls.update();
+  }
 
   async setGlb(blob: Blob) {
-    const gltf = await new GLTFLoader().parseAsync(await blob.arrayBuffer(), '');
-    if (this.disposed) return;
+    const version = ++this.loadVersion;
+    const gltf = await loadEmbeddedGlb(blob);
+    if (this.disposed || version !== this.loadVersion) { gltf.scenes.forEach(disposeObject); return; }
     this.clearModel();
     this.model.add(gltf.scene);
     gltf.scene.updateMatrixWorld(true);
@@ -106,21 +116,7 @@ export class MeshPreviewScene {
   }
 
   private clearModel() {
-    this.model.traverse(object => {
-      if (!(object instanceof Mesh)) return;
-      object.geometry.dispose();
-      const materials = Array.isArray(object.material)
-        ? object.material
-        : [object.material];
-      materials.forEach(material => {
-        for (const value of Object.values(material)) {
-          if (value && typeof value === 'object' && 'isTexture' in value) {
-            (value as unknown as { dispose: () => void }).dispose();
-          }
-        }
-        material.dispose();
-      });
-    });
+    disposeObject(this.model);
     this.model.clear();
   }
 
@@ -136,8 +132,10 @@ export class MeshPreviewScene {
 
   private tick = () => {
     if (this.disposed) return;
-    this.controls.update();
-    this.renderer.render(this.scene, this.camera);
+    if (this.active && !document.hidden) {
+      this.controls.update();
+      this.renderer.render(this.scene, this.camera);
+    }
     this.frame = requestAnimationFrame(this.tick);
   };
 

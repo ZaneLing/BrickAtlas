@@ -1,5 +1,7 @@
 # Engineering Audit - 2026-09-10
 
+The subsequent all-workspace upgrade is documented in [WORKSPACE_UPGRADE.md](WORKSPACE_UPGRADE.md). It adds responsive layouts, validated import/history/snapshots, a compact catalog, progress safeguards and local GLB ingestion. The historical results below describe the earlier audit, not the latest test counts.
+
 ## Scope and Evidence
 
 Reviewed the seven workspaces (Landing, Explore, Build, Assembly Game, Create, Compose, Free DIY), domain models, local persistence, image ingestion, Web Workers, geometry loading, LDraw/PDF exports, asset build scripts, and dependencies. There is **no API server, database, authentication service, or deployed backend** in this repository. Server-side coverage therefore means the Node asset pipeline and static application delivery, not invented service tests.
@@ -75,7 +77,7 @@ The render-call samples measure CPU submission, **not GPU timer-query duration**
 
 - Compose is still a scene editor, not a connection solver. Footprint/vertical checks do not prove stud/tube compatibility, structural stability, legal support or collision-free mechanical insertion.
 - Catalog components now use real source geometry. Character/animal presets and procedural loose parts remain simplified representations, not independently certified physical designs.
-- Compose playback currently places one component per step. Full internal build sequences, per-brick picking, PDF guides, undo/redo and JSON re-import are not yet at parity with the model workspace.
+- Compose playback currently places one component per step. Full internal build sequences, per-brick picking and PDF guides are not yet at parity with the model workspace. Undo/redo and validated JSON re-import were added in the subsequent workspace upgrade.
 - Assembly Game validates expected instance type, color, quantity, and step order; it does not certify physical reachability, clutch strength, or structural stability.
 - Source geometry is cached per model; very large numbers of duplicated components will still increase draw calls and memory. No unlimited-complexity guarantee is made.
 - Single-photo generation uses monocular depth for the visible surface but still infers unseen geometry. Multi-view generation intersects aligned silhouettes. Reinforcement options are packing patterns, not engineering strength guarantees.

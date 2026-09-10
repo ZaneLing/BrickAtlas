@@ -9,6 +9,7 @@ uniform float atlasWidth;
 uniform float atlasXray;
 varying float atlasVisibility;
 varying float atlasSelected;
+varying float atlasGhost;
 varying vec3 atlasBrickColor;
 vec4 readAtlas() { return texture2D(atlasState, vec2((instanceIndex + 0.5) / atlasWidth, 1.0 / 6.0)); }
 `;
@@ -16,6 +17,7 @@ const selectionDeclaration = `
 uniform float atlasXray;
 varying float atlasVisibility;
 varying float atlasSelected;
+varying float atlasGhost;
 varying vec3 atlasBrickColor;
 `;
 
@@ -46,7 +48,9 @@ export function atlasMaterial(bucket: GeometryBucket, texture: DataTexture, coun
     shader.vertexShader = shader.vertexShader.replace('void main() {', `void main() {
       vec4 state = readAtlas();
       atlasVisibility = state.w;
-      atlasSelected = texture2D(atlasState, vec2((instanceIndex + 0.5) / atlasWidth, 0.5)).x;
+      vec4 metadata = texture2D(atlasState, vec2((instanceIndex + 0.5) / atlasWidth, 0.5));
+      atlasSelected = metadata.x;
+      atlasGhost = metadata.y;
       atlasBrickColor = texture2D(atlasState, vec2((instanceIndex + 0.5) / atlasWidth, 5.0 / 6.0)).rgb;
     `);
     if (bucket.kind === 'conditional') {
@@ -68,10 +72,14 @@ export function atlasMaterial(bucket: GeometryBucket, texture: DataTexture, coun
       diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.01, 0.12, 0.7), atlasSelected);
       diffuseColor.a = mix(diffuseColor.a, 1.0, atlasSelected);`
         : 'diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.18, 0.58, 1.0), atlasSelected * 0.24);'}
+      if (atlasGhost > 0.5) {
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.22, 0.5, 0.9), 0.44);
+        if (mod(floor(gl_FragCoord.x) + floor(gl_FragCoord.y), 4.0) < 1.0) discard;
+      }
       diffuseColor.a *= mix(1.0, 0.2, atlasXray * (1.0 - atlasSelected));
     `);
   };
-  material.customProgramCacheKey = () => `atlas-v3-${bucket.kind}`;
+  material.customProgramCacheKey = () => `atlas-v5-${bucket.kind}`;
   material.userData.atlas = { xray: atlasUniforms.xray, opacity, isLine };
   if (material instanceof MeshPhysicalMaterial) material.emissive = new Color(0);
   return material;

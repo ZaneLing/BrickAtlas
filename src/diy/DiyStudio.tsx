@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Box, Check, ChevronDown, Download, Eraser,
+  ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Box, Check, ChevronDown, Copy, Download, Eraser,
   Focus, Grid2X2, Hand, Home, Languages, Layers3, Minus, MousePointer2, Paintbrush,
   Plus, Redo2, RotateCw, Save, Search, Trash2, Undo2, Upload,
 } from 'lucide-react';
 import type { Locale, Translator } from '../app/locale';
-import { readLocal, writeLocal } from '../app/storage';
+import { readLocal } from '../app/storage';
+import { useProjectAutosave } from '../app/useProjectAutosave';
+import { ProjectShelf } from '../ui/ProjectShelf';
 import { brickPalette } from '../creator/imageBrickModel';
 import { BrickAtlasMark } from '../ui/BrickAtlasMark';
 import { IconButton, Modal } from '../ui/Controls';
@@ -13,7 +15,7 @@ import { DiyScene, type DiyHover } from './DiyScene';
 import { renderDiyThumbnails } from './diyGeometry';
 import {
   canRemove, commitDiy, diyBom, DiyIndex, diyParts, diyRecipes, diyToLdraw, emptyDiyProject,
-  diyCategories, parseDiyProject, partById, recipeById, redoDiy, rotateDiyBrick, stampSize, undoDiy,
+  diyCategories, duplicateDiyBrick, moveDiyBrick, parseDiyProject, partById, recipeById, redoDiy, rotateDiyBrick, stampSize, undoDiy,
   type DiyBrick, type DiyBrush, type DiyCategory, type DiyHistory, type DiyProject, type DiyTool, type Turn,
 } from './diyModel';
 import './diy.css';
@@ -49,7 +51,6 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
   const [query, setQuery] = useState('');
   const [topView, setTopView] = useState(false);
   const [notice, setNotice] = useState('');
-  const [storageState, setStorageState] = useState<'saved' | 'saving' | 'error' | 'invalid'>(loaded.invalid ? 'invalid' : 'saved');
   const [sceneError, setSceneError] = useState('');
   const [pendingImport, setPendingImport] = useState<DiyProject | null>(null);
   const [clearOpen, setClearOpen] = useState(false);
@@ -61,6 +62,7 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
   const current = useRef({ brush, tr });
   current.current = { brush, tr };
   const project = history.present;
+  const { state: storageState, save } = useProjectAutosave(storageKey, project, loaded.invalid);
   const selected = project.bricks.find(brick => brick.id === selectedId);
   const color = brickPalette.find(color => color.id === brush.color)!;
   const recipe = recipeById.get(brush.recipeId)!;
@@ -76,7 +78,6 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
   const applyHistory = useCallback((next: DiyHistory) => {
     historyRef.current = next;
     setHistory(next);
-    setStorageState('saving');
   }, []);
   const commit = useCallback((next: DiyProject) => applyHistory(commitDiy(historyRef.current, next)), [applyHistory]);
   const place = useCallback((bricks: DiyBrick[]) => {
@@ -121,12 +122,6 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
   useEffect(() => { scene.current?.setLayer(autoHeight ? null : layer); }, [autoHeight, layer, sceneRevision]);
   useEffect(() => { scene.current?.select(selectedId); }, [selectedId, project.bricks, sceneRevision]);
   useEffect(() => { scene.current?.setLabel(tr('自由 DIY 三维画布', 'Free DIY 3D canvas')); }, [tr]);
-  useEffect(() => {
-    // Preserve malformed stored input until an explicit edit/save replaces it.
-    if (storageState === 'invalid') return;
-    const timer = setTimeout(() => setStorageState(writeLocal(storageKey, JSON.stringify(project)) ? 'saved' : 'error'), 450);
-    return () => clearTimeout(timer);
-  }, [project, storageState === 'invalid']);
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
@@ -180,7 +175,18 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
     return () => window.removeEventListener('keydown', keydown);
   }, [undo, redo, rotateBrush, rotateSelected, edit, selectedId]);
 
-  function save() { setStorageState(writeLocal(storageKey, JSON.stringify(project)) ? 'saved' : 'error'); }
+  function moveSelected(axis: 'x' | 'y' | 'z', value: number) {
+    if (!selected) return;
+    const result = moveDiyBrick(historyRef.current.present, selected.id, { [axis]: value });
+    if (result.issue) setNotice(tr('移动无效：碰撞、缺少支撑或坐标越界', 'Invalid move: collision, missing support or coordinate limit'));
+    else commit(result.project);
+  }
+  function duplicateSelected() {
+    if (!selected) return;
+    const result = duplicateDiyBrick(historyRef.current.present, selected.id);
+    if (result.issue) setNotice(tr('附近没有可用的复制位置，或已达到容量上限', 'No valid nearby copy position, or capacity reached'));
+    else if (result.id) { commit(result.project); setSelectedId(result.id); }
+  }
   async function importProject(file?: File) {
     if (!file) return;
     try {
@@ -224,6 +230,9 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
         <IconButton label={tr('重做', 'Redo')} disabled={!history.future.length} onClick={redo}><Redo2 size={18} /></IconButton>
         <span className="diy-tool-divider" />
         <IconButton label={tr('保存 DIY', 'Save DIY')} onClick={save}><Save size={18} /></IconButton>
+        <ProjectShelf space="diy" name={project.name} serialize={() => JSON.stringify(historyRef.current.present)} restore={text => {
+          commit(parseDiyProject(text)); setSelectedId(null); requestAnimationFrame(() => scene.current?.fit());
+        }} tr={tr} />
         <IconButton label={tr('打开 DIY 项目', 'Open DIY project')} onClick={() => fileInput.current?.click()}><Upload size={18} /></IconButton>
         <input hidden ref={fileInput} type="file" accept=".json,application/json" aria-label={tr('导入 DIY JSON', 'Import DIY JSON')} onChange={event => { void importProject(event.target.files?.[0]); event.target.value = ''; }} />
         <details className="diy-download">
@@ -325,7 +334,11 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
             }} /></label></div>
           {selected && <div className="diy-selected">
             <span>{tr('选中', 'Selected')} · {selected.partId} · X {selected.x} · Z {selected.z} · {selected.turn * 90}°</span>
+            <div className="diy-coordinates">{(['x', 'y', 'z'] as const).map(axis => <label key={axis}>{axis.toUpperCase()}<input
+              type="number" step={1} aria-label={tr(`选中积木 ${axis.toUpperCase()}`, `Selected brick ${axis.toUpperCase()}`)}
+              value={selected[axis]} onChange={event => moveSelected(axis, Number(event.target.value))} /></label>)}</div>
             <div><IconButton label={tr('聚焦选中积木', 'Focus selected brick')} onClick={() => scene.current?.fit(true)}><Focus size={16} /></IconButton>
+              <IconButton label={tr('复制选中积木', 'Duplicate selected brick')} onClick={duplicateSelected}><Copy size={16} /></IconButton>
               <IconButton label={tr('旋转选中积木 90°', 'Rotate selected brick 90°')} onClick={rotateSelected}><RotateCw size={16} /></IconButton>
               <IconButton label={tr('拾取选中样式', 'Pick selected style')} onClick={() => { setBrush({ recipeId: selected.partId, color: selected.color, turn: selected.turn }); setTool('place'); }}><Paintbrush size={16} /></IconButton>
               <IconButton label={tr('删除选中积木', 'Delete selected brick')} onClick={() => edit(selected.id, 'erase')}><Trash2 size={16} /></IconButton></div>

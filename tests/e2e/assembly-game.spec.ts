@@ -1,17 +1,58 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
+
+async function dragMaterialToCanvas(page: Page, material: Locator, correct = true) {
+  const transfer = await page.evaluateHandle(() => new DataTransfer());
+  await material.dispatchEvent('dragstart', { dataTransfer: transfer });
+  const stage = (await page.locator('.assembly-game-stage').boundingBox())!;
+  const assembly = await material.locator('.assembly-swatch-group').count() > 0;
+  let target = { x: stage.width / 2, y: stage.height / 2 };
+  if (!assembly && correct) {
+    await expect.poll(() => page.evaluate(() => window.__assemblyGame?.().heldId)).not.toBeNull();
+    const projected = await page.evaluate(() => {
+      const game = window.__assemblyGame?.();
+      return game?.scene?.projected.find(part => part.id === game.heldId) ?? null;
+    });
+    if (!projected) throw new Error('Selected material has no projected target');
+    target = projected;
+  } else if (!assembly) {
+    target = { x: stage.width - 24, y: stage.height - 24 };
+  }
+  const event = {
+    dataTransfer: transfer,
+    clientX: stage.x + target.x,
+    clientY: stage.y + target.y,
+  };
+  const canvas = page.locator('.assembly-game-stage');
+  await canvas.dispatchEvent('dragenter', event);
+  await canvas.dispatchEvent('dragover', event);
+  await canvas.dispatchEvent('drop', event);
+  await material.dispatchEvent('dragend', { dataTransfer: transfer });
+  await transfer.dispose();
+}
 
 async function placeCurrentMaterial(page: Page) {
   const material = page.locator('.assembly-material-card:not(.future):not(:disabled)').first();
   await expect(material).toBeVisible();
-  await material.click();
-  const required = Number(await material.getAttribute('data-required-turn') ?? 0);
-  let current = Number(await material.getAttribute('data-current-turn') ?? 0);
-  while (current !== required) {
-    await page.getByRole('button', { name: '旋转当前积木 90°' }).click();
-    current = (current + 1) % 4;
-  }
-  await material.dragTo(page.locator('.assembly-drop-zone'));
+  await dragMaterialToCanvas(page, material);
 }
+
+test('end-of-step review returns parts placed away from their targets', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.removeItem('brick-atlas-assembly-game-v1'));
+  await page.goto('/assemble/31028-sailboat');
+  await expect.poll(
+    () => page.evaluate(() => window.__assemblyGame?.().ready),
+    { timeout: 30000 },
+  ).toBe(true);
+  for (let index = 0; index < 6; index++) {
+    const material = page.locator('.assembly-material-card:not(:disabled)').first();
+    await dragMaterialToCanvas(page, material, false);
+  }
+  await expect.poll(() => page.evaluate(() => window.__assemblyGame?.().review)).toBe('failed');
+  expect(await page.evaluate(() => window.__assemblyGame?.().completedStep)).toBe(0);
+  expect(await page.evaluate(() => window.__assemblyGame?.().placed)).toBe(0);
+  await expect(page.locator('.assembly-material-card:not(:disabled)')).toHaveCount(3);
+});
 
 test('manual assembly rejects wrong steps, saves progress and marks completion', async ({ page }) => {
   test.setTimeout(120000);
@@ -25,7 +66,16 @@ test('manual assembly rejects wrong steps, saves progress and marks completion',
   ).toBe(true);
   await expect(page.locator('.assembly-loop-frame img')).toBeVisible({ timeout: 30000 });
   await expect(page.locator('.assembly-static-guide figure')).toHaveCount(2);
+  await expect(page.locator('.assembly-part-thumbnail').first()).toBeVisible();
+  await expect.poll(() => page.evaluate(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>('.assembly-part-thumbnail');
+    return canvas
+      ? canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data.some((value, index) => index % 4 === 3 && value > 0)
+      : false;
+  })).toBe(true);
   expect(await page.evaluate(() => window.__assemblyGame?.().completedStep)).toBe(0);
+  expect(await page.evaluate(() => window.__assemblyGame?.().scene?.visibleInstances)).toBe(6);
+  expect(await page.evaluate(() => window.__assemblyGame?.().scene?.ghosted)).toBe(6);
   const camera = await page.evaluate(() => window.__assemblyGame?.().scene?.camera);
   await page.getByLabel('模型视角').selectOption('top');
   await expect.poll(() => page.evaluate(before => {
@@ -38,24 +88,35 @@ test('manual assembly rejects wrong steps, saves progress and marks completion',
 
   const steps = page.locator('.assembly-step-list > button');
   await steps.nth(1).click();
-  const futurePart = page.locator('.assembly-material-card.future:not(:disabled)').first();
+  const futurePart = page.locator('.assembly-material-card.future').first();
   await expect(futurePart).toBeVisible();
-  await futurePart.dragTo(page.locator('.assembly-drop-zone'));
-  await expect.poll(() => page.evaluate(() => window.__assemblyGame?.().feedback)).toBe('wrong');
+  await expect(futurePart).toBeDisabled();
   expect(await page.evaluate(() => window.__assemblyGame?.().placed)).toBe(0);
 
   await steps.nth(0).click();
-  const directional = page.locator('.assembly-material-card[data-rotation-relevant="true"]:not(:disabled)').first();
-  if (await directional.count()) {
-    await directional.click();
-    const required = Number(await directional.getAttribute('data-required-turn'));
-    for (let turn = 0; turn < (required + 1) % 4; turn++) {
-      await page.getByRole('button', { name: '旋转当前积木 90°' }).click();
-    }
-    await directional.dragTo(page.locator('.assembly-drop-zone'));
-    await expect.poll(() => page.evaluate(() => window.__assemblyGame?.().feedback)).toBe('wrong');
-    expect(await page.evaluate(() => window.__assemblyGame?.().placed)).toBe(0);
-  }
+  const firstMaterial = page.locator('.assembly-material-card:not(.future):not(:disabled)').first();
+  await expect(firstMaterial.locator('b')).toHaveText('2×');
+  await firstMaterial.click();
+  await expect(page.getByRole('img', { name: '当前零件可旋转三维预览' })).toBeVisible();
+  const target = await page.evaluate(() => {
+    const game = window.__assemblyGame?.();
+    return game?.scene?.projected.find(part => part.id === game.heldId) ?? null;
+  });
+  if (!target) throw new Error('Selected material has no projected target');
+  const stage = (await page.locator('.assembly-game-stage').boundingBox())!;
+  await page.mouse.move(stage.x + target.x, stage.y + target.y);
+  await expect.poll(() => page.evaluate(() => window.__assemblyGame?.().scene?.manualPreview)).toBe(1);
+  await page.mouse.click(stage.x + target.x, stage.y + target.y);
+  await expect(firstMaterial.locator('b')).toHaveText('1×');
+  expect(await page.evaluate(() => window.__assemblyGame?.().positions)).toBe(1);
+  await page.getByRole('button', { name: '保存', exact: true }).click();
+  await page.reload();
+  await expect.poll(
+    () => page.evaluate(() => window.__assemblyGame?.().ready),
+    { timeout: 30000 },
+  ).toBe(true);
+  expect(await page.evaluate(() => window.__assemblyGame?.().positions)).toBe(1);
+  expect(await page.evaluate(() => window.__assemblyGame?.().scene?.manualPlaced)).toBe(1);
   while ((await page.evaluate(() => window.__assemblyGame?.().completedStep ?? 0)) < 1) {
     await expect.poll(() => page.evaluate(() => window.__assemblyGame?.().advancing)).toBe(false);
     await placeCurrentMaterial(page);
@@ -63,6 +124,9 @@ test('manual assembly rejects wrong steps, saves progress and marks completion',
       const game = window.__assemblyGame?.();
       return Boolean(game?.placed || game?.advancing || game?.completedStep);
     })).toBe(true);
+    if (await page.evaluate(() => window.__assemblyGame?.().advancing)) {
+      expect(await page.evaluate(() => window.__assemblyGame?.().review)).toBe('passed');
+    }
   }
   await page.getByRole('button', { name: '保存', exact: true }).click();
   await page.reload();
@@ -119,7 +183,7 @@ test('placement steps accept one completed subassembly', async ({ page }) => {
   ).toBe(true);
   expect(await page.evaluate(() => window.__assemblyGame?.().activeStep)).toBe(105);
   expect(await page.evaluate(() => window.__assemblyGame?.().required)).toBe(1);
-  await page.locator('.assembly-material-card').first().dragTo(page.locator('.assembly-drop-zone'));
+  await dragMaterialToCanvas(page, page.locator('.assembly-material-card').first());
   await expect.poll(
     () => page.evaluate(() => window.__assemblyGame?.().completedStep),
     { timeout: 10000 },

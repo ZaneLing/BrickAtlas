@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowDownToLine, ArrowLeft, ArrowRight, BookOpen, Box, ChevronDown, Crosshair,
   Cloud, Cpu, Expand, FileDown, Hand, ImagePlus, Layers3, Minus, Pause, Play,
-  Plus, Rotate3D, RotateCcw, SkipBack, SkipForward, Triangle, X,
+  Plus, Rotate3D, RotateCcw, SkipBack, SkipForward, Triangle, Upload, X,
 } from 'lucide-react';
 import type { Locale, Translator } from '../app/locale';
 import { ImageBrickScene, type ImageBrickView } from '../scene/ImageBrickScene';
@@ -126,12 +126,12 @@ async function sourceFile(source: ImageSource, size = 768) {
 
 async function voxelizeMesh(
   mesh: ExtractedMesh,
-  source: ImageSource,
+  source: ImageSource | undefined,
   options: ImageBrickOptions,
   providerName: string,
   signal: AbortSignal,
 ) {
-  const front = await sampleSource(source, 512);
+  const front = source ? await sampleSource(source, 512) : { data: new Uint8ClampedArray([160, 165, 169, 255]), width: 1, height: 1 };
   let resolution = options.width;
   let build: ImageBrickBuild | null = null;
   while (resolution >= 12) {
@@ -167,8 +167,8 @@ async function voxelizeMesh(
       volume,
       front,
       { ...options, width: resolution },
-      source.file.name.replace(/\.[^.]+$/, ''),
-      `${providerName} public image-to-3D service`,
+      source?.file.name.replace(/\.[^.]+$/, '') ?? 'Imported mesh',
+      providerName,
     );
     if (build.bricks.length <= options.brickBudget) break;
     if (resolution <= 12) {
@@ -228,6 +228,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
   const sceneRef = useRef<ImageBrickScene | null>(null);
   const meshSceneRef = useRef<MeshPreviewScene | null>(null);
   const meshAbortRef = useRef<AbortController | null>(null);
+  const glbInput = useRef<HTMLInputElement>(null);
   const sourcesRef = useRef<Partial<Record<ImageViewRole, ImageSource>>>({});
   const uploadVersions = useRef<Record<ImageViewRole, number>>({ front: 0, left: 0, back: 0, right: 0 });
   const [sources, setSources] = useState<Partial<Record<ImageViewRole, ImageSource>>>({});
@@ -263,6 +264,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
     ? [
         sources.front.file.name,
         sources.front.file.size,
+        sources.front.url,
         sources.front.crop.x.toFixed(2),
         sources.front.crop.y.toFixed(2),
         sources.front.crop.size.toFixed(2),
@@ -318,9 +320,10 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
     if (followStep && step > 0) requestAnimationFrame(() => sceneRef.current?.focusStep(step));
   }, [step, followStep]);
   useEffect(() => { sceneRef.current?.setExplosion(explosion); }, [explosion]);
-  useEffect(() => { sceneRef.current?.setAutoRotate(autoRotate); }, [autoRotate]);
+  useEffect(() => { sceneRef.current?.setAutoRotate(autoRotate); meshSceneRef.current?.setAutoRotate(autoRotate); }, [autoRotate]);
   useEffect(() => { sceneRef.current?.setPanMode(panMode); }, [panMode]);
   useEffect(() => { sceneRef.current?.setView(view); }, [view]);
+  useEffect(() => { meshSceneRef.current?.setActive(stageMode === 'mesh'); }, [stageMode]);
   useEffect(() => {
     if (!meshResult) return;
     void meshSceneRef.current?.setGlb(meshResult.blob).catch(cause => {
@@ -406,7 +409,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
   useEffect(() => {
     if (
       reconstructionMode !== 'mesh'
-      || !sources.front
+      || (!sources.front && meshResult?.provider !== 'local-glb')
       || !meshData
       || !meshResult
       || meshSignature !== frontSignature
@@ -484,6 +487,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
     setMeshData(null);
     setMeshSignature('');
     setStageMode('bricks');
+    setProcessing(false);
   }
 
   async function generateCloudMesh() {
@@ -491,6 +495,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
     meshAbortRef.current?.abort();
     const abort = new AbortController();
     meshAbortRef.current = abort;
+    setMeshStatus('connecting');
     setError('');
     setBuild(createEmptyBrickBuild());
     setStep(0);
@@ -498,11 +503,13 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
     setProcessing(true);
     try {
       const upload = await sourceFile(sources.front);
+      abort.signal.throwIfAborted();
       const result = await reconstructPhotoMesh(
         upload,
         meshProvider,
         abort.signal,
         (status, detail) => {
+          if (abort.signal.aborted || meshAbortRef.current !== abort) return;
           setMeshStatus(status);
           setMeshDetail(detail ?? '');
         },
@@ -518,7 +525,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
       setMeshStatus('voxelizing');
       setStageMode('mesh');
     } catch (cause) {
-      if (cause instanceof DOMException && cause.name === 'AbortError') return;
+      if (abort.signal.aborted || meshAbortRef.current !== abort) return;
       const message = cause instanceof Error ? cause.message : String(cause);
       setMeshStatus('error');
       setError(/ZeroGPU quota/i.test(message)
@@ -528,8 +535,29 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
         )
         : message);
     } finally {
-      if (meshAbortRef.current === abort) meshAbortRef.current = null;
-      setProcessing(false);
+      if (meshAbortRef.current === abort) { meshAbortRef.current = null; setProcessing(false); }
+    }
+  }
+
+  async function importGlb(file?: File) {
+    if (!file) return;
+    meshAbortRef.current?.abort();
+    const abort = new AbortController();
+    meshAbortRef.current = abort;
+    setReconstructionMode('mesh'); setMeshStatus('parsing'); setProcessing(true); setError('');
+    try {
+      const mesh = await extractMeshTriangles(file);
+      abort.signal.throwIfAborted();
+      if (meshAbortRef.current !== abort) return;
+      setMeshResult({ blob: file, provider: 'local-glb', providerName: file.name, sourceUrl: '' });
+      setMeshData(mesh); setMeshSignature(frontSignature); setStageMode('mesh');
+      setOptions(value => ({ ...value, method: value.method === 'relief' ? 'hollow' : value.method }));
+    } catch (cause) {
+      if (abort.signal.aborted || meshAbortRef.current !== abort) return;
+      setMeshStatus('error');
+      setError(`${tr('GLB 导入失败', 'GLB import failed')}: ${cause instanceof Error ? cause.message : String(cause)}`);
+    } finally {
+      if (meshAbortRef.current === abort) { meshAbortRef.current = null; setProcessing(false); }
     }
   }
 
@@ -680,12 +708,17 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
           role="tab"
           aria-selected={reconstructionMode === 'local'}
           onClick={() => {
+            resetMesh();
             setReconstructionMode('local');
             setStageMode('bricks');
             setBuild(createEmptyBrickBuild());
             setError('');
           }}
         ><Cpu size={15} />{tr('本地备用', 'Local fallback')}</button>
+      </div>
+      <div className="creator-local-import">
+        <button className="secondary-button" onClick={() => glbInput.current?.click()}><Upload size={16} />{tr('导入本地 GLB', 'Import local GLB')}</button>
+        <input hidden ref={glbInput} type="file" accept=".glb,model/gltf-binary" aria-label={tr('导入 GLB 网格', 'Import GLB mesh')} onChange={event => { void importGlb(event.target.files?.[0]); event.target.value = ''; }} />
       </div>
       <div className="crop-source-list">
         {(reconstructionMode === 'mesh' ? roles.slice(0, 1) : roles).map(role => <ImageCropEditor
@@ -728,10 +761,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
           disabled={!sources.front || meshStatus === 'voxelizing'}
           onClick={() => {
             if (cloudBusy) {
-              meshAbortRef.current?.abort();
-              setMeshStatus('idle');
-              setMeshDetail('');
-              setProcessing(false);
+              resetMesh();
             } else void generateCloudMesh();
           }}
         >{cloudBusy ? <X size={16} /> : <Triangle size={16} />}{cloudBusy
@@ -785,7 +815,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
           <small>{tr(`${viewCount} / 4 个视角`, `${viewCount} / 4 views`)}</small>
         </span>
       </div>}
-      {sources.front && reconstructionMode === 'mesh' && <div className={`creator-depth-state mesh-${meshStatus}`}>
+      {(sources.front || meshResult) && reconstructionMode === 'mesh' && <div className={`creator-depth-state mesh-${meshStatus}`}>
         <Cloud size={15} />
         <span><strong>{meshStatusLabel[meshStatus]}</strong><small>{meshDetail || meshResult?.providerName || tr('尚未调用公开服务', 'Public service not called yet')}</small></span>
       </div>}
@@ -796,6 +826,7 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
         {meshResult && <button data-brick-effect="shatter" onClick={() => downloadBlob(meshResult.blob, `${build.name || 'image-mesh'}.glb`)}><FileDown size={15} />GLB</button>}
         <button data-brick-effect="shatter" disabled={!brickCount} onClick={exportBom}><ArrowDownToLine size={15} />BOM CSV</button>
         <button data-brick-effect="shatter" disabled={!brickCount} onClick={() => download(imageBrickBuildToLdraw(build), `${build.name}.ldr`, 'text/plain;charset=utf-8')}><ArrowDownToLine size={15} />LDraw</button>
+        <button disabled={!brickCount} onClick={() => download(JSON.stringify(build, null, 2), `${build.name}.json`, 'application/json')}><FileDown size={15} />JSON</button>
       </div>
     </aside>
 
@@ -813,10 +844,10 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
       </div>
       <div className={`image-brick-canvas ${stageMode === 'bricks' ? '' : 'stage-hidden'}`} ref={hostRef} />
       <div className={`image-mesh-canvas ${stageMode === 'mesh' ? '' : 'stage-hidden'}`} ref={meshHostRef} />
-      {!sources.front && <div className="image-empty-state">
+      {!sources.front && !meshResult && !cloudBusy && <div className="image-empty-state">
         <ImagePlus size={34} />
         <strong>{tr('从真实照片开始', 'Start with a real photo')}</strong>
-        <span>{tr('正面照片必需', 'Front view required')}</span>
+        <span>{tr('照片 / GLB', 'Photo / GLB')}</span>
       </div>}
       {sources.front && reconstructionMode === 'mesh' && !meshResult && !cloudBusy && <div className="image-empty-state">
         <Triangle size={34} />
@@ -832,6 +863,11 @@ export function ImageBrickStudio({ locale, tr }: { locale: Locale; tr: Translato
         <Triangle size={14} />
         <strong>{meshResult.providerName}</strong>
         <span>{meshData?.triangleCount.toLocaleString(locale === 'zh' ? 'zh-CN' : 'en-US')} {tr('原始三角面', 'source triangles')}</span>
+      </div>}
+      {stageMode === 'mesh' && meshResult && <div className="image-zoom-tools">
+        <IconButton label={tr('放大网格', 'Zoom mesh in')} onClick={() => meshSceneRef.current?.zoom(0.8)}><Plus size={17} /></IconButton>
+        <IconButton label={tr('缩小网格', 'Zoom mesh out')} onClick={() => meshSceneRef.current?.zoom(1.25)}><Minus size={17} /></IconButton>
+        <IconButton label={tr('自动旋转网格', 'Rotate mesh')} active={autoRotate} onClick={() => setAutoRotate(value => !value)}><Rotate3D size={17} /></IconButton>
       </div>}
       {stageMode === 'bricks' && <div className="image-viewport-toolbar" aria-label={tr('视角工具', 'View tools')}>
         <div className="view-select"><Box size={16} /><select aria-label={tr('模型视角', 'Model view')} value={view} onChange={event => setView(event.target.value as ImageBrickView)}>

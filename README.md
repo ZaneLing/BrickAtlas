@@ -37,7 +37,7 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
 - Select any brick to view its part number, color, dimensions, subassembly, and 3D shape.
 - Search, hide, isolate, highlight matching parts, and use X-Ray mode to inspect internal structure.
 - Follow step-by-step assembly in the central 3D canvas. Manually opened guide blocks show clickable parts and one high-resolution start-to-install placement diagram.
-- Play the manual assembly game: rotate each material in 90-degree increments, pass part/color/orientation validation, resume saved progress, and earn a completion mark.
+- Play the manual assembly game: inspect and orbit real parts, move them with the pointer onto the 3D build, choose their position and quarter-turn, then pass an end-of-step position/orientation audit.
 - Compose original scenes from verified aircraft, boats, vehicles, buildings, characters, animals, baseplates, and loose bricks with stud-grid snapping and collision checks.
 - Free-build in the DIY studio: choose a shape and color, rotate previews or already placed bricks by 90 degrees, click to snap, and keep stacking on an extending baseplate.
 - Export printable PDF build guides, BOM CSV files, LDraw files, and images up to 12K.
@@ -45,11 +45,23 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
 - Use tactile brick controls with lightweight stud bursts, full-card shatter feedback and color-matched placement effects; reduced-motion preferences disable them.
 - Switch the complete interface between Chinese and English.
 
-Brick Atlas is designed for desktop browsers with a workspace width of at least 1180 px.
+Desktop browsers retain the three-column workspaces. Phone and tablet layouts place the 3D canvas before the controls and material library.
+
+### Workspace Upgrade
+
+- A playable space lobby with model search, category/difficulty filters, favorites, and resume links.
+- Persistent Explore display preferences and adjustable Build playback speed.
+- Assembly undo-last-placement, restart confirmation, paused guides, and validated progress recovery.
+- DIY coordinate editing, validated duplication, and local project snapshots.
+- Compose undo/redo, validated JSON import, component search, snapshots, and BOM export.
+- Local embedded GLB import in Create, with cancellable reconstruction, resource cleanup, and JSON export.
+- Bounded project sizes, protected corrupt saves, and immediate autosave flushing when leaving a page.
+
+See the [module-by-module upgrade report](docs/WORKSPACE_UPGRADE.md) for implementation details, verification, and remaining boundaries.
 
 ## Routes
 
-- `/` model catalog and automatic 3D feature showcase
+- `/` playable space lobby, searchable model catalog and deferred 3D showcase
 - `/explore/:modelId` model explorer
 - `/build/:modelId` build instructions
 - `/assemble` difficulty-ranked manual assembly catalog

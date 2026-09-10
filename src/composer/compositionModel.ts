@@ -73,6 +73,13 @@ export interface CompositionProject {
   items: ComposerItem[];
   updatedAt: number;
 }
+export const COMPOSITION_LIMIT = 5000;
+export const COMPOSITION_ITEM_LIMIT = 200;
+
+export function compositionBrickCount(project: CompositionProject) {
+  const base = baseplateCatalog.find(base => base.id === project.baseplateId) ?? baseplateCatalog[0];
+  return base.width * base.depth / 16 + project.items.reduce((sum, item) => sum + item.bricks.length, 0);
+}
 
 const brick = (
   partId: string,
@@ -199,9 +206,13 @@ function rectanglesOverlap(a: ComposerItem, b: ComposerItem) {
 }
 
 export function canPlaceItem(project: CompositionProject, candidate: ComposerItem, ignoreId?: string) {
-  if (![candidate.x, candidate.z, candidate.level].every(Number.isFinite)
+  if (![candidate.x, candidate.z].every(Number.isInteger)
     || !Number.isInteger(candidate.level) || candidate.level < 0 || candidate.level > 60
+    || !candidate.footprint.every(n => Number.isFinite(n) && n > 0 && n <= 128)
     || ![0, 1, 2, 3].includes(candidate.rotation)) return false;
+  if (candidate.bricks.some(brick =>
+    Math.abs(brick.x) + brick.width / 2 > candidate.footprint[0] / 2 + 0.001
+    || Math.abs(brick.z) + brick.depth / 2 > candidate.footprint[1] / 2 + 0.001)) return false;
   const base = baseplateCatalog.find(item => item.id === project.baseplateId) ?? baseplateCatalog[0];
   const [width, depth] = rotatedFootprint(candidate);
   if (
@@ -218,9 +229,9 @@ export function findOpenPlacement(
   footprint: [number, number],
 ): { x: number; z: number } | null {
   const base = baseplateCatalog.find(item => item.id === project.baseplateId) ?? baseplateCatalog[0];
-  for (let ring = 0; ring <= Math.max(base.width, base.depth); ring += 2) {
-    for (let z = -ring; z <= ring; z += 2) {
-      for (let x = -ring; x <= ring; x += 2) {
+  for (let ring = 0; ring <= Math.max(base.width, base.depth); ring++) {
+    for (let z = -ring; z <= ring; z++) {
+      for (let x = -ring; x <= ring; x++) {
         if (Math.max(Math.abs(x), Math.abs(z)) !== ring) continue;
         const candidate: ComposerItem = {
           id: '__candidate__',
@@ -248,6 +259,8 @@ export function createComposerItem(
   bricks = asset.bricks ?? [],
   sourceUrl?: string,
 ): ComposerItem | null {
+  if (!bricks.length || project.items.length >= COMPOSITION_ITEM_LIMIT
+    || compositionBrickCount(project) + bricks.length > COMPOSITION_LIMIT) return null;
   const footprint: [number, number] = asset.modelId && bricks.length
     ? [
       Math.ceil(2 * Math.max(...bricks.map(brick => Math.abs(brick.x) + brick.width / 2))),
@@ -411,34 +424,44 @@ export function createCompositionBuild(
 export function parseCompositionProject(value: string | null): CompositionProject {
   if (!value) return createCompositionProject();
   try {
+    return readCompositionProject(value);
+  } catch {
+    return createCompositionProject();
+  }
+}
+
+export function readCompositionProject(value: string): CompositionProject {
+    if (value.length > 4_000_000) throw new Error('Project file exceeds 4 MB');
     const parsed = JSON.parse(value) as CompositionProject;
-    if (parsed.version !== 1 || !Array.isArray(parsed.items) || parsed.items.length > 200
-      || typeof parsed.name !== 'string' || typeof parsed.id !== 'string'
+    if (!parsed || parsed.version !== 1 || !Array.isArray(parsed.items) || parsed.items.length > COMPOSITION_ITEM_LIMIT
+      || typeof parsed.name !== 'string' || parsed.name.length > 100
+      || typeof parsed.id !== 'string' || parsed.id.length > 100 || !Number.isFinite(parsed.updatedAt)
       || !baseplateCatalog.some(base => base.id === parsed.baseplateId)
       || new Set(parsed.items.map(item => item?.id)).size !== parsed.items.length
       || !parsed.items.every(item =>
-        item && typeof item.id === 'string' && typeof item.nameZh === 'string' && typeof item.nameEn === 'string'
-        && composerAssets.some(asset => asset.id === item.assetId)
+        item && typeof item.id === 'string' && item.id.length > 0 && item.id.length <= 100
+        && typeof item.nameZh === 'string' && item.nameZh.length <= 200 && typeof item.nameEn === 'string' && item.nameEn.length <= 200
+        && composerAssets.some(asset => asset.id === item.assetId && asset.kind === item.kind && asset.modelId === item.sourceModelId)
+        && (!item.sourceUrl || typeof item.sourceUrl === 'string' && /^https:\/\//.test(item.sourceUrl))
         && [item.x, item.z, item.level].every(Number.isFinite)
         && [0, 1, 2, 3].includes(item.rotation)
         && Array.isArray(item.footprint) && item.footprint.length === 2 && item.footprint.every(n => Number.isFinite(n) && n > 0)
         && Array.isArray(item.bricks) && item.bricks.length > 0 && item.bricks.length <= 5000
         && item.bricks.every(brick =>
           brick && /^[\w-]+$/.test(brick.partId) && /^#[0-9a-f]{6}$/i.test(brick.colorHex)
-          && [brick.width, brick.depth, brick.height].every(n => Number.isFinite(n) && n > 0)
-          && [brick.x, brick.y, brick.z, brick.colorCode].every(Number.isFinite)
-          && (!brick.originalMatrix || brick.originalMatrix.length === 16 && brick.originalMatrix.every(Number.isFinite)),
+          && [brick.width, brick.depth, brick.height].every(n => Number.isFinite(n) && n > 0 && n <= 1000)
+          && [brick.x, brick.y, brick.z, brick.colorCode].every(n => Number.isFinite(n) && Math.abs(n) <= 1_000_000)
+          && (!brick.originalMatrix || Array.isArray(brick.originalMatrix) && brick.originalMatrix.length === 16 && brick.originalMatrix.every(Number.isFinite)),
         ),
-      )) return createCompositionProject();
+      )) throw new Error('Invalid composition project');
+    if (compositionBrickCount(parsed) > COMPOSITION_LIMIT
+      || !parsed.items.every(item => canPlaceItem(parsed, item, item.id))) throw new Error('Composition exceeds capacity, overlaps or base boundaries');
     return parsed;
-  } catch {
-    return createCompositionProject();
-  }
 }
 
 export function changeBaseplate(project: CompositionProject, baseplateId: string): CompositionProject | null {
   if (!baseplateCatalog.some(base => base.id === baseplateId)) return null;
   const next = { ...project, baseplateId, updatedAt: Date.now() };
   // Never relocate, rotate or delete an assembly as a side effect of changing its base.
-  return next.items.every(item => canPlaceItem(next, item, item.id)) ? next : null;
+  return compositionBrickCount(next) <= COMPOSITION_LIMIT && next.items.every(item => canPlaceItem(next, item, item.id)) ? next : null;
 }

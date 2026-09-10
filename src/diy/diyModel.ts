@@ -309,13 +309,34 @@ export function rotateDiyBrick(
 ): { project: DiyProject; issue: PlacementIssue } {
   const current = project.bricks.find(brick => brick.id === id);
   if (!current) return { project, issue: null };
-  const replacement: DiyBrick = {
-    ...current,
-    turn: ((current.turn + 1) % 4) as Turn,
-  };
+  return moveDiyBrick(project, id, { turn: ((current.turn + 1) % 4) as Turn });
+}
+
+export function moveDiyBrick(project: DiyProject, id: string, update: Partial<Pick<DiyBrick, 'x' | 'y' | 'z' | 'turn'>>) {
+  const current = project.bricks.find(brick => brick.id === id);
+  if (!current) return { project, issue: null };
+  const replacement = { ...current, ...update };
   const bricks = project.bricks.map(brick => brick.id === id ? replacement : brick);
   const issue = new DiyIndex([]).validate(bricks, 0);
   return issue ? { project, issue } : { project: { ...project, bricks }, issue: null };
+}
+
+export function duplicateDiyBrick(project: DiyProject, id: string): { project: DiyProject; issue: PlacementIssue; id?: string } {
+  const source = project.bricks.find(brick => brick.id === id);
+  if (!source) return { project, issue: null };
+  if (project.bricks.length >= DIY_LIMIT) return { project, issue: 'limit' };
+  const index = new DiyIndex(project.bricks);
+  const copyId = crypto.randomUUID();
+  for (let radius = 1; radius <= 32; radius++) {
+    for (let dz = -radius; dz <= radius; dz++) for (let dx = -radius; dx <= radius; dx++) {
+      if (Math.max(Math.abs(dx), Math.abs(dz)) !== radius) continue;
+      const candidate = { ...source, id: copyId, stampId: copyId, x: source.x + dx, z: source.z + dz };
+      if (!index.validate([candidate], project.bricks.length)) {
+        return { project: { ...project, bricks: [...project.bricks, candidate] }, issue: null, id: copyId };
+      }
+    }
+  }
+  return { project, issue: 'unsupported' };
 }
 
 function validBrick(brick: DiyBrick) {

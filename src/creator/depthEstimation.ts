@@ -8,8 +8,14 @@ export function estimatePhotoDepth(
   onProgress?: (phase: DepthPhase) => void,
 ) {
   return new Promise<SampledDepth>((resolve, reject) => {
+    if (signal.aborted) { reject(new DOMException('Cancelled', 'AbortError')); return; }
     const worker = new Worker(new URL('../workers/depth.worker.ts', import.meta.url), { type: 'module' });
+    const timeout = window.setTimeout(() => {
+      cleanup();
+      reject(new Error('Depth estimation timed out after 30 seconds'));
+    }, 30_000);
     const cleanup = () => {
+      clearTimeout(timeout);
       worker.terminate();
       signal.removeEventListener('abort', abort);
     };

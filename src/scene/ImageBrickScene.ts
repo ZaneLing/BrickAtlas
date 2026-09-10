@@ -462,6 +462,11 @@ export class ImageBrickScene {
 
   private tick = (time: number) => {
     if (this.disposed) return;
+    if (document.hidden || !this.host.clientWidth || !this.host.clientHeight) {
+      this.lastTick = time;
+      this.frame = requestAnimationFrame(this.tick);
+      return;
+    }
     const dt = Math.min((time - (this.lastTick || time - 16)) / 1000, 0.05);
     this.lastTick = time;
     let moving = false;

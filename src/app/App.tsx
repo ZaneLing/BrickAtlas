@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowDownToLine, ArrowLeft, ArrowRight, Box, Boxes, Check, CheckCircle2, ChevronDown, ChevronRight,
   BookOpen, CircleDot, Crosshair, Expand, ExternalLink, Eye, EyeOff, FileDown, Focus, Grid2X2, Hand, Info, Layers3,
   Gamepad2, Languages, Library, LoaderCircle, Minus, Pause, Play, Plus, Rotate3D, RotateCcw, Search, Settings2, ShieldCheck,
-  SkipBack, SkipForward, Upload, X, Maximize2, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen,
+  SkipBack, SkipForward, Star, Upload, X, Maximize2, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen,
 } from 'lucide-react';
 import { AtlasScene } from '../scene/AtlasScene';
 import { PartPreviewScene } from '../scene/PartPreview';
@@ -17,12 +17,16 @@ import { modelCatalog, type ModelConfig } from '../../atlas.config';
 import { exportBuildGuide, groupStepParts } from '../instructions/exportGuide';
 import { localCategory, localGroupName, useLocale, type Locale, type Translator } from './locale';
 import { LandingShowcase } from './LandingShowcase';
-import { ImageBrickStudio } from '../creator/ImageBrickStudio';
-import { ComposeStudio } from '../composer/ComposeStudio';
-import { DiyStudio } from '../diy/DiyStudio';
-import { AssemblyGame, AssemblyGameHub } from '../assembly/AssemblyGame';
 import { assemblyDifficulty, difficultyLabel } from '../assembly/difficulty';
-import { completedAssemblyModels } from '../assembly/progress';
+import { readAssemblyProgress } from '../assembly/progress';
+import { defaultCatalogFilter, filterCatalog, readFavorites, saveFavorites } from './catalog';
+import { CatalogFilters } from '../ui/CatalogFilters';
+
+const ImageBrickStudio = lazy(() => import('../creator/ImageBrickStudio').then(module => ({ default: module.ImageBrickStudio })));
+const ComposeStudio = lazy(() => import('../composer/ComposeStudio').then(module => ({ default: module.ComposeStudio })));
+const DiyStudio = lazy(() => import('../diy/DiyStudio').then(module => ({ default: module.DiyStudio })));
+const AssemblyGame = lazy(() => import('../assembly/AssemblyGame').then(module => ({ default: module.AssemblyGame })));
+const AssemblyGameHub = lazy(() => import('../assembly/AssemblyGame').then(module => ({ default: module.AssemblyGameHub })));
 
 declare global { interface Window { __atlas?: () => ReturnType<AtlasScene['snapshot']> } }
 const viewNames = (tr: Translator) => ({
@@ -127,13 +131,14 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   const [retry, setRetry] = useState(0);
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState<'structure' | 'parts'>('structure');
-  const [structureOpen, setStructureOpen] = useState(true);
-  const [detailsOpen, setDetailsOpen] = useState(true);
+  const [structureOpen, setStructureOpen] = useState(() => innerWidth >= 1050);
+  const [detailsOpen, setDetailsOpen] = useState(() => innerWidth >= 1050);
   const [modal, setModal] = useState<'credits' | 'settings' | null>(null);
   const [hover, setHover] = useState<{ part: PartInstance; x: number; y: number } | null>(null);
   const [readyTime, setReadyTime] = useState<number | null>(null);
   const [notice, setNotice] = useState('');
   const [playing, setPlaying] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [panMode, setPanMode] = useState(mode === 'build');
   const [followBuildStep, setFollowBuildStep] = useState(false);
   const [exportSize, setExportSize] = useState(3840);
@@ -270,9 +275,9 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
     const timer = setTimeout(() => {
       focusStepAfter.current = followBuildStep ? currentBuildStep + 1 : null;
       patch({ buildStep: currentBuildStep + 1, assemblyRevision: state.assemblyRevision + 1 });
-    }, 1150);
+    }, 1150 / playbackSpeed);
     return () => clearTimeout(timer);
-  }, [playing, mode, currentBuildStep, steps.length, patch, state.assemblyRevision, followBuildStep]);
+  }, [playing, mode, currentBuildStep, steps.length, patch, state.assemblyRevision, followBuildStep, playbackSpeed]);
   useEffect(() => {
     if (mode !== 'build' || !readyTime || !openInstructionStep || !sceneRef.current) {
       setInstructionDiagramLoading(false);
@@ -348,6 +353,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
     }
   }
   function setBuildStep(step: number, focus = followBuildStep) {
+    setPlaying(false);
     const next = Math.max(0, Math.min(steps.length, step));
     focusStepAfter.current = focus && next ? next : null;
     patch({ buildStep: next, explosion: 0, autoRotate: false, isolation: null, assemblyRevision: state.assemblyRevision + 1 });
@@ -391,6 +397,7 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
       <div className="top-actions">
         <a className="text-button source-button" href={import.meta.env.BASE_URL}><Library size={16} />{tr('项目库', 'Library')}</a>
         <a className="icon-button" aria-label={tr('自由 DIY', 'Free DIY')} title={tr('自由 DIY', 'Free DIY')} href={`${import.meta.env.BASE_URL}diy`}><Boxes size={17} /></a>
+        <a className="icon-button" aria-label={tr('挑战当前模型', 'Assemble this model')} title={tr('挑战当前模型', 'Assemble this model')} href={`${import.meta.env.BASE_URL}assemble/${config.id}`}><Gamepad2 size={17} /></a>
         <a className="text-button source-button" href={`${import.meta.env.BASE_URL}${mode === 'build' ? 'explore' : 'build'}/${config.id}`}>{mode === 'build' ? <Layers3 size={16} /> : <BookOpen size={16} />}{mode === 'build' ? tr('探索', 'Explore') : tr('拼装', 'Build')}</a>
         {mode === 'build' && <button className="text-button source-button" disabled={!!guideExport || loading} onClick={exportInstructions}><FileDown size={16} />{tr('导出说明书', 'Export guide')}</button>}
         <IconButton label={tr('X-Ray 透视模式', 'X-Ray mode')} active={state.xray} onClick={() => patch({ xray: !state.xray })}><Eye size={18} /></IconButton>
@@ -508,6 +515,9 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
               ? <strong>{tr('放置已完成的子装配', 'Place the completed subassembly')}</strong>
               : <><strong>{tr('本步', 'This step')} {activeStepParts?.length ?? 0} {tr('件', 'bricks')}</strong>{activeStepParts?.slice(0, 4).map(part => <button key={part.instanceId} onClick={() => selectPart(part.instanceId, true)}><span style={{ background: part.colorHex }} />{part.partNumber}</button>)}{(activeStepParts?.length ?? 0) > 4 && <span>+{activeStepParts!.length - 4}</span>}</>}
           </div>
+          <label className="playback-speed">{tr('播放速度', 'Playback speed')}<select aria-label={tr('拼装播放速度', 'Build playback speed')} value={playbackSpeed} onChange={event => setPlaybackSpeed(Number(event.target.value))}>
+            {[0.5, 1, 1.5, 2].map(speed => <option key={speed} value={speed}>{speed}x</option>)}
+          </select></label>
           <p className="instruction-note">{instructionDisclaimer}</p>
         </section> : <section className="explosion-dock" aria-label={tr('拆解控制', 'Explode controls')}>
           <div className="dock-heading"><div><Layers3 size={18} /><strong>{tr('拆解程度', 'Explode')}</strong><span className="phase-name">{state.explosion === 0 ? tr('完整装配', 'Assembled') : state.explosion <= 0.45 ? tr('结构分离', 'Structure') : state.explosion === 1 ? tr('零件陈列', 'Inventory') : tr('实例展开', 'Expanded')}</span></div><output aria-live="off">{Math.round(state.explosion * 100)}<span>%</span></output></div>
@@ -623,19 +633,6 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   </div>;
 }
 
-function FloatingBricks() {
-  const colors = ['#ef4438', '#f3c744', '#3478d4', '#21a8b8', '#d95b9f', '#784fc4', '#ff7b32'];
-  return <div className="floating-bricks" aria-hidden="true">{Array.from({ length: 22 }, (_, index) => <span key={index} style={{
-    '--brick-x': `${(index * 47) % 101}%`,
-    '--brick-y': `${(index * 31) % 92}%`,
-    '--brick-r': `${(index * 29) % 70 - 35}deg`,
-    '--brick-delay': `${-(index % 9) * 1.3}s`,
-    '--brick-duration': `${11 + index % 7}s`,
-    '--brick-color': colors[index % colors.length],
-    '--brick-scale': `${0.55 + index % 5 * 0.17}`,
-  } as React.CSSProperties}>{[0, 1, 2, 3].map(stud => <i key={stud} />)}</span>)}</div>;
-}
-
 function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Translator; toggleLocale: () => void }) {
   type CatalogSummary = {
     stats: AtlasManifest['stats'];
@@ -644,57 +641,60 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
     provenance: 'source' | 'editorial';
   };
   const [summaries, setSummaries] = useState<Record<string, CatalogSummary>>({});
-  const [completedModels] = useState(() => completedAssemblyModels());
+  const [gameProgress] = useState(readAssemblyProgress);
+  const [favorites, setFavorites] = useState(readFavorites);
+  const [filter, setFilter] = useState(defaultCatalogFilter);
+  const [catalogNotice, setCatalogNotice] = useState('');
+  const completedModels = new Set(Object.keys(gameProgress).filter(id => gameProgress[id].completed));
+  const filtered = filterCatalog(modelCatalog, filter, favorites, gameProgress);
+  const recent = modelCatalog.filter(model => {
+    const saved = gameProgress[model.id];
+    return saved && !saved.completed && (saved.completedStep || saved.placedIds.length);
+  }).sort((a, b) => gameProgress[b.id].updatedAt - gameProgress[a.id].updatedAt).slice(0, 3);
   useEffect(() => {
     const abort = new AbortController();
-    Promise.all(modelCatalog.map(async model => {
-      const response = await fetch(`${import.meta.env.BASE_URL}models/${model.id}/manifest.json`, { signal: abort.signal });
-      if (!response.ok) return [model.id, null] as const;
-      const manifest = await response.json() as AtlasManifest;
-      return [model.id, {
-        stats: manifest.stats,
-        treeNodes: manifest.submodels.length + manifest.groups.length,
-        steps: manifest.instructions?.steps.length ?? 0,
-        provenance: manifest.instructions?.provenance ?? 'editorial',
-      }] as const;
-    })).then(items => setSummaries(Object.fromEntries(items.filter((item): item is [string, CatalogSummary] => !!item[1])))).catch(() => {});
+    fetch(`${import.meta.env.BASE_URL}models/catalog.json`, { signal: abort.signal })
+      .then(async response => {
+        if (!response.ok) throw new Error(`Catalog HTTP ${response.status}`);
+        const items = await response.json() as Record<string, CatalogSummary>;
+        if (!abort.signal.aborted) setSummaries(items);
+      })
+      .catch(() => { if (!abort.signal.aborted) setCatalogNotice(tr('模型统计暂不可用，仍可进入各个模型', 'Model statistics are unavailable. All models can still be opened.')); });
     return () => abort.abort();
   }, []);
   return <div className="catalog-page landing-page">
     <header className="topbar landing-nav">
       <a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><BrickAtlasMark /></span><strong>BRICK<span>ATLAS</span></strong></a>
-      <nav className="landing-links"><a href="#features">{tr('功能', 'Features')}</a><a href="#models">{tr('模型商店', 'Model shop')}</a><a href={`${import.meta.env.BASE_URL}assemble`}>{tr('线上拼装', 'Assembly game')}</a><a href={`${import.meta.env.BASE_URL}diy`}>{tr('自由 DIY', 'Free DIY')}</a><a href={`${import.meta.env.BASE_URL}compose`}>{tr('组建', 'Compose')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
+      <nav className="landing-links"><a href="#models">{tr('模型库', 'Models')}</a><a href={`${import.meta.env.BASE_URL}assemble`}>{tr('线上拼装', 'Assembly game')}</a><a href={`${import.meta.env.BASE_URL}diy`}>{tr('自由 DIY', 'Free DIY')}</a><a href={`${import.meta.env.BASE_URL}compose`}>{tr('组建', 'Compose')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
       <LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} />
     </header>
     <main>
-      <section className="landing-hero">
-        <FloatingBricks />
-        <div className="rainbow-rail" aria-hidden="true">{['#ef4438', '#f3c744', '#3478d4', '#21a8b8', '#d95b9f', '#784fc4'].map(color => <span key={color} style={{ background: color }} />)}</div>
-        <img className="hero-model" src={`${import.meta.env.BASE_URL}models/5867/preview.png`} alt="LEGO 5867 Super Speedster" />
-        <div className="hero-copy">
-          <span className="eyebrow">EXPLORE · BUILD · CREATE</span>
-          <h1>Brick Atlas</h1>
-          <h2>{tr('把每一块积木看清楚', 'See every brick. Build every idea.')}</h2>
-          <p>{tr('旋转真实 LDraw 模型，拆解每个结构，逐步完成拼装，并导出属于你的说明书。', 'Rotate real LDraw models, inspect every assembly, build step by step, and export your own guide.')}</p>
-          <div className="hero-actions"><a className="hero-primary" href={`${import.meta.env.BASE_URL}assemble`}><Gamepad2 size={17} />{tr('开始拼装游戏', 'Play assembly game')}</a><a href={`${import.meta.env.BASE_URL}diy`}><Boxes size={17} />{tr('自由拼积木', 'Build freely')}</a><a href="#models"><Library size={17} />{tr('浏览模型', 'Browse models')}</a></div>
-          <dl><div><dt>{tr('积木实例', 'Brick instances')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.stats.instances, 0) || '—'}</dd></div><div><dt>{tr('可探索项目', 'Models')}</dt><dd>{modelCatalog.length}</dd></div><div><dt>{tr('拼装步骤', 'Build steps')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.steps, 0) || '—'}</dd></div></dl>
-        </div>
-        <div className="hero-model-label"><strong>5867</strong><span>Super Speedster</span></div>
+      <section className="play-lobby">
+        <div className="play-lobby-heading"><div><span className="eyebrow">{tr('积木空间', 'BRICK SPACES')}</span><h1>Brick Atlas</h1></div><span>{completedModels.size} / {modelCatalog.length} {tr('已完成', 'completed')}</span></div>
+        <nav className="play-spaces" aria-label={tr('选择积木空间', 'Choose a brick space')}>
+          <a href={`${import.meta.env.BASE_URL}assemble`}><Gamepad2 size={25} /><strong>{tr('拼装挑战', 'Assembly challenges')}</strong><ArrowRight size={18} /></a>
+          <a href={`${import.meta.env.BASE_URL}diy`}><Boxes size={25} /><strong>{tr('自由 DIY', 'Free DIY')}</strong><ArrowRight size={18} /></a>
+          <a href={`${import.meta.env.BASE_URL}compose`}><Layers3 size={25} /><strong>{tr('场景组建', 'Compose a scene')}</strong><ArrowRight size={18} /></a>
+          <a href={`${import.meta.env.BASE_URL}create`}><Plus size={25} /><strong>{tr('照片与网格创作', 'Photo and mesh studio')}</strong><ArrowRight size={18} /></a>
+        </nav>
+        {recent.length > 0 && <div className="continue-playing"><strong>{tr('继续上次拼装', 'Continue building')}</strong>{recent.map(model => <a key={model.id} href={`${import.meta.env.BASE_URL}assemble/${model.id}`}>{locale === 'zh' ? model.subtitle : model.title}<span>{tr(`已完成 ${gameProgress[model.id].completedStep} 步`, `${gameProgress[model.id].completedStep} steps complete`)}</span><ArrowRight size={15} /></a>)}</div>}
       </section>
-      <section className="feature-band" id="features">
-        <div><Rotate3D size={22} /><strong>{tr('真实 3D 探索', 'True 3D exploration')}</strong><span>{tr('自由旋转、缩放和拆解', 'Orbit, zoom, isolate, and explode')}</span></div>
-        <div><BookOpen size={22} /><strong>{tr('动态拼装', 'Animated building')}</strong><span>{tr('步骤、零件和入位动画同步', 'Steps, parts, and motion stay in sync')}</span></div>
-        <div><Boxes size={22} /><strong>{tr('自由 DIY 与组建', 'Free DIY and composition')}</strong><span>{tr('逐砖拼搭，或把完整组件放入场景', 'Build brick by brick or compose complete models')}</span></div>
-        <div><FileDown size={22} /><strong>{tr('高清输出', 'High-resolution output')}</strong><span>{tr('最高 12K 图像与完整 PDF 说明书', 'Up to 12K imagery and complete PDF guides')}</span></div>
-      </section>
-      <LandingShowcase locale={locale} tr={tr} />
       <section className="catalog-shell" id="models">
-        <section className="catalog-heading"><div><span className="eyebrow">MODEL SHOP</span><h2>{tr('选择你的下一盒积木', 'Choose your next build')}</h2><p>{tr('点击任意模型进入探索，或直接开始逐步拼装。', 'Open any model to explore it, or jump straight into guided building.')}</p></div><dl><div><dt>{tr('项目', 'Models')}</dt><dd>{modelCatalog.length}</dd></div><div><dt>{tr('套装', 'Sets')}</dt><dd>{new Set(modelCatalog.map(model => model.setNumber)).size}</dd></div><div><dt>{tr('积木', 'Bricks')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.stats.instances, 0) || '—'}</dd></div></dl></section>
+        <section className="catalog-heading"><div><span className="eyebrow">MODEL LIBRARY</span><h2>{tr('选择你的下一盒积木', 'Choose your next build')}</h2></div><dl><div><dt>{tr('项目', 'Models')}</dt><dd>{modelCatalog.length}</dd></div><div><dt>{tr('积木', 'Bricks')}</dt><dd>{Object.values(summaries).reduce((sum, item) => sum + item.stats.instances, 0) || '—'}</dd></div></dl></section>
+      <CatalogFilters filter={filter} onChange={setFilter} count={filtered.length} locale={locale} tr={tr} />
+      {catalogNotice && <p role="alert">{catalogNotice}</p>}
+      {!filtered.length && <p className="catalog-empty">{tr('没有符合条件的模型', 'No matching models')}</p>}
       <section className="model-grid" aria-label={tr('积木模型项目', 'Brick model projects')}>
-        {modelCatalog.map((model, index) => {
+        {filtered.map((model, index) => {
           const difficulty = assemblyDifficulty(model.id);
           const gameComplete = completedModels.has(model.id);
           return <article className={`model-card ${gameComplete ? 'game-completed' : ''}`} key={model.id}>
+          <IconButton className="model-favorite" label={tr(`${favorites.includes(model.id) ? '取消收藏' : '收藏'} ${model.title}`, `${favorites.includes(model.id) ? 'Unfavorite' : 'Favorite'} ${model.title}`)}
+            active={favorites.includes(model.id)} onClick={() => {
+              const next = favorites.includes(model.id) ? favorites.filter(id => id !== model.id) : [...favorites, model.id];
+              if (saveFavorites(next)) { setFavorites(next); setCatalogNotice(''); }
+              else setCatalogNotice(tr('收藏保存失败，浏览器存储不可用', 'Favorites could not be saved. Browser storage is unavailable.'));
+            }}><Star size={17} fill={favorites.includes(model.id) ? 'currentColor' : 'none'} /></IconButton>
           <a className="model-card-explore" href={`${import.meta.env.BASE_URL}explore/${model.id}`} aria-label={tr(`探索 ${model.title}`, `Explore ${model.title}`)}>
             <div className={`model-art art-${index % 5}`}><img src={`${import.meta.env.BASE_URL}models/${model.id}/preview.png`} alt={tr(`${model.title} 三维模型预览`, `${model.title} 3D model preview`)} /><Boxes size={42} aria-hidden="true" />{gameComplete && <span className="model-complete-badge"><CheckCircle2 size={20} />{tr('已拼完', 'Completed')}</span>}</div>
             <div className="model-card-body"><div className="eyebrow"><span className="set-number">{model.id}</span>{localCategory(locale, model.category)} / {model.year}</div><h3>{model.title}</h3><p>{locale === 'zh' ? model.subtitle : model.theme}</p>
@@ -709,10 +709,11 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
               </dl>
             </div>
           </a>
-          <div className="model-card-actions"><a href={`${import.meta.env.BASE_URL}build/${model.id}`}><BookOpen size={16} />{tr('观看拼装', 'Guided build')}</a><a className="primary-link" href={`${import.meta.env.BASE_URL}assemble/${model.id}`}><Gamepad2 size={16} />{gameComplete ? tr('再次挑战', 'Play again') : tr('手动拼装', 'Assemble')}</a></div>
+          <div className="model-card-actions"><a href={`${import.meta.env.BASE_URL}build/${model.id}`}><BookOpen size={16} />{tr('观看拼装', 'Guided build')}</a><a className="primary-link" href={`${import.meta.env.BASE_URL}assemble/${model.id}`}><Gamepad2 size={16} />{gameComplete ? tr('查看成果', 'View completed') : gameProgress[model.id]?.completedStep || gameProgress[model.id]?.placedIds.length ? tr('继续拼装', 'Continue') : tr('手动拼装', 'Assemble')}</a></div>
         </article>;
         })}
       </section>
+      <LandingShowcase locale={locale} tr={tr} />
       <p className="catalog-legal">{tr('非官方社区项目。模型来自 LDraw OMR；LEGO 是 LEGO Group 的商标。', 'Unofficial community project. Models are sourced from LDraw OMR. LEGO is a trademark of the LEGO Group.')}</p>
       </section>
     </main>
@@ -760,7 +761,7 @@ function ComposePage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
   </div>;
 }
 
-export default function App() {
+function AppRoutes() {
   const { locale, tr, toggleLocale } = useLocale();
   useEffect(() => { document.title = tr('Brick Atlas｜积木世界', 'Brick Atlas | Build the world'); }, [tr]);
   const relative = location.pathname.slice(import.meta.env.BASE_URL.replace(/\/$/, '').length) || '/';
@@ -780,4 +781,8 @@ export default function App() {
   const config = modelCatalog.find(model => model.id === modelId);
   if (match && config) return <ExplorerWorkspace config={config} mode={match[1] as 'explore' | 'build'} locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   return <div className="route-error"><Boxes size={38} /><h1>{tr('项目不存在', 'Project not found')}</h1><a className="primary-button" href={import.meta.env.BASE_URL}>{tr('返回项目库', 'Back to library')}</a></div>;
+}
+
+export default function App() {
+  return <Suspense fallback={<main className="route-error" role="status"><LoaderCircle className="spinner" size={28} /><h1>Brick Atlas</h1></main>}><AppRoutes /></Suspense>;
 }

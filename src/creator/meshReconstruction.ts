@@ -1,5 +1,5 @@
-import { Mesh, Vector3 } from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { InstancedMesh, Matrix4, Mesh, SkinnedMesh, Vector3 } from 'three';
+import { disposeObject, loadEmbeddedGlb } from '../scene/gltfResources';
 import type { Client as GradioClient } from '@gradio/client';
 
 export type CloudMeshProvider = 'triposr-cpu' | 'stable-fast-3d' | 'triposr';
@@ -12,7 +12,7 @@ export type CloudMeshPhase =
 
 export interface CloudMeshResult {
   blob: Blob;
-  provider: CloudMeshProvider;
+  provider: CloudMeshProvider | 'local-glb';
   providerName: string;
   sourceUrl: string;
 }
@@ -51,7 +51,7 @@ async function runJob(
   signal.throwIfAborted();
   const job = client.submit(endpoint, input);
   const abort = () => {
-    void job.cancel();
+    void job.cancel().catch(() => {});
     job.close_stream();
   };
   signal.addEventListener('abort', abort, { once: true });
@@ -91,6 +91,7 @@ export async function reconstructPhotoMesh(
   onPhase: (phase: CloudMeshPhase, detail?: string) => void,
   token = '',
 ): Promise<CloudMeshResult> {
+  signal.throwIfAborted();
   onPhase('connecting');
   const { Client, handle_file } = await import('@gradio/client');
   const options = token.trim().startsWith('hf_')
@@ -103,6 +104,7 @@ export async function reconstructPhotoMesh(
       : 'stabilityai/TripoSR';
   const client = await Client.connect(space, options);
   try {
+    signal.throwIfAborted();
     onPhase('uploading');
     let output: unknown[];
     if (provider === 'stable-fast-3d') {
@@ -161,38 +163,52 @@ export async function extractMeshTriangles(
   blob: Blob,
   maximumTriangles = 250_000,
 ): Promise<ExtractedMesh> {
-  const gltf = await new GLTFLoader().parseAsync(await blob.arrayBuffer(), '');
+  const gltf = await loadEmbeddedGlb(blob);
+  try {
   gltf.scene.updateMatrixWorld(true);
   const meshes: Mesh[] = [];
   let triangleCount = 0;
   gltf.scene.traverse(object => {
     if (!(object instanceof Mesh)) return;
+    if (object instanceof SkinnedMesh || object.morphTargetInfluences?.some(weight => weight !== 0)) {
+      throw new Error('Use a static, baked GLB mesh without active skin or morph deformation');
+    }
     const position = object.geometry.getAttribute('position');
     if (!position) return;
     meshes.push(object);
-    triangleCount += object.geometry.index
+    triangleCount += (object.geometry.index
       ? Math.floor(object.geometry.index.count / 3)
-      : Math.floor(position.count / 3);
+      : Math.floor(position.count / 3)) * (object instanceof InstancedMesh ? object.count : 1);
   });
   if (!triangleCount) throw new Error('Generated GLB contains no triangle mesh');
   const stride = Math.max(1, Math.ceil(triangleCount / maximumTriangles));
   const values: number[] = [];
   const point = new Vector3();
+  const transform = new Matrix4();
+  const instanceMatrix = new Matrix4();
   let triangleCursor = 0;
   for (const mesh of meshes) {
     const geometry = mesh.geometry;
     const position = geometry.getAttribute('position');
     const index = geometry.index;
     const count = index ? Math.floor(index.count / 3) : Math.floor(position.count / 3);
+    for (let instance = 0; instance < (mesh instanceof InstancedMesh ? mesh.count : 1); instance++) {
+      transform.copy(mesh.matrixWorld);
+      if (mesh instanceof InstancedMesh) {
+        mesh.getMatrixAt(instance, instanceMatrix);
+        transform.multiply(instanceMatrix);
+      }
     for (let triangle = 0; triangle < count; triangle++, triangleCursor++) {
       if (triangleCursor % stride) continue;
       for (let corner = 0; corner < 3; corner++) {
         const vertex = index
           ? index.getX(triangle * 3 + corner)
           : triangle * 3 + corner;
-        point.fromBufferAttribute(position, vertex).applyMatrix4(mesh.matrixWorld);
+        point.fromBufferAttribute(position, vertex).applyMatrix4(transform);
+        if (![point.x, point.y, point.z].every(Number.isFinite)) throw new Error('GLB contains invalid vertex coordinates');
         values.push(point.x, point.y, point.z);
       }
+    }
     }
   }
   return {
@@ -200,4 +216,7 @@ export async function extractMeshTriangles(
     triangleCount,
     sampledTriangleCount: values.length / 9,
   };
+  } finally {
+    gltf.scenes.forEach(disposeObject);
+  }
 }

@@ -1,8 +1,9 @@
 import {
   ACESFilmicToneMapping, AmbientLight, Box3, BufferAttribute, BufferGeometry, Color, DataTexture, DirectionalLight, DoubleSide,
-  FloatType, GridHelper, Group, HemisphereLight, LineSegments, Matrix4, Mesh, MeshBasicMaterial,
+  EdgesGeometry, FloatType, GridHelper, Group, HemisphereLight, LineBasicMaterial, LineSegments, Matrix4, Mesh, MeshBasicMaterial,
+  MeshPhysicalMaterial,
   MOUSE, NearestFilter, PCFSoftShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Raycaster, RGBAFormat,
-  ShadowMaterial,
+  ShadowMaterial, Plane,
   Scene, SRGBColorSpace, Vector2, Vector3, WebGLRenderer, type Intersection, type Material,
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -26,6 +27,10 @@ interface Callbacks {
   hover: (part: PartInstance | null, x: number, y: number) => void;
 }
 type PickPart = { part: PartInstance; mesh: Mesh; box: Box3; transparent: boolean };
+export interface ManualAssemblyPlacement {
+  position: [number, number, number];
+  turn: 0 | 1 | 2 | 3;
+}
 
 export class AtlasScene {
   readonly scene = new Scene();
@@ -38,6 +43,8 @@ export class AtlasScene {
   };
   private state: ExplorerState = initialState;
   private model = new Group();
+  private manualAssembly = new Group();
+  private manualAssemblyPreview = new Group();
   private grid = new GridHelper(600, 30, 0xc8ceda, 0xe3e6ec);
   private ground: Mesh;
   private texture: DataTexture;
@@ -102,7 +109,15 @@ export class AtlasScene {
     this.ground.rotation.x = -Math.PI / 2;
     this.ground.position.y = manifest.bounds.min[1] - 0.7;
     this.ground.receiveShadow = true;
-    this.scene.add(this.model, this.grid, this.ground, new HemisphereLight(0xffffff, 0x8292ae, 2), new AmbientLight(0xffffff, 0.2));
+    this.scene.add(
+      this.model,
+      this.manualAssembly,
+      this.manualAssemblyPreview,
+      this.grid,
+      this.ground,
+      new HemisphereLight(0xffffff, 0x8292ae, 2),
+      new AmbientLight(0xffffff, 0.2),
+    );
     const key = new DirectionalLight(0xffffff, 3.3);
     key.position.set(-100, 180, 130);
     key.castShadow = true;
@@ -204,6 +219,102 @@ export class AtlasScene {
     this.controls.mouseButtons.LEFT = enabled || this.actualExplosion > 0.98 ? MOUSE.PAN : MOUSE.ROTATE;
     this.controls.enableRotate = !enabled && this.actualExplosion < 0.98;
     this.renderer.domElement.style.cursor = enabled ? 'grab' : '';
+    this.dirty = true;
+  }
+  private clearManualGroup(group: Group) {
+    group.traverse(object => {
+      if (!(object instanceof Mesh || object instanceof LineSegments)) return;
+      object.geometry.dispose();
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      materials.forEach(material => material.dispose());
+    });
+    group.clear();
+  }
+  private manualPart(
+    instanceId: string,
+    placement: ManualAssemblyPlacement,
+    preview: boolean,
+  ) {
+    const part = this.manifest.instances.find(item => item.instanceId === instanceId);
+    const pick = part ? this.picks.get(part.index) : null;
+    if (!part || !pick) return null;
+    const center = this.partBox(part).getCenter(new Vector3());
+    const geometry = pick.mesh.geometry.clone();
+    geometry.translate(-center.x, -center.y, -center.z);
+    geometry.computeVertexNormals();
+    const material = new MeshPhysicalMaterial({
+      color: part.colorHex,
+      roughness: 0.3,
+      clearcoat: 0.24,
+      clearcoatRoughness: 0.32,
+      transparent: preview,
+      opacity: preview ? 0.72 : 1,
+      depthWrite: !preview,
+      side: DoubleSide,
+    });
+    const mesh = new Mesh(geometry, material);
+    const edgeGeometry = new EdgesGeometry(geometry, 32);
+    const edges = new LineSegments(edgeGeometry, new LineBasicMaterial({
+      color: preview ? '#245da9' : new Color(part.colorHex).lerp(new Color('#1f2937'), 0.3),
+      transparent: true,
+      opacity: preview ? 0.85 : 0.45,
+    }));
+    const group = new Group();
+    group.position.fromArray(placement.position);
+    group.rotation.y = placement.turn * Math.PI / 2;
+    group.add(mesh, edges);
+    return group;
+  }
+  setManualAssemblyPlacements(placements: Record<string, ManualAssemblyPlacement>) {
+    this.clearManualGroup(this.manualAssembly);
+    for (const [instanceId, placement] of Object.entries(placements)) {
+      const object = this.manualPart(instanceId, placement, false);
+      if (object) this.manualAssembly.add(object);
+    }
+    this.dirty = true;
+  }
+  assemblyPlacementPoint(instanceId: string, clientX: number, clientY: number) {
+    const part = this.manifest.instances.find(item => item.instanceId === instanceId);
+    if (!part) return null;
+    const bounds = this.renderer.domElement.getBoundingClientRect();
+    const x = Math.max(bounds.left, Math.min(bounds.right, clientX));
+    const y = Math.max(bounds.top, Math.min(bounds.bottom, clientY));
+    this.pointerStart.set(
+      (x - bounds.left) / bounds.width * 2 - 1,
+      -(y - bounds.top) / bounds.height * 2 + 1,
+    );
+    this.raycaster.setFromCamera(this.pointerStart, this.camera);
+    const target = this.partBox(part).getCenter(new Vector3());
+    const point = new Vector3();
+    if (!this.raycaster.ray.intersectPlane(new Plane(new Vector3(0, 1, 0), -target.y), point)) {
+      point.copy(target);
+    }
+    point.x = Math.round(point.x / 4) * 4;
+    point.z = Math.round(point.z / 4) * 4;
+    point.y = target.y;
+    return point.toArray() as [number, number, number];
+  }
+  previewManualAssembly(
+    instanceId: string,
+    clientX: number,
+    clientY: number,
+    turn: 0 | 1 | 2 | 3,
+  ) {
+    const position = this.assemblyPlacementPoint(instanceId, clientX, clientY);
+    this.clearManualGroup(this.manualAssemblyPreview);
+    if (!position) return null;
+    const object = this.manualPart(instanceId, { position, turn }, true);
+    if (object) this.manualAssemblyPreview.add(object);
+    this.dirty = true;
+    return position;
+  }
+  clearManualAssemblyPreview() {
+    this.clearManualGroup(this.manualAssemblyPreview);
+    this.dirty = true;
+  }
+  setAssemblyPlacementMode(enabled: boolean) {
+    this.controls.enabled = !enabled;
+    this.renderer.domElement.style.cursor = enabled ? 'crosshair' : this.panMode ? 'grab' : '';
     this.dirty = true;
   }
   animateInstances(instanceIds: string[]) {
@@ -316,7 +427,10 @@ export class AtlasScene {
     this.dirty = true;
   }
 
-  setState(state: ExplorerState, options: { preserveCamera?: boolean } = {}) {
+  setState(state: ExplorerState, options: {
+    preserveCamera?: boolean;
+    animateAssembly?: boolean;
+  } = {}) {
     const previous = this.state;
     this.state = state;
     const activeStep = state.buildStep ? this.manifest.instructions?.steps[state.buildStep - 1] : undefined;
@@ -326,7 +440,7 @@ export class AtlasScene {
     const visibilityChanged = filteredVisibilityChanged || previous.buildStep !== state.buildStep;
     const viewChanged = previous.view !== state.view || previous.revision !== state.revision;
     const assemblyChanged = previous.buildStep !== state.buildStep || previous.assemblyRevision !== state.assemblyRevision;
-    if (assemblyChanged && state.buildStep !== null && state.buildStep > 0
+    if ((options.animateAssembly ?? true) && assemblyChanged && state.buildStep !== null && state.buildStep > 0
       && (previous.buildStep === null || state.buildStep >= (previous.buildStep ?? 0))) {
       const ids = activeStep?.motionInstanceIds ?? activeStep?.instanceIds ?? [];
       this.assemblyIds = new Set(ids);
@@ -371,6 +485,7 @@ export class AtlasScene {
       ? this.manifest.instructions.steps[this.state.buildStep - 1] : undefined;
     const currentStep = activeStep?.motionInstanceIds ?? activeStep?.instanceIds ?? [];
     const selected = new Set([...this.state.selection, ...this.state.highlightedBrickIds, ...(this.state.highlightStep ? currentStep : [])]);
+    const ghosts = new Set(this.state.ghostBrickIds);
     const n = this.manifest.instances.length;
     for (const part of this.manifest.instances) {
       const offset = new Vector3(...explosionOffset(part, this.actualExplosion, this.manifest, this.inventory));
@@ -391,7 +506,12 @@ export class AtlasScene {
       }
       this.offsets[part.index].copy(offset);
       this.stateData.set([offset.x, offset.y, offset.z, Number(visible.has(part.instanceId))], part.index * 4);
-      this.stateData[n * 4 + part.index * 4] = Number(selected.has(part.instanceId));
+      this.stateData.set([
+        Number(selected.has(part.instanceId)),
+        Number(ghosts.has(part.instanceId)),
+        0,
+        0,
+      ], n * 4 + part.index * 4);
     }
     this.texture.needsUpdate = true;
     this.metrics.visibleInstances = this.visible.filter(p => this.loaded.has(p.groupId)).length;
@@ -836,6 +956,9 @@ export class AtlasScene {
     return {
       ...this.metrics,
       selected: [...this.state.selection],
+      ghosted: this.state.ghostBrickIds.length,
+      manualPlaced: this.manualAssembly.children.length,
+      manualPreview: this.manualAssemblyPreview.children.length,
       projected: this.visible.filter(p => this.loaded.has(p.groupId)).map(p => this.projectPart(p)),
       inventoryCells: this.inventory.cells,
       offsets: this.offsets.map(v => v.toArray()),

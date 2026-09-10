@@ -8,20 +8,23 @@ animation at `/build/:modelId`.
 1. Choose one of the 15 catalog models, ordered from difficulty 1 to 5.
 2. The game loads the same verified LDraw manifest and batched geometry used by
    Explore and Build.
-3. The current step's unplaced instances are hidden.
-4. Drag a material from the guide into the central installation target.
-5. Select a material and rotate it in 90-degree increments with the button or
-   `R` key. The target orientation is derived from the source LDraw matrix.
-6. The payload is checked against the current step, part number, color,
-   quarter-turn orientation, and remaining quantity. Rotationally symmetric
-   parts accept any quarter turn.
-7. A valid instance is revealed and receives the existing GPU placement
-   animation. Invalid or future-step material is rejected.
-8. The game advances only after every required instance is placed. Placement
-   steps accept one completed subassembly.
-9. Progress is saved locally after every accepted placement and by the explicit
+3. The current step remains visible as blue ghost targets.
+4. Each material card renders the real source-part triangle geometry rather
+   than a generic icon.
+5. Selecting a material opens a freely orbitable 3D inspector. The selected
+   part then follows the pointer over a target-height placement plane.
+6. Click the canvas or drag from the tray to choose the part's position.
+   Quarter-turn controls change its installed orientation.
+7. The manual position and orientation are retained in the canvas and local
+   save data. Invalid or future-step material types are rejected.
+8. Material quantities decrement after every accepted part, and exhausted
+   cards disappear from the current-step tray.
+9. Before advancing, an explicit audit checks the exact instance set and every
+   authored target position and orientation. Incorrect parts are returned to
+   the material tray; placement steps audit one completed subassembly.
+10. Progress is saved locally after every accepted placement and by the explicit
    Save command.
-10. Completing the final step records a durable completion flag. The home model
+11. Completing the final step records a durable completion flag. The home model
    card and assembly catalog then show a completion check.
 
 ## Guide Media
