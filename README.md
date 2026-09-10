@@ -8,7 +8,23 @@
   An unofficial desktop workspace for exploring LDraw models, inspecting individual bricks, and following animated build instructions.
 </p>
 
-https://github.com/user-attachments/assets/1761f41d-e016-40c3-85f9-06102f5acc66
+## Feature Videos
+
+### 1. 3D Explode: 0% to 100% to 0%
+
+https://github.com/user-attachments/assets/77e02f26-285b-4b47-a3f5-080b395bf07f
+
+### 2. Guided Build
+
+https://github.com/user-attachments/assets/8f964a18-3408-4908-aced-dff1d4d4a31e
+
+### 3. Create: Multi-view Image to Bricks
+
+https://github.com/user-attachments/assets/46452ae9-0480-4387-ad05-a8f0d9dddd14
+
+### 4. Free DIY
+
+https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
 
 ## Features
 
