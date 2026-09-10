@@ -19,6 +19,7 @@ import { localCategory, localGroupName, useLocale, type Locale, type Translator 
 import { LandingShowcase } from './LandingShowcase';
 import { ImageBrickStudio } from '../creator/ImageBrickStudio';
 import { ComposeStudio } from '../composer/ComposeStudio';
+import { DiyStudio } from '../diy/DiyStudio';
 
 declare global { interface Window { __atlas?: () => ReturnType<AtlasScene['snapshot']> } }
 const viewNames = (tr: Translator) => ({
@@ -603,7 +604,7 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
   return <div className="catalog-page landing-page">
     <header className="topbar landing-nav">
       <a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><BrickAtlasMark /></span><strong>BRICK<span>ATLAS</span></strong></a>
-      <nav className="landing-links"><a href="#features">{tr('功能', 'Features')}</a><a href="#models">{tr('模型商店', 'Model shop')}</a><a href={`${import.meta.env.BASE_URL}compose`}>{tr('组建', 'Compose')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
+      <nav className="landing-links"><a href="#features">{tr('功能', 'Features')}</a><a href="#models">{tr('模型商店', 'Model shop')}</a><a href={`${import.meta.env.BASE_URL}diy`}>{tr('自由 DIY', 'Free DIY')}</a><a href={`${import.meta.env.BASE_URL}compose`}>{tr('组建', 'Compose')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
       <LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} />
     </header>
     <main>
@@ -685,6 +686,7 @@ function ComposePage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
       <div className="top-divider" />
       <span className="workspace-label">{tr('自由组建工作台', 'DIY composition workspace')}</span>
       <nav className="top-actions">
+        <a className="text-button" href={`${import.meta.env.BASE_URL}diy`}><Box size={16} />{tr('自由 DIY', 'Free DIY')}</a>
         <a className="text-button" href={`${import.meta.env.BASE_URL}create`}><Plus size={16} />{tr('图片创作', 'Create')}</a>
         <a className="text-button" href={import.meta.env.BASE_URL}><Library size={16} />{tr('项目库', 'Library')}</a>
         <LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} />
@@ -701,6 +703,7 @@ export default function App() {
   if (relative === '/' || relative === '') return <CatalogPage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   if (relative === '/create' || relative === '/create/') return <CreatorPage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   if (relative === '/compose' || relative === '/compose/') return <ComposePage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
+  if (relative === '/diy' || relative === '/diy/') return <DiyStudio locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   const match = /^\/(explore|build)\/([^/]+)\/?$/.exec(relative);
   let modelId = '';
   try { modelId = match ? decodeURIComponent(match[2]) : ''; } catch { /* Invalid URL is a missing project, not an application crash. */ }
