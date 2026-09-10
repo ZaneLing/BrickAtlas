@@ -8,7 +8,7 @@
 - Ten searchable categories: basic bricks, plates, tiles/grilles, slopes/curves, round parts, modified bricks, Technic, connectors, architecture and motion parts.
 - Pointer-following translucent preview and footprint outline, using the same geometry as placed bricks and library thumbnails.
 - Click to place repeatedly; dragging or right-dragging manipulates the camera without committing a brick.
-- Ninety-degree rotation and automatic stacking on existing brick tops; optional explicit plate layer.
+- Ninety-degree rotation for both the placement preview and any selected placed brick. Existing-brick rotation is an undoable model edit and is rejected when the new footprint overlaps another brick or removes required support.
 - Paint existing bricks, select/focus/pick style, erase, undo and redo.
 - Whole recipe placement is one undo action. Clear/import replacement requires confirmation and remains undoable.
 - Local autosave and explicit save; storage errors remain visible without disabling the editor.
@@ -40,7 +40,7 @@ Procedural parts are recognizable editable representations, not full LDraw under
 ## Verification
 
 - Unit tests cover library uniqueness and locked-file existence, category population, rotations, negative/distant coordinates, occupied cells, top stacking, unsupported placements, smooth/slope/jumper attachment restrictions, all recipe rotations, protected deletion, undo/redo, malformed imports, geometry validity and LDraw coordinate conversion.
-- Chrome mouse tests cover cursor preview movement, rotated stamping, stacking, recoloring, history, no placement during drag, collision rejection, atomic recipes, extended-ground placement, save/reload and file export/import.
+- Chrome mouse tests cover cursor preview movement, rotated stamping, selected-brick rotation and persistence, stacking, recoloring, history, no placement during drag, collision rejection, atomic recipes, extended-ground placement, save/reload and file export/import.
 - A 2,500-brick fixture validates shape batching and retained editing under simulated storage quota failure.
 - Screenshots, nonblank pixel checks and thumbnail checks at 1180, 1440 and 3840 px desktop widths, plus axe WCAG 2 A/AA.
 - Library cards use their real procedural geometry. Selecting a card can use a full-card brick shatter, normal commands use a lighter stud burst, and successful canvas placement emits a color-matched lock ring. Reduced-motion preferences disable these effects.

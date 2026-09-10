@@ -2,11 +2,23 @@ import { expect, test } from '@playwright/test';
 import { PNG } from 'pngjs';
 import { modelCatalog } from '../../atlas.config';
 
+test('Create defaults to explicit real-mesh reconstruction without fabricating a local result', async ({ page }) => {
+  await page.goto('/create');
+  await expect(page.getByRole('tab', { name: '公开 AI 网格' })).toHaveAttribute('aria-selected', 'true');
+  await page.getByLabel('上传正视图').setInputFiles('public/models/5867/preview.png');
+  await expect(page.getByRole('button', { name: '生成真实三维网格' })).toBeEnabled();
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => window.__imageBricks?.().bricks)).toBe(0);
+  await expect(page.getByText('等待生成真实网格')).toBeVisible();
+  await expect(page.getByLabel('公开三维服务')).toHaveValue('triposr-cpu');
+});
+
 test('Create and Compose restart updates the actual GPU state', async ({ page }) => {
   test.setTimeout(120000);
   for (const route of ['/create', '/compose']) {
     await page.goto(route);
     if (route === '/create') {
+      await page.getByRole('tab', { name: '本地备用' }).click();
       await page.getByLabel('上传正视图').setInputFiles('public/models/5867/preview.png');
       await expect.poll(
         () => page.evaluate(() => window.__imageBricks?.().drawnInstances ?? 0),

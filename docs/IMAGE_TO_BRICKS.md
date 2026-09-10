@@ -1,23 +1,39 @@
 # Image-to-Bricks Pipeline
 
-## Browser Reconstruction
+## Two-stage Mesh Reconstruction
 
 `/create` starts empty and converts the user's own real-object photographs. It no longer shows a fixed vehicle demo.
 
-The local pipeline:
+The default pipeline:
+
+1. accepts one front photograph and preserves the complete image or a manual crop;
+2. sends the image only after an explicit Generate action to the selected public Hugging Face Space;
+3. uses the anonymous TripoSR CPU Space by default, or an official TripoSR/Stable Fast 3D ZeroGPU Space, to return a real GLB triangle mesh;
+4. validates the download and rejects empty, oversized, or mesh-free output;
+5. exposes the intermediate GLB in an interactive Three.js preview and as a download;
+6. extracts world-space triangles with `GLTFLoader`;
+7. voxelizes the mesh in a Web Worker with scanline interior filling;
+8. supports a solid volume or a boundary-only hollow shell;
+9. projects source-photo color onto the voxels and quantizes it in CIELAB space;
+10. packs voxels into 1x1 through 1x4 and 2x2 through 2x4 bricks;
+11. reduces resolution automatically to stay within the requested brick budget; and
+12. creates stable brick IDs, build steps, BOM data, and LDraw output.
+
+The public Spaces use shared GPU capacity. Anonymous jobs can be queued or
+rejected when the ZeroGPU allowance is exhausted. The UI reports that state
+instead of substituting guessed geometry. A Hugging Face token may be entered
+for the current page session; it is never persisted.
+
+## Local Fallback
+
+The explicitly labeled local fallback:
 
 1. accepts one required front photograph and optional left, back, and right photographs;
-2. preserves the complete image by default, with manual square cropping still available;
-3. runs the Apache-2.0 Depth Anything V2 Small ONNX model in a Web Worker;
-4. estimates and flood-fills the connected background while preserving transparent image masks;
-5. converts single-image depth into a smoothed 3D surface shell instead of a flat color relief;
-6. intersects aligned silhouettes when two to four views are supplied;
-7. supports hollow, solid, and low-profile relief output;
-8. quantizes colors in CIELAB space against the supported LDraw palette;
-9. packs voxels into 1x1 through 1x4 and 2x2 through 2x4 bricks;
-10. reduces resolution automatically to stay within the requested brick budget;
-11. creates stable brick IDs, bottom-up build steps, BOM data, and LDraw output; and
-12. renders the result with batched Three.js instancing.
+2. runs the Apache-2.0 Depth Anything V2 Small ONNX model in a Web Worker;
+3. estimates and flood-fills the connected background while preserving transparent image masks;
+4. converts single-image depth into a smoothed surface shell;
+5. intersects aligned silhouettes when two to four views are supplied; and
+6. supports hollow, solid, and low-profile relief output.
 
 The depth model is downloaded once from the
 [ONNX community Depth Anything V2 Small repository](https://huggingface.co/onnx-community/depth-anything-v2-small)
@@ -39,9 +55,9 @@ References:
 - [BrickLink Studio import formats](https://studiohelp.bricklink.com/hc/en-us/articles/6502277722647-Import-formats)
 - [Image2Lego paper](https://arxiv.org/abs/2108.08477)
 
-## Optional Cloud Reconstruction
+## Production Reconstruction
 
-For higher-fidelity production reconstruction:
+For a dedicated production deployment:
 
 1. Validate and normalize the upload.
 2. Segment the subject and remove the background.
@@ -53,10 +69,13 @@ For higher-fidelity production reconstruction:
 8. generate LDraw, BOM, and bottom-up build steps; and
 9. send the result to the existing Brick Atlas viewer.
 
-Candidate reconstruction backends:
+Available reconstruction backends:
 
-- Alibaba Cloud Model Studio Tripo supports single-image and ordered front/left/back/right multi-image GLB generation. It is the closest match for this workflow, but requires the Tripo product to be enabled for the Beijing-region key.
-- [TripoSR](https://github.com/VAST-AI-Research/TripoSR) is an MIT-licensed self-hosted alternative and needs substantially more compute than the browser path.
+- The public [TripoSR CPU Space](https://huggingface.co/spaces/WeReCooking2/Dust3R-TripoSR) is the default anonymous endpoint and returns GLB. It is slower but does not consume ZeroGPU quota.
+- The official public [TripoSR Space](https://huggingface.co/spaces/stabilityai/TripoSR) returns OBJ plus GLB through shared ZeroGPU capacity.
+- The public [Stable Fast 3D Space](https://huggingface.co/spaces/stabilityai/stable-fast-3d) is an alternate GLB endpoint.
+- Alibaba Cloud Model Studio Tripo supports single-image and ordered front/left/back/right multi-image GLB generation, but requires the Tripo product to be enabled for the Beijing-region key.
+- [TripoSR](https://github.com/VAST-AI-Research/TripoSR) can also be self-hosted and needs substantially more compute than the local browser fallback.
 - OpenRouter image models generate or edit raster images; they do not return a reliable watertight 3D mesh and are therefore not used as the geometry source.
 
 Open implementations such as [Bricked](https://github.com/evanesmiller/Bricked) and [BrickBuilder](https://github.com/jjohnson5253/brickbuilderai) use the same broad sequence: segmentation, reconstruction, voxelization, brick packing, and Three.js visualization.

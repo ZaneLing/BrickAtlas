@@ -8,6 +8,10 @@
   An unofficial desktop workspace for exploring LDraw models, inspecting individual bricks, and following animated build instructions.
 </p>
 
+<p align="center">
+  <strong>English</strong> · <a href="README.zh-CN.md">简体中文</a>
+</p>
+
 ## Feature Videos
 
 ### 1. 3D Explode: 0% to 100% to 0%
@@ -33,11 +37,11 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
 - Select any brick to view its part number, color, dimensions, subassembly, and 3D shape.
 - Search, hide, isolate, highlight matching parts, and use X-Ray mode to inspect internal structure.
 - Follow step-by-step assembly in the central 3D canvas. Manually opened guide blocks show clickable parts and one high-resolution start-to-install placement diagram.
-- Play the manual assembly game: drag the correct current-step materials into the model, resume saved progress, and earn a completion mark.
+- Play the manual assembly game: rotate each material in 90-degree increments, pass part/color/orientation validation, resume saved progress, and earn a completion mark.
 - Compose original scenes from verified aircraft, boats, vehicles, buildings, characters, animals, baseplates, and loose bricks with stud-grid snapping and collision checks.
-- Free-build in the DIY studio: choose a shape and color, preview it under the mouse, click to snap, and keep stacking on an extending baseplate.
+- Free-build in the DIY studio: choose a shape and color, rotate previews or already placed bricks by 90 degrees, click to snap, and keep stacking on an extending baseplate.
 - Export printable PDF build guides, BOM CSV files, LDraw files, and images up to 12K.
-- Turn a real-object photo into a depth-aware 3D brick sculpture, or add left, back, and right views for a tighter multi-view reconstruction.
+- Send one real-object photo to a public TripoSR or Stable Fast 3D endpoint, inspect the returned GLB mesh, then voxelize and pack it into a brick sculpture. A clearly labeled local depth/multi-view fallback remains available.
 - Use tactile brick controls with lightweight stud bursts, full-card shatter feedback and color-matched placement effects; reduced-motion preferences disable them.
 - Switch the complete interface between Chinese and English.
 
@@ -81,13 +85,13 @@ npm ci
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`. The app runs locally without a backend, database, or API key.
+Open `http://127.0.0.1:5173`. The app runs without a database or private backend. Local tools need no API key. The default public TripoSR CPU endpoint works anonymously; official ZeroGPU providers accept an optional session-only Hugging Face token for additional quota.
 
 On macOS, `Start.command` and `npm run start:local` are also available.
 
 ## Image Conversion
 
-The Creator preserves the full source photo by default and also supports manual square crops. One front image produces a Depth Anything V2-assisted 3D shell; optional left, back, and right views tighten the hollow or solid visual hull. See [Image-to-Bricks Pipeline](docs/IMAGE_TO_BRICKS.md) for limitations and implementation details.
+The Creator now uses an explicit two-stage workflow by default: a public Hugging Face Space turns the front image into a real GLB triangle mesh, then a Web Worker voxelizes that mesh and packs the occupied volume into supported bricks. The original GLB can be inspected and downloaded before viewing the brick result. Photos are sent to the selected public provider only after the user presses Generate. The local Depth Anything V2 and multi-view silhouette pipeline remains available as an offline fallback and is never labeled as a real mesh reconstruction. See [Image-to-Bricks Pipeline](docs/IMAGE_TO_BRICKS.md) for limitations and implementation details.
 
 ## Models and Licenses
 

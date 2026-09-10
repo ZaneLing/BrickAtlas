@@ -2,10 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowLeft, ArrowRight, Box, Check, CheckCircle2, ChevronRight, CircleAlert,
   Crosshair, Hand, Languages, Library, LoaderCircle, LockKeyhole, Play,
-  Rotate3D, RotateCcw, Save, Sparkles, Trophy,
+  Rotate3D, RotateCcw, RotateCw, Save, Sparkles, Trophy,
 } from 'lucide-react';
 import { modelCatalog, type ModelConfig } from '../../atlas.config';
-import { groupStepParts } from '../instructions/exportGuide';
 import { BrickModel } from '../model/BrickModel';
 import {
   initialState, type AssemblyStep, type AtlasManifest, type ExplorerState,
@@ -17,6 +16,10 @@ import type { Locale, Translator } from '../app/locale';
 import {
   assemblyDifficulty, difficultyLabel, type AssemblyDifficulty,
 } from './difficulty';
+import {
+  assemblyMaterialKey, groupAssemblyMaterials, partOrientationMatches,
+  type QuarterTurn,
+} from './orientation';
 import {
   clearModelAssemblyProgress, completedAssemblyModels, readModelAssemblyProgress,
   saveModelAssemblyProgress,
@@ -34,6 +37,7 @@ declare global {
       completed: boolean;
       advancing: boolean;
       feedback: 'idle' | 'correct' | 'wrong';
+      selectedTurn: QuarterTurn | null;
       scene: ReturnType<AtlasScene['snapshot']> | null;
     };
   }
@@ -43,6 +47,7 @@ type MaterialPayload = {
   step: number;
   kind: 'part' | 'assembly';
   key: string;
+  turn: QuarterTurn;
 };
 
 type GuideMedia = {
@@ -219,6 +224,7 @@ export function AssemblyGame({
   const [stage, setStage] = useState(tr('读取模型', 'Loading model'));
   const [completedStep, setCompletedStep] = useState(0);
   const [placedIds, setPlacedIds] = useState<string[]>([]);
+  const [placedTurns, setPlacedTurns] = useState<Record<string, QuarterTurn>>({});
   const [completed, setCompleted] = useState(false);
   const [previewStep, setPreviewStep] = useState(1);
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialPayload | null>(null);
@@ -248,7 +254,7 @@ export function AssemblyGame({
     const ids = new Set(preview.instanceIds);
     return manifest.instances.filter(part => ids.has(part.instanceId));
   }, [manifest, preview]);
-  const previewGroups = useMemo(() => groupStepParts(previewParts), [previewParts]);
+  const previewGroups = useMemo(() => groupAssemblyMaterials(previewParts), [previewParts]);
   const placed = useMemo(() => new Set(placedIds), [placedIds]);
   const difficulty = assemblyDifficulty(config.id);
   const percent = modelProgressPercent(completedStep, steps.length);
@@ -268,6 +274,10 @@ export function AssemblyGame({
         const currentIds = new Set(stepIds(next.instructions.steps[clamped]));
         setCompletedStep(clamped);
         setPlacedIds(saved.placedIds.filter(id => currentIds.has(id)));
+        setPlacedTurns(Object.fromEntries(
+          Object.entries(saved.placedTurns ?? {})
+            .filter(([id]) => currentIds.has(id)),
+        ));
         setCompleted(saved.completed || clamped >= next.instructions.steps.length);
         setPreviewStep(Math.min(clamped + 1, next.instructions.steps.length));
         setManifest(next);
@@ -363,6 +373,7 @@ export function AssemblyGame({
       completed,
       advancing,
       feedback,
+      selectedTurn: selectedMaterial?.turn ?? null,
       scene: sceneRef.current?.snapshot() ?? null,
     });
     return () => {
@@ -370,7 +381,7 @@ export function AssemblyGame({
     };
   }, [
     config.id, ready, completedStep, activeStepNumber, placedIds.length,
-    activeStep, activeIds.length, completed, advancing, feedback,
+    activeStep, activeIds.length, completed, advancing, feedback, selectedMaterial,
   ]);
 
   useEffect(() => () => {
@@ -434,38 +445,46 @@ export function AssemblyGame({
     nextCompletedStep = completedStep,
     nextPlacedIds = placedIds,
     nextCompleted = completed,
+    nextPlacedTurns = placedTurns,
   ) => saveModelAssemblyProgress(config.id, {
     completedStep: nextCompletedStep,
     placedIds: nextPlacedIds,
+    placedTurns: nextPlacedTurns,
     completed: nextCompleted,
     updatedAt: Date.now(),
-  }), [config.id, completedStep, placedIds, completed]);
+  }), [config.id, completedStep, placedIds, placedTurns, completed]);
 
-  const finishStep = useCallback((nextPlaced: string[]) => {
+  const finishStep = useCallback((
+    nextPlaced: string[],
+    nextTurns: Record<string, QuarterTurn> = placedTurns,
+  ) => {
     if (!activeStep || advancing) return;
     setPlacedIds(nextPlaced);
+    setPlacedTurns(nextTurns);
     setAdvancing(true);
     setFeedback('correct');
     if (activeStep.kind === 'placement') setPlacementAnimating(true);
-    save(completedStep, nextPlaced, false);
+    save(completedStep, nextPlaced, false, nextTurns);
     advanceTimer.current = window.setTimeout(() => {
       const nextStep = activeStepNumber;
       const done = nextStep >= steps.length;
       setCompletedStep(nextStep);
       setPlacedIds([]);
+      setPlacedTurns({});
       setCompleted(done);
       setAdvancing(false);
       setPlacementAnimating(false);
       setSelectedMaterial(null);
       setFeedback('idle');
       setPreviewStep(done ? steps.length : nextStep + 1);
-      save(nextStep, [], done);
+      save(nextStep, [], done, {});
       setNotice(done
         ? tr('模型拼装完成', 'Model completed')
         : tr(`第 ${nextStep} 步完成`, `Step ${nextStep} completed`));
     }, activeStep.kind === 'placement' ? 1100 : 760);
   }, [
-    activeStep, advancing, save, completedStep, activeStepNumber, steps.length, tr,
+    activeStep, advancing, save, completedStep, activeStepNumber, steps.length,
+    placedTurns, tr,
   ]);
 
   const placeMaterial = useCallback((item: MaterialPayload | null) => {
@@ -481,31 +500,53 @@ export function AssemblyGame({
         setFeedback('wrong');
         return;
       }
-      finishStep([]);
+      finishStep([], {});
       return;
     }
-    const candidate = activeParts.find(part =>
-      `${part.partNumber}:${part.colorCode}` === item.key
-      && !placed.has(part.instanceId),
-    );
+    const candidates = activeParts.filter(part =>
+      assemblyMaterialKey(part) === item.key && !placed.has(part.instanceId));
+    const candidate = candidates.find(part => partOrientationMatches(part, item.turn));
     if (!candidate) {
       setFeedback('wrong');
-      setNotice(tr('材料数量或型号不正确', 'Wrong part or quantity'));
+      setNotice(candidates.length
+        ? tr('积木方向不正确，请旋转 90° 后重试', 'Wrong orientation. Rotate the brick 90° and try again')
+        : tr('材料数量或型号不正确', 'Wrong part or quantity'));
       window.setTimeout(() => setFeedback('idle'), 700);
       return;
     }
     const next = [...placedIds, candidate.instanceId];
+    const nextTurns = { ...placedTurns, [candidate.instanceId]: item.turn };
     setPlacedIds(next);
+    setPlacedTurns(nextTurns);
     window.setTimeout(() => sceneRef.current?.animateInstances([candidate.instanceId]), 30);
     setSelectedMaterial(null);
     setFeedback('correct');
-    save(completedStep, next, false);
+    save(completedStep, next, false, nextTurns);
     window.setTimeout(() => setFeedback('idle'), 520);
-    if (next.length === activeIds.length) finishStep(next);
+    if (next.length === activeIds.length) finishStep(next, nextTurns);
   }, [
     activeStep, completed, advancing, activeStepNumber, activeParts, placed,
-    placedIds, save, completedStep, activeIds.length, finishStep, tr,
+    placedIds, placedTurns, save, completedStep, activeIds.length, finishStep, tr,
   ]);
+
+  const rotateMaterial = useCallback(() => {
+    setSelectedMaterial(current => current?.kind === 'part'
+      ? { ...current, turn: ((current.turn + 1) % 4) as QuarterTurn }
+      : current);
+  }, []);
+
+  useEffect(() => {
+    const keydown = (event: KeyboardEvent) => {
+      if (
+        event.key.toLowerCase() !== 'r'
+        || (event.target as HTMLElement)?.closest('input, textarea, select')
+      ) return;
+      event.preventDefault();
+      rotateMaterial();
+    };
+    window.addEventListener('keydown', keydown);
+    return () => window.removeEventListener('keydown', keydown);
+  }, [rotateMaterial]);
 
   function dragMaterial(event: React.DragEvent, item: MaterialPayload) {
     event.dataTransfer.effectAllowed = 'copy';
@@ -518,6 +559,7 @@ export function AssemblyGame({
     clearModelAssemblyProgress(config.id);
     setCompletedStep(0);
     setPlacedIds([]);
+    setPlacedTurns({});
     setCompleted(false);
     setPreviewStep(1);
     setSelectedMaterial(null);
@@ -529,7 +571,7 @@ export function AssemblyGame({
 
   function remaining(groupKey: string) {
     return activeParts.filter(part =>
-      `${part.partNumber}:${part.colorCode}` === groupKey
+      assemblyMaterialKey(part) === groupKey
       && !placed.has(part.instanceId),
     ).length;
   }
@@ -690,7 +732,11 @@ export function AssemblyGame({
               ? <><Check size={24} /><strong>{tr('安装正确', 'Correct placement')}</strong></>
               : advancing
                 ? <><Sparkles size={24} /><strong>{tr('步骤完成', 'Step complete')}</strong></>
-                : <><Box size={25} /><strong>{tr('拖动材料到这里安装', 'Drop a material here to install')}</strong><span>{selectedMaterial ? tr('也可点击放置已选材料', 'Click to place the selected material') : tr('必须使用当前步骤材料', 'Current-step materials only')}</span></>}
+                : <><Box size={25} /><strong>{tr('拖动材料到这里安装', 'Drop a material here to install')}</strong><span>{selectedMaterial
+                  ? selectedMaterial.kind === 'part'
+                    ? tr(`已选方向 ${selectedMaterial.turn * 90}°，也可点击安装`, `Selected orientation ${selectedMaterial.turn * 90}°. Click to install`)
+                    : tr('也可点击放置已选材料', 'Click to place the selected material')
+                  : tr('必须使用当前步骤材料', 'Current-step materials only')}</span></>}
         </section>}
         {notice && <div className="assembly-game-toast" role="status">{notice}</div>}
       </main>
@@ -726,6 +772,12 @@ export function AssemblyGame({
           </section>
           <section className="assembly-materials">
             <div className="assembly-guide-label"><Box size={14} />{tr('本步材料', 'Materials')}</div>
+            {selectedMaterial?.kind === 'part' && selectedMaterial.step === activeStepNumber && <div className="assembly-orientation-control">
+              <span><Box style={{ transform: `rotate(${selectedMaterial.turn * 90}deg)` }} size={19} /><strong>{selectedMaterial.turn * 90}°</strong></span>
+              <button onClick={rotateMaterial} aria-label={tr('旋转当前积木 90°', 'Rotate current brick 90°')}>
+                <RotateCw size={15} />{tr('旋转 90°', 'Rotate 90°')}
+              </button>
+            </div>}
             {preview?.kind === 'placement'
               ? <button
                   className={`assembly-material-card ${previewStep !== activeStepNumber ? 'future' : ''}`}
@@ -734,11 +786,13 @@ export function AssemblyGame({
                     step: previewStep,
                     kind: 'assembly',
                     key: preview.id,
+                    turn: 0,
                   })}
                   onClick={() => setSelectedMaterial({
                     step: previewStep,
                     kind: 'assembly',
                     key: preview.id,
+                    turn: 0,
                   })}
                 >
                   <span className="assembly-material-swatch assembly-swatch-group"><Sparkles size={20} /></span>
@@ -747,24 +801,35 @@ export function AssemblyGame({
                 </button>
               : previewGroups.map(group => {
                   const left = previewStep === activeStepNumber ? remaining(group.key) : group.quantity;
+                  const selected = selectedMaterial?.step === previewStep
+                    && selectedMaterial.kind === 'part'
+                    && selectedMaterial.key === group.key;
+                  const turn = selected ? selectedMaterial.turn : 0;
                   return <button
-                    className={`assembly-material-card ${!left ? 'placed' : ''} ${previewStep !== activeStepNumber ? 'future' : ''}`}
+                    className={`assembly-material-card ${selected ? 'selected' : ''} ${!left ? 'placed' : ''} ${previewStep !== activeStepNumber ? 'future' : ''}`}
                     disabled={!left}
                     draggable={Boolean(left)}
                     key={group.key}
+                    data-required-turn={group.requiredTurn}
+                    data-current-turn={turn}
+                    data-rotation-relevant={group.rotationRelevant}
                     onDragStart={event => dragMaterial(event, {
                       step: previewStep,
                       kind: 'part',
                       key: group.key,
+                      turn,
                     })}
                     onClick={() => setSelectedMaterial({
                       step: previewStep,
                       kind: 'part',
                       key: group.key,
+                      turn,
                     })}
                   >
-                    <span className="assembly-material-swatch" style={{ background: group.colorHex }}><Box size={18} /></span>
-                    <span><strong>{group.partNumber}</strong><small>{group.name}<br />{group.colorName}</small></span>
+                    <span className="assembly-material-swatch" style={{ background: group.colorHex }}><Box size={18} style={{ transform: `rotate(${turn * 90}deg)` }} /></span>
+                    <span><strong>{group.partNumber}</strong><small>{group.name}<br />{group.colorName}<br />{group.rotationRelevant
+                      ? tr(`目标方向 ${group.requiredTurn * 90}°`, `Target orientation ${group.requiredTurn * 90}°`)
+                      : tr('方向任意', 'Any orientation')}</small></span>
                     <b>{left}×</b>
                   </button>;
                 })}

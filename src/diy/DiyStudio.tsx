@@ -13,7 +13,7 @@ import { DiyScene, type DiyHover } from './DiyScene';
 import { renderDiyThumbnails } from './diyGeometry';
 import {
   canRemove, commitDiy, diyBom, DiyIndex, diyParts, diyRecipes, diyToLdraw, emptyDiyProject,
-  diyCategories, parseDiyProject, partById, recipeById, redoDiy, stampSize, undoDiy,
+  diyCategories, parseDiyProject, partById, recipeById, redoDiy, rotateDiyBrick, stampSize, undoDiy,
   type DiyBrick, type DiyBrush, type DiyCategory, type DiyHistory, type DiyProject, type DiyTool, type Turn,
 } from './diyModel';
 import './diy.css';
@@ -145,14 +145,30 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
   }, [notice]);
   const undo = useCallback(() => { applyHistory(undoDiy(historyRef.current)); setSelectedId(null); }, [applyHistory]);
   const redo = useCallback(() => { applyHistory(redoDiy(historyRef.current)); setSelectedId(null); }, [applyHistory]);
-  const rotate = useCallback(() => setBrush(brush => ({ ...brush, turn: ((brush.turn + 1) % 4) as Turn })), []);
+  const rotateBrush = useCallback(() => setBrush(brush => ({ ...brush, turn: ((brush.turn + 1) % 4) as Turn })), []);
+  const rotateSelected = useCallback(() => {
+    if (!selectedId) return;
+    const result = rotateDiyBrick(historyRef.current.present, selectedId);
+    if (result.issue) {
+      setNotice(result.issue === 'overlap'
+        ? current.current.tr('旋转后会与其他积木碰撞', 'Rotation would overlap another brick')
+        : result.issue === 'unsupported'
+          ? current.current.tr('旋转后积木会失去支撑', 'Rotation would leave bricks unsupported')
+          : current.current.tr('无法旋转这块积木', 'This brick cannot be rotated'));
+      return;
+    }
+    if (result.project !== historyRef.current.present) commit(result.project);
+  }, [commit, selectedId]);
   useEffect(() => {
     const keydown = (event: KeyboardEvent) => {
       if ((event.target as HTMLElement)?.closest('input, textarea, select, dialog')) return;
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
         event.preventDefault(); event.shiftKey ? redo() : undo();
       } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'y') { event.preventDefault(); redo(); }
-      else if (event.key.toLowerCase() === 'r') { event.preventDefault(); rotate(); }
+      else if (event.key.toLowerCase() === 'r') {
+        event.preventDefault();
+        if (selectedId) rotateSelected(); else rotateBrush();
+      }
       else if (event.key === 'Escape') { setTool('orbit'); setSelectedId(null); }
       else if (event.key === 'Delete' || event.key === 'Backspace') { if (selectedId) { event.preventDefault(); edit(selectedId, 'erase'); } }
       else if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
@@ -162,7 +178,7 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
     };
     window.addEventListener('keydown', keydown);
     return () => window.removeEventListener('keydown', keydown);
-  }, [undo, redo, rotate, edit, selectedId]);
+  }, [undo, redo, rotateBrush, rotateSelected, edit, selectedId]);
 
   function save() { setStorageState(writeLocal(storageKey, JSON.stringify(project)) ? 'saved' : 'error'); }
   async function importProject(file?: File) {
@@ -227,7 +243,13 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
         <div className="diy-floating-tools" role="toolbar" aria-label={tr('DIY 编辑工具', 'DIY editing tools')}>
           {tools.map(({ id, label, icon: Icon }) => <IconButton key={id} label={label} active={tool === id} onClick={() => setTool(id)}><Icon size={19} /></IconButton>)}
           <span className="diy-tool-divider" />
-          <IconButton label={tr('旋转待放积木 90°', 'Rotate preview 90°')} disabled={tool !== 'place'} onClick={rotate}><RotateCw size={19} /></IconButton>
+          <IconButton
+            label={selectedId
+              ? tr('旋转选中积木 90°', 'Rotate selected brick 90°')
+              : tr('旋转待放积木 90°', 'Rotate preview 90°')}
+            disabled={!selectedId && tool !== 'place'}
+            onClick={selectedId ? rotateSelected : rotateBrush}
+          ><RotateCw size={19} /></IconButton>
         </div>
         <div className="diy-view-tools">
           <IconButton label={tr('透视视图', 'Perspective view')} active={!topView} onClick={() => { setTopView(false); scene.current?.setView(false); }}><Box size={17} /></IconButton>
@@ -302,8 +324,9 @@ export function DiyStudio({ locale, tr, toggleLocale }: { locale: Locale; tr: Tr
               if (Number.isFinite(n)) setLayer(Math.max(0, Math.min(3000, Math.round(n))));
             }} /></label></div>
           {selected && <div className="diy-selected">
-            <span>{tr('选中', 'Selected')} · {selected.partId} · X {selected.x} · Z {selected.z}</span>
+            <span>{tr('选中', 'Selected')} · {selected.partId} · X {selected.x} · Z {selected.z} · {selected.turn * 90}°</span>
             <div><IconButton label={tr('聚焦选中积木', 'Focus selected brick')} onClick={() => scene.current?.fit(true)}><Focus size={16} /></IconButton>
+              <IconButton label={tr('旋转选中积木 90°', 'Rotate selected brick 90°')} onClick={rotateSelected}><RotateCw size={16} /></IconButton>
               <IconButton label={tr('拾取选中样式', 'Pick selected style')} onClick={() => { setBrush({ recipeId: selected.partId, color: selected.color, turn: selected.turn }); setTool('place'); }}><Paintbrush size={16} /></IconButton>
               <IconButton label={tr('删除选中积木', 'Delete selected brick')} onClick={() => edit(selected.id, 'erase')}><Trash2 size={16} /></IconButton></div>
           </div>}

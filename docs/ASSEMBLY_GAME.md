@@ -10,15 +10,18 @@ animation at `/build/:modelId`.
    Explore and Build.
 3. The current step's unplaced instances are hidden.
 4. Drag a material from the guide into the central installation target.
-5. The payload is checked against the current step, part number, color, and
-   remaining quantity.
-6. A valid instance is revealed and receives the existing GPU placement
+5. Select a material and rotate it in 90-degree increments with the button or
+   `R` key. The target orientation is derived from the source LDraw matrix.
+6. The payload is checked against the current step, part number, color,
+   quarter-turn orientation, and remaining quantity. Rotationally symmetric
+   parts accept any quarter turn.
+7. A valid instance is revealed and receives the existing GPU placement
    animation. Invalid or future-step material is rejected.
-7. The game advances only after every required instance is placed. Placement
+8. The game advances only after every required instance is placed. Placement
    steps accept one completed subassembly.
-8. Progress is saved locally after every accepted placement and by the explicit
+9. Progress is saved locally after every accepted placement and by the explicit
    Save command.
-9. Completing the final step records a durable completion flag. The home model
+10. Completing the final step records a durable completion flag. The home model
    card and assembly catalog then show a completion check.
 
 ## Guide Media
@@ -35,6 +38,7 @@ The `brick-atlas-assembly-game-v1` local-storage record stores:
 
 - completed step count;
 - instance IDs already placed in the active step;
+- the accepted quarter-turn for each placed instance;
 - completion status; and
 - update time.
 

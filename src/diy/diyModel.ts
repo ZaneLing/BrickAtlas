@@ -303,6 +303,21 @@ export function canRemove(bricks: DiyBrick[], id: string) {
   return !new DiyIndex([]).validate(remaining, 0);
 }
 
+export function rotateDiyBrick(
+  project: DiyProject,
+  id: string,
+): { project: DiyProject; issue: PlacementIssue } {
+  const current = project.bricks.find(brick => brick.id === id);
+  if (!current) return { project, issue: null };
+  const replacement: DiyBrick = {
+    ...current,
+    turn: ((current.turn + 1) % 4) as Turn,
+  };
+  const bricks = project.bricks.map(brick => brick.id === id ? replacement : brick);
+  const issue = new DiyIndex([]).validate(bricks, 0);
+  return issue ? { project, issue } : { project: { ...project, bricks }, issue: null };
+}
+
 function validBrick(brick: DiyBrick) {
   return brick && typeof brick.id === 'string' && brick.id.length <= 100
     && typeof brick.stampId === 'string' && brick.stampId.length <= 100

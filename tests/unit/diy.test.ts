@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import {
   canRemove, commitDiy, DIY_LIMIT, DiyIndex, diyCategories, diyRecipes, diyToLdraw, emptyDiyProject, footprint,
-  parseDiyProject, redoDiy, stamp, stampSize, undoDiy, type DiyBrush, type DiyHistory,
+  parseDiyProject, redoDiy, rotateDiyBrick, stamp, stampSize, undoDiy, type DiyBrush, type DiyHistory,
 } from '../../src/diy/diyModel';
 import { createDiyGeometry } from '../../src/diy/diyGeometry';
 import { diyParts } from '../../src/diy/diyModel';
@@ -52,6 +52,26 @@ describe('DIY placement', () => {
     const bottom = stamp(brush, 0, 0, 0, 'a'), top = stamp(brush, 0, 3, 0, 'b');
     expect(canRemove([...bottom, ...top], bottom[0].id)).toBe(false);
     expect(canRemove([...bottom, ...top], top[0].id)).toBe(true);
+  });
+  it('rotates an already placed brick and rejects rotations that break support', () => {
+    const project = {
+      ...emptyDiyProject(),
+      bricks: stamp(brush, 0, 0, 0, 'bottom'),
+    };
+    const rotated = rotateDiyBrick(project, project.bricks[0].id);
+    expect(rotated.issue).toBeNull();
+    expect(rotated.project.bricks[0].turn).toBe(1);
+
+    const supported = {
+      ...project,
+      bricks: [
+        ...project.bricks,
+        ...stamp({ ...brush, recipeId: '3005' }, 3, 3, 0, 'top'),
+      ],
+    };
+    const rejected = rotateDiyBrick(supported, supported.bricks[0].id);
+    expect(rejected.issue).toBe('unsupported');
+    expect(rejected.project).toBe(supported);
   });
   it('limits physical count without imposing a board boundary', () => {
     expect(new DiyIndex([]).validate(stamp(brush, 0, 0, 0), DIY_LIMIT)).toBe('limit');

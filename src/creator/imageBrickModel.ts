@@ -89,6 +89,15 @@ export interface SampledDepth {
   width: number;
   height: number;
 }
+export interface SampledMeshVolume {
+  width: number;
+  height: number;
+  depth: number;
+  occupied: Uint8Array;
+  triangleCount: number;
+  surfaceVoxelCount: number;
+  solidVoxelCount: number;
+}
 export interface ImageBrickViews {
   front: SampledImage;
   left?: SampledImage;
@@ -678,6 +687,76 @@ export function createBrickModelFromViews(
       'Depth Anything V2 Small ONNX, Apache-2.0, revision 4472b7362082ad9968fee890ca0f1e5aca36b93d',
     ];
   }
+  return build;
+}
+
+export function createBrickModelFromMeshVolume(
+  volume: SampledMeshVolume,
+  front: SampledImage,
+  options: ImageBrickOptions,
+  name = 'AI mesh sculpture',
+  credit = 'Public image-to-3D mesh',
+): ImageBrickBuild {
+  if (
+    volume.width < 1
+    || volume.height < 1
+    || volume.depth < 1
+    || volume.occupied.length !== volume.width * volume.height * volume.depth
+  ) {
+    throw new Error('Invalid mesh voxel volume');
+  }
+  const analysis = analyzeImage(front.data, front.width, front.height, {
+    ...options,
+    removeBackground: false,
+  });
+  const fallback = analysis.cells.find((cell): cell is ImageCell => Boolean(cell))?.color
+    ?? brickPalette.find(color => color.id === 'light-gray')!;
+  const voxels = new Map<string, BrickPaletteColor>();
+  for (let y = 0; y < volume.height; y++) {
+    for (let z = 0; z < volume.depth; z++) {
+      for (let x = 0; x < volume.width; x++) {
+        const index = (y * volume.depth + z) * volume.width + x;
+        if (!volume.occupied[index]) continue;
+        const sourceX = clamp(
+          Math.floor((x + 0.5) / volume.width * front.width),
+          0,
+          front.width - 1,
+        );
+        const sourceY = clamp(
+          Math.floor((1 - (y + 0.5) / volume.height) * front.height),
+          0,
+          front.height - 1,
+        );
+        voxels.set(
+          `${x}:${y}:${z}`,
+          analysis.cells[sourceY * front.width + sourceX]?.color ?? fallback,
+        );
+      }
+    }
+  }
+  applySharedPalette(voxels, options.maxColors);
+  const trimmed = trimVoxels(voxels, [
+    volume.width,
+    volume.height,
+    volume.depth,
+  ]);
+  const build = buildFromVoxels(
+    trimmed.voxels,
+    trimmed.width,
+    trimmed.height,
+    trimmed.depth,
+    options,
+    name,
+    analysis.background,
+    1,
+    Math.max(volume.width, volume.height, volume.depth),
+    front.height,
+    'mesh-ai',
+  );
+  build.credits = [
+    credit,
+    `${volume.triangleCount.toLocaleString('en-US')} source triangles; ${volume.solidVoxelCount.toLocaleString('en-US')} solid voxels`,
+  ];
   return build;
 }
 

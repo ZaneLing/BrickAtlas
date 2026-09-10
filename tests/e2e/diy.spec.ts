@@ -103,6 +103,19 @@ test('dragging never places and collisions are rejected on a locked layer', asyn
   expect(hover?.y).toBe(0);
 });
 
+test('an already placed brick rotates 90 degrees and persists', async ({ page }) => {
+  await page.goto('/diy');
+  await page.getByRole('button', { name: '选取基础砖 2×4', exact: true }).click();
+  await placeAt(page);
+  await expect.poll(() => page.evaluate(() => window.__diy!().bricks[0].turn)).toBe(0);
+  await page.locator('.diy-selected').getByRole('button', { name: '旋转选中积木 90°' }).click();
+  await expect.poll(() => page.evaluate(() => window.__diy!().bricks[0].turn)).toBe(1);
+  await expect(page.locator('.diy-selected')).toContainText('90°');
+  await page.getByRole('button', { name: '保存 DIY' }).click();
+  await page.reload();
+  await expect.poll(() => page.evaluate(() => window.__diy?.().bricks[0].turn)).toBe(1);
+});
+
 test('assemblies are atomic, ground extends, persistence and file exports work', async ({ page }, testInfo) => {
   await page.goto('/diy');
   await page.getByRole('tab', { name: /小组件/ }).click();

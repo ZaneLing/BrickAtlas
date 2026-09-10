@@ -431,6 +431,7 @@ test('image studio converts an image into bricks, steps, and exports', async ({ 
   await page.goto('/create');
   await expect(page.getByRole('region', { name: '图片转积木工作台' })).toBeVisible();
   await expect.poll(async () => page.evaluate(() => window.__imageBricks?.().bricks ?? -1)).toBe(0);
+  await page.getByRole('tab', { name: '本地备用' }).click();
   await page.getByLabel('上传正视图').setInputFiles('public/models/5867/preview.png');
   await expect.poll(
     async () => page.evaluate(() => window.__imageBricks?.().bricks ?? 0),
