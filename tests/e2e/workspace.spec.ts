@@ -4,7 +4,17 @@ import { expect, test } from '@playwright/test';
 test('catalog exposes fifteen projects, real previews and model parameters', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Brick Atlas' })).toBeVisible();
+  await expect(page.getByRole('region', { name: '双动画积木演示' }).locator('canvas')).toHaveCount(2);
   await expect(page.getByRole('navigation', { name: '选择积木空间' }).getByRole('link')).toHaveCount(4);
+  await expect(page.locator('.landing-brick-backdrop .backdrop-brick')).toHaveCount(30);
+  expect(await page.locator('.landing-brick-backdrop .backdrop-brick').evaluateAll(bricks =>
+    new Set(bricks.map(brick => [...brick.classList].find(name => name.startsWith('backdrop-brick-')))).size,
+  )).toBe(6);
+  expect(await page.locator('.landing-brick-backdrop').evaluate(element => ({
+    pointerEvents: getComputedStyle(element).pointerEvents,
+    animation: getComputedStyle(element.firstElementChild!).animationName,
+    opacity: getComputedStyle(element.firstElementChild!).opacity,
+  }))).toEqual({ pointerEvents: 'none', animation: 'backdrop-brick-float', opacity: '0.32' });
   await expect(page.locator('.model-card')).toHaveCount(15);
   await expect(page.getByRole('searchbox', { name: '搜索模型' })).toBeVisible();
   await expect(page.locator('.model-card-explore')).toHaveCount(15);
@@ -22,30 +32,37 @@ test('catalog exposes fifteen projects, real previews and model parameters', asy
   await expect(page.locator('.brick-burst-piece')).toHaveCount(0, { timeout: 1500 });
 });
 
-test('landing showcase slowly builds and completes a full explode cycle', async ({ page }) => {
+test('landing opens with equal build and explode animations running together', async ({ page }) => {
   test.setTimeout(60000);
   await page.goto('/');
-  const story = page.getByRole('region', { name: '自动循环功能演示' });
-  await story.scrollIntoViewIfNeeded();
-  await expect(story.locator('canvas')).toBeVisible();
-  await expect(story.getByText('实时渲染')).toBeVisible();
-  await expect(story.getByText('观察结构', { exact: true })).toHaveCount(0);
-  const initial = await page.evaluate(() => window.__landingAtlas?.().visibleInstances ?? 0);
-  await page.waitForTimeout(10000);
-  const partialBuild = await page.evaluate(() => window.__landingAtlas?.().visibleInstances ?? 0);
-  expect(partialBuild).toBeGreaterThan(initial);
-  expect(partialBuild).toBeLessThan(278);
+  const showcase = page.getByRole('region', { name: '双动画积木演示' });
+  await expect(showcase.getByRole('article')).toHaveCount(2);
+  await expect(showcase.locator('canvas')).toHaveCount(2);
+  await expect(showcase.locator('canvas').first()).toBeVisible();
+  const layout = await showcase.getByRole('article').evaluateAll(panels => panels.map(panel => {
+    const rect = panel.getBoundingClientRect();
+    return { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+  }));
+  expect(layout[0].top).toBe(layout[1].top);
+  expect(Math.abs(layout[0].width - layout[1].width)).toBeLessThan(2);
+  expect(layout[0].top).toBeLessThan(100);
+  expect(await page.evaluate(() => {
+    const showcase = document.querySelector('.landing-showcase')!;
+    const lobby = document.querySelector('.play-lobby')!;
+    return Boolean(showcase.compareDocumentPosition(lobby) & Node.DOCUMENT_POSITION_FOLLOWING);
+  })).toBe(true);
 
-  expect(await page.evaluate(() => window.__landingAtlas?.().controlsEnabled)).toBe(false);
-  await expect(story.getByText('三维拆分', { exact: true }).locator('..').locator('..')).toHaveClass(/active/, { timeout: 9000 });
-  await expect.poll(async () => page.evaluate(() => window.__landingAtlas?.().autoRotate)).toBe(false);
+  const initial = await page.evaluate(() => window.__landingAtlases?.().build?.visibleInstances ?? 0);
+  await expect.poll(() => page.evaluate(() => window.__landingAtlases?.().build?.visibleInstances ?? 0)).toBeGreaterThan(initial);
+  expect(await page.evaluate(() => window.__landingAtlases?.().build?.controlsEnabled)).toBe(false);
+  expect(await page.evaluate(() => window.__landingAtlases?.().explode?.controlsEnabled)).toBe(false);
   await expect.poll(
-    async () => page.evaluate(() => window.__landingAtlas?.().actualExplosion ?? 0),
+    () => page.evaluate(() => window.__landingAtlases?.().explode?.actualExplosion ?? 0),
     { timeout: 6500 },
   ).toBeGreaterThan(0.95);
   await expect.poll(
-    async () => page.evaluate(() => window.__landingAtlas?.().actualExplosion ?? 1),
-    { timeout: 6000 },
+    () => page.evaluate(() => window.__landingAtlases?.().explode?.actualExplosion ?? 1),
+    { timeout: 7500 },
   ).toBeLessThan(0.05);
 });
 

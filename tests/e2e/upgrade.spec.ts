@@ -114,13 +114,14 @@ test('local GLB converts without cloud calls and rejects malformed files', async
   expect(await page.evaluate(() => window.__imageBricks!().bricks)).toBe(brickCount);
 });
 
-test('lobby loads a compact catalog and defers the offscreen 3D demo', async ({ page }) => {
+test('lobby loads a compact catalog and shares one manifest across both opening animations', async ({ page }) => {
   const manifests: string[] = [];
   page.on('request', request => { if (request.url().endsWith('/manifest.json')) manifests.push(request.url()); });
   await page.goto('/');
   await expect(page.locator('.model-card')).toHaveCount(15);
   await expect(page.locator('.model-card-specs dd').first()).not.toHaveText('—');
-  expect(manifests).toEqual([]);
+  await expect(page.locator('.landing-showcase canvas')).toHaveCount(2);
+  expect(manifests).toHaveLength(1);
 });
 
 test('large model rotation remains responsive with bounded draw calls', async ({ page }, testInfo) => {

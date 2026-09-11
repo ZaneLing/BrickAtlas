@@ -633,6 +633,41 @@ export function ExplorerWorkspace({ config, mode, locale, tr, toggleLocale }: { 
   </div>;
 }
 
+const backdropShapes = [
+  { kind: 'long', studs: 4 },
+  { kind: 'square', studs: 4 },
+  { kind: 'plate', studs: 4 },
+  { kind: 'round', studs: 1 },
+  { kind: 'slope', studs: 2 },
+  { kind: 'technic', studs: 3 },
+] as const;
+const backdropColors = ['#df443b', '#efc229', '#3478d4', '#20a2b2', '#cf4f92', '#45a05a', '#f28a2e', '#8a61c5'];
+
+function FloatingBrickBackdrop() {
+  return <div className="landing-brick-backdrop" aria-hidden="true">
+    {Array.from({ length: 30 }, (_, index) => {
+      const shape = backdropShapes[index % backdropShapes.length];
+      const drift = 18 + index % 5 * 7;
+      return <span
+        className={`backdrop-brick backdrop-brick-${shape.kind}`}
+        key={index}
+        style={{
+          '--brick-x': `${(index * 37 + 4) % 96}%`,
+          '--brick-y': `${(index * 53 + 3) % 94}%`,
+          '--brick-color': backdropColors[index % backdropColors.length],
+          '--brick-rotate': `${(index * 31) % 80 - 40}deg`,
+          '--brick-scale': `${0.62 + index % 6 * 0.1}`,
+          '--brick-delay': `${-(index % 12) * 1.7}s`,
+          '--brick-duration': `${15 + index % 7 * 2}s`,
+          '--brick-drift': `${drift}px`,
+          '--brick-rise': `${Math.round(drift * -0.65)}px`,
+          '--brick-return': `${Math.round(drift * -0.45)}px`,
+        } as React.CSSProperties}
+      >{Array.from({ length: shape.studs }, (_, stud) => <i key={stud} />)}</span>;
+    })}
+  </div>;
+}
+
 function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Translator; toggleLocale: () => void }) {
   type CatalogSummary = {
     stats: AtlasManifest['stats'];
@@ -663,12 +698,14 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
     return () => abort.abort();
   }, []);
   return <div className="catalog-page landing-page">
+    <FloatingBrickBackdrop />
     <header className="topbar landing-nav">
       <a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><BrickAtlasMark /></span><strong>BRICK<span>ATLAS</span></strong></a>
       <nav className="landing-links"><a href="#models">{tr('模型库', 'Models')}</a><a href={`${import.meta.env.BASE_URL}assemble`}>{tr('线上拼装', 'Assembly game')}</a><a href={`${import.meta.env.BASE_URL}diy`}>{tr('自由 DIY', 'Free DIY')}</a><a href={`${import.meta.env.BASE_URL}compose`}>{tr('组建', 'Compose')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
       <LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} />
     </header>
     <main>
+      <LandingShowcase locale={locale} tr={tr} />
       <section className="play-lobby">
         <div className="play-lobby-heading"><div><span className="eyebrow">{tr('积木空间', 'BRICK SPACES')}</span><h1>Brick Atlas</h1></div><span>{completedModels.size} / {modelCatalog.length} {tr('已完成', 'completed')}</span></div>
         <nav className="play-spaces" aria-label={tr('选择积木空间', 'Choose a brick space')}>
@@ -713,7 +750,6 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
         </article>;
         })}
       </section>
-      <LandingShowcase locale={locale} tr={tr} />
       <p className="catalog-legal">{tr('非官方社区项目。模型来自 LDraw OMR；LEGO 是 LEGO Group 的商标。', 'Unofficial community project. Models are sourced from LDraw OMR. LEGO is a trademark of the LEGO Group.')}</p>
       </section>
     </main>
