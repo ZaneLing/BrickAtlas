@@ -16,7 +16,7 @@ declare global {
   }
 }
 
-const BUILD_DURATION = 18_000;
+const BUILD_DURATION = 26_000;
 const BUILD_HOLD = 1_400;
 const EXPLODE_DURATION = 4_600;
 const EXPLODE_HOLD = 1_100;
