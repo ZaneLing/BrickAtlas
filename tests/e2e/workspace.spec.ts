@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 test('catalog exposes fifteen projects, real previews and model parameters', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Brick Atlas' })).toBeVisible();
-  await expect(page.getByRole('region', { name: '双动画积木演示' }).locator('canvas')).toHaveCount(2);
+  await expect(page.getByRole('region', { name: '四动画积木演示' }).locator('canvas')).toHaveCount(2);
   await expect(page.getByRole('navigation', { name: '选择积木空间' }).getByRole('link')).toHaveCount(4);
   await expect(page.locator('.landing-brick-backdrop .backdrop-brick')).toHaveCount(30);
   expect(await page.locator('.landing-brick-backdrop .backdrop-brick').evaluateAll(bricks =>
@@ -35,11 +35,12 @@ test('catalog exposes fifteen projects, real previews and model parameters', asy
 test('landing opens with equal build and explode animations running together', async ({ page }) => {
   test.setTimeout(60000);
   await page.goto('/');
-  const showcase = page.getByRole('region', { name: '双动画积木演示' });
-  await expect(showcase.getByRole('article')).toHaveCount(2);
-  await expect(showcase.locator('canvas')).toHaveCount(2);
-  await expect(showcase.locator('canvas').first()).toBeVisible();
-  const layout = await showcase.getByRole('article').evaluateAll(panels => panels.map(panel => {
+  const showcase = page.getByRole('region', { name: '四动画积木演示' });
+  const firstRow = showcase.locator('.landing-showcase-primary');
+  await expect(showcase.getByRole('article')).toHaveCount(4);
+  await expect(firstRow.locator('canvas')).toHaveCount(2);
+  await expect(firstRow.locator('canvas').first()).toBeVisible();
+  const layout = await firstRow.getByRole('article').evaluateAll(panels => panels.map(panel => {
     const rect = panel.getBoundingClientRect();
     return { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
   }));
@@ -67,6 +68,27 @@ test('landing opens with equal build and explode animations running together', a
     () => page.evaluate(() => window.__landingAtlases?.().explode?.actualExplosion ?? 1),
     { timeout: 7500 },
   ).toBeLessThan(0.05);
+});
+
+test('second animation row demonstrates Assemble and DIY without loading before it is visible', async ({ page }) => {
+  await page.goto('/');
+  expect(await page.evaluate(() => window.__landingAtlases?.().assemble)).toBeNull();
+  expect(await page.evaluate(() => window.__landingAtlases?.().diy)).toBeNull();
+  const secondRow = page.locator('.landing-showcase-secondary');
+  await secondRow.scrollIntoViewIfNeeded();
+  await expect(secondRow.locator('canvas')).toHaveCount(2);
+  await expect.poll(() => page.evaluate(() => window.__landingAtlases?.().assemble?.loadedInstances ?? 0)).toBe(36);
+  await expect.poll(() => page.evaluate(() => window.__landingAtlases?.().diy?.count ?? 0)).toBeGreaterThan(0);
+  const layout = await secondRow.getByRole('article').evaluateAll(panels => panels.map(panel => {
+    const rect = panel.getBoundingClientRect();
+    return { top: rect.top, width: rect.width };
+  }));
+  expect(layout[0].top).toBe(layout[1].top);
+  expect(Math.abs(layout[0].width - layout[1].width)).toBeLessThan(2);
+  const initialDiyCount = await page.evaluate(() => window.__landingAtlases?.().diy?.count ?? 0);
+  await expect.poll(() => page.evaluate(count => window.__landingAtlases?.().diy?.count !== count, initialDiyCount)).toBe(true);
+  await expect(secondRow.getByRole('link', { name: '进入自主拼装' })).toHaveAttribute('href', '/assemble/31028-sailboat');
+  await expect(secondRow.getByRole('link', { name: '进入自由 DIY' })).toHaveAttribute('href', '/diy');
 });
 
 test('language toggle translates the complete workspace and persists', async ({ page }) => {

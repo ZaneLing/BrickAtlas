@@ -49,7 +49,7 @@ Desktop browsers retain the three-column workspaces. Phone and tablet layouts pl
 
 ### Workspace Upgrade
 
-- Opening split-screen build/explode animations, with varied translucent floating bricks behind the page.
+- Two opening animation rows: build/explode first, then self-guided Assemble/DIY free build, with varied translucent floating bricks behind the page.
 - A playable space lobby with model search, category/difficulty filters, favorites, and resume links.
 - Persistent Explore display preferences and adjustable Build playback speed.
 - Assembly undo-last-placement, restart confirmation, paused guides, and validated progress recovery.
@@ -62,7 +62,7 @@ See the [module-by-module upgrade report](docs/WORKSPACE_UPGRADE.md) for impleme
 
 ## Routes
 
-- `/` opening split-screen build/explode animations, playable space lobby, and searchable model catalog
+- `/` two rows of four live brick animations, playable space lobby, and searchable model catalog
 - `/explore/:modelId` model explorer
 - `/build/:modelId` build instructions
 - `/assemble` difficulty-ranked manual assembly catalog

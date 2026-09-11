@@ -4,7 +4,8 @@
 
 ## 1. 空间大厅与模型库
 
-- 首页打开即显示左右各占一半的独立三维动画：左侧持续逐步拼装，右侧持续三维拆分；积木空间入口紧随其后。
+- 首页第一行显示左右各占一半的逐步拼装/三维拆分动画；第二行显示自主 Assemble 的选件吸附过程和 DIY 彩色作品逐块搭建。
+- 第二行动画在滚动进入视口后才加载，离开视口后暂停更新，避免四个 WebGL 场景同时争抢资源。
 - 首页逐步拼装的单步运动时长按切步间隔动态匹配，确保当前零件完成入位后再进入下一步。
 - 模型库新增名称/编号/主题搜索、分类、五级难度、收藏/进行中/已完成筛选，以及难度、名称、年份排序。
 - 收藏持久保存；大厅按最近更新时间展示未完成的拼装，直接继续上次进度。
@@ -121,18 +122,18 @@ flowchart LR
 
 ## 验证记录
 
-验证时间：2026-09-10；本机 macOS、Chrome，开发服务复用 5173。
+验证时间：2026-09-11；本机 macOS、Chrome，开发服务复用 5173。
 
 | 检查 | 结果 |
 |---|---|
 | `npm run check` | 15 个资产校验、源模型变换/边界对照、66 项单元测试、TypeScript 与生产构建全部通过 |
-| `playwright test --project=desktop-chrome` | 59 项通过，0 失败、0 跳过、0 flaky，约 260 秒 |
+| `playwright test --project=desktop-chrome` | 60 项通过，0 失败、0 跳过、0 flaky，约 252 秒 |
 | 桌面与窄屏 | 390 / 820 / 1180 / 1440 / 3840px 截图和画布像素检查，无页面横向溢出 |
-| 首页双动画 | 桌面两块画布严格等宽并同时运行；手机上下各占首屏一半；共享一次模型清单请求 |
+| 首页四动画 | 两行画布桌面严格等宽、手机上下排列；第二行 Assemble/DIY 进入视口才加载，实测均约 60 FPS |
 | 无障碍 | Chrome 中 WCAG 2 A/AA、2.1 AA 扫描通过 |
 | 塔桥旋转 | 4,281 实例，约 60.01 FPS，515 draw calls；本机短时开发构建样本，不是跨设备性能保证 |
 | GLB 离线流程 | 本地四面体 GLB 完整转换、网格预览像素与缩放、损坏文件保留旧结果通过 |
 | `npm audit` | 含开发依赖，0 个已知漏洞 |
 | `git diff --check` | 通过 |
 
-最终 Chrome 报告位于运行机器的 `/tmp/brick-atlas-upgrade-playwright/index.html`，结构化结果位于 `/tmp/brick-atlas-upgrade-e2e.json`；截图在 `test-results/`。不覆盖本轮开始前已有的 `assets-built/e2e-report.json`。
+最新 Chrome 结构化结果位于运行机器的 `/tmp/brick-atlas-four-showcases-e2e.json`；截图在 `test-results/`。不覆盖本轮开始前已有的 `assets-built/e2e-report.json`。

@@ -46,7 +46,7 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
 
 ### 全空间升级
 
-- 首页打开即显示各占一半的拼装/拆分动画，页面底层持续漂浮多种半透明积木。
+- 首页第一行显示拼装/拆分动画，第二行显示自主 Assemble/DIY 自由组建，页面底层持续漂浮多种半透明积木。
 - 游玩空间新增搜索、分类/难度筛选、收藏及继续拼装。
 - Explore 保存显示偏好，Build 支持调整播放速度。
 - 拼装游戏支持撤回最后一块、重置确认、暂停指导动画和有效进度恢复。
@@ -59,7 +59,7 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
 
 ## 页面
 
-- `/` 首屏左右双动画、积木空间大厅与可筛选模型库
+- `/` 两行四个实时动画、积木空间大厅与可筛选模型库
 - `/explore/:modelId` 模型探索
 - `/build/:modelId` 动态拼装说明
 - `/assemble` 分级手动拼装目录
