@@ -67,6 +67,7 @@ export class AtlasScene {
   private drawingPixelLimit = Infinity;
   private actualExplosion = 0;
   private assemblyProgress = 1;
+  private assemblyDurationSeconds = 0.95;
   private assemblyIds = new Set<string>();
   private assemblyOrder = new Map<string, number>();
   private desiredTarget = new Vector3();
@@ -213,6 +214,9 @@ export class AtlasScene {
   setLocale(locale: 'zh' | 'en') {
     this.locale = locale;
     this.renderer.domElement.setAttribute('aria-label', `${this.manifest.model.title} ${this.text('交互式三维模型', 'interactive 3D model')}`);
+  }
+  setAssemblyDuration(durationMs: number) {
+    if (Number.isFinite(durationMs)) this.assemblyDurationSeconds = Math.max(0.12, Math.min(3, durationMs / 1000));
   }
   setPanMode(enabled: boolean) {
     this.panMode = enabled;
@@ -647,7 +651,7 @@ export class AtlasScene {
       if (!this.interaction) this.fit();
     }
     if (this.assemblyProgress < 1) {
-      this.assemblyProgress = Math.min(1, this.assemblyProgress + dt / 0.95);
+      this.assemblyProgress = Math.min(1, this.assemblyProgress + dt / this.assemblyDurationSeconds);
       this.updateLayout();
     }
     if (this.cameraMoving && !this.interaction) {
@@ -965,6 +969,8 @@ export class AtlasScene {
       camera: this.camera.position.toArray(),
       target: this.controls.target.toArray(),
       cameraMoving: this.cameraMoving,
+      assemblyProgress: this.assemblyProgress,
+      assemblyDurationMs: this.assemblyDurationSeconds * 1000,
       panMode: this.panMode,
       buildStep: this.state.buildStep,
       requestedExplosion: this.state.explosion,

@@ -54,6 +54,9 @@ test('landing opens with equal build and explode animations running together', a
 
   const initial = await page.evaluate(() => window.__landingAtlases?.().build?.visibleInstances ?? 0);
   await expect.poll(() => page.evaluate(() => window.__landingAtlases?.().build?.visibleInstances ?? 0)).toBeGreaterThan(initial);
+  const landingDuration = await page.evaluate(() => window.__landingAtlases?.().build?.assemblyDurationMs ?? 0);
+  expect(landingDuration).toBeGreaterThan(250);
+  expect(landingDuration).toBeLessThan(18_000 / 52);
   expect(await page.evaluate(() => window.__landingAtlases?.().build?.controlsEnabled)).toBe(false);
   expect(await page.evaluate(() => window.__landingAtlases?.().explode?.controlsEnabled)).toBe(false);
   await expect.poll(

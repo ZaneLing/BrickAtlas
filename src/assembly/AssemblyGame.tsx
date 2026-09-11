@@ -63,6 +63,9 @@ type GuideMedia = {
 };
 
 const payloadType = 'application/x-brick-atlas-material';
+const GUIDE_FPS = 24;
+const GUIDE_FRAME_COUNT = 24;
+const GUIDE_FRAME_INTERVAL = 1000 / GUIDE_FPS;
 
 function DifficultyStuds({
   difficulty,
@@ -240,6 +243,39 @@ function AssemblyMaterialInspector({
   </div>;
 }
 
+function AssemblyGuideLoop({
+  media,
+  playing,
+  loading,
+  step,
+  tr,
+}: {
+  media: GuideMedia | null;
+  playing: boolean;
+  loading: boolean;
+  step: number;
+  tr: Translator;
+}) {
+  const imageRef = useRef<HTMLImageElement>(null);
+  const frameRef = useRef(0);
+  useEffect(() => {
+    frameRef.current = 0;
+    if (imageRef.current && media?.frames.length) imageRef.current.src = media.frames[0];
+  }, [media]);
+  useEffect(() => {
+    if (!media?.frames.length || !playing) return;
+    const timer = window.setInterval(() => {
+      if (document.hidden || !imageRef.current) return;
+      frameRef.current = (frameRef.current + 1) % media.frames.length;
+      imageRef.current.src = media.frames[frameRef.current];
+    }, GUIDE_FRAME_INTERVAL);
+    return () => clearInterval(timer);
+  }, [media, playing]);
+  return media?.step === step && media.frames.length
+    ? <img ref={imageRef} src={media.frames[0]} alt={tr(`第 ${step} 步动画`, `Step ${step} animation`)} />
+    : <><LoaderCircle className="spinner" size={24} /><span>{loading ? tr('生成清晰动画', 'Rendering clear animation') : tr('等待模型', 'Waiting for model')}</span></>;
+}
+
 export function AssemblyGameHub({
   locale,
   tr,
@@ -356,7 +392,6 @@ export function AssemblyGame({
   const [panMode, setPanMode] = useState(false);
   const [guideMedia, setGuideMedia] = useState<GuideMedia | null>(null);
   const [guideLoading, setGuideLoading] = useState(false);
-  const [frameIndex, setFrameIndex] = useState(0);
   const [guidePlaying, setGuidePlaying] = useState(() => !matchMedia('(prefers-reduced-motion: reduce)').matches);
   const [resetOpen, setResetOpen] = useState(false);
   const [storageError, setStorageError] = useState(false);
@@ -584,15 +619,6 @@ export function AssemblyGame({
   }, [notice]);
 
   useEffect(() => {
-    if (!guideMedia?.frames.length || !guidePlaying) return;
-    setFrameIndex(0);
-    const timer = window.setInterval(() => {
-      if (!document.hidden) setFrameIndex(index => (index + 1) % guideMedia.frames.length);
-    }, 420);
-    return () => clearInterval(timer);
-  }, [guideMedia, guidePlaying]);
-
-  useEffect(() => {
     if (!ready || !previewStep || !preview || !sceneRef.current) {
       setGuideMedia(current => {
         current?.frames.forEach(URL.revokeObjectURL);
@@ -604,9 +630,9 @@ export function AssemblyGame({
     let urls: string[] = [];
     setGuideLoading(true);
     const timer = window.setTimeout(() => {
-      Promise.all(Array.from({ length: 7 }, (_, index) =>
+      Promise.all(Array.from({ length: GUIDE_FRAME_COUNT }, (_, index) =>
         sceneRef.current!.captureBuildStep(previewStep, 960, 620, {
-          progress: index / 6,
+          progress: index / (GUIDE_FRAME_COUNT - 1),
           focusStep: true,
           focusPadding: 0.86,
           shadows: false,
@@ -1078,9 +1104,7 @@ export function AssemblyGame({
           <section className="assembly-loop">
             <div className="assembly-guide-label"><Play size={14} />{tr('循环动画', 'Loop animation')}<IconButton label={guidePlaying ? tr('暂停指导动画', 'Pause guide animation') : tr('播放指导动画', 'Play guide animation')} onClick={() => setGuidePlaying(value => !value)}>{guidePlaying ? <Pause size={14} /> : <Play size={14} />}</IconButton></div>
             <div className="assembly-loop-frame">
-              {guideMedia?.step === previewStep && guideMedia.frames.length
-                ? <img src={guideMedia.frames[frameIndex]} alt={tr(`第 ${previewStep} 步动画`, `Step ${previewStep} animation`)} />
-                : <><LoaderCircle className="spinner" size={24} /><span>{guideLoading ? tr('生成清晰动画', 'Rendering clear animation') : tr('等待模型', 'Waiting for model')}</span></>}
+              <AssemblyGuideLoop media={guideMedia} playing={guidePlaying} loading={guideLoading} step={previewStep} tr={tr} />
             </div>
           </section>
           <section className="assembly-static-guide">

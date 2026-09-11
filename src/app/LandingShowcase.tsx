@@ -16,7 +16,7 @@ declare global {
   }
 }
 
-const BUILD_DURATION = 14_000;
+const BUILD_DURATION = 18_000;
 const BUILD_HOLD = 1_400;
 const EXPLODE_DURATION = 4_600;
 const EXPLODE_HOLD = 1_100;
@@ -72,6 +72,8 @@ export function LandingShowcase({ locale, tr }: { locale: Locale; tr: Translator
           scene.controls.enableZoom = false;
           scene.controls.enabled = false;
         }
+        const stepInterval = BUILD_DURATION / ((manifest.instructions?.steps.length ?? 1) + 1);
+        buildScene.setAssemblyDuration(stepInterval * 0.88);
         buildScene.setState(buildStateRef.current);
         explodeScene.setState(explodeStateRef.current);
         buildSceneRef.current = buildScene;

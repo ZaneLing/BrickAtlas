@@ -65,6 +65,10 @@ test('manual assembly rejects wrong steps, saves progress and marks completion',
     { timeout: 30000 },
   ).toBe(true);
   await expect(page.locator('.assembly-loop-frame img')).toBeVisible({ timeout: 30000 });
+  const guideFrame = page.locator('.assembly-loop-frame img');
+  const firstGuideFrame = await guideFrame.getAttribute('src');
+  await page.waitForTimeout(150);
+  expect(await guideFrame.getAttribute('src')).not.toBe(firstGuideFrame);
   await expect(page.locator('.assembly-static-guide figure')).toHaveCount(2);
   await expect(page.locator('.assembly-part-thumbnail').first()).toBeVisible();
   await expect.poll(() => page.evaluate(() => {
