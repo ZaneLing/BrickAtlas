@@ -1,5 +1,14 @@
 # Brick Atlas 模型测试场
 
+## 多任务套件（新）
+
+覆盖八类能力的新套件位于 [suite/](suite/README.md)，入口默认 http://127.0.0.1:5175。
+启动命令 `npm run suite:start`，数据准备 `npm run suite:prepare`。
+查看 [详细计划](PLAN-multitask.md)、[数据卡](suite/DATASET_CARD.md)、[指标](suite/METRICS.md) 和 [多任务实测报告](suite/REPORT.md)。
+不包含机械手、机器人或VLA。下面保留旧CARE-mini的文档和5174入口，旧实验不与新榜单合并。
+
+## CARE-mini v1（保留）
+
 独立的 **CARE-mini v1** benchmark 模块。原项目的浏览、拼装、DIY、资产和入口保持不变。
 
 [v1 交付报告与实测结果](REPORT-v1.zh-CN.md)
