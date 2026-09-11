@@ -21,7 +21,7 @@ import {
   assemblyDifficulty, difficultyLabel, type AssemblyDifficulty,
 } from './difficulty';
 import {
-  auditAssemblyStep, type QuarterTurn,
+  assemblyMaterialKey, auditAssemblyStep, equivalentAssemblyTargets, type QuarterTurn,
 } from './orientation';
 import {
   clearModelAssemblyProgress, completedAssemblyModels, readModelAssemblyProgress,
@@ -60,6 +60,11 @@ type MaterialPayload = {
 type GuideMedia = {
   step: number;
   frames: string[];
+};
+
+type PointerPlacement = {
+  instanceId: string;
+  position: [number, number, number];
 };
 
 const payloadType = 'application/x-brick-atlas-material';
@@ -395,7 +400,7 @@ export function AssemblyGame({
   const [guidePlaying, setGuidePlaying] = useState(() => !matchMedia('(prefers-reduced-motion: reduce)').matches);
   const [resetOpen, setResetOpen] = useState(false);
   const [storageError, setStorageError] = useState(false);
-  const pointerPlacement = useRef<[number, number, number] | null>(null);
+  const pointerPlacement = useRef<PointerPlacement | null>(null);
   const pointerClient = useRef<[number, number] | null>(null);
 
   const steps = manifest?.instructions?.steps ?? [];
@@ -423,6 +428,40 @@ export function AssemblyGame({
   const placed = useMemo(() => new Set(placedIds), [placedIds]);
   const difficulty = assemblyDifficulty(config.id);
   const percent = modelProgressPercent(completedStep, steps.length);
+  const placementAtPointer = useCallback((
+    item: MaterialPayload,
+    clientX: number,
+    clientY: number,
+    previewPlacement: boolean,
+  ): PointerPlacement | null => {
+    if (item.kind !== 'part' || !item.instanceId || !sceneRef.current) return null;
+    const targets = equivalentAssemblyTargets(
+      activeParts,
+      placed,
+      item.key,
+      item.instanceId,
+      item.turn,
+    );
+    const instanceId = sceneRef.current.closestAssemblyTarget(
+      targets.map(part => part.instanceId),
+      clientX,
+      clientY,
+    );
+    if (!instanceId) {
+      if (previewPlacement) sceneRef.current.clearManualAssemblyPreview();
+      return null;
+    }
+    const position = previewPlacement
+      ? sceneRef.current.previewManualAssembly(
+          item.instanceId,
+          clientX,
+          clientY,
+          item.turn,
+          instanceId,
+        )
+      : sceneRef.current.assemblyPlacementPoint(instanceId, clientX, clientY);
+    return position ? { instanceId, position } : null;
+  }, [activeParts, placed]);
 
   useEffect(() => {
     const abort = new AbortController();
@@ -534,14 +573,14 @@ export function AssemblyGame({
     }
     const pointer = pointerClient.current;
     if (pointer) {
-      pointerPlacement.current = sceneRef.current?.previewManualAssembly(
-        selected.instanceId!,
+      pointerPlacement.current = placementAtPointer(
+        selected,
         pointer[0],
         pointer[1],
-        selected.turn,
-      ) ?? null;
+        true,
+      );
     }
-  }, [selectedMaterial, activeStepNumber, ready]);
+  }, [selectedMaterial, activeStepNumber, ready, placementAtPointer]);
 
   useEffect(() => {
     if (!manifest || !steps.length) return;
@@ -753,7 +792,7 @@ export function AssemblyGame({
 
   const placeMaterial = useCallback((
     item: MaterialPayload | null,
-    position?: [number, number, number] | null,
+    placement?: PointerPlacement | null,
   ) => {
     if (!item || !activeStep || completed || advancing || ![0, 1, 2, 3].includes(item.turn)) return;
     if (item.step !== activeStepNumber) {
@@ -770,15 +809,20 @@ export function AssemblyGame({
       finishStep([], {}, {}, true);
       return;
     }
-    const candidates = activeParts.filter(part =>
-      `${part.partNumber}:${part.colorCode}` === item.key && !placed.has(part.instanceId));
-    const candidate = candidates.find(part => part.instanceId === item.instanceId) ?? candidates[0];
+    const candidate = equivalentAssemblyTargets(
+      activeParts,
+      placed,
+      item.key,
+      item.instanceId,
+      item.turn,
+    ).find(part => part.instanceId === placement?.instanceId);
     if (!candidate) {
       setFeedback('wrong');
-      setNotice(tr('材料数量或型号不正确', 'Wrong part or quantity'));
+      setNotice(tr('这个槽位需要调整积木方向', 'Rotate the part to match this target'));
       window.setTimeout(() => setFeedback('idle'), 700);
       return;
     }
+    const position = placement?.position;
     if (item.kind !== 'part' || !position || position.length !== 3 || !position.every(n => Number.isFinite(n) && Math.abs(n) <= 1_000_000)) {
       setFeedback('wrong');
       setNotice(tr('请先在画布中选择安装位置', 'Choose an installation position on the canvas'));
@@ -786,7 +830,7 @@ export function AssemblyGame({
       return;
     }
     const next = [...placedIds, candidate.instanceId];
-    const nextTurns = { ...placedTurns, [candidate.instanceId]: item.turn };
+    const nextTurns = { ...placedTurns, [candidate.instanceId]: 0 as QuarterTurn };
     const nextPositions = { ...placedPositions, [candidate.instanceId]: position };
     setPlacedIds(next);
     setPlacedTurns(nextTurns);
@@ -830,7 +874,7 @@ export function AssemblyGame({
   function resolveMaterial(item: MaterialPayload) {
     if (item.kind === 'assembly') return item;
     const candidate = activeParts.find(part =>
-      `${part.partNumber}:${part.colorCode}` === item.key
+      assemblyMaterialKey(part) === item.key
       && !placed.has(part.instanceId));
     return candidate ? { ...item, instanceId: candidate.instanceId } : null;
   }
@@ -882,7 +926,7 @@ export function AssemblyGame({
 
   function remaining(groupKey: string) {
     return activeParts.filter(part =>
-      `${part.partNumber}:${part.colorCode}` === groupKey
+      assemblyMaterialKey(part) === groupKey
       && !placed.has(part.instanceId),
     ).length;
   }
@@ -984,12 +1028,12 @@ export function AssemblyGame({
           event.dataTransfer.dropEffect = 'copy';
           if (selectedMaterial?.kind === 'part' && selectedMaterial.instanceId) {
             pointerClient.current = [event.clientX, event.clientY];
-            pointerPlacement.current = sceneRef.current?.previewManualAssembly(
-              selectedMaterial.instanceId,
+            pointerPlacement.current = placementAtPointer(
+              selectedMaterial,
               event.clientX,
               event.clientY,
-              selectedMaterial.turn,
-            ) ?? null;
+              true,
+            );
           }
         }}
         onDragLeaveCapture={event => {
@@ -999,20 +1043,20 @@ export function AssemblyGame({
           event.preventDefault();
           setDragOver(false);
           const item = payload(event);
-          const position = item?.kind === 'part' && item.instanceId
-            ? sceneRef.current?.assemblyPlacementPoint(item.instanceId, event.clientX, event.clientY)
+          const placement = item?.kind === 'part' && item.instanceId
+            ? placementAtPointer(item, event.clientX, event.clientY, false)
             : null;
-          placeMaterial(item, position);
+          placeMaterial(item, placement);
         }}
         onPointerMove={event => {
           if (selectedMaterial?.kind !== 'part' || !selectedMaterial.instanceId) return;
           pointerClient.current = [event.clientX, event.clientY];
-          pointerPlacement.current = sceneRef.current?.previewManualAssembly(
-            selectedMaterial.instanceId,
+          pointerPlacement.current = placementAtPointer(
+            selectedMaterial,
             event.clientX,
             event.clientY,
-            selectedMaterial.turn,
-          ) ?? null;
+            true,
+          );
         }}
         onPointerLeave={() => {
           pointerPlacement.current = null;
@@ -1027,13 +1071,9 @@ export function AssemblyGame({
             || !selectedMaterial.instanceId
             || (event.target as HTMLElement).closest('.assembly-game-view-tools')
           ) return;
-          const position = pointerPlacement.current
-            ?? sceneRef.current?.assemblyPlacementPoint(
-              selectedMaterial.instanceId,
-              event.clientX,
-              event.clientY,
-            );
-          placeMaterial(selectedMaterial, position);
+          const placement = pointerPlacement.current
+            ?? placementAtPointer(selectedMaterial, event.clientX, event.clientY, false);
+          placeMaterial(selectedMaterial, placement);
         }}
       >
         <div className="assembly-game-canvas" ref={stageRef} />

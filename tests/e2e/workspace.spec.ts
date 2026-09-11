@@ -132,16 +132,20 @@ test('desktop renderer uses high-density pixels and supports 4x ultra mode', asy
   await expect.poll(ratio).toBeGreaterThanOrEqual(3.9);
 });
 
-test('build mode advances, animates and persists progress per project', async ({ page }, testInfo) => {
+test('build mode advances, animates and persists progress per project', async ({ page, request }, testInfo) => {
+  const manifest = await request.get('/models/5867/manifest.json').then(response => response.json()) as {
+    instructions: { steps: Array<{ instanceIds: string[] }> };
+  };
+  const firstStepSize = manifest.instructions.steps[0].instanceIds.length;
   await page.goto('/build/5867');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await page.getByLabel('下一步', { exact: true }).click();
   await expect(page.getByLabel('当前拼装步骤')).toHaveValue('1');
-  await expect.poll(async () => page.evaluate(() => window.__atlas?.().visibleInstances)).toBe(6);
+  await expect.poll(async () => page.evaluate(() => window.__atlas?.().visibleInstances)).toBe(firstStepSize);
   await expect(page.getByRole('complementary', { name: '步骤说明书' })).toBeVisible();
   const accordion = page.getByRole('region', { name: '可折叠拼装步骤' });
   const stepBricks = accordion.locator('.instruction-brick-step');
-  await expect(stepBricks).toHaveCount(51);
+  await expect(stepBricks).toHaveCount(manifest.instructions.steps.length);
   await expect(accordion.locator('.instruction-brick-step[open]')).toHaveCount(0);
   await stepBricks.first().locator('summary').click();
   await expect(page.getByRole('region', { name: '本步所需零件' })).toContainText('本步所需零件');
@@ -288,11 +292,15 @@ test('step snapshots never resize or flash the live canvas and controls stay top
   expect(layout.canvasBottom).toBeLessThanOrEqual(1);
 });
 
-test('selected build brick opens an interactive geometry preview', async ({ page }) => {
+test('selected build brick opens an interactive geometry preview', async ({ page, request }) => {
+  const manifest = await request.get('/models/5867/manifest.json').then(response => response.json()) as {
+    instructions: { steps: Array<{ instanceIds: string[] }> };
+  };
   await page.goto('/build/5867');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: '下一步' }).click();
-  await expect.poll(async () => page.evaluate(() => window.__atlas?.().visibleInstances)).toBe(6);
+  await expect.poll(async () => page.evaluate(() => window.__atlas?.().visibleInstances))
+    .toBe(manifest.instructions.steps[0].instanceIds.length);
   await page.waitForTimeout(900);
   const canvas = page.locator('.canvas-host canvas');
   const point = await page.evaluate(() => {
@@ -320,8 +328,11 @@ test('selected build brick opens an interactive geometry preview', async ({ page
   expect(await previewCanvas.screenshot()).not.toEqual(before);
 });
 
-test('build guide exports cover and one page per step', async ({ page }, testInfo) => {
+test('build guide exports cover and one page per step', async ({ page, request }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chrome', 'One browser verifies the generated PDF payload.');
+  const manifest = await request.get('/models/31027/manifest.json').then(response => response.json()) as {
+    instructions: { steps: unknown[] };
+  };
   await page.goto('/build/31027');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: '下一步' }).click();
@@ -333,7 +344,8 @@ test('build guide exports cover and one page per step', async ({ page }, testInf
   const payload = await readFile(path);
   expect(file.suggestedFilename()).toBe('brick-atlas-31027-build-guide.pdf');
   expect(payload.subarray(0, 4).toString()).toBe('%PDF');
-  expect((payload.toString('latin1').match(/\/Type \/Page\b/g) ?? [])).toHaveLength(13);
+  expect((payload.toString('latin1').match(/\/Type \/Page\b/g) ?? []))
+    .toHaveLength(manifest.instructions.steps.length + 1);
 });
 
 test('source-authored instruction model exposes OMR steps', async ({ page }) => {
@@ -343,19 +355,29 @@ test('source-authored instruction model exposes OMR steps', async ({ page }) => 
   await expect(page.getByText('OMR 源步骤', { exact: true })).toBeVisible();
 });
 
-test('editorial scene builds movable assemblies before final placement', async ({ page }) => {
+test('editorial scene builds movable assemblies before final placement', async ({ page, request }) => {
+  const manifest = await request.get('/models/10159/manifest.json').then(response => response.json()) as {
+    instances: Array<{ instanceId: string }>;
+    instructions: {
+      steps: Array<{ kind?: string; motionInstanceIds?: string[] }>;
+    };
+  };
+  const placementCount = manifest.instructions.steps.filter(step => step.kind === 'placement').length;
   await page.goto('/build/10159');
   await expect(page.getByText('模型已就绪', { exact: true })).toBeVisible();
-  await expect(page.getByLabel('当前拼装步骤')).toHaveAttribute('max', '115');
+  await expect(page.getByLabel('当前拼装步骤')).toHaveAttribute(
+    'max',
+    String(manifest.instructions.steps.length),
+  );
   const labels = await page.locator('.instruction-brick-label strong').allTextContents();
   expect(labels.slice(0, 3).every(label => label.includes('airplane'))).toBe(true);
-  expect(labels.slice(-11).every(label => label.includes('放置总成'))).toBe(true);
-  const placement = await page.evaluate(async () => {
-    const manifest = await fetch('/models/10159/manifest.json').then(response => response.json());
-    const index = manifest.instructions.steps.findIndex((step: { kind?: string }) => step.kind === 'placement');
-    const instanceId = manifest.instructions.steps[index].motionInstanceIds[0];
-    return { step: index + 1, partIndex: manifest.instances.findIndex((part: { instanceId: string }) => part.instanceId === instanceId) };
-  });
+  expect(labels.slice(-placementCount).every(label => label.includes('放置总成'))).toBe(true);
+  const index = manifest.instructions.steps.findIndex(step => step.kind === 'placement');
+  const instanceId = manifest.instructions.steps[index].motionInstanceIds![0];
+  const placement = {
+    step: index + 1,
+    partIndex: manifest.instances.findIndex(part => part.instanceId === instanceId),
+  };
   await page.getByLabel('当前拼装步骤').fill(String(placement.step - 1));
   await expect.poll(async () => page.evaluate(index =>
     Math.max(...window.__atlas!().offsets[index].map(value => Math.abs(value))), placement.partIndex,

@@ -298,13 +298,35 @@ export class AtlasScene {
     point.y = target.y;
     return point.toArray() as [number, number, number];
   }
+  closestAssemblyTarget(instanceIds: string[], clientX: number, clientY: number) {
+    const candidates = new Set(instanceIds);
+    const bounds = this.renderer.domElement.getBoundingClientRect();
+    const pointerX = clientX - bounds.left;
+    const pointerY = clientY - bounds.top;
+    let closest: PartInstance | null = null;
+    let closestDistance = Infinity;
+    for (const part of this.manifest.instances) {
+      if (!candidates.has(part.instanceId)) continue;
+      const projected = this.projectPart(part);
+      const distance = Math.hypot(projected.x - pointerX, projected.y - pointerY);
+      if (
+        distance < closestDistance
+        || distance === closestDistance && part.index < (closest?.index ?? Infinity)
+      ) {
+        closest = part;
+        closestDistance = distance;
+      }
+    }
+    return closest?.instanceId ?? null;
+  }
   previewManualAssembly(
     instanceId: string,
     clientX: number,
     clientY: number,
     turn: 0 | 1 | 2 | 3,
+    targetInstanceId = instanceId,
   ) {
-    const position = this.assemblyPlacementPoint(instanceId, clientX, clientY);
+    const position = this.assemblyPlacementPoint(targetInstanceId, clientX, clientY);
     this.clearManualGroup(this.manualAssemblyPreview);
     if (!position) return null;
     const object = this.manualPart(instanceId, { position, turn }, true);

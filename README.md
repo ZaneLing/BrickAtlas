@@ -37,7 +37,8 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
 - Select any brick to view its part number, color, dimensions, subassembly, and 3D shape.
 - Search, hide, isolate, highlight matching parts, and use X-Ray mode to inspect internal structure.
 - Follow step-by-step assembly in the central 3D canvas. Manually opened guide blocks show clickable parts and one high-resolution start-to-install placement diagram.
-- Play the manual assembly game: inspect and orbit real parts, move them with the pointer onto the 3D build, choose their position and quarter-turn, then pass an end-of-step position/orientation audit.
+- Play the manual assembly game: identical Part ID/color pieces are interchangeable, target the nearest compatible open slot, choose quarter-turns, and pass the end-of-step position/orientation audit.
+- Models without source `STEP` commands use contact-aware editorial ordering, so every part in a batch attaches to structure completed in an earlier step.
 - Compose original scenes from verified aircraft, boats, vehicles, buildings, characters, animals, baseplates, and loose bricks with stud-grid snapping and collision checks.
 - Free-build in the DIY studio: choose a shape and color, rotate previews or already placed bricks by 90 degrees, click to snap, and keep stacking on an extending baseplate.
 - Export printable PDF build guides, BOM CSV files, LDraw files, and images up to 12K.

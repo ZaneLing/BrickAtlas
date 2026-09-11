@@ -31,28 +31,76 @@ export function partQuarterTurn(part: Pick<PartInstance, 'originalMatrix'>): Qua
 export function partRotationIsRelevant(
   part: Pick<PartInstance, 'displayName' | 'tags'>,
 ) {
+  return partTurnPeriod(part) > 1;
+}
+
+export function partTurnPeriod(
+  part: Pick<PartInstance, 'displayName' | 'tags'>,
+): 1 | 2 | 4 {
   const label = `${part.displayName} ${part.tags.join(' ')}`.toLowerCase();
   const directional = /(slope|wedge|clip|handle|stud on|bracket|hinge|wing|tail|bar|axle)/.test(label);
-  if (directional) return true;
-  return !(
-    /\b1\s*x\s*1\b/.test(label)
-    || /\b2\s*x\s*2\b/.test(label)
-    || /(round|cone|dish|bush)/.test(label)
-  );
+  if (directional) return 4;
+  if (/(round|cone|dish|bush)/.test(label)) return 1;
+  const dimensions = /\b(\d+)\s*x\s*(\d+)\b/.exec(label);
+  if (dimensions?.[1] === dimensions?.[2]) return 1;
+  return 2;
 }
 
 export function partOrientationMatches(
   part: Pick<PartInstance, 'originalMatrix' | 'displayName' | 'tags'>,
   turn: QuarterTurn,
 ) {
-  return !partRotationIsRelevant(part) || partQuarterTurn(part) === turn;
+  const period = partTurnPeriod(part);
+  return period === 1 || partQuarterTurn(part) % period === turn % period;
 }
 
 export function assemblyMaterialKey(
-  part: Pick<PartInstance, 'partNumber' | 'colorCode' | 'originalMatrix' | 'displayName' | 'tags'>,
+  part: Pick<PartInstance, 'partNumber' | 'colorCode'>,
 ) {
-  const turn = partRotationIsRelevant(part) ? partQuarterTurn(part) : 0;
-  return `${part.partNumber}:${part.colorCode}:${turn}`;
+  return `${part.partNumber}:${part.colorCode}`;
+}
+
+export function equivalentAssemblyTargets(
+  parts: PartInstance[],
+  placedIds: ReadonlySet<string>,
+  materialKey: string,
+  sourceInstanceId: string | undefined,
+  turn: QuarterTurn,
+) {
+  const candidates = parts.filter(part =>
+    assemblyMaterialKey(part) === materialKey && !placedIds.has(part.instanceId));
+  const source = parts.find(part => part.instanceId === sourceInstanceId) ?? candidates[0];
+  if (!source) return [];
+  const period = partTurnPeriod(source);
+  const sourceTurn = partQuarterTurn(source);
+  return candidates.filter(target => {
+    if (period === 1) return true;
+    const required = ((partQuarterTurn(target) - sourceTurn + 4) % 4) as QuarterTurn;
+    return required % period === turn % period;
+  });
+}
+
+export function nearestAssemblyTarget(
+  parts: PartInstance[],
+  position: [number, number, number],
+) {
+  let closest: PartInstance | null = null;
+  let closestDistance = Infinity;
+  for (const part of parts) {
+    const distance = Math.hypot(
+      (part.bounds.min[0] + part.bounds.max[0]) / 2 - position[0],
+      (part.bounds.min[1] + part.bounds.max[1]) / 2 - position[1],
+      (part.bounds.min[2] + part.bounds.max[2]) / 2 - position[2],
+    );
+    if (
+      distance < closestDistance
+      || distance === closestDistance && part.index < (closest?.index ?? Infinity)
+    ) {
+      closest = part;
+      closestDistance = distance;
+    }
+  }
+  return closest;
 }
 
 export function groupAssemblyMaterials(parts: PartInstance[]): AssemblyMaterialGroup[] {
@@ -60,7 +108,7 @@ export function groupAssemblyMaterials(parts: PartInstance[]): AssemblyMaterialG
   for (const part of parts) {
     const rotationRelevant = partRotationIsRelevant(part);
     const requiredTurn = rotationRelevant ? partQuarterTurn(part) : 0;
-    const key = `${part.partNumber}:${part.colorCode}:${requiredTurn}`;
+    const key = assemblyMaterialKey(part);
     const item = groups.get(key) ?? {
       key,
       partNumber: part.partNumber,

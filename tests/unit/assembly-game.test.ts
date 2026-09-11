@@ -3,7 +3,9 @@ import { readFileSync } from 'node:fs';
 import { modelCatalog } from '../../atlas.config';
 import { assemblyDifficulty } from '../../src/assembly/difficulty';
 import {
-  auditAssemblyStep, groupAssemblyMaterials, partOrientationMatches, partQuarterTurn,
+  assemblyMaterialKey, auditAssemblyStep, equivalentAssemblyTargets,
+  groupAssemblyMaterials, nearestAssemblyTarget, partOrientationMatches,
+  partQuarterTurn, partTurnPeriod,
 } from '../../src/assembly/orientation';
 import type { PartInstance } from '../../src/model/types';
 import type { AtlasManifest } from '../../src/model/types';
@@ -63,7 +65,7 @@ describe('assembly game progression', () => {
     expect(completedAssemblyModels().has('31028-sailboat')).toBe(false);
   });
 
-  it('groups directional parts by quarter turn and validates orientation', () => {
+  it('groups identical materials while preserving directional target constraints', () => {
     const part = {
       partNumber: '3040b',
       colorCode: '4',
@@ -74,7 +76,7 @@ describe('assembly game progression', () => {
       originalMatrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
       instanceId: 'brick_1',
       bounds: { min: [-4, -4, -8], max: [4, 4, 8] },
-    } as PartInstance;
+    } as unknown as PartInstance;
     const turned = {
       ...part,
       instanceId: 'brick_2',
@@ -84,7 +86,34 @@ describe('assembly game progression', () => {
     expect(partQuarterTurn(turned)).toBe(3);
     expect(partOrientationMatches(turned, 0)).toBe(false);
     expect(partOrientationMatches(turned, 3)).toBe(true);
-    expect(groupAssemblyMaterials([part, turned])).toHaveLength(2);
+    expect(partTurnPeriod(part)).toBe(4);
+    expect(groupAssemblyMaterials([part, turned])).toMatchObject([{
+      key: '3040b:4',
+      quantity: 2,
+      instanceIds: ['brick_1', 'brick_2'],
+    }]);
+    expect(equivalentAssemblyTargets(
+      [part, turned],
+      new Set(),
+      assemblyMaterialKey(part),
+      part.instanceId,
+      0,
+    ).map(target => target.instanceId)).toEqual(['brick_1']);
+    expect(equivalentAssemblyTargets(
+      [part, turned],
+      new Set(),
+      assemblyMaterialKey(part),
+      part.instanceId,
+      3,
+    ).map(target => target.instanceId)).toEqual(['brick_2']);
+    const halfTurnBrick = {
+      ...part,
+      displayName: 'Brick 1 x 2',
+      tags: [],
+      originalMatrix: [-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1],
+    };
+    expect(partTurnPeriod(halfTurnBrick)).toBe(2);
+    expect(partOrientationMatches(halfTurnBrick, 0)).toBe(true);
     const step = {
       id: 'step-1',
       title: 'Step',
@@ -113,6 +142,59 @@ describe('assembly game progression', () => {
       wrongOrientationIds: [],
       wrongPositionIds: [],
     });
+  });
+
+  it('allows identical tyres to fill any equivalent unoccupied wheel target', () => {
+    const tyre = {
+      partNumber: '50951',
+      colorCode: '0',
+      displayName: 'Tyre 6/30 x 11',
+      colorName: 'Black',
+      colorHex: '#111111',
+      tags: [],
+      originalMatrix: [0, 0, -0.4, 0, 0, 0.4, 0, 0, 0.4, 0, 0, 0, 0, 0, 0, 1],
+      instanceId: 'wheel-front-right',
+      index: 0,
+      bounds: { min: [12, -8, 16], max: [20, 6, 32] },
+    } as unknown as PartInstance;
+    const targets: PartInstance[] = [
+      tyre,
+      {
+        ...tyre,
+        instanceId: 'wheel-rear-right',
+        index: 1,
+        bounds: { min: [12, -8, -24], max: [20, 6, -8] },
+      },
+      {
+        ...tyre,
+        instanceId: 'wheel-rear-left',
+        index: 2,
+        originalMatrix: [0, 0, 0.4, 0, 0, 0.4, 0, 0, -0.4, 0, 0, 0, 0, 0, 0, 1],
+        bounds: { min: [-20, -8, -24], max: [-12, 6, -8] },
+      },
+      {
+        ...tyre,
+        instanceId: 'wheel-front-left',
+        index: 3,
+        originalMatrix: [0, 0, 0.4, 0, 0, 0.4, 0, 0, -0.4, 0, 0, 0, 0, 0, 0, 1],
+        bounds: { min: [-20, -8, 16], max: [-12, 6, 32] },
+      },
+    ];
+    expect(partTurnPeriod(tyre)).toBe(2);
+    const equivalent = equivalentAssemblyTargets(
+      targets,
+      new Set(['wheel-front-right']),
+      assemblyMaterialKey(tyre),
+      tyre.instanceId,
+      0,
+    );
+    expect(equivalent.map(target => target.instanceId)).toEqual([
+      'wheel-rear-right',
+      'wheel-rear-left',
+      'wheel-front-left',
+    ]);
+    expect(nearestAssemblyTarget(equivalent, [-15, 0, 23])?.instanceId)
+      .toBe('wheel-front-left');
   });
 
   it('audits every catalog step against exact instances and authored orientation', () => {
