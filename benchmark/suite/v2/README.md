@@ -3,6 +3,8 @@
 本版本提供5,120个独立结构和117,910个任务条件case，以及全部逐题GT与传统算法基线。
 先读 [中文报告](REPORT.zh-CN.md) 和 [指标合同](METRICS.md)。
 英文现状论文位于 `benchmark/paper/`，使用官方CVPR模板；不是投稿完成声明。
+新增研究与严格评分修复见 [当前能力说明](../study/OVERVIEW.zh-CN.md)、
+[最新实测报告](../study/REPORT.zh-CN.md) 和 [研究复现](../study/README.md)。
 
 ## 开始使用
 
@@ -102,6 +104,9 @@ npm run v2:score -- --selection=/absolute/selection.json --predictions=/absolute
 ```
 
 此命令不调用模型API。漏答记失败；重复/未知题目拒绝。
+新提交默认使用`v2-strict-schema-1`，拒绝旧decoder可隐式转换的数组型号/颜色。
+原评分器仅通过CLI `score-legacy`用于历史复现；既有结果不改写。
+`v2:replay`按保存的评分版本分派，严格版本另核对全分层统计与源码hash。
 第三方模型身份是提交者声明；没有提供的原始API日志、时间、token、费用不伪造。
 批量结果自动显示在Casebank页，可逐题打开回放。
 API适配器仍限16图片，部分v2分层题会超过该上限；不能静默删图，应由支持完整输入的外部模型适配器处理。
@@ -121,5 +126,6 @@ npm run v2:baseline -- --selection=suite/artifacts/casebank-v2/selections/select
 
 数字名义网格和25目录类型；无机器人、通用CAD连接或力学模拟。
 5,120对象均程序生成，不是独立人工设计。8策略、近重复筛查均有局限，见中文报告。
-人审仍未完成；完整v2神经模型评测与多模态训练尚未进行。
+人审仍未完成。最新扩展已完成674次v2主实验与56次对照；
+多模态训练矩阵的完成组数以最新报告为准，不能把启动实验当作完成。
 历史神经实验和费用保留在旧目录，不挪用为v2结果。

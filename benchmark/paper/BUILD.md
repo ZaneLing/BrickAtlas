@@ -8,7 +8,7 @@
 - Official CVPR author-kit revision:
   `291758547e923160eb4d37079b7b9f0dfce82355`.
 - Template files are unmodified; their hashes are recorded in `evidence.json`.
-- Output: seven US Letter pages, including references.
+- Output: eight US Letter pages, including references.
 - TeX log: no unresolved citations/references or overfull boxes.
 - PDF inspection: text on every page, no text outside page boundaries.
 - All-page contact sheet and detailed formula/result pages inspected visually:

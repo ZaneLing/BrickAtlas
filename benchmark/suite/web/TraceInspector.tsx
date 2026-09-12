@@ -74,7 +74,8 @@ export function TraceInspector({ runId, caseIndex, endpointOverride }: { runId: 
     <div className="trace-heading"><div><span className="eyebrow">AUDITABLE EVENT REPLAY</span><h2>全步骤可视化</h2></div>
       <a className="command" href={`${endpoint}${endpoint.includes('?') ? '&' : '?'}format=jsonl`}><Download size={15} />事件 JSONL</a></div>
     <div className="trace-facts"><span>{trace.events.length} 个事件</span><span>{trace.evidence.responseCount} 次真实模型响应</span>
-      <span>{endpointOverride ? '未提供调用收据 · 离线回放' : `新增费用 $${trace.evidence.cost.toFixed(6)}`}</span>{trace.evidence.reusedFirstResponse && <span>首答复用 · 不重复计费</span>}
+      <span>{trace.mode === 'local-inference' ? '本地推理 · 无API账单'
+        : ['public-algorithm', 'external-submission'].includes(trace.mode) ? '未提供调用收据 · 离线回放' : `新增费用 $${trace.evidence.cost.toFixed(6)}`}</span>{trace.evidence.reusedFirstResponse && <span>首答复用 · 不重复计费</span>}
       <strong>{trace.evidence.scoreMatches ? '分数复算一致' : '版本不一致'}</strong></div>
     <div className="trace-mode"><label><input type="checkbox" checked={inputOnly} onChange={e => { setInputOnly(e.target.checked); setPlaying(false); }} />仅看模型原始输入</label>
       {!inputOnly && <><label><input type="checkbox" checked={showEdges} onChange={e => setShowEdges(e.target.checked)} />连接图</label>

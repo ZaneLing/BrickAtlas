@@ -12,11 +12,17 @@ import { evaluate } from './evaluate';
 import { publicAlgorithm } from './baseline';
 import { DIRECTORY, sourceHashes } from './build';
 import { submissionTrace } from './trace';
+import { EVALUATOR_VERSION } from '../study/strict-evaluate';
+import { replayStrictRun } from '../study/strict-replay';
 
 export async function replayEvaluations() {
   const root = resolve(ARTIFACTS, 'evaluations-v2'), result = [];
   for (const id of readdirSync(root)) {
     const dir = resolve(root, id), summary = JSON.parse(readFileSync(resolve(dir, 'summary.json'), 'utf8'));
+    if (summary.evaluatorVersion === EVALUATOR_VERSION) {
+      result.push(await replayStrictRun(dir)); continue;
+    }
+    assert.equal(summary.evaluatorVersion, undefined, 'Unknown evaluator version');
     const selection = JSON.parse(readFileSync(resolve(dir, 'selection.json'), 'utf8'));
     const expected = new Set(verifySelection(selection).map(s => s.id)), seen = new Set<string>();
     assert.deepEqual(summary.sourceHashes, sourceHashes()); assert.equal(summary.selectionHash, selection.hash);

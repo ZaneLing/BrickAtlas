@@ -5,7 +5,8 @@ import type { SuiteRenderer } from '../render';
 import { ARTIFACTS, BENCHMARK } from '../storage';
 import { caseSpecs, getSpec, taskForV2 } from './cases';
 import { groundTruth } from './ground-truth';
-import { evaluate } from './evaluate';
+import { evaluateStrict, EVALUATOR_VERSION } from '../study/strict-evaluate';
+import { strictTrace } from '../study/strict-trace';
 import { DIRECTORY } from './build';
 import { POLICIES } from './dataset';
 import { jsonLines } from './verify';
@@ -50,19 +51,22 @@ export async function handleV2(url: URL, req: http.IncomingMessage, res: http.Se
   } else if (req.method === 'POST' && path === '/api/v2/evaluate') {
     const b = await body(req);
     if (typeof b.caseId !== 'string') throw new Error('caseId required');
-    json(res, 200, evaluate(taskForV2(getSpec(b.caseId)), b.answer));
+    json(res, 200, { ...evaluateStrict(taskForV2(getSpec(b.caseId)), b.answer), evaluatorVersion: EVALUATOR_VERSION });
   } else if (req.method === 'GET' && path === '/api/v2/evaluations') {
     const root = resolve(ARTIFACTS, 'evaluations-v2');
     const reports = existsSync(root) ? readdirSync(root).filter(n => /^[\w.-]+$/.test(n)).flatMap(n => {
       const file = resolve(root, n, 'summary.json');
       if (!existsSync(file)) return [];
       const r = JSON.parse(readFileSync(file, 'utf8'));
-      return [{ id: r.id, model: r.model, baseline: r.baseline, cases: r.cases, rows: r.rows.filter((g: { stratum: string }) => g.stratum.startsWith('task|')) }];
+      return [{ id: r.id, model: r.model, baseline: r.baseline, cases: r.cases,
+        evaluatorVersion: r.evaluatorVersion ?? 'legacy-v2',
+        rows: r.rows.filter((g: { stratum: string }) => g.stratum.startsWith('task|')) }];
     }) : [];
     json(res, 200, reports);
   } else if (req.method === 'GET' && /^\/api\/v2\/evaluations\/[\w.-]+\/trace$/.test(path)) {
     const runId = path.split('/')[4], caseId = url.searchParams.get('caseId');
     const dir = resolve(ARTIFACTS, 'evaluations-v2', runId), summary = JSON.parse(readFileSync(resolve(dir, 'summary.json'), 'utf8'));
+    if (summary.evaluatorVersion !== undefined && summary.evaluatorVersion !== EVALUATOR_VERSION) throw new Error('Unknown evaluator version');
     let found = false;
     for await (const row of jsonLines(resolve(dir, 'cases.jsonl.gz'))) if (row.spec.id === caseId) {
       const task = taskForV2(getSpec(caseId!)), images = [];
@@ -70,7 +74,8 @@ export async function handleV2(url: URL, req: http.IncomingMessage, res: http.Se
       for (const f of task.frames) {
         const r = await renderer.render(f); writeFileSync(resolve(frameDir, r.hash + '.png'), r.buffer); images.push(`/api/v2/frames/${r.hash}.png`);
       }
-      const trace = submissionTrace(runId, summary.model, summary.baseline, row, images);
+      const trace = summary.evaluatorVersion === EVALUATOR_VERSION ? strictTrace(runId, summary.model, row, images)
+        : submissionTrace(runId, summary.model, summary.baseline, row, images);
       if (!isDeepStrictEqual(trace.verdict, row.verdict)) throw new Error('Stored evaluation differs from replay');
       if (url.searchParams.get('format') === 'jsonl') {
         const { events, ...manifest } = trace;

@@ -59,7 +59,7 @@ const provenance = Object.fromEntries(Object.entries(paths).map(([name, path]) =
   path: '../suite/artifacts/' + path, sha256: createHash('sha256').update(readFileSync(resolve(artifacts, path))).digest('hex'),
 }]));
 writeFileSync(resolve(here, 'evidence.json'), JSON.stringify({
-  provenance, scope: 'V2 full deterministic baseline; neural results from older releases only.',
+  provenance, scope: 'V2 full deterministic baseline and older pilots; new v2 study provenance is in study-evidence.json.',
   template: { source: 'https://github.com/cvpr-org/author-kit', revision: '291758547e923160eb4d37079b7b9f0dfce82355',
     files: Object.fromEntries(['cvpr.sty', 'ieeenat_fullname.bst'].map(p => [p, createHash('sha256').update(readFileSync(resolve(here, p))).digest('hex')])) },
 }, null, 2) + '\n');

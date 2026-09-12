@@ -5,6 +5,9 @@
 
 ## 文档
 
+- [当前能测什么、研究目标与整体结构](study/OVERVIEW.zh-CN.md)
+- [最新v2神经实测、训练与全链路审计报告](study/REPORT.zh-CN.md)
+- [最新实验与严格评分复现](study/README.md)
 - [Casebank v2 中文完整报告：5120结构与逐题GT](v2/REPORT.zh-CN.md)
 - [Casebank v2 操作与复现](v2/README.md)
 - [Casebank v2 指标合同](v2/METRICS.md)
@@ -16,6 +19,10 @@
 - [数据卡](DATASET_CARD.md)
 - [任务协议与指标](METRICS.md)
 - [实验结果](REPORT.md)
+
+当前主版本是Casebank v2：5,120个独立结构、117,910任务条件。
+新增v2实测包括674次主实验与56次对照，训练完成状态见上述最新报告。
+下文命令与552配色样本说明对应早期Grid-v1，保留用于历史复现，不与v2混算。
 
 ## 一次性准备
 

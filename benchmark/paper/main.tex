@@ -33,17 +33,17 @@ an independently implemented integer-cell geometry certificate, applicable
 metrics, and replayable evaluation evidence. We separate ordinary RGB,
 layer disclosure, and privileged symbolic references, and distinguish
 model submissions from harness operations and evaluator diagnostics.
-On the complete casebank, a public-input algorithm solves symbolic
-relations and edits, but greedy assembly succeeds on only 2,364 of 5,120
-structures, despite complete disassembly success. This demonstrates a
-concrete distinction between current-action legality and future
-assemblability, not a neural-model ranking. We also report, separately,
-small neural pilots on earlier dataset versions. All 117,910 v2 cases
-pass oracle and empty-answer audits and are independently regenerated
-for artifact verification. The release is an executable research
-resource, not yet a confirmatory benchmark study: independent human
-review, broad multimodal baselines, semantic diversity, and
-token-matched training experiments remain outstanding.
+On the complete casebank, a height-sorted planner solves all 10,240
+assembly/disassembly cases, whereas greedy assembly solves only
+2,364 of 5,120. Thus the present planning domain diagnoses constraint
+following, not difficult combinatorial search. A new two-model v2 study
+contains 674 one-shot calls and 56 controls on 24 shared held-out objects
+and 25 catalog questions. Both models fail exact ordinary reconstruction;
+privileged symbolic references solve all eight controlled reconstructions.
+All 117,910 v2 oracle answers pass, and 138,240 independently computed
+metric comparisons agree. The release is an executable research
+resource, not yet a confirmatory benchmark study: semantic diversity,
+independent human review, and broader empirical coverage remain limited.
 \end{abstract}
 
 \section{Introduction}
@@ -98,8 +98,8 @@ counterexamples that exposed ambiguous repair labels and metadata
 leakage during development.
 \end{enumerate}
 These are implemented capabilities, not claims of state-of-the-art
-performance or submission readiness. Neural results in this manuscript
-come from earlier, much smaller releases and are labeled accordingly.
+performance or submission readiness. New v2 model evidence and earlier
+pilots are reported separately rather than pooled across dataset versions.
 
 \section{Related Work and Positioning}
 \paragraph{Generation and structural representations.}
@@ -221,11 +221,13 @@ difficulty bins contain 1,445 small ($\leq16$), 2,141 medium (17--28),
 and 1,534 large ($>28$) structures. They are mechanical bins, not measured
 human difficulty.
 
-We also run approximate cross-split near-duplicate screening on canonical
-part-position sets: 32 hash minima, eight bands, and a Jaccard threshold
-of 0.8. The screening retrieves 48 candidate pairs and flags none above
-threshold. This is not an exhaustive nearest-neighbor search; it can
-miss near duplicates and does not measure semantic or subassembly leakage.
+We run a lossless length/prefix Jaccard join on canonical part-position
+sets at threshold 0.8, then cross-check it by brute force over all
+8,305,836 cross-split pairs. No pair reaches the threshold.
+This is exhaustive only for the declared canonical token representation:
+canonical orientation can change under perturbations, and the check is
+not a best-aligned geometric distance, semantic leakage test, or
+pretraining contamination audit.
 
 \subsection{Task Expansion and Accounting}
 Each object produces 13 task variants and 23 task-condition cases:
@@ -292,6 +294,16 @@ agree. Every ground-truth witness passes this cross-check and its task
 scorer. This independence is at the algorithm-implementation level; both
 checkers share the declared catalog and nominal geometric assumptions.
 It is not independent human validation.
+
+A further independent implementation checks multiset, occupancy, colored
+surface, and edge metrics on 15,360 original/perturbed structures:
+138,240 comparisons agree. An independently relaxed shortest-path
+algorithm agrees on all 10,240 relation queries. Nominal connector counts
+agree on all 5,120 structures, still only within the grid catalog.
+An additional 107,520 mutation/invariance checks cover missing, duplicate,
+unknown, and reversed plan actions; no-op edits; wrong repair localization;
+and instance-ID/yaw equivalence. These finite checks are not a proof
+over all possible malformed submissions.
 
 Full-case baseline testing exposed a subtle repair ambiguity during
 pre-release development. A shifted brick could occupy the same pose as
@@ -380,6 +392,14 @@ cannot receive exact success. A null metric means task-inapplicable,
 such as a false-alarm rate on a positive repair case, not an omitted
 failure.
 
+The frozen v2 decoder had a JavaScript coercion gap: singleton arrays
+used as part-type or color fields could be accepted as string keys.
+New submissions use an explicitly versioned strict primitive-type gate;
+the legacy scorer remains available only for historical reproduction.
+All 117,910 oracle answers still pass, 5,120 malformed examples are
+rejected, and metrics on 118,640 existing baseline/API records are
+unchanged. Historical runs are not silently rewritten.
+
 Reports are stratified by task, variant, condition, and split, with
 additional policy and piece-count summaries. Every metric carries its
 actual denominator. Success uncertainty uses a fixed-seed, 1,000-resample
@@ -452,6 +472,108 @@ Disassembly starts from the complete valid structure and removes an
 eligible piece. The result shows that our process metric distinguishes
 final geometry from executable construction; it does not show that the
 tasks are hard for a suitable search or dependency-aware planner.
+
+A bottom-up height order, reversed for disassembly, solves all 10,240
+plans and passes an independent execution checker. Under the current
+valid-grid and vertical-insertion assumptions, higher parts cannot block
+earlier lower insertions. This simple complete construction limits the
+planning claim to constraint following. A train-only BOM/dimension
+retrieval baseline was also evaluated on all 2,430 non-training objects
+for ordinary reconstruction; it neither sees target geometry nor adapts
+the retrieved structure to it.
+
+\subsection{V2 Fixed-Input Model Study}
+We freeze three held-out objects per policy, covering available size
+strata, before observing results: 24 objects, all 13 default/ordinary
+task variants, and 25 catalog questions yield 337 cases per model.
+GPT-4.1 mini and Gemini 2.5 Flash run interleaved at temperature zero
+with a 2,200-token output cap. All 674 calls, failures, raw responses,
+images, token counts, latencies, and settled receipts are retained.
+Table~\ref{tab:study} gives exact successes; partial metrics and
+source-group bootstrap intervals are included in the artifacts.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrr}
+\toprule
+Task/variant & GPT-4.1 mini & Gemini Flash\\
+\midrule
+\tableinput{tables/study-main.tex}
+\bottomrule
+\end{tabular}
+\caption{New v2 one-shot results. Each structural variant has the same
+24 source objects; the 25 isolated-part questions are separate.}
+\label{tab:study}
+\end{table}
+
+For Gemini, one preselected object per policy receives six reconstruction
+controls and one assembly representation control (56 new calls).
+Reflection and legality feedback reuse the identical recorded first
+answer, charging only the new request. Feedback is target-blind.
+Table~\ref{tab:controls} does not support a claim that images are ignored:
+zero exact successes create a floor effect. Symbolic references provide
+additional privileged information; relative-coordinate plans use the
+same target information, not BrickNet connector programs.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrr}
+\toprule
+Control & Original & Control\\
+\midrule
+\tableinput{tables/study-controls.tex}
+\bottomrule
+\end{tabular}
+\caption{Paired Gemini controls on eight objects. Relative denotes
+assembly; all other arms denote reconstruction.}
+\label{tab:controls}
+\end{table}
+
+Cross-task associations are computed over 24 source objects, not 337
+independent trials. Constant marginals yield undefined correlations.
+These are exploratory diagnostics without confirmatory power or a
+causal claim about reasoning or transfer.
+
+\subsection{Image-Conditioned Training Protocol}
+The new local pilot uses the public SmolVLM-256M-Instruct checkpoint~\cite{marafioti2025smolvlm}
+at revision \texttt{7e3e67ed}, unquantized. Ninety-six training objects
+and 24 disjoint validation objects provide seven task families
+(672/168 examples) with actual supplied PNG views. Language-side
+query/value rank-8 LoRA has 460,800 trainable parameters.
+Single-reconstruction, multi-task, and leave-edit conditions each use
+seeds 17, 29, and 43; base is untrained. Every trained condition uses
+120 updates, exactly 512 supervised answer tokens per update
+(61,440 total), AdamW at $2\times10^{-4}$, and gradient clipping at 1.
+Full prompts and answers are retained; loss-bearing answer positions
+are deterministically subsampled to match supervision.
+
+This matches supervision, not input tokens, image tokens, time, or
+compute. Validation NLL uses two fixed examples per task, not all
+validation examples. Training uses PyTorch/MPS; every formal checkpoint
+uses MLX for greedy 2,200-token inference on the same 337 cases.
+Token, pixel, and mask digests match across both preprocessing backends
+on all cases; floating-point kernels need not produce identical output.
+All 840 training/validation prompt prefixes retain token identity when
+answers are appended; the longest full sequence is 5,176 tokens.
+Compact test-oracle answers use at most 1,793 SmolVLM tokens, below the
+2,200-token cap. These private length diagnostics are never model inputs.
+Only completed jobs appear in Table~\ref{tab:vlm}; the artifact manifest
+records completed versus planned jobs. An incomplete matrix does not
+establish multi-task transfer.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrrr}
+\toprule
+Condition & Seed & Steps & Supervision & Success\\
+\midrule
+\tableinput{tables/study-training.tex}
+\bottomrule
+\end{tabular}
+\caption{Completed v2 local VLM jobs only. Each row evaluates 337 cases.
+All raw predictions are retained, including malformed responses.}
+\label{tab:vlm}
+\end{table}
 
 \subsection{Earlier Neural Pilots: Separate Evidence}
 \label{sec:pilots}
@@ -533,7 +655,7 @@ and checked case by case, rather than inferred from a few examples.
 A full offline replay independently re-evaluates the deterministic
 baseline and reconstructs all event state chains.
 
-Engineering validation passes 79 benchmark tests and 69 original
+Engineering validation passes 85 benchmark tests and 69 original
 application unit tests, TypeScript checking, and production frontend
 build. Browser checks cover 1,440-pixel desktop and 390-pixel mobile
 layouts, nonblank canvas pixels, camera interaction, input/truth
@@ -543,17 +665,26 @@ recipes are verified, but not all possible PNGs are pre-rendered.
 A 46-case external-input export verifies 125 image uses and 25 unique
 image hashes.
 
+For the new study, all 1,177 train/validation/test input records are
+checked against their task recipes: 1,970 image uses and 626 distinct
+renders match by regeneration. The portable training bundle contains
+840 records and 480 unique PNGs with verified input/answer and split
+identity. Rendering equality is checked on the same browser/GPU stack,
+not claimed across arbitrary rasterizers.
+
 A copied environment without the original runtime directory or API key
 regenerates the complete casebank audit and replays all evaluations.
 It shares the installed pinned Node dependencies; this is not a clean
 operating-system installation, a second-person reproduction, or a
 repeated stochastic model training run.
 
-The historical API campaign contains 363 settled requests totaling
+The earlier API campaign contains 363 settled requests totaling
 \$0.45102511: \$0.10992152 for CARE-mini and diagnostics,
 \$0.08908686 for Grid-v1 experiments, \$0.20204040 for the composition
-pilot, and \$0.04997633 for the paired controls. V2 construction,
-algorithmic evaluation, and verification add no API requests.
+pilot, and \$0.04997633 for the paired controls. The new v2 study adds
+730 settled requests costing \$1.50635072, bringing the cumulative
+campaign to 1,093 requests and \$1.95737583. Construction and offline
+verification add no API requests.
 We preserve the cumulative ledger and its \$4.50 internal cap rather
 than resetting the budget between releases.
 
@@ -564,7 +695,7 @@ shares a common root plate. More task conditions do not create more
 independent objects. Eight policies do not imply broad semantic coverage.
 The known-part recognition set is not a novel-part generalization test.
 Policy-held-out bridge and shell data share primitives with training.
-Near-duplicate screening is approximate.
+Near-duplicate checking is exhaustive only for its declared token representation.
 
 \paragraph{Validity of ground truth.}
 Two geometry implementations reduce some coding risks but share the same
@@ -584,13 +715,12 @@ to make that distinction visible. Additional calibration using
 independent human judgments and adversarial alternatives is needed.
 
 \paragraph{Empirical scope.}
-No large neural evaluation has been run on v2. The complete baseline is
-a deterministic public-input algorithm, with explicit abstentions for
-unsupported modalities. Prior neural studies have only four shared
-composition objects or eight older text cases. They cannot establish
-cross-task correlations, representation advantages, or general
-multi-task transfer. Broader model families, specialized baselines,
-properly matched token budgets, and confirmatory sample designs remain
+The new v2 neural study covers only 24 shared structural objects and
+two API models, plus a small local VLM training protocol. Earlier studies
+use different data and remain separate. Exploratory correlations and
+eight-object controls cannot establish general representation advantages
+or causal multi-task transfer. Broader model families, specialized
+baselines, semantic diversity, and confirmatory sample designs remain
 necessary before strong comparative claims.
 
 \paragraph{Release and research ethics.}
@@ -608,13 +738,12 @@ future conference year's rules.
 BrickAtlas v2 turns a small multi-task prototype into a materialized,
 versioned casebank with per-case ground truth, explicit information
 conditions, complete metric denominators, and auditable replay.
-Its full algorithmic baseline reveals a concrete gap between locally
-legal greedy assembly and executable completion. The implementation
-also exposes the limits of its present evidence: procedural diversity,
-nominal geometry, and small earlier neural pilots are not substitutes
-for independent data review and broad model evaluation. The current
-release makes those next experiments reproducible and their assumptions
-inspectable, without reporting them as already completed.
+Its full algorithmic audit reveals both greedy failure and a simple
+complete height-sorted planner, preventing an overstated search claim.
+The v2 model study exposes failures in visual reconstruction alongside
+stronger symbolic editing, while preserving original outputs and costs.
+Procedural diversity, nominal geometry, and small-sample model evidence
+remain no substitutes for independent data review and broad evaluation.
 
 {\small
 \bibliographystyle{ieeenat_fullname}

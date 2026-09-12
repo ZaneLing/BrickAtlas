@@ -9,13 +9,14 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 ## Contents
 
 - `main.tex`: abstract, motivation, related work, data, ground truth, metrics,
-  auditable replay, complete v2 algorithmic results, earlier neural pilots, limitations.
+  auditable replay, v2 algorithmic audits and neural study, earlier pilots, limitations.
 - `main.pdf`: compiled readable manuscript.
 - `references.bib`: verified core references; not an exhaustive related-work survey.
 - `tables/*.tex`: tables generated from actual artifacts, not manually invented values.
 - `figures/*.png`: actual benchmark renders from the largest-case-per-policy audit.
 - `evidence.json`: source paths/hashes for numerical evidence and upstream template.
 - `generate-tables.mjs`: table generation and evidence assertions.
+- `generate-study.mjs`, `study-evidence.json`: new study tables and source hashes.
 
 ## Compile
 
@@ -23,6 +24,7 @@ From the repository root, regenerate tables:
 
 ```bash
 node benchmark/paper/generate-tables.mjs
+node benchmark/paper/generate-study.mjs
 ```
 
 From `benchmark/paper/`, with a normal TeX Live installation:
@@ -64,12 +66,16 @@ spacing to force a page count. Template provenance is not a claim of acceptance.
 ## Evidence Boundaries
 
 V2 has 5,120 objects, 117,910 task-condition cases, and one complete public-input
-algorithmic baseline. **No large neural study has been run on v2.**
+algorithmic baseline plus complete height-sorted planning audits.
+The new v2 study contains 674 one-shot and 56 control API calls on 24 shared
+held-out objects and 25 catalog questions; it remains exploratory, not powered.
+Only completed SmolVLM jobs appear in the training table; `study-evidence.json`
+records the completed count out of ten planned jobs.
 The 112-call two-model study, 24-call paired control, and five Qwen LoRA/base runs
 belong to earlier releases and are explicitly separated.
 
 Independent human review, rich human-designed data, broader model baselines,
-matched-token multi-task training and confirmatory experiments are outstanding.
+confirmatory experiments and any unfinished training jobs remain outstanding.
 The original local `RESEARCH_ROADMAP.md` remains excluded from publication.
 
-Chinese companion: `../suite/v2/REPORT.zh-CN.md`.
+Chinese companions: `../suite/study/OVERVIEW.zh-CN.md` and `../suite/study/REPORT.zh-CN.md`.
