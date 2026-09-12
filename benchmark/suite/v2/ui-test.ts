@@ -1,0 +1,80 @@
+import { chromium } from '@playwright/test';
+import { PNG } from 'pngjs';
+import assert from 'node:assert/strict';
+import { mkdirSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { atomicJson } from '../../core/budget';
+import { ARTIFACTS, BENCHMARK } from '../storage';
+
+const { url } = JSON.parse(readFileSync(resolve(BENCHMARK, '.runtime/suite-server.json'), 'utf8'));
+const before = await (await fetch(url + '/api/status')).json();
+const out = resolve(ARTIFACTS, 'casebank-v2/ui'); mkdirSync(out, { recursive: true });
+const browser = await chromium.launch({ headless: true, channel: process.env.CI ? undefined : 'chrome' });
+try {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1050 } }), errors: string[] = [];
+  let paid = 0, truthRequests = 0;
+  page.on('pageerror', e => errors.push(e.message));
+  page.on('request', r => { if (r.url().endsWith('/run')) paid++; if (r.url().endsWith('/truth')) truthRequests++; });
+  await page.goto(url);
+  await page.getByRole('button', { name: 'Casebank v2', exact: true }).click();
+  await page.locator('.casebank .heading').getByText(/117,910/).waitFor();
+  await page.locator('.casebank table tbody tr').first().waitFor();
+  const firstId = await page.locator('.casebank table tbody tr').first().locator('code').innerText();
+  await page.getByTitle(`查看 ${firstId}`, { exact: true }).click();
+  await page.getByRole('textbox', { name: 'v2 answer', exact: true }).waitFor();
+  assert.equal(truthRequests, 0);
+  assert.equal(await page.locator('.casebank-truth').count(), 0);
+  const input = await (await fetch(`${url}/api/v2/cases/${firstId}/input`)).json();
+  assert.ok(!('target' in input) && !('oracle' in input) && !('frames' in input) && !('reference' in input.input));
+  const truth = await (await fetch(`${url}/api/v2/cases/${firstId}/truth`)).json();
+  await page.getByRole('textbox', { name: 'v2 answer', exact: true }).fill(JSON.stringify(truth.oracle));
+  await page.getByRole('button', { name: '评估此 case', exact: true }).click();
+  await page.locator('.submission [role=status]').filter({ hasText: 'PASS' }).waitFor();
+  await page.getByRole('button', { name: '查看裁判真值', exact: true }).click();
+  await page.locator('.casebank-truth canvas').waitFor();
+  const nonblank = async () => {
+    const image = PNG.sync.read(await page.locator('.casebank-truth canvas').screenshot());
+    const colors = new Set<string>();
+    for (let i = 0; i < image.data.length; i += 20) colors.add(image.data.subarray(i, i + 3).toString('hex'));
+    assert.ok(colors.size > 80);
+  };
+  await nonblank();
+  const canvas = page.locator('.casebank-truth canvas'), original = await canvas.screenshot(), box = (await canvas.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down(); await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.6, { steps: 8 }); await page.mouse.up();
+  assert.notDeepEqual(await canvas.screenshot(), original);
+  await page.locator('.casebank-detail').screenshot({ path: resolve(out, 'case-desktop.png') });
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  await nonblank();
+  await page.locator('.casebank-detail').screenshot({ path: resolve(out, 'case-mobile.png') });
+  await page.getByRole('button', { name: '隐藏裁判真值', exact: true }).click();
+  assert.equal(await page.locator('.casebank-truth').count(), 0);
+  await page.getByTitle('下一页 case', { exact: true }).click();
+  await page.waitForFunction(id => document.querySelector('.casebank table tbody code')?.textContent !== id, firstId);
+  await page.getByRole('combobox', { name: 'v2 kind', exact: true }).selectOption('repair');
+  const select = page.getByRole('combobox', { name: 'v2 evaluation', exact: true });
+  const options = await select.locator('option').all();
+  assert.ok(options.length > 1);
+  await select.selectOption(await options[1].getAttribute('value') ?? '');
+  await page.locator('.casebank-evaluations table tbody tr').first().waitFor();
+  const submission = page.locator('.casebank-evaluations>details').first();
+  await submission.locator('summary').click();
+  await submission.getByRole('button', { name: '回放提交', exact: true }).click();
+  await page.getByRole('heading', { name: '全步骤可视化', exact: true }).waitFor();
+  await page.getByTitle('最终事件', { exact: true }).click();
+  assert.equal(await page.locator('.trace-scenes canvas').count(), 3);
+  await page.getByLabel('仅看模型原始输入', { exact: true }).check();
+  assert.equal(await page.locator('.trace-scenes canvas').count(), 0);
+  assert.ok(await page.locator('.trace-inputs img').count() > 0);
+  const download = page.getByRole('link', { name: '事件 JSONL', exact: true });
+  const jsonl = await (await fetch(url + await download.getAttribute('href'))).text();
+  assert.equal(JSON.parse(jsonl.split('\n')[0]).type, 'manifest');
+  assert.equal((await (await fetch(url + '/api/status')).json()).budget.spent, before.budget.spent);
+  assert.deepEqual(errors, []); assert.equal(paid, 0);
+  const evidence = { checkedAt: new Date().toISOString(), allCasesPaginated: true, filters: true,
+    inputDoesNotFetchTruth: true, oracleSubmission: true, truthExplicitlyLabeled: true, cameraInteractive: true,
+    desktopMobileCanvasNonblank: true, horizontalOverflow: false, batchResultsVisible: true,
+    submissionTrace: true, traceInputIsolation: true, traceJsonl: true, paidRequests: paid, errors };
+  atomicJson(resolve(out, 'verification.json'), evidence); console.log(JSON.stringify(evidence, null, 2));
+} finally { await browser.close(); }

@@ -20,6 +20,7 @@ import { portConnections } from './research/connectors';
 import { reviewQueue, reviewSummary, submitReview } from './research/review';
 import { PAIRED_VERSION } from './research/paired';
 import { trainingStatus } from './research/training-status';
+import { handleV2 } from './v2/routes';
 
 if (!process.env.OPENROUTER_API_KEY && existsSync(resolve(BENCHMARK, '../.env'))) process.loadEnvFile(resolve(BENCHMARK, '../.env'));
 const token = randomUUID(), data = models();
@@ -45,6 +46,7 @@ server.on('request', async (req, res) => {
     if (!path.startsWith('/api/')) { vite.middlewares(req, res, () => { res.writeHead(404); res.end('Not found'); }); return; }
     if (req.headers.origin && req.headers.origin !== url) { json(res, 403, { error: 'Origin denied' }); return; }
     if (req.method === 'POST' && req.headers['x-benchmark-client'] !== token) { json(res, 403, { error: 'Client token required' }); return; }
+    if (await handleV2(request, req, res, { json, body, renderer })) return;
     if (path === '/api/status' && req.method === 'GET') {
       const ledgerFile = resolve(BENCHMARK, '.runtime/campaign-ledger.json');
       const ledger = existsSync(ledgerFile) ? JSON.parse(readFileSync(ledgerFile, 'utf8')) : { charges: [], cap: 4.5 };

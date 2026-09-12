@@ -41,11 +41,11 @@ function TraceScenes({ trace, index, showEdges, showDiff }: { trace: CaseTrace; 
   </>;
 }
 
-export function TraceInspector({ runId, caseIndex }: { runId: string; caseIndex: number }) {
+export function TraceInspector({ runId, caseIndex, endpointOverride }: { runId: string; caseIndex: number; endpointOverride?: string }) {
   const [trace, setTrace] = useState<CaseTrace | null>(null);
   const [error, setError] = useState(''), [index, setIndex] = useState(0), [playing, setPlaying] = useState(false);
   const [showEdges, setShowEdges] = useState(false), [showDiff, setShowDiff] = useState(true), [inputOnly, setInputOnly] = useState(false);
-  const endpoint = `/api/runs/${runId}/cases/${caseIndex}/trace`;
+  const endpoint = endpointOverride ?? `/api/runs/${runId}/cases/${caseIndex}/trace`;
   useEffect(() => {
     const abort = new AbortController();
     setTrace(null); setIndex(0); setPlaying(false); setError('');
@@ -72,15 +72,15 @@ export function TraceInspector({ runId, caseIndex }: { runId: string; caseIndex:
       && 'metrics' in e.payload && (e.payload as { metrics: { success: number } }).metrics.success === 0);
   return <section className="trace-inspector">
     <div className="trace-heading"><div><span className="eyebrow">AUDITABLE EVENT REPLAY</span><h2>全步骤可视化</h2></div>
-      <a className="command" href={`${endpoint}?format=jsonl`}><Download size={15} />事件 JSONL</a></div>
+      <a className="command" href={`${endpoint}${endpoint.includes('?') ? '&' : '?'}format=jsonl`}><Download size={15} />事件 JSONL</a></div>
     <div className="trace-facts"><span>{trace.events.length} 个事件</span><span>{trace.evidence.responseCount} 次真实模型响应</span>
-      <span>新增费用 ${trace.evidence.cost.toFixed(6)}</span>{trace.evidence.reusedFirstResponse && <span>首答复用 · 不重复计费</span>}
+      <span>{endpointOverride ? '未提供调用收据 · 离线回放' : `新增费用 $${trace.evidence.cost.toFixed(6)}`}</span>{trace.evidence.reusedFirstResponse && <span>首答复用 · 不重复计费</span>}
       <strong>{trace.evidence.scoreMatches ? '分数复算一致' : '版本不一致'}</strong></div>
     <div className="trace-mode"><label><input type="checkbox" checked={inputOnly} onChange={e => { setInputOnly(e.target.checked); setPlaying(false); }} />仅看模型原始输入</label>
       {!inputOnly && <><label><input type="checkbox" checked={showEdges} onChange={e => setShowEdges(e.target.checked)} />连接图</label>
         <label><input type="checkbox" checked={showDiff} onChange={e => setShowDiff(e.target.checked)} />最终差分</label></>}</div>
     {inputOnly ? <div className="trace-inputs"><p>{trace.input.prompt}</p><div className="observation-grid">{trace.frames.map((path, i) =>
-      <figure key={path + i}><img src={`/api/runs/${runId}/${path}`} alt={trace.input.imageTitles[i]} /><figcaption>{trace.input.imageTitles[i]}</figcaption></figure>)}</div>
+      <figure key={path + i}><img src={path.startsWith('/api/') ? path : `/api/runs/${runId}/${path}`} alt={trace.input.imageTitles[i]} /><figcaption>{trace.input.imageTitles[i]}</figcaption></figure>)}</div>
       <pre>{JSON.stringify(trace.modelInput, null, 2)}</pre></div>
       : <TraceScenes key={`${runId}:${caseIndex}`} trace={trace} index={index} showEdges={showEdges} showDiff={showDiff} />}
     {!inputOnly && <><div className="trace-transport">

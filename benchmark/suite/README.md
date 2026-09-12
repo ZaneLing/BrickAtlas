@@ -5,6 +5,10 @@
 
 ## 文档
 
+- [Casebank v2 中文完整报告：5120结构与逐题GT](v2/REPORT.zh-CN.md)
+- [Casebank v2 操作与复现](v2/README.md)
+- [Casebank v2 指标合同](v2/METRICS.md)
+- [英文论文与官方CVPR模板](../paper/README.md)
 - [研究版逐项目标验收](ACCEPTANCE.md)
 - [研究版操作与复现](research/README.md)
 - [576几何组数据卡与局限](research/DATASET_CARD.md)

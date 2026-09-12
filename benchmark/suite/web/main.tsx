@@ -6,6 +6,7 @@ import { viewer } from './viewer';
 import { TraceInspector } from './TraceInspector';
 import { TrainingPanel } from './TrainingPanel';
 import { ReviewPanel } from './ReviewPanel';
+import { CasebankPanel } from './CasebankPanel';
 import './style.css';
 
 interface Status {
@@ -46,7 +47,7 @@ function Scene({ parts }: { parts: Part[] }) {
   </div>;
 }
 function App() {
-  const [tab, setTab] = useState<'data' | 'task' | 'result' | 'protocol' | 'training' | 'review'>('data');
+  const [tab, setTab] = useState<'data' | 'task' | 'result' | 'protocol' | 'training' | 'review' | 'casebank'>('data');
   const [status, setStatus] = useState<Status | null>(null);
   const [dataset, setDataset] = useState<{ summary: DatasetSummary; items: SampleSummary[] } | null>(null);
   const [release, setRelease] = useState<'pilot' | 'research'>('pilot');
@@ -120,6 +121,7 @@ function App() {
     <div className="nav-row"><nav>{([
       ['data', '结构数据', Database], ['task', '任务评测', FlaskConical], ['result', '模型结果', BarChart3], ['protocol', '协议与指标', ShieldCheck],
       ['training', '训练与验证', Cpu], ['review', '人工审核', ClipboardCheck],
+      ['casebank', 'Casebank v2', Database],
     ] as const).map(([id, text, Icon]) => <button key={id} className={tab === id ? 'active' : ''} onClick={() => setTab(id)}><Icon size={16} />{text}</button>)}</nav>
       <div className="budget">累计 <strong>${status?.budget.spent.toFixed(4) ?? '0.0000'}</strong><span>/ $4.50</span></div></div>
     {error && <div role="alert" className="alert">{error}<button className="icon" title="关闭错误" onClick={() => setError('')}><X size={16} /></button></div>}
@@ -189,6 +191,7 @@ function App() {
     </main>}
     {tab === 'training' && <TrainingPanel />}
     {tab === 'review' && <ReviewPanel token={status?.token ?? ''} />}
+    {tab === 'casebank' && <CasebankPanel token={status?.token ?? ''} />}
     {tab === 'protocol' && <main className="protocol"><span className="eyebrow">{VERSION} · 初始协议，研究版按结果条件单列</span><h2>协议与指标</h2><div className="table-wrap"><table><thead><tr><th>维度</th><th>输入</th><th>主评分</th></tr></thead><tbody>
       {TASKS.map((k, i) => <tr key={k}><td>{LABELS[k]}</td><td>{['孤立零件 RGB','完整结构程序','组装图 + 逐层图 + BOM','文字 + 占用体积约束','部分结构 + 参考图','结构 + 改色/增删指令','目标 + 装配/拆解方向','错误结构 + 参考图'][i]}</td><td>{['型号/颜色/studs','关系字段正确率','Part / BOM / Edge F1','合法性 + 体积 IoU','复原 + 原结构保持','目标正确 + 非目标保持','逐步合法性 + 完整性','定位 F1 + 复原'][i]}</td></tr>)}
     </tbody></table></div><dl className="rules"><dt>结构</dt><dd>25 类规则砖/板，整数 stud/plate 网格，四向 yaw；支持绝对与相对程序。</dd><dt>数据</dt><dd>初始版552个配色样本、138几何组；组合语法版576独立几何组。均为公开程序化开发集，不是人工设计资产。</dd><dt>主榜</dt><dd>固定输入、一次提交、无反馈；LLM/MLLM 按输入条件记录，不测试 VLA。</dd><dt>辅助榜</dt><dd>额外一次与目标无关的合法性检查；不是完整自主 agent。</dd><dt>划分</dt><dd>同几何组的所有派生任务不跨split；两版分别保持独立的整族留出协议。</dd><dt>物理边界</dt><dd>检查重叠、支撑与垂直通道，不模拟承重、扣合力或机器人。</dd><dt>研究边界</dt><dd>本地文本/结构LoRA实验见“训练与验证”；不是多模态微调。连接器导入也不等于所有类型已被验证。</dd></dl></main>}

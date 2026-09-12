@@ -1,0 +1,623 @@
+% Development manuscript. No submission or acceptance is implied.
+% Official cvpr-org/author-kit revision is recorded in evidence.json.
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[pagenumbers]{cvpr}
+\usepackage{microtype}
+\usepackage{tabularx}
+\definecolor{cvprblue}{rgb}{0.21,0.49,0.74}
+\usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
+\def\confName{CVPR}
+\def\confYear{2026}
+\makeatletter
+\newcommand{\tableinput}[1]{\@@input #1 }
+\makeatother
+\title{BrickAtlas: An Auditable Casebank for Multi-Task\\
+Visual and Symbolic Brick-Structure Reasoning}
+\author{Development Manuscript\\
+Author and affiliation metadata intentionally omitted\\
+September 12, 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Brick-structure reasoning combines recognition, spatial relations,
+reconstruction, generation, editing, and executable planning. These tasks
+require different inputs and notions of correctness: a plausible hidden
+layout need not match one reference, while a submitted assembly order must
+actually execute. We present the current development release of
+BrickAtlas, a versioned casebank with 5,120 distinct procedural geometries,
+117,760 object-derived task-condition cases, and 150 separate known-part
+questions. Each case includes a machine-readable ground-truth record,
+an independently implemented integer-cell geometry certificate, applicable
+metrics, and replayable evaluation evidence. We separate ordinary RGB,
+layer disclosure, and privileged symbolic references, and distinguish
+model submissions from harness operations and evaluator diagnostics.
+On the complete casebank, a public-input algorithm solves symbolic
+relations and edits, but greedy assembly succeeds on only 2,364 of 5,120
+structures, despite complete disassembly success. This demonstrates a
+concrete distinction between current-action legality and future
+assemblability, not a neural-model ranking. We also report, separately,
+small neural pilots on earlier dataset versions. All 117,910 v2 cases
+pass oracle and empty-answer audits and are independently regenerated
+for artifact verification. The release is an executable research
+resource, not yet a confirmatory benchmark study: independent human
+review, broad multimodal baselines, semantic diversity, and
+token-matched training experiments remain outstanding.
+\end{abstract}
+
+\section{Introduction}
+Building a structure from parts requires more than recognizing its final
+appearance. A system may identify a brick yet misunderstand a connection,
+produce a plausible exterior with a different hidden arrangement, or
+specify a legal final assembly in an impossible construction order.
+Conversely, failure to recover hidden geometry from an opaque image does
+not necessarily imply a reasoning failure. A benchmark must make these
+distinctions explicit before scores can support claims about model ability.
+
+Prior work establishes strong foundations. BrickGPT generates buildable
+structures from text using autoregressive prediction with validity
+checking and physics-aware rollback~\cite{pun2025brickgpt}.
+BrickNet expands the data and connection vocabulary through human-designed
+LDraw objects and graph-backed assembly programs~\cite{kulits2026bricknet}.
+Break and Make evaluates interactive understanding by inspecting,
+disassembling, and rebuilding objects in LTRON~\cite{walsman2022break}.
+BrickAtlas does not claim to originate generation, connection reasoning,
+or disassembly-and-reconstruction. Its present focus is an explicit
+evaluation contract connecting several task families to the same source
+objects and making input privileges, alternative answers, and execution
+evidence inspectable.
+
+Three practical problems motivate this release. First, dataset size is
+easily overstated by counting colors, views, and task variants as
+independent objects. Second, ``ground truth'' may refer either to one
+valid witness or to the only acceptable answer. Conflating them penalizes
+legitimate alternatives. Third, a model's output can be improved or
+reordered by the surrounding harness without that intervention being
+visible in the reported result. A visualization of a final structure
+being unfolded piece by piece is not evidence that the model planned its
+assembly.
+
+We address these problems with a procedural casebank, typed evaluation,
+and auditable artifacts. The scope is deliberately digital: orthogonal
+rectangular bricks and plates, nominal stud contact, and vertical
+insertion/removal. We do not use a robot, manipulator, or
+vision--language--action controller. We do not equate nominal support
+with physical stability.
+
+The current contribution package is:
+\begin{enumerate}
+\item A versioned resource with 5,120 geometrically distinct objects from
+eight construction policies, preserving source-group membership across
+all derived tasks and input conditions.
+\item Per-case ground truth that records answer semantics, structural
+targets, protected regions, nominal connection ports, executable
+witnesses, and metric-specific oracle evaluations.
+\item A complete deterministic baseline and replay audit, including
+counterexamples that exposed ambiguous repair labels and metadata
+leakage during development.
+\end{enumerate}
+These are implemented capabilities, not claims of state-of-the-art
+performance or submission readiness. Neural results in this manuscript
+come from earlier, much smaller releases and are labeled accordingly.
+
+\section{Related Work and Positioning}
+\paragraph{Generation and structural representations.}
+BrickGPT~\cite{pun2025brickgpt}, previously released under the LegoGPT
+name, couples a language model with external checks to generate stable
+brick structures from text. BrickNet~\cite{kulits2026bricknet} collects
+over 100,000 human-designed objects and scenes and models connectivity
+through graph-backed programs. These works cover substantially richer
+semantic or geometric settings than the current BrickAtlas grid domain.
+Our relative-coordinate encoding, inherited from an earlier release,
+is not a replacement for BrickNet's typed connector language. The present
+casebank asks a different engineering question: how should multiple
+tasks on shared objects be labeled, scored, and traced without silently
+changing the information available to a model?
+
+\paragraph{Interactive assembly.}
+Break and Make~\cite{walsman2022break} already studies structural
+understanding through disassembly and reconstruction. BrickAtlas's
+earlier CARE-mini track also uses an interactive action loop, but the
+v2 casebank evaluated here is primarily a fixed-input submission
+protocol. A static structure answer, a submitted plan, a fixed
+validation-feedback run, and autonomous tool use are separate tracks.
+We do not merge their scores into a single agent leaderboard.
+
+\paragraph{Training baselines.}
+We use a public Qwen3-0.6B checkpoint~\cite{qwen3model} with standard
+LoRA~\cite{hu2022lora} for an earlier text/structure pilot. This is
+an implementation baseline, not a new model architecture. The experiment
+does not train a vision encoder, does not use v2 data, and does not
+establish compute-matched multi-task transfer.
+
+\section{Casebank Construction}
+\label{sec:data}
+\subsection{Geometric Domain}
+A part is represented as
+\begin{equation}
+p=(\mathrm{id},t,c,x,y,z,r),
+\end{equation}
+where $t$ is one of 25 catalog types, $c$ is one of six colors,
+$(x,y,z)$ is the minimum body corner, and $r\in\{0,1,2,3\}$ is a
+quarter-turn yaw. Horizontal units are studs (8\,mm), and vertical units
+are plate heights (3.2\,mm). Coordinates are integers; the inherited
+validator limits part origins to $[0,24]^3$, bodies to $[0,32]^3$,
+and submissions to 64 parts. Generated v2 objects contain 9--47 parts.
+
+Nominal validity requires no body overlap and at least one supporting
+stud below every elevated part. Planning additionally checks unobstructed
+vertical insertion or removal. All structures start with a common
+4-by-8 plate; this improves controlled generation but restricts shape
+diversity. Types and colors are public rather than novel categories.
+Actual catalog coverage of assembled objects is smaller than the
+25-type recognition catalog.
+
+\begin{figure*}[t]
+\centering
+\begin{tabular}{@{}cccc@{}}
+\includegraphics[width=.23\textwidth]{figures/tip-walk.png}&
+\includegraphics[width=.23\textwidth]{figures/low-fan.png}&
+\includegraphics[width=.23\textwidth]{figures/shallow-terrace.png}&
+\includegraphics[width=.23\textwidth]{figures/plate-network.png}\\
+\small Tip walk & \small Low fan & \small Shallow terrace & \small Plate network\\
+\includegraphics[width=.23\textwidth]{figures/column-field.png}&
+\includegraphics[width=.23\textwidth]{figures/alternating-beams.png}&
+\includegraphics[width=.23\textwidth]{figures/two-support-bridge.png}&
+\includegraphics[width=.23\textwidth]{figures/enclosed-shell.png}\\
+\small Column field & \small Alternating beams & \small Two-support bridge & \small Enclosed shell
+\end{tabular}
+\caption{Rendered v2 examples, selected as the largest sample within each
+policy for a rendering stress test, not a random semantic showcase.
+Bridge and shell construction policies are reserved for the policy-held-out
+split. Shared grid primitives and the common root plate remain present
+across splits.}
+\label{fig:policies}
+\end{figure*}
+
+\subsection{Policies, Groups, and Splits}
+We generate 640 accepted unique geometries per policy
+(Fig.~\ref{fig:policies}). Tip walk attaches at the current tip with
+one supporting parent; low fan samples low parents; shallow terrace
+restricts attachment height more strongly; plate network uses thin
+parts; column field constructs independent vertical profiles on a common
+base; alternating beams switch beam orientation. Two-support bridge
+explicitly constructs paired supports before spanning them, while
+enclosed shell constructs a perimeter and roof around varying interiors.
+These are different construction procedures, not a claim of eight
+disjoint semantic distributions.
+
+Geometry is canonicalized over color removal, translation, and four
+global yaw rotations. Exact duplicate geometries are rejected both
+within v2 and against the two earlier procedural releases. Mirroring
+is not included in the equivalence group. All variants of an accepted
+object inherit one group and split.
+
+Six policies use a deterministic geometry-hash partition into training,
+validation, and ID test objects. Bridge and shell policies are entirely
+held out. This is a \emph{policy holdout}: it does not prove that primitive
+motifs or geometric support are absent from training. Unlike an earlier
+pilot whose differently named families sometimes shared sampling code,
+v2 declares the actual policy distinction and its limits.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrr}
+\toprule
+Split & Source objects & Task-condition cases\\
+\midrule
+\tableinput{tables/splits.tex}
+\midrule
+Total & 5,120 & 117,910\\
+\bottomrule
+\end{tabular}
+\caption{V2 counts. The ID case count additionally includes 150 isolated
+part/color questions, which are not counted among the 5,120 objects.}
+\label{tab:splits}
+\end{table}
+
+Table~\ref{tab:splits} reports the realized partition. Piece-count
+difficulty bins contain 1,445 small ($\leq16$), 2,141 medium (17--28),
+and 1,534 large ($>28$) structures. They are mechanical bins, not measured
+human difficulty.
+
+We also run approximate cross-split near-duplicate screening on canonical
+part-position sets: 32 hash minima, eight bands, and a Jaccard threshold
+of 0.8. The screening retrieves 48 candidate pairs and flags none above
+threshold. This is not an exhaustive nearest-neighbor search; it can
+miss near duplicates and does not measure semantic or subassembly leakage.
+
+\subsection{Task Expansion and Accounting}
+Each object produces 13 task variants and 23 task-condition cases:
+two relation queries (connected and separated), one reconstruction,
+one constrained generation, one suffix completion, three edits
+(rotation, recoloring, removal), two plans (assembly, disassembly),
+and three repairs (normal, color, shift).
+Reconstruction, completion, and each repair variant have three
+information conditions. Thus,
+\begin{align}
+N_{\mathrm{variant}}&=5{,}120\times13+150=66{,}710,\\
+N_{\mathrm{case}}&=5{,}120\times23+150=117{,}910.
+\end{align}
+The extra 150 cases cover 25 known catalog types in six colors.
+They form a separate recognition set rather than repeating the same
+isolated image once per assembly. Color instances share the catalog-type
+group when uncertainty is summarized.
+
+\section{Ground Truth and Information Boundaries}
+\subsection{A Witness Is Not Always a Unique Answer}
+Every case stores a ground-truth object containing the public-input
+hash, source group and split, target and starting geometry, bill of
+materials (BOM), extents, connection edges, individual nominal stud
+mates, changed and protected IDs, yaw symmetry, assembly and disassembly
+witnesses, applicable metric names, and an evaluated oracle answer.
+The record explicitly declares whether the answer is exact or whether
+the oracle is only one member of an acceptable set.
+
+For generation, the witness satisfies dimensions, zero anchoring,
+piece budget, color count, connectivity, and branching constraints;
+other satisfying layouts are accepted. For planning, any executable
+permutation is valid. Structure reconstruction ignores arbitrary
+instance IDs and symmetric yaw rotations. These equivalences are
+different and are not collapsed into one similarity score.
+
+\subsection{Three Information Conditions}
+\paragraph{Ordinary RGB.}
+Four assembled views (isometric, top, front, side) and a BOM are provided
+for reconstruction, completion, and repair. Hidden layers are not
+revealed. The primary structural criterion accepts matching colored
+positive-axis first-hit surfaces plus BOM and nominal validity.
+It therefore does not force one unobservable interior arrangement.
+Preservation and localization gates remain mandatory where relevant.
+
+\paragraph{Layer disclosure.}
+An assembled view and separate top views for each occupied bottom-height
+layer reveal additional information. Unlike ordinary RGB, this condition
+requires the complete reference type/color/pose multiset, up to symmetry.
+It is not pooled with ordinary visual performance.
+
+\paragraph{Privileged symbolic reference.}
+The complete reference program is explicitly supplied. This diagnostic
+isolates failures that remain despite complete geometry information and
+requires full structural correctness. It is not a visual benchmark score.
+Other task families use their declared default inputs: symbolic structures
+for relations, edits, and plans; constraints for generation; isolated
+images for part recognition.
+
+\subsection{Independent Checks and Label Repairs}
+Generation uses the main axis-aligned geometry checker. A separately
+implemented integer-cell checker independently traverses occupied cells,
+support, collision, and insertion corridors. Connection stud totals must
+agree. Every ground-truth witness passes this cross-check and its task
+scorer. This independence is at the algorithm-implementation level; both
+checkers share the declared catalog and nominal geometric assumptions.
+It is not independent human validation.
+
+Full-case baseline testing exposed a subtle repair ambiguity during
+pre-release development. A shifted brick could occupy the same pose as
+another brick of the same type and color. The reference image then
+could not identify which of the two current IDs should be labeled faulty.
+We exclude these indistinguishable shifted poses before generating the
+release. Thirty cases exposed the issue in an initial symbolic repair
+baseline. The final casebank and baseline were rebuilt and re-audited;
+pre-release results are not reported as final scores.
+
+Fault type, changed IDs, target programs, and private render geometry are
+not carried in ordinary public input records. In particular, the
+normal/color/shift variant label is evaluator metadata, not a prompt field.
+The model exporter emits only a case ID, fixed system prompt, public
+task, and image paths. The full case index and ground-truth shards remain
+public research artifacts, so this separation is a protocol boundary,
+not protection against a participant deliberately consulting the answers.
+
+\section{Evaluation}
+\label{sec:metrics}
+\subsection{Structural and Task-Specific Metrics}
+Let $T$ and $A$ denote expected and submitted part multisets, and let
+$m$ be the number of exact type/color/pose matches after accounting
+for yaw symmetry. Part precision, recall, and F1 are
+\begin{equation}
+P=\frac{m}{|A|},\qquad R=\frac{m}{|T|},\qquad
+F_1=\frac{2m}{|A|+|T|}.
+\end{equation}
+The implementation defines empty-set conventions explicitly and prevents
+duplicate predictions from inflating multiset matches. BOM metrics
+ignore poses, while edge F1 requires matched endpoints and the correct
+number of mating studs. Occupancy IoU is computed both without color
+and on cell/color tuples.
+
+For an ordinary visual case, let $S^+(T)$ be the set of colored
+first-hit cells along the positive X, Y, and Z axes. The visible
+structural predicate is
+\begin{equation}
+\begin{aligned}
+V(A,T)={}&\mathbf{1}\{\mathrm{valid}(A)\}\\
+ &{}\cdot\mathbf{1}\{\mathrm{BOM}(A)=\mathrm{BOM}(T)\}\\
+ &{}\cdot\mathbf{1}\{S^+(A)=S^+(T)\}.
+\end{aligned}
+\end{equation}
+This is a nominal grid-surface proxy, not pixel similarity or a
+ray-tracing proof of what is visible from every perspective.
+Full-structure success is reported separately. A high surface F1 alone
+does not imply success.
+
+Completion and editing additionally measure preservation of the protected
+source multiset. Completion reports precision/recall/F1 for additions
+after subtracting retained source matches. These addition diagnostics
+can disagree with a valid alternative hidden layout and therefore do
+not override ordinary-condition acceptance. Repair additionally
+requires exact faulty-current-ID localization, reports restoration and
+localization metrics separately, and measures false alarms only on
+normal cases.
+
+Part recognition reports type, color, and stud-count accuracy. Relations
+report direct connectivity, vertical ordering, contact-stud count, and
+shortest undirected contact-graph distance. Constrained generation is
+scored against its six public constraints and legality; similarity to
+one arbitrary witness is not a generation-quality metric.
+
+\subsection{Executable Plans}
+A plan is evaluated in its submitted order. Execution stops at the
+first unknown, duplicate, unsupported, colliding, or blocked action.
+The scorer records the zero-based failure step, legal-prefix fraction,
+executed coverage, unique submitted coverage, length accuracy, and
+duplicate-free status. Complete success requires every required ID
+exactly once and a fully executable sequence.
+
+The evaluator does not sort a failed plan into a successful one.
+An incomplete but locally legal prefix is distinct from an attempted
+illegal action: its failure-step field is null, while success is zero.
+This distinction is important for greedy algorithms that run out of
+legal choices after prematurely covering a lower piece's insertion path.
+
+\subsection{Denominators and Aggregation}
+A selection manifest freezes case IDs, filters, and a hash before
+scoring. Unknown or duplicate prediction IDs are rejected. Missing
+submissions produce explicit failure rows and remain in all applicable
+denominators. Malformed structure outputs receive zero structural
+metrics; malformed QA can retain correct-field partial credit but
+cannot receive exact success. A null metric means task-inapplicable,
+such as a false-alarm rate on a positive repair case, not an omitted
+failure.
+
+Reports are stratified by task, variant, condition, and split, with
+additional policy and piece-count summaries. Every metric carries its
+actual denominator. Success uncertainty uses a fixed-seed, 1,000-resample
+bootstrap of source-group means. No aggregate mixes ordinary images,
+layer disclosure, and full symbolic references. These intervals quantify
+sampling variation within this procedural resource, not semantic
+coverage or immunity to contamination.
+
+\section{Audit and Replay System}
+The replay format separates four actors: model, harness, environment,
+and evaluator. Events identify whether evidence was recorded or derived,
+and link content-addressed before/after states. Recorded API responses
+retain their original text and billing receipts. Decoding and
+deterministic reconstruction are marked as system operations.
+No unavailable internal reasoning or historical timestamp is invented.
+
+For a structure collection, the viewer unfolds submitted parts as a
+harness visualization, not as an assembly plan. For a plan, it executes
+the original order and displays the first rejection. Input, intermediate
+output, and reference views can be compared with synchronized cameras.
+The input-only view hides the judge scenes and diagnostics. Per-case
+JSONL export preserves events and manifests.
+
+The v2 external-submission track stores submitted JSON, not a fabricated
+provider transcript. Missing token counts, latency, and receipts are
+explicitly unavailable; zero new calls during replay is not a claim
+that an external model's inference was free. Deterministic baseline
+outputs are labeled as harness/algorithm evidence rather than model
+responses. Every one of the 117,910 stored baseline cases has been
+replayed offline with score and state-chain checks; browser interaction
+tests are representative rather than 117,910 manual UI inspections.
+
+\section{Experiments and Current Results}
+\subsection{Complete V2 Algorithmic Baseline}
+The baseline accepts only public task input. It computes symbolic
+relations, applies declared edit operations, greedily chooses an
+immediately legal next plan action, and copies or compares an explicitly
+supplied symbolic reference. It has no visual perception or constrained
+generation solver. For unsupported inputs it abstains; the evaluation
+records a zero rather than silently removing those cases. These
+abstentions are coverage facts, not failed attempts by a visual model.
+
+All 117,910 selected cases were processed. The baseline solves all
+10,240 relation cases, all 15,360 edit cases, and all 25,600 privileged
+symbolic reconstruction/completion/repair cases. It solves 2,364 of
+5,120 assembly plans (46.2\%) and all 5,120 disassembly plans.
+Table~\ref{tab:planning} separates the splits. Since this baseline is
+not learned, the ID/policy-held-out contrast describes procedural
+difficulty for a fixed algorithm, not learned OOD generalization.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{llrrr}
+\toprule
+Direction & Split & Cases & Successes & \%\\
+\midrule
+\tableinput{tables/planning.tex}
+\bottomrule
+\end{tabular}
+\caption{Public-input greedy plan baseline on v2. The stored order is
+never repaired by the scorer. These are algorithmic, not neural, results.}
+\label{tab:planning}
+\end{table}
+
+The assembly/disassembly asymmetry is mechanistically interpretable.
+Current insertion legality does not ensure that a later lower piece
+will retain an unobstructed vertical corridor. A greedy strategy can
+place a supported roof or bridge early and block that corridor.
+Disassembly starts from the complete valid structure and removes an
+eligible piece. The result shows that our process metric distinguishes
+final geometry from executable construction; it does not show that the
+tasks are hard for a suitable search or dependency-aware planner.
+
+\subsection{Earlier Neural Pilots: Separate Evidence}
+\label{sec:pilots}
+Two preceding releases provide neural pipeline evidence but not a v2
+leaderboard. A 576-object composition pilot evaluated four held-out
+objects with GPT-4.1 mini and Gemini 2.5 Flash. Each model answered 56
+cases, for 112 API requests. Table~\ref{tab:pilot} shows visual task
+counts; all cells have only four objects. Both models failed ordinary
+and layer reconstruction/completion, but succeeded with the privileged
+symbolic reference. This suggests a useful perception-versus-structure
+diagnostic, not a statistically established model comparison.
+V2 also changes some scoring rules, including full-structure requirements
+under layer disclosure; cross-version scores must not be pooled.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{llccc}
+\toprule
+Task & Model & RGB & Layers & Symbolic\\
+\midrule
+\tableinput{tables/pilot.tex}
+\bottomrule
+\end{tabular}
+\caption{Earlier composition-v1 pilot only. Gemini Flash denotes
+Gemini 2.5 Flash. These 112 API calls are not v2 model evaluation.}
+\label{tab:pilot}
+\end{table}
+
+A further Gemini control reuses the identical first answer and input
+for 12 ordinary-condition generation/reconstruction/repair cases.
+One additional call either requests reflection without new scene
+information or supplies target-blind legality feedback. Both arms remain
+at 2/12 exact successes, with no gained or lost successes.
+The 24 new requests are billed once; reused historical receipts are
+not charged again. Arms ran sequentially rather than interleaved,
+and the sample is too small to establish that validation tools are
+generally ineffective.
+
+An older Grid-v1 text/structure pilot uses Qwen3-0.6B and rank-8 LoRA
+on query/value projections, with 1,146,880 trainable parameters,
+AdamW learning rate $2\times10^{-4}$, and 120 optimizer steps per
+trained run. The maximum sequence length is 3,072; overlength training
+examples are excluded rather than truncating answers. Greedy inference
+allows 1,200 new tokens. Single-task training uses editing; multi-task
+training uses relations, generation, editing, and planning. Table
+~\ref{tab:training} reports actual outputs, not a proposed recipe.
+All successes are editing cases. Multi-task seeds average 16.7\%
+with a sample standard deviation of 7.2 percentage points, without
+evidence of broad transfer.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrrr}
+\toprule
+Condition & Seed & Steps & Tokens & Success\\
+\midrule
+\tableinput{tables/training.tex}
+\bottomrule
+\end{tabular}
+\caption{Earlier Grid-v1 local text/structure pilot, eight test cases
+per row. Tokens count processed input plus output training tokens.
+Base/single have one seed each. This is not v2 or multimodal training.}
+\label{tab:training}
+\end{table}
+
+The single/multi runs are step-matched, not token-matched, and use
+different supervision diversity. A lower validation NLL is not evidence
+of execution success. Four adapters, five prediction sets, and all 480
+optimizer-step records are bundled. Training used an Apple M4 Pro
+with 48\,GB memory and MPS; local computation consumed real resources
+despite having no API bill.
+
+\subsection{Verification and Resource Accounting}
+All 117,910 v2 oracle answers pass and all empty answers fail. The
+artifact verifier regenerates every ground truth and compares all
+public inputs and private render recipes, checking 476,760 serialized
+rows across 14 compressed shards. Ground truth is therefore materialized
+and checked case by case, rather than inferred from a few examples.
+A full offline replay independently re-evaluates the deterministic
+baseline and reconstructs all event state chains.
+
+Engineering validation passes 79 benchmark tests and 69 original
+application unit tests, TypeScript checking, and production frontend
+build. Browser checks cover 1,440-pixel desktop and 390-pixel mobile
+layouts, nonblank canvas pixels, camera interaction, input/truth
+separation, pagination, scoring, and replay export. A render audit tests
+115 views across the largest sample in each policy. All dataset render
+recipes are verified, but not all possible PNGs are pre-rendered.
+A 46-case external-input export verifies 125 image uses and 25 unique
+image hashes.
+
+A copied environment without the original runtime directory or API key
+regenerates the complete casebank audit and replays all evaluations.
+It shares the installed pinned Node dependencies; this is not a clean
+operating-system installation, a second-person reproduction, or a
+repeated stochastic model training run.
+
+The historical API campaign contains 363 settled requests totaling
+\$0.45102511: \$0.10992152 for CARE-mini and diagnostics,
+\$0.08908686 for Grid-v1 experiments, \$0.20204040 for the composition
+pilot, and \$0.04997633 for the paired controls. V2 construction,
+algorithmic evaluation, and verification add no API requests.
+We preserve the cumulative ledger and its \$4.50 internal cap rather
+than resetting the budget between releases.
+
+\section{Limitations and Research Readiness}
+\paragraph{Data and domain.}
+The casebank contains procedural, not human-authored, structures and
+shares a common root plate. More task conditions do not create more
+independent objects. Eight policies do not imply broad semantic coverage.
+The known-part recognition set is not a novel-part generalization test.
+Policy-held-out bridge and shell data share primitives with training.
+Near-duplicate screening is approximate.
+
+\paragraph{Validity of ground truth.}
+Two geometry implementations reduce some coding risks but share the same
+nominal assumptions. No force, clutch, deformation, load-bearing
+stability, or arbitrary CAD collision model is validated. Public BrickNet
+connector annotations were imported in an earlier audit, but only the
+25-type grid domain was cross-checked; the gated human-model dataset was
+not obtained. Real independent human review is still absent. The
+200-object review interface does not constitute 200 completed reviews.
+
+\paragraph{Metric validity.}
+The surface criterion reduces hidden-layout unfairness but is not a
+complete model of image observability. It ignores some rendered seam
+information and can differ from perspective visibility. Exact metrics
+can be unforgiving to near-correct answers; partial metrics are included
+to make that distinction visible. Additional calibration using
+independent human judgments and adversarial alternatives is needed.
+
+\paragraph{Empirical scope.}
+No large neural evaluation has been run on v2. The complete baseline is
+a deterministic public-input algorithm, with explicit abstentions for
+unsupported modalities. Prior neural studies have only four shared
+composition objects or eight older text cases. They cannot establish
+cross-task correlations, representation advantages, or general
+multi-task transfer. Broader model families, specialized baselines,
+properly matched token budgets, and confirmatory sample designs remain
+necessary before strong comparative claims.
+
+\paragraph{Release and research ethics.}
+Procedural model records declare CC0 provenance. Imported BrickNet
+annotations retain MIT attribution, and the Qwen base checkpoint and
+adapter documentation retain the Apache-2.0 context. Raw API receipts
+and outputs are preserved without storing credentials or machine
+identity. A future human study needs actual independent participants,
+appropriate consent, and a documented disagreement process.
+This manuscript uses the official CVPR 2026 template for exposition;
+it is not a claim of submission, acceptance, or compliance with a
+future conference year's rules.
+
+\section{Conclusion}
+BrickAtlas v2 turns a small multi-task prototype into a materialized,
+versioned casebank with per-case ground truth, explicit information
+conditions, complete metric denominators, and auditable replay.
+Its full algorithmic baseline reveals a concrete gap between locally
+legal greedy assembly and executable completion. The implementation
+also exposes the limits of its present evidence: procedural diversity,
+nominal geometry, and small earlier neural pilots are not substitutes
+for independent data review and broad model evaluation. The current
+release makes those next experiments reproducible and their assumptions
+inspectable, without reporting them as already completed.
+
+{\small
+\bibliographystyle{ieeenat_fullname}
+\bibliography{references}
+}
+\end{document}
