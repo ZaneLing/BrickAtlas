@@ -1,0 +1,930 @@
+{
+  "version": "trace-v1",
+  "runId": "2026-09-11T18-40-18-464Z-validator-once",
+  "caseIndex": 28,
+  "taskId": "ccd0cf9531742fa70b099df5",
+  "model": "google/gemini-2.5-flash",
+  "kind": "plan",
+  "mode": "validator-once",
+  "input": {
+    "id": "ccd0cf9531742fa70b099df5",
+    "kind": "plan",
+    "split": "test_id",
+    "family": "bridge",
+    "prompt": "Return every piece ID exactly once in a valid assemble order. Check support, no body overlap and unobstructed vertical insertion/removal. Any legal order is accepted, not only the source order.",
+    "input": {
+      "target": {
+        "version": 1,
+        "parts": [
+          {
+            "id": "pd6bbc7f",
+            "partId": "3004",
+            "color": "red",
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "turn": 1
+          },
+          {
+            "id": "p2a210e8",
+            "partId": "3004",
+            "color": "red",
+            "x": 5,
+            "y": 6,
+            "z": 0,
+            "turn": 1
+          },
+          {
+            "id": "p8c212b4",
+            "partId": "3004",
+            "color": "red",
+            "x": 5,
+            "y": 0,
+            "z": 0,
+            "turn": 1
+          },
+          {
+            "id": "pa9ed18e",
+            "partId": "3004",
+            "color": "red",
+            "x": 0,
+            "y": 3,
+            "z": 0,
+            "turn": 1
+          },
+          {
+            "id": "p1906741",
+            "partId": "3004",
+            "color": "red",
+            "x": 5,
+            "y": 3,
+            "z": 0,
+            "turn": 1
+          },
+          {
+            "id": "padb68d4",
+            "partId": "3795",
+            "color": "yellow",
+            "x": 0,
+            "y": 9,
+            "z": 0,
+            "turn": 0
+          },
+          {
+            "id": "p22d7bff",
+            "partId": "3004",
+            "color": "red",
+            "x": 0,
+            "y": 6,
+            "z": 0,
+            "turn": 1
+          }
+        ]
+      },
+      "direction": "assemble"
+    },
+    "responseSchema": {
+      "order": [
+        "part ID strings"
+      ]
+    },
+    "imageTitles": []
+  },
+  "frames": [],
+  "modelInput": {
+    "system": "BrickAtlas grid-v1: x,z use studs (8 mm), y uses plate heights (3.2 mm).\nPart position is the MINIMUM x,z corner and BOTTOM y. turn is 0,1,2,3 quarter-turns:\nodd turns swap catalog w,d; 180-degree symmetric bricks have equal footprints.\nAll bricks/plates are opaque rectangular bodies with top studs and bottom sockets.\nOnly integer coordinates 0..24 and at most 64 pieces; bodies must fit within [0,32]^3.\nNo overlap. Every elevated part needs at least one directly supporting stud below it.\nOnly vertical +Y removal and -Y insertion are allowed in plan tasks; overhead overlap blocks passage.\nThis is discrete geometry/connectivity, NOT force, stability or robot-control simulation.\nProgram output: {\"version\":1,\"parts\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]}.\nAlternative reversible output: {\"version\":1,\"nodes\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\n\"parent\":null,\"offset\":[0,0,0],\"turn\":0}, ...]}.\nRelative offsets are in GLOBAL grid axes from parent's minimum corner; turn remains absolute.\nParents must occur earlier. This relative program is not a guarantee of a stud attachment.\nReturn exactly one JSON object; no markdown or chain of thought.\nPublic catalog: {\"2456\":{\"name\":\"Brick 2x6\",\"w\":6,\"d\":2,\"h\":3},\"3001\":{\"name\":\"Brick 2x4\",\"w\":4,\"d\":2,\"h\":3},\"3002\":{\"name\":\"Brick 2x3\",\"w\":3,\"d\":2,\"h\":3},\"3003\":{\"name\":\"Brick 2x2\",\"w\":2,\"d\":2,\"h\":3},\"3004\":{\"name\":\"Brick 1x2\",\"w\":2,\"d\":1,\"h\":3},\"3005\":{\"name\":\"Brick 1x1\",\"w\":1,\"d\":1,\"h\":3},\"3007\":{\"name\":\"Brick 2x8\",\"w\":8,\"d\":2,\"h\":3},\"3008\":{\"name\":\"Brick 1x8\",\"w\":8,\"d\":1,\"h\":3},\"3009\":{\"name\":\"Brick 1x6\",\"w\":6,\"d\":1,\"h\":3},\"3010\":{\"name\":\"Brick 1x4\",\"w\":4,\"d\":1,\"h\":3},\"3020\":{\"name\":\"Plate 2x4\",\"w\":4,\"d\":2,\"h\":1},\"3021\":{\"name\":\"Plate 2x3\",\"w\":3,\"d\":2,\"h\":1},\"3022\":{\"name\":\"Plate 2x2\",\"w\":2,\"d\":2,\"h\":1},\"3023\":{\"name\":\"Plate 1x2\",\"w\":2,\"d\":1,\"h\":1},\"3024\":{\"name\":\"Plate 1x1\",\"w\":1,\"d\":1,\"h\":1},\"3031\":{\"name\":\"Plate 4x4\",\"w\":4,\"d\":4,\"h\":1},\"3032\":{\"name\":\"Plate 4x6\",\"w\":6,\"d\":4,\"h\":1},\"3034\":{\"name\":\"Plate 2x8\",\"w\":8,\"d\":2,\"h\":1},\"3035\":{\"name\":\"Plate 4x8\",\"w\":8,\"d\":4,\"h\":1},\"3460\":{\"name\":\"Plate 1x8\",\"w\":8,\"d\":1,\"h\":1},\"3622\":{\"name\":\"Brick 1x3\",\"w\":3,\"d\":1,\"h\":3},\"3623\":{\"name\":\"Plate 1x3\",\"w\":3,\"d\":1,\"h\":1},\"3666\":{\"name\":\"Plate 1x6\",\"w\":6,\"d\":1,\"h\":1},\"3710\":{\"name\":\"Plate 1x4\",\"w\":4,\"d\":1,\"h\":1},\"3795\":{\"name\":\"Plate 2x6\",\"w\":6,\"d\":2,\"h\":1}}\nNo tools or target feedback are available on the one-shot track. Follow task-specific response schema.",
+    "user": "{\"id\":\"ccd0cf9531742fa70b099df5\",\"kind\":\"plan\",\"split\":\"test_id\",\"family\":\"bridge\",\"prompt\":\"Return every piece ID exactly once in a valid assemble order. Check support, no body overlap and unobstructed vertical insertion/removal. Any legal order is accepted, not only the source order.\",\"input\":{\"target\":{\"version\":1,\"parts\":[{\"id\":\"pd6bbc7f\",\"partId\":\"3004\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":1},{\"id\":\"p2a210e8\",\"partId\":\"3004\",\"color\":\"red\",\"x\":5,\"y\":6,\"z\":0,\"turn\":1},{\"id\":\"p8c212b4\",\"partId\":\"3004\",\"color\":\"red\",\"x\":5,\"y\":0,\"z\":0,\"turn\":1},{\"id\":\"pa9ed18e\",\"partId\":\"3004\",\"color\":\"red\",\"x\":0,\"y\":3,\"z\":0,\"turn\":1},{\"id\":\"p1906741\",\"partId\":\"3004\",\"color\":\"red\",\"x\":5,\"y\":3,\"z\":0,\"turn\":1},{\"id\":\"padb68d4\",\"partId\":\"3795\",\"color\":\"yellow\",\"x\":0,\"y\":9,\"z\":0,\"turn\":0},{\"id\":\"p22d7bff\",\"partId\":\"3004\",\"color\":\"red\",\"x\":0,\"y\":6,\"z\":0,\"turn\":1}]},\"direction\":\"assemble\"},\"responseSchema\":{\"order\":[\"part ID strings\"]},\"imageTitles\":[]}"
+  },
+  "source": [],
+  "reference": [
+    {
+      "id": "pd6bbc7f",
+      "partId": "3004",
+      "color": "red",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "p8c212b4",
+      "partId": "3004",
+      "color": "red",
+      "x": 5,
+      "y": 0,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "pa9ed18e",
+      "partId": "3004",
+      "color": "red",
+      "x": 0,
+      "y": 3,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "p1906741",
+      "partId": "3004",
+      "color": "red",
+      "x": 5,
+      "y": 3,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "p22d7bff",
+      "partId": "3004",
+      "color": "red",
+      "x": 0,
+      "y": 6,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "p2a210e8",
+      "partId": "3004",
+      "color": "red",
+      "x": 5,
+      "y": 6,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "padb68d4",
+      "partId": "3795",
+      "color": "yellow",
+      "x": 0,
+      "y": 9,
+      "z": 0,
+      "turn": 0
+    }
+  ],
+  "output": [
+    {
+      "id": "pd6bbc7f",
+      "partId": "3004",
+      "color": "red",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "p8c212b4",
+      "partId": "3004",
+      "color": "red",
+      "x": 5,
+      "y": 0,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "pa9ed18e",
+      "partId": "3004",
+      "color": "red",
+      "x": 0,
+      "y": 3,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "p1906741",
+      "partId": "3004",
+      "color": "red",
+      "x": 5,
+      "y": 3,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "p22d7bff",
+      "partId": "3004",
+      "color": "red",
+      "x": 0,
+      "y": 6,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "p2a210e8",
+      "partId": "3004",
+      "color": "red",
+      "x": 5,
+      "y": 6,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "padb68d4",
+      "partId": "3795",
+      "color": "yellow",
+      "x": 0,
+      "y": 9,
+      "z": 0,
+      "turn": 0
+    }
+  ],
+  "states": {
+    "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945": [],
+    "839c4b63dd4d39157da4e750fde19b1b682b16a14ec71fcb32e5b2580cc0bc02": [
+      {
+        "id": "pd6bbc7f",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      }
+    ],
+    "671a61ac1260a14c11122e4358b97d99a4585351eecd6ea474d0855c9f341ddd": [
+      {
+        "id": "pd6bbc7f",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p8c212b4",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      }
+    ],
+    "612e48b16682196e2df044a7d1a98fa28dd321852c5a44a18b5e0e015c4792d4": [
+      {
+        "id": "pd6bbc7f",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p8c212b4",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "pa9ed18e",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 3,
+        "z": 0,
+        "turn": 1
+      }
+    ],
+    "b1f504c095ad5bde7be913bbeabd4efd1e37868dc3035a1043afe0b51d7e7c8c": [
+      {
+        "id": "pd6bbc7f",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p8c212b4",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "pa9ed18e",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 3,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p1906741",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 3,
+        "z": 0,
+        "turn": 1
+      }
+    ],
+    "c595c65a1a2b24eed49b49f538a39b8b94c92dabeae64a27e84b538866188358": [
+      {
+        "id": "pd6bbc7f",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p8c212b4",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "pa9ed18e",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 3,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p1906741",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 3,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p22d7bff",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 6,
+        "z": 0,
+        "turn": 1
+      }
+    ],
+    "79f9d7ac26c3b67768494e029f17de54c8f3f2ee6d1d0e6f9caa8380332a1ce2": [
+      {
+        "id": "pd6bbc7f",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p8c212b4",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "pa9ed18e",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 3,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p1906741",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 3,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p22d7bff",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 6,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p2a210e8",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 6,
+        "z": 0,
+        "turn": 1
+      }
+    ],
+    "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292": [
+      {
+        "id": "pd6bbc7f",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p8c212b4",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 0,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "pa9ed18e",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 3,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p1906741",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 3,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p22d7bff",
+        "partId": "3004",
+        "color": "red",
+        "x": 0,
+        "y": 6,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "p2a210e8",
+        "partId": "3004",
+        "color": "red",
+        "x": 5,
+        "y": 6,
+        "z": 0,
+        "turn": 1
+      },
+      {
+        "id": "padb68d4",
+        "partId": "3795",
+        "color": "yellow",
+        "x": 0,
+        "y": 9,
+        "z": 0,
+        "turn": 0
+      }
+    ]
+  },
+  "events": [
+    {
+      "id": 0,
+      "actor": "harness",
+      "kind": "input",
+      "title": "固定模型输入",
+      "payload": {
+        "messages": {
+          "system": "BrickAtlas grid-v1: x,z use studs (8 mm), y uses plate heights (3.2 mm).\nPart position is the MINIMUM x,z corner and BOTTOM y. turn is 0,1,2,3 quarter-turns:\nodd turns swap catalog w,d; 180-degree symmetric bricks have equal footprints.\nAll bricks/plates are opaque rectangular bodies with top studs and bottom sockets.\nOnly integer coordinates 0..24 and at most 64 pieces; bodies must fit within [0,32]^3.\nNo overlap. Every elevated part needs at least one directly supporting stud below it.\nOnly vertical +Y removal and -Y insertion are allowed in plan tasks; overhead overlap blocks passage.\nThis is discrete geometry/connectivity, NOT force, stability or robot-control simulation.\nProgram output: {\"version\":1,\"parts\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]}.\nAlternative reversible output: {\"version\":1,\"nodes\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\n\"parent\":null,\"offset\":[0,0,0],\"turn\":0}, ...]}.\nRelative offsets are in GLOBAL grid axes from parent's minimum corner; turn remains absolute.\nParents must occur earlier. This relative program is not a guarantee of a stud attachment.\nReturn exactly one JSON object; no markdown or chain of thought.\nPublic catalog: {\"2456\":{\"name\":\"Brick 2x6\",\"w\":6,\"d\":2,\"h\":3},\"3001\":{\"name\":\"Brick 2x4\",\"w\":4,\"d\":2,\"h\":3},\"3002\":{\"name\":\"Brick 2x3\",\"w\":3,\"d\":2,\"h\":3},\"3003\":{\"name\":\"Brick 2x2\",\"w\":2,\"d\":2,\"h\":3},\"3004\":{\"name\":\"Brick 1x2\",\"w\":2,\"d\":1,\"h\":3},\"3005\":{\"name\":\"Brick 1x1\",\"w\":1,\"d\":1,\"h\":3},\"3007\":{\"name\":\"Brick 2x8\",\"w\":8,\"d\":2,\"h\":3},\"3008\":{\"name\":\"Brick 1x8\",\"w\":8,\"d\":1,\"h\":3},\"3009\":{\"name\":\"Brick 1x6\",\"w\":6,\"d\":1,\"h\":3},\"3010\":{\"name\":\"Brick 1x4\",\"w\":4,\"d\":1,\"h\":3},\"3020\":{\"name\":\"Plate 2x4\",\"w\":4,\"d\":2,\"h\":1},\"3021\":{\"name\":\"Plate 2x3\",\"w\":3,\"d\":2,\"h\":1},\"3022\":{\"name\":\"Plate 2x2\",\"w\":2,\"d\":2,\"h\":1},\"3023\":{\"name\":\"Plate 1x2\",\"w\":2,\"d\":1,\"h\":1},\"3024\":{\"name\":\"Plate 1x1\",\"w\":1,\"d\":1,\"h\":1},\"3031\":{\"name\":\"Plate 4x4\",\"w\":4,\"d\":4,\"h\":1},\"3032\":{\"name\":\"Plate 4x6\",\"w\":6,\"d\":4,\"h\":1},\"3034\":{\"name\":\"Plate 2x8\",\"w\":8,\"d\":2,\"h\":1},\"3035\":{\"name\":\"Plate 4x8\",\"w\":8,\"d\":4,\"h\":1},\"3460\":{\"name\":\"Plate 1x8\",\"w\":8,\"d\":1,\"h\":1},\"3622\":{\"name\":\"Brick 1x3\",\"w\":3,\"d\":1,\"h\":3},\"3623\":{\"name\":\"Plate 1x3\",\"w\":3,\"d\":1,\"h\":1},\"3666\":{\"name\":\"Plate 1x6\",\"w\":6,\"d\":1,\"h\":1},\"3710\":{\"name\":\"Plate 1x4\",\"w\":4,\"d\":1,\"h\":1},\"3795\":{\"name\":\"Plate 2x6\",\"w\":6,\"d\":2,\"h\":1}}\nNo tools or target feedback are available on the one-shot track. Follow task-specific response schema.",
+          "user": "{\"id\":\"ccd0cf9531742fa70b099df5\",\"kind\":\"plan\",\"split\":\"test_id\",\"family\":\"bridge\",\"prompt\":\"Return every piece ID exactly once in a valid assemble order. Check support, no body overlap and unobstructed vertical insertion/removal. Any legal order is accepted, not only the source order.\",\"input\":{\"target\":{\"version\":1,\"parts\":[{\"id\":\"pd6bbc7f\",\"partId\":\"3004\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":1},{\"id\":\"p2a210e8\",\"partId\":\"3004\",\"color\":\"red\",\"x\":5,\"y\":6,\"z\":0,\"turn\":1},{\"id\":\"p8c212b4\",\"partId\":\"3004\",\"color\":\"red\",\"x\":5,\"y\":0,\"z\":0,\"turn\":1},{\"id\":\"pa9ed18e\",\"partId\":\"3004\",\"color\":\"red\",\"x\":0,\"y\":3,\"z\":0,\"turn\":1},{\"id\":\"p1906741\",\"partId\":\"3004\",\"color\":\"red\",\"x\":5,\"y\":3,\"z\":0,\"turn\":1},{\"id\":\"padb68d4\",\"partId\":\"3795\",\"color\":\"yellow\",\"x\":0,\"y\":9,\"z\":0,\"turn\":0},{\"id\":\"p22d7bff\",\"partId\":\"3004\",\"color\":\"red\",\"x\":0,\"y\":6,\"z\":0,\"turn\":1}]},\"direction\":\"assemble\"},\"responseSchema\":{\"order\":[\"part ID strings\"]},\"imageTitles\":[]}"
+        },
+        "framePaths": [],
+        "note": "User serialization reconstructed from frozen runner; local Python JSON escapes Unicode. Same semantic payload."
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "timestamp": null,
+      "callIndex": null,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "model-input"
+    },
+    {
+      "id": 1,
+      "actor": "model",
+      "kind": "response",
+      "title": "模型响应 1",
+      "payload": {
+        "raw": "{\"order\":[\"pd6bbc7f\",\"p8c212b4\",\"pa9ed18e\",\"p1906741\",\"p22d7bff\",\"p2a210e8\",\"padb68d4\"]}",
+        "generationId": "gen-1789152178-uz9Y6I3wqTbdGKCiZPGX",
+        "provider": "Google",
+        "tokens": {
+          "input": 1309,
+          "output": 57
+        },
+        "latencyMs": 918,
+        "billing": "OpenRouter usage receipt",
+        "originalReceiptCost": 0.0005352,
+        "finishReason": "stop"
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0.0005352,
+      "provenance": "recorded",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 2,
+      "actor": "harness",
+      "kind": "decode",
+      "title": "按原始计划执行；不重新排序",
+      "payload": {
+        "order": [
+          "pd6bbc7f",
+          "p8c212b4",
+          "pa9ed18e",
+          "p1906741",
+          "p22d7bff",
+          "p2a210e8",
+          "padb68d4"
+        ]
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 3,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "pd6bbc7f"
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "839c4b63dd4d39157da4e750fde19b1b682b16a14ec71fcb32e5b2580cc0bc02",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 4,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "p8c212b4"
+      },
+      "before": "839c4b63dd4d39157da4e750fde19b1b682b16a14ec71fcb32e5b2580cc0bc02",
+      "after": "671a61ac1260a14c11122e4358b97d99a4585351eecd6ea474d0855c9f341ddd",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 5,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "pa9ed18e"
+      },
+      "before": "671a61ac1260a14c11122e4358b97d99a4585351eecd6ea474d0855c9f341ddd",
+      "after": "612e48b16682196e2df044a7d1a98fa28dd321852c5a44a18b5e0e015c4792d4",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 6,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "p1906741"
+      },
+      "before": "612e48b16682196e2df044a7d1a98fa28dd321852c5a44a18b5e0e015c4792d4",
+      "after": "b1f504c095ad5bde7be913bbeabd4efd1e37868dc3035a1043afe0b51d7e7c8c",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 7,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "p22d7bff"
+      },
+      "before": "b1f504c095ad5bde7be913bbeabd4efd1e37868dc3035a1043afe0b51d7e7c8c",
+      "after": "c595c65a1a2b24eed49b49f538a39b8b94c92dabeae64a27e84b538866188358",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 8,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "p2a210e8"
+      },
+      "before": "c595c65a1a2b24eed49b49f538a39b8b94c92dabeae64a27e84b538866188358",
+      "after": "79f9d7ac26c3b67768494e029f17de54c8f3f2ee6d1d0e6f9caa8380332a1ce2",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 9,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "padb68d4"
+      },
+      "before": "79f9d7ac26c3b67768494e029f17de54c8f3f2ee6d1d0e6f9caa8380332a1ce2",
+      "after": "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 10,
+      "actor": "evaluator",
+      "kind": "score",
+      "title": "第 1 次输出的事后评分",
+      "payload": {
+        "metrics": {
+          "format": 1,
+          "valid": 1,
+          "success": 1,
+          "legalPrefix": 1,
+          "coverage": 1
+        },
+        "issues": []
+      },
+      "before": "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292",
+      "after": "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 11,
+      "actor": "harness",
+      "kind": "feedback",
+      "title": "固定合法性反馈（由历史版本重建）",
+      "payload": {
+        "syntax": true,
+        "legality": [
+          "No decodable structure; for QA/planning, check the requested response schema."
+        ]
+      },
+      "before": "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292",
+      "after": "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "model-input"
+    },
+    {
+      "id": 12,
+      "actor": "model",
+      "kind": "response",
+      "title": "模型响应 2",
+      "payload": {
+        "raw": "{\"order\":[\"pd6bbc7f\",\"p8c212b4\",\"pa9ed18e\",\"p1906741\",\"p22d7bff\",\"p2a210e8\",\"padb68d4\"]}",
+        "generationId": "gen-1789152179-RkQwhcQS1cjNHIWjog1P",
+        "provider": "Google",
+        "tokens": {
+          "input": 1410,
+          "output": 57
+        },
+        "latencyMs": 844,
+        "billing": "OpenRouter usage receipt",
+        "originalReceiptCost": 0.0005655,
+        "finishReason": "stop"
+      },
+      "before": "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292",
+      "after": "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0.0005655,
+      "provenance": "recorded",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 13,
+      "actor": "harness",
+      "kind": "decode",
+      "title": "按原始计划执行；不重新排序",
+      "payload": {
+        "order": [
+          "pd6bbc7f",
+          "p8c212b4",
+          "pa9ed18e",
+          "p1906741",
+          "p22d7bff",
+          "p2a210e8",
+          "padb68d4"
+        ]
+      },
+      "before": "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292",
+      "after": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 14,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "pd6bbc7f"
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "839c4b63dd4d39157da4e750fde19b1b682b16a14ec71fcb32e5b2580cc0bc02",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 15,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "p8c212b4"
+      },
+      "before": "839c4b63dd4d39157da4e750fde19b1b682b16a14ec71fcb32e5b2580cc0bc02",
+      "after": "671a61ac1260a14c11122e4358b97d99a4585351eecd6ea474d0855c9f341ddd",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 16,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "pa9ed18e"
+      },
+      "before": "671a61ac1260a14c11122e4358b97d99a4585351eecd6ea474d0855c9f341ddd",
+      "after": "612e48b16682196e2df044a7d1a98fa28dd321852c5a44a18b5e0e015c4792d4",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 17,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "p1906741"
+      },
+      "before": "612e48b16682196e2df044a7d1a98fa28dd321852c5a44a18b5e0e015c4792d4",
+      "after": "b1f504c095ad5bde7be913bbeabd4efd1e37868dc3035a1043afe0b51d7e7c8c",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 18,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "p22d7bff"
+      },
+      "before": "b1f504c095ad5bde7be913bbeabd4efd1e37868dc3035a1043afe0b51d7e7c8c",
+      "after": "c595c65a1a2b24eed49b49f538a39b8b94c92dabeae64a27e84b538866188358",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 19,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "p2a210e8"
+      },
+      "before": "c595c65a1a2b24eed49b49f538a39b8b94c92dabeae64a27e84b538866188358",
+      "after": "79f9d7ac26c3b67768494e029f17de54c8f3f2ee6d1d0e6f9caa8380332a1ce2",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 20,
+      "actor": "environment",
+      "kind": "execute",
+      "title": "执行计划：放置",
+      "payload": {
+        "id": "padb68d4"
+      },
+      "before": "79f9d7ac26c3b67768494e029f17de54c8f3f2ee6d1d0e6f9caa8380332a1ce2",
+      "after": "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 21,
+      "actor": "evaluator",
+      "kind": "score",
+      "title": "第 2 次输出的事后评分",
+      "payload": {
+        "metrics": {
+          "format": 1,
+          "valid": 1,
+          "success": 1,
+          "legalPrefix": 1,
+          "coverage": 1
+        },
+        "issues": []
+      },
+      "before": "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292",
+      "after": "f25641f0e97d6a4a286c0c19ab88c854c3217e82117600351a7a5a07146f3292",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    }
+  ],
+  "differences": [],
+  "verdict": {
+    "metrics": {
+      "format": 1,
+      "valid": 1,
+      "success": 1,
+      "legalPrefix": 1,
+      "coverage": 1
+    },
+    "issues": []
+  },
+  "evidence": {
+    "scoreMatches": true,
+    "responseCount": 2,
+    "cost": 0.0011007,
+    "reusedFirstResponse": false,
+    "outputMeaning": "executed-plan",
+    "referenceIsExample": false,
+    "note": "Historical replay. Responses are recorded; decoding, feedback reconstruction and geometry playback are derived. No internal thoughts or historical timestamps were recorded. Collection unfolding is not a model assembly plan. Difference labels beyond exact matches are diagnostic, not the scorer."
+  }
+}

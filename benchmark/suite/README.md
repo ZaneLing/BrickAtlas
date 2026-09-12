@@ -5,6 +5,9 @@
 
 ## 文档
 
+- [研究版逐项目标验收](ACCEPTANCE.md)
+- [研究版操作与复现](research/README.md)
+- [576几何组数据卡与局限](research/DATASET_CARD.md)
 - [详细分阶段计划](../PLAN-multitask.md)
 - [数据卡](DATASET_CARD.md)
 - [任务协议与指标](METRICS.md)
@@ -123,8 +126,9 @@ npm run suite:score -- --predictions=/absolute/path/predictions.jsonl
 每条包含taskId、group、split、kind、messages、needsImages和renderRequests。
 renderRequests仅供可信离线渲染预处理，**不可作为图像题的模型输入**。
 对需要图像的SFT条目，必须先生成对应图片再使用支持视觉的训练器。
-未执行神经模型微调，不把数据导出说成训练完成。
-本版用真实通用模型API验证评测链路，提供oracle、空答案和copy-input诊断基线。
+初始版仅导出配方；研究扩展现已完成五组真实 Qwen3-0.6B 文本/结构基线，包括四组短程 LoRA。
+权重、训练步骤和预测已打包，见 `research/README.md`。这不是多模态微调，也未证明多任务迁移。
+另有真实通用模型API评测，以及oracle、空答案和copy-input诊断基线。
 
 ## 验证
 

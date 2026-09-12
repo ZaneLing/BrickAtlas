@@ -5,8 +5,9 @@ import { execFileSync } from 'node:child_process';
 import { ARTIFACTS, BENCHMARK, SUITE, listRuns } from './storage';
 import { models } from './data';
 import { atomicJson } from '../core/budget';
+import { VERSION } from './shared';
 
-const run = listRuns().find(r => r.mode === 'one-shot' && r.representation === 'absolute' && r.status === 'complete');
+const run = listRuns().find(r => r.version === VERSION && r.mode === 'one-shot' && r.representation === 'absolute' && r.status === 'complete');
 assert.ok(run, 'Run one-shot smoke before integration test');
 const selectedModel = run.models[0], rows = run.results.filter(r => r.model === selectedModel);
 const file = resolve(BENCHMARK, '.runtime/suite-exports/predictions.from-real-run.jsonl');

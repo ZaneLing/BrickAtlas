@@ -10,6 +10,10 @@ import { runSuite } from './runner';
 import { SuiteRenderer } from './render';
 import { report } from './report';
 import { TASKS, type Kind, type Mode } from './shared';
+import { RESEARCH_VERSION } from './research/dataset';
+import { replayResearch, type ResearchRun } from './research/run';
+import { replayLocal, type LocalRun } from './research/local-results';
+import { PAIRED_VERSION, replayPaired, type PairedRun } from './research/paired';
 
 const [command, ...args] = process.argv.slice(2);
 const option = (name: string, fallback: string) => args.find(a => a.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
@@ -36,6 +40,9 @@ if (command === 'prepare') {
 } else if (command === 'replay') {
   const evidence = [];
   for (const run of listRuns()) {
+    if (run.version === PAIRED_VERSION) { evidence.push(replayPaired(run as unknown as PairedRun)); continue; }
+    if (run.version === RESEARCH_VERSION) { evidence.push(replayResearch(run as ResearchRun)); continue; }
+    if (run.version === 'local-text-training-v1') { evidence.push(replayLocal(run as LocalRun)); continue; }
     assert.equal(run.datasetHash, summary().digest); assert.equal(run.protocolHash, digest(SYSTEM));
     assert.equal(run.selectionHash, digest(run.selection));
     assert.deepEqual(sourceHashes(), run.sourceFiles);

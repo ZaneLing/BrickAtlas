@@ -1,0 +1,2307 @@
+{
+  "version": "trace-v1",
+  "runId": "2026-09-12T04-39-54-248Z-research",
+  "caseIndex": 74,
+  "taskId": "47a7766cc734ebe187fa7471",
+  "model": "google/gemini-2.5-flash",
+  "kind": "reconstruct",
+  "mode": "one-shot",
+  "input": {
+    "id": "47a7766cc734ebe187fa7471",
+    "kind": "reconstruct",
+    "split": "test_id",
+    "family": "alternating-columns",
+    "prompt": "Reconstruct all reference pieces and their exact colors/poses from the assembled and layer-inspection images. Layer views explicitly reveal hidden geometry; this is NOT single-view reconstruction. IDs may be arbitrary. This is the privileged SYMBOLIC diagnostic: the complete reference program is supplied. Do not label this a visual result.",
+    "input": {
+      "billOfMaterials": {
+        "3035:gray": 1,
+        "3005:yellow": 1,
+        "3023:red": 1,
+        "3022:blue": 1,
+        "3002:green": 1,
+        "3024:yellow": 1,
+        "3710:red": 1,
+        "3010:blue": 1,
+        "3710:green": 1,
+        "3010:yellow": 1,
+        "3622:red": 1,
+        "3623:blue": 1,
+        "3021:green": 1,
+        "3001:yellow": 1,
+        "3005:red": 1
+      },
+      "coordinateFrame": "minimum x/z corner at 0,0; bottom y=0",
+      "condition": "symbolic",
+      "coordinateSystem": "min X/Z corner anchored at 0; X/Z studs, Y plate layers",
+      "reference": {
+        "version": 1,
+        "parts": [
+          {
+            "id": "p83ce971",
+            "partId": "3035",
+            "color": "gray",
+            "x": 1,
+            "y": 0,
+            "z": 1,
+            "turn": 0
+          },
+          {
+            "id": "p3ee7135",
+            "partId": "3005",
+            "color": "yellow",
+            "x": 7,
+            "y": 1,
+            "z": 4,
+            "turn": 1
+          },
+          {
+            "id": "pd2a678b",
+            "partId": "3023",
+            "color": "red",
+            "x": 1,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "id": "p0eef9e1",
+            "partId": "3022",
+            "color": "blue",
+            "x": 1,
+            "y": 2,
+            "z": 2,
+            "turn": 1
+          },
+          {
+            "id": "p7e49759",
+            "partId": "3002",
+            "color": "green",
+            "x": 5,
+            "y": 1,
+            "z": 0,
+            "turn": 0
+          },
+          {
+            "id": "pe896bb4",
+            "partId": "3024",
+            "color": "yellow",
+            "x": 7,
+            "y": 4,
+            "z": 4,
+            "turn": 1
+          },
+          {
+            "id": "pd6a45fd",
+            "partId": "3710",
+            "color": "red",
+            "x": 6,
+            "y": 5,
+            "z": 4,
+            "turn": 0
+          },
+          {
+            "id": "p011572e",
+            "partId": "3010",
+            "color": "blue",
+            "x": 8,
+            "y": 6,
+            "z": 2,
+            "turn": 1
+          },
+          {
+            "id": "pd76c1b1",
+            "partId": "3710",
+            "color": "green",
+            "x": 6,
+            "y": 9,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "id": "pdf1c970",
+            "partId": "3010",
+            "color": "yellow",
+            "x": 1,
+            "y": 3,
+            "z": 2,
+            "turn": 1
+          },
+          {
+            "id": "pdce41c5",
+            "partId": "3622",
+            "color": "red",
+            "x": 9,
+            "y": 6,
+            "z": 4,
+            "turn": 0
+          },
+          {
+            "id": "p6b84247",
+            "partId": "3623",
+            "color": "blue",
+            "x": 11,
+            "y": 9,
+            "z": 4,
+            "turn": 1
+          },
+          {
+            "id": "pd24725f",
+            "partId": "3021",
+            "color": "green",
+            "x": 0,
+            "y": 6,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "id": "p8f0da86",
+            "partId": "3001",
+            "color": "yellow",
+            "x": 10,
+            "y": 10,
+            "z": 2,
+            "turn": 1
+          },
+          {
+            "id": "pdd87623",
+            "partId": "3005",
+            "color": "red",
+            "x": 11,
+            "y": 10,
+            "z": 6,
+            "turn": 0
+          }
+        ]
+      }
+    },
+    "responseSchema": {
+      "version": 1,
+      "parts": [
+        {
+          "id": "local1",
+          "partId": "3005",
+          "color": "red",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "turn": 0
+        }
+      ]
+    },
+    "imageTitles": []
+  },
+  "frames": [],
+  "modelInput": {
+    "system": "BrickAtlas grid-v1: x,z use studs (8 mm), y uses plate heights (3.2 mm).\nPart position is the MINIMUM x,z corner and BOTTOM y. turn is 0,1,2,3 quarter-turns:\nodd turns swap catalog w,d; 180-degree symmetric bricks have equal footprints.\nAll bricks/plates are opaque rectangular bodies with top studs and bottom sockets.\nOnly integer coordinates 0..24 and at most 64 pieces; bodies must fit within [0,32]^3.\nNo overlap. Every elevated part needs at least one directly supporting stud below it.\nOnly vertical +Y removal and -Y insertion are allowed in plan tasks; overhead overlap blocks passage.\nThis is discrete geometry/connectivity, NOT force, stability or robot-control simulation.\nProgram output: {\"version\":1,\"parts\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]}.\nAlternative reversible output: {\"version\":1,\"nodes\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\n\"parent\":null,\"offset\":[0,0,0],\"turn\":0}, ...]}.\nRelative offsets are in GLOBAL grid axes from parent's minimum corner; turn remains absolute.\nParents must occur earlier. This relative program is not a guarantee of a stud attachment.\nReturn exactly one JSON object; no markdown or chain of thought.\nPublic catalog: {\"2456\":{\"name\":\"Brick 2x6\",\"w\":6,\"d\":2,\"h\":3},\"3001\":{\"name\":\"Brick 2x4\",\"w\":4,\"d\":2,\"h\":3},\"3002\":{\"name\":\"Brick 2x3\",\"w\":3,\"d\":2,\"h\":3},\"3003\":{\"name\":\"Brick 2x2\",\"w\":2,\"d\":2,\"h\":3},\"3004\":{\"name\":\"Brick 1x2\",\"w\":2,\"d\":1,\"h\":3},\"3005\":{\"name\":\"Brick 1x1\",\"w\":1,\"d\":1,\"h\":3},\"3007\":{\"name\":\"Brick 2x8\",\"w\":8,\"d\":2,\"h\":3},\"3008\":{\"name\":\"Brick 1x8\",\"w\":8,\"d\":1,\"h\":3},\"3009\":{\"name\":\"Brick 1x6\",\"w\":6,\"d\":1,\"h\":3},\"3010\":{\"name\":\"Brick 1x4\",\"w\":4,\"d\":1,\"h\":3},\"3020\":{\"name\":\"Plate 2x4\",\"w\":4,\"d\":2,\"h\":1},\"3021\":{\"name\":\"Plate 2x3\",\"w\":3,\"d\":2,\"h\":1},\"3022\":{\"name\":\"Plate 2x2\",\"w\":2,\"d\":2,\"h\":1},\"3023\":{\"name\":\"Plate 1x2\",\"w\":2,\"d\":1,\"h\":1},\"3024\":{\"name\":\"Plate 1x1\",\"w\":1,\"d\":1,\"h\":1},\"3031\":{\"name\":\"Plate 4x4\",\"w\":4,\"d\":4,\"h\":1},\"3032\":{\"name\":\"Plate 4x6\",\"w\":6,\"d\":4,\"h\":1},\"3034\":{\"name\":\"Plate 2x8\",\"w\":8,\"d\":2,\"h\":1},\"3035\":{\"name\":\"Plate 4x8\",\"w\":8,\"d\":4,\"h\":1},\"3460\":{\"name\":\"Plate 1x8\",\"w\":8,\"d\":1,\"h\":1},\"3622\":{\"name\":\"Brick 1x3\",\"w\":3,\"d\":1,\"h\":3},\"3623\":{\"name\":\"Plate 1x3\",\"w\":3,\"d\":1,\"h\":1},\"3666\":{\"name\":\"Plate 1x6\",\"w\":6,\"d\":1,\"h\":1},\"3710\":{\"name\":\"Plate 1x4\",\"w\":4,\"d\":1,\"h\":1},\"3795\":{\"name\":\"Plate 2x6\",\"w\":6,\"d\":2,\"h\":1}}\nNo tools or target feedback are available on the one-shot track. Follow task-specific response schema.",
+    "user": "{\"id\":\"47a7766cc734ebe187fa7471\",\"kind\":\"reconstruct\",\"split\":\"test_id\",\"family\":\"alternating-columns\",\"prompt\":\"Reconstruct all reference pieces and their exact colors/poses from the assembled and layer-inspection images. Layer views explicitly reveal hidden geometry; this is NOT single-view reconstruction. IDs may be arbitrary. This is the privileged SYMBOLIC diagnostic: the complete reference program is supplied. Do not label this a visual result.\",\"input\":{\"billOfMaterials\":{\"3035:gray\":1,\"3005:yellow\":1,\"3023:red\":1,\"3022:blue\":1,\"3002:green\":1,\"3024:yellow\":1,\"3710:red\":1,\"3010:blue\":1,\"3710:green\":1,\"3010:yellow\":1,\"3622:red\":1,\"3623:blue\":1,\"3021:green\":1,\"3001:yellow\":1,\"3005:red\":1},\"coordinateFrame\":\"minimum x/z corner at 0,0; bottom y=0\",\"condition\":\"symbolic\",\"coordinateSystem\":\"min X/Z corner anchored at 0; X/Z studs, Y plate layers\",\"reference\":{\"version\":1,\"parts\":[{\"id\":\"p83ce971\",\"partId\":\"3035\",\"color\":\"gray\",\"x\":1,\"y\":0,\"z\":1,\"turn\":0},{\"id\":\"p3ee7135\",\"partId\":\"3005\",\"color\":\"yellow\",\"x\":7,\"y\":1,\"z\":4,\"turn\":1},{\"id\":\"pd2a678b\",\"partId\":\"3023\",\"color\":\"red\",\"x\":1,\"y\":1,\"z\":3,\"turn\":0},{\"id\":\"p0eef9e1\",\"partId\":\"3022\",\"color\":\"blue\",\"x\":1,\"y\":2,\"z\":2,\"turn\":1},{\"id\":\"p7e49759\",\"partId\":\"3002\",\"color\":\"green\",\"x\":5,\"y\":1,\"z\":0,\"turn\":0},{\"id\":\"pe896bb4\",\"partId\":\"3024\",\"color\":\"yellow\",\"x\":7,\"y\":4,\"z\":4,\"turn\":1},{\"id\":\"pd6a45fd\",\"partId\":\"3710\",\"color\":\"red\",\"x\":6,\"y\":5,\"z\":4,\"turn\":0},{\"id\":\"p011572e\",\"partId\":\"3010\",\"color\":\"blue\",\"x\":8,\"y\":6,\"z\":2,\"turn\":1},{\"id\":\"pd76c1b1\",\"partId\":\"3710\",\"color\":\"green\",\"x\":6,\"y\":9,\"z\":3,\"turn\":0},{\"id\":\"pdf1c970\",\"partId\":\"3010\",\"color\":\"yellow\",\"x\":1,\"y\":3,\"z\":2,\"turn\":1},{\"id\":\"pdce41c5\",\"partId\":\"3622\",\"color\":\"red\",\"x\":9,\"y\":6,\"z\":4,\"turn\":0},{\"id\":\"p6b84247\",\"partId\":\"3623\",\"color\":\"blue\",\"x\":11,\"y\":9,\"z\":4,\"turn\":1},{\"id\":\"pd24725f\",\"partId\":\"3021\",\"color\":\"green\",\"x\":0,\"y\":6,\"z\":3,\"turn\":0},{\"id\":\"p8f0da86\",\"partId\":\"3001\",\"color\":\"yellow\",\"x\":10,\"y\":10,\"z\":2,\"turn\":1},{\"id\":\"pdd87623\",\"partId\":\"3005\",\"color\":\"red\",\"x\":11,\"y\":10,\"z\":6,\"turn\":0}]}},\"responseSchema\":{\"version\":1,\"parts\":[{\"id\":\"local1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]},\"imageTitles\":[]}"
+  },
+  "source": [
+    {
+      "id": "p83ce971",
+      "partId": "3035",
+      "color": "gray",
+      "x": 1,
+      "y": 0,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "p3ee7135",
+      "partId": "3005",
+      "color": "yellow",
+      "x": 7,
+      "y": 1,
+      "z": 4,
+      "turn": 1
+    },
+    {
+      "id": "pd2a678b",
+      "partId": "3023",
+      "color": "red",
+      "x": 1,
+      "y": 1,
+      "z": 3,
+      "turn": 0
+    },
+    {
+      "id": "p0eef9e1",
+      "partId": "3022",
+      "color": "blue",
+      "x": 1,
+      "y": 2,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "p7e49759",
+      "partId": "3002",
+      "color": "green",
+      "x": 5,
+      "y": 1,
+      "z": 0,
+      "turn": 0
+    },
+    {
+      "id": "pe896bb4",
+      "partId": "3024",
+      "color": "yellow",
+      "x": 7,
+      "y": 4,
+      "z": 4,
+      "turn": 1
+    },
+    {
+      "id": "pd6a45fd",
+      "partId": "3710",
+      "color": "red",
+      "x": 6,
+      "y": 5,
+      "z": 4,
+      "turn": 0
+    },
+    {
+      "id": "p011572e",
+      "partId": "3010",
+      "color": "blue",
+      "x": 8,
+      "y": 6,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "pd76c1b1",
+      "partId": "3710",
+      "color": "green",
+      "x": 6,
+      "y": 9,
+      "z": 3,
+      "turn": 0
+    },
+    {
+      "id": "pdf1c970",
+      "partId": "3010",
+      "color": "yellow",
+      "x": 1,
+      "y": 3,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "pdce41c5",
+      "partId": "3622",
+      "color": "red",
+      "x": 9,
+      "y": 6,
+      "z": 4,
+      "turn": 0
+    },
+    {
+      "id": "p6b84247",
+      "partId": "3623",
+      "color": "blue",
+      "x": 11,
+      "y": 9,
+      "z": 4,
+      "turn": 1
+    },
+    {
+      "id": "pd24725f",
+      "partId": "3021",
+      "color": "green",
+      "x": 0,
+      "y": 6,
+      "z": 3,
+      "turn": 0
+    },
+    {
+      "id": "p8f0da86",
+      "partId": "3001",
+      "color": "yellow",
+      "x": 10,
+      "y": 10,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "pdd87623",
+      "partId": "3005",
+      "color": "red",
+      "x": 11,
+      "y": 10,
+      "z": 6,
+      "turn": 0
+    }
+  ],
+  "reference": [
+    {
+      "id": "p83ce971",
+      "partId": "3035",
+      "color": "gray",
+      "x": 1,
+      "y": 0,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "p3ee7135",
+      "partId": "3005",
+      "color": "yellow",
+      "x": 7,
+      "y": 1,
+      "z": 4,
+      "turn": 1
+    },
+    {
+      "id": "pd2a678b",
+      "partId": "3023",
+      "color": "red",
+      "x": 1,
+      "y": 1,
+      "z": 3,
+      "turn": 0
+    },
+    {
+      "id": "p0eef9e1",
+      "partId": "3022",
+      "color": "blue",
+      "x": 1,
+      "y": 2,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "p7e49759",
+      "partId": "3002",
+      "color": "green",
+      "x": 5,
+      "y": 1,
+      "z": 0,
+      "turn": 0
+    },
+    {
+      "id": "pe896bb4",
+      "partId": "3024",
+      "color": "yellow",
+      "x": 7,
+      "y": 4,
+      "z": 4,
+      "turn": 1
+    },
+    {
+      "id": "pd6a45fd",
+      "partId": "3710",
+      "color": "red",
+      "x": 6,
+      "y": 5,
+      "z": 4,
+      "turn": 0
+    },
+    {
+      "id": "p011572e",
+      "partId": "3010",
+      "color": "blue",
+      "x": 8,
+      "y": 6,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "pd76c1b1",
+      "partId": "3710",
+      "color": "green",
+      "x": 6,
+      "y": 9,
+      "z": 3,
+      "turn": 0
+    },
+    {
+      "id": "pdf1c970",
+      "partId": "3010",
+      "color": "yellow",
+      "x": 1,
+      "y": 3,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "pdce41c5",
+      "partId": "3622",
+      "color": "red",
+      "x": 9,
+      "y": 6,
+      "z": 4,
+      "turn": 0
+    },
+    {
+      "id": "p6b84247",
+      "partId": "3623",
+      "color": "blue",
+      "x": 11,
+      "y": 9,
+      "z": 4,
+      "turn": 1
+    },
+    {
+      "id": "pd24725f",
+      "partId": "3021",
+      "color": "green",
+      "x": 0,
+      "y": 6,
+      "z": 3,
+      "turn": 0
+    },
+    {
+      "id": "p8f0da86",
+      "partId": "3001",
+      "color": "yellow",
+      "x": 10,
+      "y": 10,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "pdd87623",
+      "partId": "3005",
+      "color": "red",
+      "x": 11,
+      "y": 10,
+      "z": 6,
+      "turn": 0
+    }
+  ],
+  "output": [
+    {
+      "id": "p83ce971",
+      "partId": "3035",
+      "color": "gray",
+      "x": 1,
+      "y": 0,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "p3ee7135",
+      "partId": "3005",
+      "color": "yellow",
+      "x": 7,
+      "y": 1,
+      "z": 4,
+      "turn": 1
+    },
+    {
+      "id": "pd2a678b",
+      "partId": "3023",
+      "color": "red",
+      "x": 1,
+      "y": 1,
+      "z": 3,
+      "turn": 0
+    },
+    {
+      "id": "p0eef9e1",
+      "partId": "3022",
+      "color": "blue",
+      "x": 1,
+      "y": 2,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "p7e49759",
+      "partId": "3002",
+      "color": "green",
+      "x": 5,
+      "y": 1,
+      "z": 0,
+      "turn": 0
+    },
+    {
+      "id": "pe896bb4",
+      "partId": "3024",
+      "color": "yellow",
+      "x": 7,
+      "y": 4,
+      "z": 4,
+      "turn": 1
+    },
+    {
+      "id": "pd6a45fd",
+      "partId": "3710",
+      "color": "red",
+      "x": 6,
+      "y": 5,
+      "z": 4,
+      "turn": 0
+    },
+    {
+      "id": "p011572e",
+      "partId": "3010",
+      "color": "blue",
+      "x": 8,
+      "y": 6,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "pd76c1b1",
+      "partId": "3710",
+      "color": "green",
+      "x": 6,
+      "y": 9,
+      "z": 3,
+      "turn": 0
+    },
+    {
+      "id": "pdf1c970",
+      "partId": "3010",
+      "color": "yellow",
+      "x": 1,
+      "y": 3,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "pdce41c5",
+      "partId": "3622",
+      "color": "red",
+      "x": 9,
+      "y": 6,
+      "z": 4,
+      "turn": 0
+    },
+    {
+      "id": "p6b84247",
+      "partId": "3623",
+      "color": "blue",
+      "x": 11,
+      "y": 9,
+      "z": 4,
+      "turn": 1
+    },
+    {
+      "id": "pd24725f",
+      "partId": "3021",
+      "color": "green",
+      "x": 0,
+      "y": 6,
+      "z": 3,
+      "turn": 0
+    },
+    {
+      "id": "p8f0da86",
+      "partId": "3001",
+      "color": "yellow",
+      "x": 10,
+      "y": 10,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "pdd87623",
+      "partId": "3005",
+      "color": "red",
+      "x": 11,
+      "y": 10,
+      "z": 6,
+      "turn": 0
+    }
+  ],
+  "states": {
+    "1b13f8088b192d6d83cb74201769f3f449143dcaba0975e8098085ed68b2b836": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "pe896bb4",
+        "partId": "3024",
+        "color": "yellow",
+        "x": 7,
+        "y": 4,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd6a45fd",
+        "partId": "3710",
+        "color": "red",
+        "x": 6,
+        "y": 5,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p011572e",
+        "partId": "3010",
+        "color": "blue",
+        "x": 8,
+        "y": 6,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pd76c1b1",
+        "partId": "3710",
+        "color": "green",
+        "x": 6,
+        "y": 9,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "pdf1c970",
+        "partId": "3010",
+        "color": "yellow",
+        "x": 1,
+        "y": 3,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pdce41c5",
+        "partId": "3622",
+        "color": "red",
+        "x": 9,
+        "y": 6,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p6b84247",
+        "partId": "3623",
+        "color": "blue",
+        "x": 11,
+        "y": 9,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd24725f",
+        "partId": "3021",
+        "color": "green",
+        "x": 0,
+        "y": 6,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p8f0da86",
+        "partId": "3001",
+        "color": "yellow",
+        "x": 10,
+        "y": 10,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pdd87623",
+        "partId": "3005",
+        "color": "red",
+        "x": 11,
+        "y": 10,
+        "z": 6,
+        "turn": 0
+      }
+    ],
+    "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945": [],
+    "3b6696658f2477d107df86934cde5575b55f642bbcf5e611df5d40a518c1875f": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      }
+    ],
+    "109b274aff6debe12a4537c13b155a781219779e7bf9e9c39ac35ac37fe1c3dc": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      }
+    ],
+    "becafa8f974924775f7c80e945c6944ebd2e9719c864d23b173661076f4d9acd": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      }
+    ],
+    "17c827b0f3a0320370d1a0a1b500c76425227f3b60cca258e0044067a29d5de2": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      }
+    ],
+    "8dbbeed626b316b0c628fca73c2ea16f5ca1b462de2c52146a27f78ff72a6061": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      }
+    ],
+    "9ed49da6badedf3cb085dcab58d11af7d02c46c83407df8232310a1854c826c0": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "pe896bb4",
+        "partId": "3024",
+        "color": "yellow",
+        "x": 7,
+        "y": 4,
+        "z": 4,
+        "turn": 1
+      }
+    ],
+    "fde2968566654d4907e9d5e9ae2fde45851c31f18965164842b033aa4b3b46d4": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "pe896bb4",
+        "partId": "3024",
+        "color": "yellow",
+        "x": 7,
+        "y": 4,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd6a45fd",
+        "partId": "3710",
+        "color": "red",
+        "x": 6,
+        "y": 5,
+        "z": 4,
+        "turn": 0
+      }
+    ],
+    "7fb101bd1557e222ccc4762b6aa215e2d2e85dfb45d702cbed7374deb0ccc6e0": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "pe896bb4",
+        "partId": "3024",
+        "color": "yellow",
+        "x": 7,
+        "y": 4,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd6a45fd",
+        "partId": "3710",
+        "color": "red",
+        "x": 6,
+        "y": 5,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p011572e",
+        "partId": "3010",
+        "color": "blue",
+        "x": 8,
+        "y": 6,
+        "z": 2,
+        "turn": 1
+      }
+    ],
+    "563742c572a6a90af7db0cc6771b92a3d437254dc832d9024d64d94c2abd211e": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "pe896bb4",
+        "partId": "3024",
+        "color": "yellow",
+        "x": 7,
+        "y": 4,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd6a45fd",
+        "partId": "3710",
+        "color": "red",
+        "x": 6,
+        "y": 5,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p011572e",
+        "partId": "3010",
+        "color": "blue",
+        "x": 8,
+        "y": 6,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pd76c1b1",
+        "partId": "3710",
+        "color": "green",
+        "x": 6,
+        "y": 9,
+        "z": 3,
+        "turn": 0
+      }
+    ],
+    "73f0c11b782c7e5a91fc0c22f677e2491a13e841d16b081b6a653c5c4573207c": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "pe896bb4",
+        "partId": "3024",
+        "color": "yellow",
+        "x": 7,
+        "y": 4,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd6a45fd",
+        "partId": "3710",
+        "color": "red",
+        "x": 6,
+        "y": 5,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p011572e",
+        "partId": "3010",
+        "color": "blue",
+        "x": 8,
+        "y": 6,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pd76c1b1",
+        "partId": "3710",
+        "color": "green",
+        "x": 6,
+        "y": 9,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "pdf1c970",
+        "partId": "3010",
+        "color": "yellow",
+        "x": 1,
+        "y": 3,
+        "z": 2,
+        "turn": 1
+      }
+    ],
+    "cb0b832bbc3f04124d2b13eacff0a41dc37c298738c4ce28f9120a38accedfe8": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "pe896bb4",
+        "partId": "3024",
+        "color": "yellow",
+        "x": 7,
+        "y": 4,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd6a45fd",
+        "partId": "3710",
+        "color": "red",
+        "x": 6,
+        "y": 5,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p011572e",
+        "partId": "3010",
+        "color": "blue",
+        "x": 8,
+        "y": 6,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pd76c1b1",
+        "partId": "3710",
+        "color": "green",
+        "x": 6,
+        "y": 9,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "pdf1c970",
+        "partId": "3010",
+        "color": "yellow",
+        "x": 1,
+        "y": 3,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pdce41c5",
+        "partId": "3622",
+        "color": "red",
+        "x": 9,
+        "y": 6,
+        "z": 4,
+        "turn": 0
+      }
+    ],
+    "70cd1dda2693b13707c481bc13d48f27985f8291aacc223ff005759fa99ade07": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "pe896bb4",
+        "partId": "3024",
+        "color": "yellow",
+        "x": 7,
+        "y": 4,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd6a45fd",
+        "partId": "3710",
+        "color": "red",
+        "x": 6,
+        "y": 5,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p011572e",
+        "partId": "3010",
+        "color": "blue",
+        "x": 8,
+        "y": 6,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pd76c1b1",
+        "partId": "3710",
+        "color": "green",
+        "x": 6,
+        "y": 9,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "pdf1c970",
+        "partId": "3010",
+        "color": "yellow",
+        "x": 1,
+        "y": 3,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pdce41c5",
+        "partId": "3622",
+        "color": "red",
+        "x": 9,
+        "y": 6,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p6b84247",
+        "partId": "3623",
+        "color": "blue",
+        "x": 11,
+        "y": 9,
+        "z": 4,
+        "turn": 1
+      }
+    ],
+    "91ec89c332d368a8f00c5e1897048ce7773a118af71205dd1e5b3b2b73926209": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "pe896bb4",
+        "partId": "3024",
+        "color": "yellow",
+        "x": 7,
+        "y": 4,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd6a45fd",
+        "partId": "3710",
+        "color": "red",
+        "x": 6,
+        "y": 5,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p011572e",
+        "partId": "3010",
+        "color": "blue",
+        "x": 8,
+        "y": 6,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pd76c1b1",
+        "partId": "3710",
+        "color": "green",
+        "x": 6,
+        "y": 9,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "pdf1c970",
+        "partId": "3010",
+        "color": "yellow",
+        "x": 1,
+        "y": 3,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pdce41c5",
+        "partId": "3622",
+        "color": "red",
+        "x": 9,
+        "y": 6,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p6b84247",
+        "partId": "3623",
+        "color": "blue",
+        "x": 11,
+        "y": 9,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd24725f",
+        "partId": "3021",
+        "color": "green",
+        "x": 0,
+        "y": 6,
+        "z": 3,
+        "turn": 0
+      }
+    ],
+    "c922bec0565865467630563382fcfa7ab519392f1d1231632ea6034712643260": [
+      {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "pe896bb4",
+        "partId": "3024",
+        "color": "yellow",
+        "x": 7,
+        "y": 4,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd6a45fd",
+        "partId": "3710",
+        "color": "red",
+        "x": 6,
+        "y": 5,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p011572e",
+        "partId": "3010",
+        "color": "blue",
+        "x": 8,
+        "y": 6,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pd76c1b1",
+        "partId": "3710",
+        "color": "green",
+        "x": 6,
+        "y": 9,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "pdf1c970",
+        "partId": "3010",
+        "color": "yellow",
+        "x": 1,
+        "y": 3,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "pdce41c5",
+        "partId": "3622",
+        "color": "red",
+        "x": 9,
+        "y": 6,
+        "z": 4,
+        "turn": 0
+      },
+      {
+        "id": "p6b84247",
+        "partId": "3623",
+        "color": "blue",
+        "x": 11,
+        "y": 9,
+        "z": 4,
+        "turn": 1
+      },
+      {
+        "id": "pd24725f",
+        "partId": "3021",
+        "color": "green",
+        "x": 0,
+        "y": 6,
+        "z": 3,
+        "turn": 0
+      },
+      {
+        "id": "p8f0da86",
+        "partId": "3001",
+        "color": "yellow",
+        "x": 10,
+        "y": 10,
+        "z": 2,
+        "turn": 1
+      }
+    ]
+  },
+  "events": [
+    {
+      "id": 0,
+      "actor": "harness",
+      "kind": "input",
+      "title": "固定模型输入",
+      "payload": {
+        "messages": {
+          "system": "BrickAtlas grid-v1: x,z use studs (8 mm), y uses plate heights (3.2 mm).\nPart position is the MINIMUM x,z corner and BOTTOM y. turn is 0,1,2,3 quarter-turns:\nodd turns swap catalog w,d; 180-degree symmetric bricks have equal footprints.\nAll bricks/plates are opaque rectangular bodies with top studs and bottom sockets.\nOnly integer coordinates 0..24 and at most 64 pieces; bodies must fit within [0,32]^3.\nNo overlap. Every elevated part needs at least one directly supporting stud below it.\nOnly vertical +Y removal and -Y insertion are allowed in plan tasks; overhead overlap blocks passage.\nThis is discrete geometry/connectivity, NOT force, stability or robot-control simulation.\nProgram output: {\"version\":1,\"parts\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]}.\nAlternative reversible output: {\"version\":1,\"nodes\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\n\"parent\":null,\"offset\":[0,0,0],\"turn\":0}, ...]}.\nRelative offsets are in GLOBAL grid axes from parent's minimum corner; turn remains absolute.\nParents must occur earlier. This relative program is not a guarantee of a stud attachment.\nReturn exactly one JSON object; no markdown or chain of thought.\nPublic catalog: {\"2456\":{\"name\":\"Brick 2x6\",\"w\":6,\"d\":2,\"h\":3},\"3001\":{\"name\":\"Brick 2x4\",\"w\":4,\"d\":2,\"h\":3},\"3002\":{\"name\":\"Brick 2x3\",\"w\":3,\"d\":2,\"h\":3},\"3003\":{\"name\":\"Brick 2x2\",\"w\":2,\"d\":2,\"h\":3},\"3004\":{\"name\":\"Brick 1x2\",\"w\":2,\"d\":1,\"h\":3},\"3005\":{\"name\":\"Brick 1x1\",\"w\":1,\"d\":1,\"h\":3},\"3007\":{\"name\":\"Brick 2x8\",\"w\":8,\"d\":2,\"h\":3},\"3008\":{\"name\":\"Brick 1x8\",\"w\":8,\"d\":1,\"h\":3},\"3009\":{\"name\":\"Brick 1x6\",\"w\":6,\"d\":1,\"h\":3},\"3010\":{\"name\":\"Brick 1x4\",\"w\":4,\"d\":1,\"h\":3},\"3020\":{\"name\":\"Plate 2x4\",\"w\":4,\"d\":2,\"h\":1},\"3021\":{\"name\":\"Plate 2x3\",\"w\":3,\"d\":2,\"h\":1},\"3022\":{\"name\":\"Plate 2x2\",\"w\":2,\"d\":2,\"h\":1},\"3023\":{\"name\":\"Plate 1x2\",\"w\":2,\"d\":1,\"h\":1},\"3024\":{\"name\":\"Plate 1x1\",\"w\":1,\"d\":1,\"h\":1},\"3031\":{\"name\":\"Plate 4x4\",\"w\":4,\"d\":4,\"h\":1},\"3032\":{\"name\":\"Plate 4x6\",\"w\":6,\"d\":4,\"h\":1},\"3034\":{\"name\":\"Plate 2x8\",\"w\":8,\"d\":2,\"h\":1},\"3035\":{\"name\":\"Plate 4x8\",\"w\":8,\"d\":4,\"h\":1},\"3460\":{\"name\":\"Plate 1x8\",\"w\":8,\"d\":1,\"h\":1},\"3622\":{\"name\":\"Brick 1x3\",\"w\":3,\"d\":1,\"h\":3},\"3623\":{\"name\":\"Plate 1x3\",\"w\":3,\"d\":1,\"h\":1},\"3666\":{\"name\":\"Plate 1x6\",\"w\":6,\"d\":1,\"h\":1},\"3710\":{\"name\":\"Plate 1x4\",\"w\":4,\"d\":1,\"h\":1},\"3795\":{\"name\":\"Plate 2x6\",\"w\":6,\"d\":2,\"h\":1}}\nNo tools or target feedback are available on the one-shot track. Follow task-specific response schema.",
+          "user": "{\"id\":\"47a7766cc734ebe187fa7471\",\"kind\":\"reconstruct\",\"split\":\"test_id\",\"family\":\"alternating-columns\",\"prompt\":\"Reconstruct all reference pieces and their exact colors/poses from the assembled and layer-inspection images. Layer views explicitly reveal hidden geometry; this is NOT single-view reconstruction. IDs may be arbitrary. This is the privileged SYMBOLIC diagnostic: the complete reference program is supplied. Do not label this a visual result.\",\"input\":{\"billOfMaterials\":{\"3035:gray\":1,\"3005:yellow\":1,\"3023:red\":1,\"3022:blue\":1,\"3002:green\":1,\"3024:yellow\":1,\"3710:red\":1,\"3010:blue\":1,\"3710:green\":1,\"3010:yellow\":1,\"3622:red\":1,\"3623:blue\":1,\"3021:green\":1,\"3001:yellow\":1,\"3005:red\":1},\"coordinateFrame\":\"minimum x/z corner at 0,0; bottom y=0\",\"condition\":\"symbolic\",\"coordinateSystem\":\"min X/Z corner anchored at 0; X/Z studs, Y plate layers\",\"reference\":{\"version\":1,\"parts\":[{\"id\":\"p83ce971\",\"partId\":\"3035\",\"color\":\"gray\",\"x\":1,\"y\":0,\"z\":1,\"turn\":0},{\"id\":\"p3ee7135\",\"partId\":\"3005\",\"color\":\"yellow\",\"x\":7,\"y\":1,\"z\":4,\"turn\":1},{\"id\":\"pd2a678b\",\"partId\":\"3023\",\"color\":\"red\",\"x\":1,\"y\":1,\"z\":3,\"turn\":0},{\"id\":\"p0eef9e1\",\"partId\":\"3022\",\"color\":\"blue\",\"x\":1,\"y\":2,\"z\":2,\"turn\":1},{\"id\":\"p7e49759\",\"partId\":\"3002\",\"color\":\"green\",\"x\":5,\"y\":1,\"z\":0,\"turn\":0},{\"id\":\"pe896bb4\",\"partId\":\"3024\",\"color\":\"yellow\",\"x\":7,\"y\":4,\"z\":4,\"turn\":1},{\"id\":\"pd6a45fd\",\"partId\":\"3710\",\"color\":\"red\",\"x\":6,\"y\":5,\"z\":4,\"turn\":0},{\"id\":\"p011572e\",\"partId\":\"3010\",\"color\":\"blue\",\"x\":8,\"y\":6,\"z\":2,\"turn\":1},{\"id\":\"pd76c1b1\",\"partId\":\"3710\",\"color\":\"green\",\"x\":6,\"y\":9,\"z\":3,\"turn\":0},{\"id\":\"pdf1c970\",\"partId\":\"3010\",\"color\":\"yellow\",\"x\":1,\"y\":3,\"z\":2,\"turn\":1},{\"id\":\"pdce41c5\",\"partId\":\"3622\",\"color\":\"red\",\"x\":9,\"y\":6,\"z\":4,\"turn\":0},{\"id\":\"p6b84247\",\"partId\":\"3623\",\"color\":\"blue\",\"x\":11,\"y\":9,\"z\":4,\"turn\":1},{\"id\":\"pd24725f\",\"partId\":\"3021\",\"color\":\"green\",\"x\":0,\"y\":6,\"z\":3,\"turn\":0},{\"id\":\"p8f0da86\",\"partId\":\"3001\",\"color\":\"yellow\",\"x\":10,\"y\":10,\"z\":2,\"turn\":1},{\"id\":\"pdd87623\",\"partId\":\"3005\",\"color\":\"red\",\"x\":11,\"y\":10,\"z\":6,\"turn\":0}]}},\"responseSchema\":{\"version\":1,\"parts\":[{\"id\":\"local1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]},\"imageTitles\":[]}"
+        },
+        "framePaths": [],
+        "note": "User serialization reconstructed from frozen runner; local Python JSON escapes Unicode. Same semantic payload."
+      },
+      "before": "1b13f8088b192d6d83cb74201769f3f449143dcaba0975e8098085ed68b2b836",
+      "after": "1b13f8088b192d6d83cb74201769f3f449143dcaba0975e8098085ed68b2b836",
+      "timestamp": null,
+      "callIndex": null,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "model-input"
+    },
+    {
+      "id": 1,
+      "actor": "model",
+      "kind": "response",
+      "title": "模型响应 1",
+      "payload": {
+        "raw": "{\"version\":1,\"parts\":[{\"id\":\"p83ce971\",\"partId\":\"3035\",\"color\":\"gray\",\"x\":1,\"y\":0,\"z\":1,\"turn\":0},{\"id\":\"p3ee7135\",\"partId\":\"3005\",\"color\":\"yellow\",\"x\":7,\"y\":1,\"z\":4,\"turn\":1},{\"id\":\"pd2a678b\",\"partId\":\"3023\",\"color\":\"red\",\"x\":1,\"y\":1,\"z\":3,\"turn\":0},{\"id\":\"p0eef9e1\",\"partId\":\"3022\",\"color\":\"blue\",\"x\":1,\"y\":2,\"z\":2,\"turn\":1},{\"id\":\"p7e49759\",\"partId\":\"3002\",\"color\":\"green\",\"x\":5,\"y\":1,\"z\":0,\"turn\":0},{\"id\":\"pe896bb4\",\"partId\":\"3024\",\"color\":\"yellow\",\"x\":7,\"y\":4,\"z\":4,\"turn\":1},{\"id\":\"pd6a45fd\",\"partId\":\"3710\",\"color\":\"red\",\"x\":6,\"y\":5,\"z\":4,\"turn\":0},{\"id\":\"p011572e\",\"partId\":\"3010\",\"color\":\"blue\",\"x\":8,\"y\":6,\"z\":2,\"turn\":1},{\"id\":\"pd76c1b1\",\"partId\":\"3710\",\"color\":\"green\",\"x\":6,\"y\":9,\"z\":3,\"turn\":0},{\"id\":\"pdf1c970\",\"partId\":\"3010\",\"color\":\"yellow\",\"x\":1,\"y\":3,\"z\":2,\"turn\":1},{\"id\":\"pdce41c5\",\"partId\":\"3622\",\"color\":\"red\",\"x\":9,\"y\":6,\"z\":4,\"turn\":0},{\"id\":\"p6b84247\",\"partId\":\"3623\",\"color\":\"blue\",\"x\":11,\"y\":9,\"z\":4,\"turn\":1},{\"id\":\"pd24725f\",\"partId\":\"3021\",\"color\":\"green\",\"x\":0,\"y\":6,\"z\":3,\"turn\":0},{\"id\":\"p8f0da86\",\"partId\":\"3001\",\"color\":\"yellow\",\"x\":10,\"y\":10,\"z\":2,\"turn\":1},{\"id\":\"pdd87623\",\"partId\":\"3005\",\"color\":\"red\",\"x\":11,\"y\":10,\"z\":6,\"turn\":0}]}",
+        "generationId": "gen-1789188259-6C1HjCipdmFZcmgc9XLh",
+        "provider": "Google",
+        "tokens": {
+          "input": 1901,
+          "output": 581
+        },
+        "latencyMs": 2465,
+        "billing": "OpenRouter usage receipt",
+        "originalReceiptCost": 0.0020228,
+        "finishReason": "stop"
+      },
+      "before": "1b13f8088b192d6d83cb74201769f3f449143dcaba0975e8098085ed68b2b836",
+      "after": "1b13f8088b192d6d83cb74201769f3f449143dcaba0975e8098085ed68b2b836",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0.0020228,
+      "provenance": "recorded",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 2,
+      "actor": "harness",
+      "kind": "decode",
+      "title": "结构集合展开，不代表装配计划",
+      "payload": {
+        "version": 1,
+        "parts": [
+          {
+            "id": "p83ce971",
+            "partId": "3035",
+            "color": "gray",
+            "x": 1,
+            "y": 0,
+            "z": 1,
+            "turn": 0
+          },
+          {
+            "id": "p3ee7135",
+            "partId": "3005",
+            "color": "yellow",
+            "x": 7,
+            "y": 1,
+            "z": 4,
+            "turn": 1
+          },
+          {
+            "id": "pd2a678b",
+            "partId": "3023",
+            "color": "red",
+            "x": 1,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "id": "p0eef9e1",
+            "partId": "3022",
+            "color": "blue",
+            "x": 1,
+            "y": 2,
+            "z": 2,
+            "turn": 1
+          },
+          {
+            "id": "p7e49759",
+            "partId": "3002",
+            "color": "green",
+            "x": 5,
+            "y": 1,
+            "z": 0,
+            "turn": 0
+          },
+          {
+            "id": "pe896bb4",
+            "partId": "3024",
+            "color": "yellow",
+            "x": 7,
+            "y": 4,
+            "z": 4,
+            "turn": 1
+          },
+          {
+            "id": "pd6a45fd",
+            "partId": "3710",
+            "color": "red",
+            "x": 6,
+            "y": 5,
+            "z": 4,
+            "turn": 0
+          },
+          {
+            "id": "p011572e",
+            "partId": "3010",
+            "color": "blue",
+            "x": 8,
+            "y": 6,
+            "z": 2,
+            "turn": 1
+          },
+          {
+            "id": "pd76c1b1",
+            "partId": "3710",
+            "color": "green",
+            "x": 6,
+            "y": 9,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "id": "pdf1c970",
+            "partId": "3010",
+            "color": "yellow",
+            "x": 1,
+            "y": 3,
+            "z": 2,
+            "turn": 1
+          },
+          {
+            "id": "pdce41c5",
+            "partId": "3622",
+            "color": "red",
+            "x": 9,
+            "y": 6,
+            "z": 4,
+            "turn": 0
+          },
+          {
+            "id": "p6b84247",
+            "partId": "3623",
+            "color": "blue",
+            "x": 11,
+            "y": 9,
+            "z": 4,
+            "turn": 1
+          },
+          {
+            "id": "pd24725f",
+            "partId": "3021",
+            "color": "green",
+            "x": 0,
+            "y": 6,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "id": "p8f0da86",
+            "partId": "3001",
+            "color": "yellow",
+            "x": 10,
+            "y": 10,
+            "z": 2,
+            "turn": 1
+          },
+          {
+            "id": "pdd87623",
+            "partId": "3005",
+            "color": "red",
+            "x": 11,
+            "y": 10,
+            "z": 6,
+            "turn": 0
+          }
+        ]
+      },
+      "before": "1b13f8088b192d6d83cb74201769f3f449143dcaba0975e8098085ed68b2b836",
+      "after": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 3,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p83ce971",
+        "partId": "3035",
+        "color": "gray",
+        "x": 1,
+        "y": 0,
+        "z": 1,
+        "turn": 0
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "3b6696658f2477d107df86934cde5575b55f642bbcf5e611df5d40a518c1875f",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 4,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p3ee7135",
+        "partId": "3005",
+        "color": "yellow",
+        "x": 7,
+        "y": 1,
+        "z": 4,
+        "turn": 1
+      },
+      "before": "3b6696658f2477d107df86934cde5575b55f642bbcf5e611df5d40a518c1875f",
+      "after": "109b274aff6debe12a4537c13b155a781219779e7bf9e9c39ac35ac37fe1c3dc",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 5,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "pd2a678b",
+        "partId": "3023",
+        "color": "red",
+        "x": 1,
+        "y": 1,
+        "z": 3,
+        "turn": 0
+      },
+      "before": "109b274aff6debe12a4537c13b155a781219779e7bf9e9c39ac35ac37fe1c3dc",
+      "after": "becafa8f974924775f7c80e945c6944ebd2e9719c864d23b173661076f4d9acd",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 6,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p0eef9e1",
+        "partId": "3022",
+        "color": "blue",
+        "x": 1,
+        "y": 2,
+        "z": 2,
+        "turn": 1
+      },
+      "before": "becafa8f974924775f7c80e945c6944ebd2e9719c864d23b173661076f4d9acd",
+      "after": "17c827b0f3a0320370d1a0a1b500c76425227f3b60cca258e0044067a29d5de2",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 7,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p7e49759",
+        "partId": "3002",
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "z": 0,
+        "turn": 0
+      },
+      "before": "17c827b0f3a0320370d1a0a1b500c76425227f3b60cca258e0044067a29d5de2",
+      "after": "8dbbeed626b316b0c628fca73c2ea16f5ca1b462de2c52146a27f78ff72a6061",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 8,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "pe896bb4",
+        "partId": "3024",
+        "color": "yellow",
+        "x": 7,
+        "y": 4,
+        "z": 4,
+        "turn": 1
+      },
+      "before": "8dbbeed626b316b0c628fca73c2ea16f5ca1b462de2c52146a27f78ff72a6061",
+      "after": "9ed49da6badedf3cb085dcab58d11af7d02c46c83407df8232310a1854c826c0",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 9,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "pd6a45fd",
+        "partId": "3710",
+        "color": "red",
+        "x": 6,
+        "y": 5,
+        "z": 4,
+        "turn": 0
+      },
+      "before": "9ed49da6badedf3cb085dcab58d11af7d02c46c83407df8232310a1854c826c0",
+      "after": "fde2968566654d4907e9d5e9ae2fde45851c31f18965164842b033aa4b3b46d4",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 10,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p011572e",
+        "partId": "3010",
+        "color": "blue",
+        "x": 8,
+        "y": 6,
+        "z": 2,
+        "turn": 1
+      },
+      "before": "fde2968566654d4907e9d5e9ae2fde45851c31f18965164842b033aa4b3b46d4",
+      "after": "7fb101bd1557e222ccc4762b6aa215e2d2e85dfb45d702cbed7374deb0ccc6e0",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 11,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "pd76c1b1",
+        "partId": "3710",
+        "color": "green",
+        "x": 6,
+        "y": 9,
+        "z": 3,
+        "turn": 0
+      },
+      "before": "7fb101bd1557e222ccc4762b6aa215e2d2e85dfb45d702cbed7374deb0ccc6e0",
+      "after": "563742c572a6a90af7db0cc6771b92a3d437254dc832d9024d64d94c2abd211e",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 12,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "pdf1c970",
+        "partId": "3010",
+        "color": "yellow",
+        "x": 1,
+        "y": 3,
+        "z": 2,
+        "turn": 1
+      },
+      "before": "563742c572a6a90af7db0cc6771b92a3d437254dc832d9024d64d94c2abd211e",
+      "after": "73f0c11b782c7e5a91fc0c22f677e2491a13e841d16b081b6a653c5c4573207c",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 13,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "pdce41c5",
+        "partId": "3622",
+        "color": "red",
+        "x": 9,
+        "y": 6,
+        "z": 4,
+        "turn": 0
+      },
+      "before": "73f0c11b782c7e5a91fc0c22f677e2491a13e841d16b081b6a653c5c4573207c",
+      "after": "cb0b832bbc3f04124d2b13eacff0a41dc37c298738c4ce28f9120a38accedfe8",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 14,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p6b84247",
+        "partId": "3623",
+        "color": "blue",
+        "x": 11,
+        "y": 9,
+        "z": 4,
+        "turn": 1
+      },
+      "before": "cb0b832bbc3f04124d2b13eacff0a41dc37c298738c4ce28f9120a38accedfe8",
+      "after": "70cd1dda2693b13707c481bc13d48f27985f8291aacc223ff005759fa99ade07",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 15,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "pd24725f",
+        "partId": "3021",
+        "color": "green",
+        "x": 0,
+        "y": 6,
+        "z": 3,
+        "turn": 0
+      },
+      "before": "70cd1dda2693b13707c481bc13d48f27985f8291aacc223ff005759fa99ade07",
+      "after": "91ec89c332d368a8f00c5e1897048ce7773a118af71205dd1e5b3b2b73926209",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 16,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p8f0da86",
+        "partId": "3001",
+        "color": "yellow",
+        "x": 10,
+        "y": 10,
+        "z": 2,
+        "turn": 1
+      },
+      "before": "91ec89c332d368a8f00c5e1897048ce7773a118af71205dd1e5b3b2b73926209",
+      "after": "c922bec0565865467630563382fcfa7ab519392f1d1231632ea6034712643260",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 17,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "pdd87623",
+        "partId": "3005",
+        "color": "red",
+        "x": 11,
+        "y": 10,
+        "z": 6,
+        "turn": 0
+      },
+      "before": "c922bec0565865467630563382fcfa7ab519392f1d1231632ea6034712643260",
+      "after": "1b13f8088b192d6d83cb74201769f3f449143dcaba0975e8098085ed68b2b836",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 18,
+      "actor": "evaluator",
+      "kind": "score",
+      "title": "第 1 次输出的事后评分",
+      "payload": {
+        "metrics": {
+          "format": 1,
+          "valid": 1,
+          "success": 1,
+          "partF1": 1,
+          "bomF1": 1,
+          "edgeF1": 1,
+          "occupancyIoU": 1,
+          "fullStructureSuccess": 1,
+          "surfaceF1": 1,
+          "visibleSurfaceSuccess": 1
+        },
+        "issues": []
+      },
+      "before": "1b13f8088b192d6d83cb74201769f3f449143dcaba0975e8098085ed68b2b836",
+      "after": "1b13f8088b192d6d83cb74201769f3f449143dcaba0975e8098085ed68b2b836",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    }
+  ],
+  "differences": [],
+  "verdict": {
+    "metrics": {
+      "format": 1,
+      "valid": 1,
+      "success": 1,
+      "partF1": 1,
+      "bomF1": 1,
+      "edgeF1": 1,
+      "occupancyIoU": 1,
+      "fullStructureSuccess": 1,
+      "surfaceF1": 1,
+      "visibleSurfaceSuccess": 1
+    },
+    "issues": []
+  },
+  "evidence": {
+    "scoreMatches": true,
+    "responseCount": 1,
+    "cost": 0.0020228,
+    "reusedFirstResponse": false,
+    "outputMeaning": "submitted-structure",
+    "referenceIsExample": true,
+    "note": "Historical replay. Responses are recorded; decoding, feedback reconstruction and geometry playback are derived. No internal thoughts or historical timestamps were recorded. Collection unfolding is not a model assembly plan. Difference labels beyond exact matches are diagnostic, not the scorer."
+  }
+}

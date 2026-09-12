@@ -1,0 +1,2535 @@
+{
+  "version": "trace-v1",
+  "runId": "2026-09-12T04-39-54-248Z-research",
+  "caseIndex": 5,
+  "taskId": "ebae54065903ac8b427cd10c",
+  "model": "openai/gpt-4.1-mini",
+  "kind": "generate",
+  "mode": "one-shot",
+  "input": {
+    "id": "ebae54065903ac8b427cd10c",
+    "kind": "generate",
+    "split": "test_id",
+    "family": "stepped-frame",
+    "prompt": "Design any connected, supported brick assembly whose extents are 8 studs along X, 6 studs along Z, and 9 plate layers high. Anchor minimum X,Y,Z at zero. Use at least two colors, at most 21 pieces, and at least one part with 3 directly connected neighbors. Different valid layouts are welcome. No target voxel mask is supplied.",
+    "input": {
+      "condition": "text-constraints",
+      "requirements": {
+        "extent": {
+          "x": 8,
+          "y": 9,
+          "z": 6
+        },
+        "maxPieces": 21,
+        "minColors": 2,
+        "connectedComponents": 1,
+        "minMaximumDegree": 3
+      }
+    },
+    "responseSchema": {
+      "version": 1,
+      "parts": [
+        {
+          "id": "local1",
+          "partId": "3005",
+          "color": "red",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "turn": 0
+        }
+      ]
+    },
+    "imageTitles": []
+  },
+  "frames": [],
+  "modelInput": {
+    "system": "BrickAtlas grid-v1: x,z use studs (8 mm), y uses plate heights (3.2 mm).\nPart position is the MINIMUM x,z corner and BOTTOM y. turn is 0,1,2,3 quarter-turns:\nodd turns swap catalog w,d; 180-degree symmetric bricks have equal footprints.\nAll bricks/plates are opaque rectangular bodies with top studs and bottom sockets.\nOnly integer coordinates 0..24 and at most 64 pieces; bodies must fit within [0,32]^3.\nNo overlap. Every elevated part needs at least one directly supporting stud below it.\nOnly vertical +Y removal and -Y insertion are allowed in plan tasks; overhead overlap blocks passage.\nThis is discrete geometry/connectivity, NOT force, stability or robot-control simulation.\nProgram output: {\"version\":1,\"parts\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]}.\nAlternative reversible output: {\"version\":1,\"nodes\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\n\"parent\":null,\"offset\":[0,0,0],\"turn\":0}, ...]}.\nRelative offsets are in GLOBAL grid axes from parent's minimum corner; turn remains absolute.\nParents must occur earlier. This relative program is not a guarantee of a stud attachment.\nReturn exactly one JSON object; no markdown or chain of thought.\nPublic catalog: {\"2456\":{\"name\":\"Brick 2x6\",\"w\":6,\"d\":2,\"h\":3},\"3001\":{\"name\":\"Brick 2x4\",\"w\":4,\"d\":2,\"h\":3},\"3002\":{\"name\":\"Brick 2x3\",\"w\":3,\"d\":2,\"h\":3},\"3003\":{\"name\":\"Brick 2x2\",\"w\":2,\"d\":2,\"h\":3},\"3004\":{\"name\":\"Brick 1x2\",\"w\":2,\"d\":1,\"h\":3},\"3005\":{\"name\":\"Brick 1x1\",\"w\":1,\"d\":1,\"h\":3},\"3007\":{\"name\":\"Brick 2x8\",\"w\":8,\"d\":2,\"h\":3},\"3008\":{\"name\":\"Brick 1x8\",\"w\":8,\"d\":1,\"h\":3},\"3009\":{\"name\":\"Brick 1x6\",\"w\":6,\"d\":1,\"h\":3},\"3010\":{\"name\":\"Brick 1x4\",\"w\":4,\"d\":1,\"h\":3},\"3020\":{\"name\":\"Plate 2x4\",\"w\":4,\"d\":2,\"h\":1},\"3021\":{\"name\":\"Plate 2x3\",\"w\":3,\"d\":2,\"h\":1},\"3022\":{\"name\":\"Plate 2x2\",\"w\":2,\"d\":2,\"h\":1},\"3023\":{\"name\":\"Plate 1x2\",\"w\":2,\"d\":1,\"h\":1},\"3024\":{\"name\":\"Plate 1x1\",\"w\":1,\"d\":1,\"h\":1},\"3031\":{\"name\":\"Plate 4x4\",\"w\":4,\"d\":4,\"h\":1},\"3032\":{\"name\":\"Plate 4x6\",\"w\":6,\"d\":4,\"h\":1},\"3034\":{\"name\":\"Plate 2x8\",\"w\":8,\"d\":2,\"h\":1},\"3035\":{\"name\":\"Plate 4x8\",\"w\":8,\"d\":4,\"h\":1},\"3460\":{\"name\":\"Plate 1x8\",\"w\":8,\"d\":1,\"h\":1},\"3622\":{\"name\":\"Brick 1x3\",\"w\":3,\"d\":1,\"h\":3},\"3623\":{\"name\":\"Plate 1x3\",\"w\":3,\"d\":1,\"h\":1},\"3666\":{\"name\":\"Plate 1x6\",\"w\":6,\"d\":1,\"h\":1},\"3710\":{\"name\":\"Plate 1x4\",\"w\":4,\"d\":1,\"h\":1},\"3795\":{\"name\":\"Plate 2x6\",\"w\":6,\"d\":2,\"h\":1}}\nNo tools or target feedback are available on the one-shot track. Follow task-specific response schema.",
+    "user": "{\"id\":\"ebae54065903ac8b427cd10c\",\"kind\":\"generate\",\"split\":\"test_id\",\"family\":\"stepped-frame\",\"prompt\":\"Design any connected, supported brick assembly whose extents are 8 studs along X, 6 studs along Z, and 9 plate layers high. Anchor minimum X,Y,Z at zero. Use at least two colors, at most 21 pieces, and at least one part with 3 directly connected neighbors. Different valid layouts are welcome. No target voxel mask is supplied.\",\"input\":{\"condition\":\"text-constraints\",\"requirements\":{\"extent\":{\"x\":8,\"y\":9,\"z\":6},\"maxPieces\":21,\"minColors\":2,\"connectedComponents\":1,\"minMaximumDegree\":3}},\"responseSchema\":{\"version\":1,\"parts\":[{\"id\":\"local1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]},\"imageTitles\":[]}"
+  },
+  "source": [],
+  "reference": [
+    {
+      "id": "pee78624",
+      "partId": "3035",
+      "color": "gray",
+      "x": 0,
+      "y": 0,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "pdce8cf8",
+      "partId": "3023",
+      "color": "blue",
+      "x": 6,
+      "y": 1,
+      "z": 2,
+      "turn": 0
+    },
+    {
+      "id": "p6dee4fd",
+      "partId": "3010",
+      "color": "green",
+      "x": 4,
+      "y": 1,
+      "z": 0,
+      "turn": 3
+    },
+    {
+      "id": "p211788c",
+      "partId": "3022",
+      "color": "yellow",
+      "x": 4,
+      "y": 4,
+      "z": 2,
+      "turn": 1
+    },
+    {
+      "id": "p9498bec",
+      "partId": "3024",
+      "color": "red",
+      "x": 3,
+      "y": 1,
+      "z": 1,
+      "turn": 2
+    },
+    {
+      "id": "pa38b518",
+      "partId": "3623",
+      "color": "blue",
+      "x": 3,
+      "y": 2,
+      "z": 1,
+      "turn": 1
+    },
+    {
+      "id": "pf905efb",
+      "partId": "3023",
+      "color": "green",
+      "x": 2,
+      "y": 1,
+      "z": 4,
+      "turn": 1
+    },
+    {
+      "id": "p326870d",
+      "partId": "3710",
+      "color": "yellow",
+      "x": 3,
+      "y": 4,
+      "z": 1,
+      "turn": 2
+    },
+    {
+      "id": "pb6aa8d4",
+      "partId": "3710",
+      "color": "red",
+      "x": 2,
+      "y": 2,
+      "z": 1,
+      "turn": 1
+    },
+    {
+      "id": "p909ccbc",
+      "partId": "3710",
+      "color": "blue",
+      "x": 4,
+      "y": 5,
+      "z": 1,
+      "turn": 2
+    },
+    {
+      "id": "pe303590",
+      "partId": "3024",
+      "color": "green",
+      "x": 2,
+      "y": 2,
+      "z": 5,
+      "turn": 0
+    },
+    {
+      "id": "pa31cccd",
+      "partId": "3004",
+      "color": "yellow",
+      "x": 2,
+      "y": 3,
+      "z": 0,
+      "turn": 1
+    },
+    {
+      "id": "p7894a09",
+      "partId": "3001",
+      "color": "red",
+      "x": 2,
+      "y": 6,
+      "z": 1,
+      "turn": 2
+    }
+  ],
+  "output": [
+    {
+      "id": "p1",
+      "partId": "3035",
+      "color": "blue",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "turn": 0
+    },
+    {
+      "id": "p2",
+      "partId": "3005",
+      "color": "red",
+      "x": 3,
+      "y": 1,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "p3",
+      "partId": "3005",
+      "color": "red",
+      "x": 4,
+      "y": 1,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "p4",
+      "partId": "3005",
+      "color": "red",
+      "x": 3,
+      "y": 1,
+      "z": 2,
+      "turn": 0
+    },
+    {
+      "id": "p5",
+      "partId": "3005",
+      "color": "red",
+      "x": 4,
+      "y": 1,
+      "z": 2,
+      "turn": 0
+    },
+    {
+      "id": "p6",
+      "partId": "3001",
+      "color": "green",
+      "x": 2,
+      "y": 3,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "p7",
+      "partId": "3001",
+      "color": "green",
+      "x": 4,
+      "y": 3,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "p8",
+      "partId": "3001",
+      "color": "green",
+      "x": 3,
+      "y": 3,
+      "z": 2,
+      "turn": 0
+    },
+    {
+      "id": "p9",
+      "partId": "3001",
+      "color": "green",
+      "x": 5,
+      "y": 3,
+      "z": 2,
+      "turn": 0
+    },
+    {
+      "id": "p10",
+      "partId": "3004",
+      "color": "yellow",
+      "x": 3,
+      "y": 6,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "p11",
+      "partId": "3004",
+      "color": "yellow",
+      "x": 4,
+      "y": 6,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "p12",
+      "partId": "3004",
+      "color": "yellow",
+      "x": 3,
+      "y": 6,
+      "z": 2,
+      "turn": 0
+    },
+    {
+      "id": "p13",
+      "partId": "3004",
+      "color": "yellow",
+      "x": 4,
+      "y": 6,
+      "z": 2,
+      "turn": 0
+    },
+    {
+      "id": "p14",
+      "partId": "3005",
+      "color": "red",
+      "x": 3,
+      "y": 8,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "p15",
+      "partId": "3005",
+      "color": "red",
+      "x": 4,
+      "y": 8,
+      "z": 1,
+      "turn": 0
+    },
+    {
+      "id": "p16",
+      "partId": "3005",
+      "color": "red",
+      "x": 3,
+      "y": 8,
+      "z": 2,
+      "turn": 0
+    },
+    {
+      "id": "p17",
+      "partId": "3005",
+      "color": "red",
+      "x": 4,
+      "y": 8,
+      "z": 2,
+      "turn": 0
+    }
+  ],
+  "states": {
+    "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945": [],
+    "e041419418719e93942448b92047f262a7d01c11dc6e5faddc532d4d9502f8fa": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      }
+    ],
+    "a30310b1594c1b5126ad3491d2878a77a445cf494e33554f15080c83f64d44a7": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      }
+    ],
+    "227c072c7322d2f918ee7690ff7ac3f8f4b308ec7f46040390dce1a40a8606d3": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      }
+    ],
+    "103a8bfcb56724b238216db80b40feddddc3da27f1eb41bea12a67fd6150b7b8": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      }
+    ],
+    "10a654e19d0cd543a8fa90696d43d4a181f820dd9cd21a9e8ff25163937e5c3d": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      }
+    ],
+    "0bb678ffbbb4d00747f55c7722ec93cff61e10448f1224c81f2437e876a2a43b": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      }
+    ],
+    "d88692506bac4d7049a387695c4387fea6a4db9045b494ac21f06d546ac8591d": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      }
+    ],
+    "02fd24f868ebadae4d7f0675730c15f36aa14c96802bc21e9ae0b03b7b6c3346": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p8",
+        "partId": "3001",
+        "color": "green",
+        "x": 3,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      }
+    ],
+    "5dcd4f142dd2710cda499d19c2bb1db6c4952d9326eb3c0112581060d5487c9d": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p8",
+        "partId": "3001",
+        "color": "green",
+        "x": 3,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p9",
+        "partId": "3001",
+        "color": "green",
+        "x": 5,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      }
+    ],
+    "b2cdc77d7c4af6055897d194f4b62bd406a4bcab6b5ddf91deeaf52bbc70480a": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p8",
+        "partId": "3001",
+        "color": "green",
+        "x": 3,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p9",
+        "partId": "3001",
+        "color": "green",
+        "x": 5,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p10",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      }
+    ],
+    "67122140b8fa8a4baebe26fbdec3cceb8613da30d4fd1174d9d02b3583a36a07": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p8",
+        "partId": "3001",
+        "color": "green",
+        "x": 3,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p9",
+        "partId": "3001",
+        "color": "green",
+        "x": 5,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p10",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p11",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      }
+    ],
+    "59596216aba71ea3f8f164ca0ff146d9da472405e4bc55609a0e432df28944a6": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p8",
+        "partId": "3001",
+        "color": "green",
+        "x": 3,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p9",
+        "partId": "3001",
+        "color": "green",
+        "x": 5,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p10",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p11",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p12",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      }
+    ],
+    "e54c44d7163429d0b640eb6c33227a76fdb70e752aed2c79c6784cbfd82379a5": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p8",
+        "partId": "3001",
+        "color": "green",
+        "x": 3,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p9",
+        "partId": "3001",
+        "color": "green",
+        "x": 5,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p10",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p11",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p12",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p13",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      }
+    ],
+    "2402531f42af674997729dfb184c414209dc0ad06b9d1471aa84d05012f87fb6": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p8",
+        "partId": "3001",
+        "color": "green",
+        "x": 3,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p9",
+        "partId": "3001",
+        "color": "green",
+        "x": 5,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p10",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p11",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p12",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p13",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p14",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 8,
+        "z": 1,
+        "turn": 0
+      }
+    ],
+    "1ba9598858484d884b1d3998ba9a6ca1f9968d5dfece03029010d8bc568344bb": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p8",
+        "partId": "3001",
+        "color": "green",
+        "x": 3,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p9",
+        "partId": "3001",
+        "color": "green",
+        "x": 5,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p10",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p11",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p12",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p13",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p14",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 8,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p15",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 8,
+        "z": 1,
+        "turn": 0
+      }
+    ],
+    "1bb5667eb1e19b94e9a18a0a1147c589820e46473259e62df39bea2684358130": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p8",
+        "partId": "3001",
+        "color": "green",
+        "x": 3,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p9",
+        "partId": "3001",
+        "color": "green",
+        "x": 5,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p10",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p11",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p12",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p13",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p14",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 8,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p15",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 8,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p16",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 8,
+        "z": 2,
+        "turn": 0
+      }
+    ],
+    "275a5b997c259cfe5a2a89931bd9e73f3f383ae70ecc5cafd51e6c2b245a88a6": [
+      {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p8",
+        "partId": "3001",
+        "color": "green",
+        "x": 3,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p9",
+        "partId": "3001",
+        "color": "green",
+        "x": 5,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p10",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p11",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p12",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p13",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p14",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 8,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p15",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 8,
+        "z": 1,
+        "turn": 0
+      },
+      {
+        "id": "p16",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 8,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "id": "p17",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 8,
+        "z": 2,
+        "turn": 0
+      }
+    ]
+  },
+  "events": [
+    {
+      "id": 0,
+      "actor": "harness",
+      "kind": "input",
+      "title": "固定模型输入",
+      "payload": {
+        "messages": {
+          "system": "BrickAtlas grid-v1: x,z use studs (8 mm), y uses plate heights (3.2 mm).\nPart position is the MINIMUM x,z corner and BOTTOM y. turn is 0,1,2,3 quarter-turns:\nodd turns swap catalog w,d; 180-degree symmetric bricks have equal footprints.\nAll bricks/plates are opaque rectangular bodies with top studs and bottom sockets.\nOnly integer coordinates 0..24 and at most 64 pieces; bodies must fit within [0,32]^3.\nNo overlap. Every elevated part needs at least one directly supporting stud below it.\nOnly vertical +Y removal and -Y insertion are allowed in plan tasks; overhead overlap blocks passage.\nThis is discrete geometry/connectivity, NOT force, stability or robot-control simulation.\nProgram output: {\"version\":1,\"parts\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]}.\nAlternative reversible output: {\"version\":1,\"nodes\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\n\"parent\":null,\"offset\":[0,0,0],\"turn\":0}, ...]}.\nRelative offsets are in GLOBAL grid axes from parent's minimum corner; turn remains absolute.\nParents must occur earlier. This relative program is not a guarantee of a stud attachment.\nReturn exactly one JSON object; no markdown or chain of thought.\nPublic catalog: {\"2456\":{\"name\":\"Brick 2x6\",\"w\":6,\"d\":2,\"h\":3},\"3001\":{\"name\":\"Brick 2x4\",\"w\":4,\"d\":2,\"h\":3},\"3002\":{\"name\":\"Brick 2x3\",\"w\":3,\"d\":2,\"h\":3},\"3003\":{\"name\":\"Brick 2x2\",\"w\":2,\"d\":2,\"h\":3},\"3004\":{\"name\":\"Brick 1x2\",\"w\":2,\"d\":1,\"h\":3},\"3005\":{\"name\":\"Brick 1x1\",\"w\":1,\"d\":1,\"h\":3},\"3007\":{\"name\":\"Brick 2x8\",\"w\":8,\"d\":2,\"h\":3},\"3008\":{\"name\":\"Brick 1x8\",\"w\":8,\"d\":1,\"h\":3},\"3009\":{\"name\":\"Brick 1x6\",\"w\":6,\"d\":1,\"h\":3},\"3010\":{\"name\":\"Brick 1x4\",\"w\":4,\"d\":1,\"h\":3},\"3020\":{\"name\":\"Plate 2x4\",\"w\":4,\"d\":2,\"h\":1},\"3021\":{\"name\":\"Plate 2x3\",\"w\":3,\"d\":2,\"h\":1},\"3022\":{\"name\":\"Plate 2x2\",\"w\":2,\"d\":2,\"h\":1},\"3023\":{\"name\":\"Plate 1x2\",\"w\":2,\"d\":1,\"h\":1},\"3024\":{\"name\":\"Plate 1x1\",\"w\":1,\"d\":1,\"h\":1},\"3031\":{\"name\":\"Plate 4x4\",\"w\":4,\"d\":4,\"h\":1},\"3032\":{\"name\":\"Plate 4x6\",\"w\":6,\"d\":4,\"h\":1},\"3034\":{\"name\":\"Plate 2x8\",\"w\":8,\"d\":2,\"h\":1},\"3035\":{\"name\":\"Plate 4x8\",\"w\":8,\"d\":4,\"h\":1},\"3460\":{\"name\":\"Plate 1x8\",\"w\":8,\"d\":1,\"h\":1},\"3622\":{\"name\":\"Brick 1x3\",\"w\":3,\"d\":1,\"h\":3},\"3623\":{\"name\":\"Plate 1x3\",\"w\":3,\"d\":1,\"h\":1},\"3666\":{\"name\":\"Plate 1x6\",\"w\":6,\"d\":1,\"h\":1},\"3710\":{\"name\":\"Plate 1x4\",\"w\":4,\"d\":1,\"h\":1},\"3795\":{\"name\":\"Plate 2x6\",\"w\":6,\"d\":2,\"h\":1}}\nNo tools or target feedback are available on the one-shot track. Follow task-specific response schema.",
+          "user": "{\"id\":\"ebae54065903ac8b427cd10c\",\"kind\":\"generate\",\"split\":\"test_id\",\"family\":\"stepped-frame\",\"prompt\":\"Design any connected, supported brick assembly whose extents are 8 studs along X, 6 studs along Z, and 9 plate layers high. Anchor minimum X,Y,Z at zero. Use at least two colors, at most 21 pieces, and at least one part with 3 directly connected neighbors. Different valid layouts are welcome. No target voxel mask is supplied.\",\"input\":{\"condition\":\"text-constraints\",\"requirements\":{\"extent\":{\"x\":8,\"y\":9,\"z\":6},\"maxPieces\":21,\"minColors\":2,\"connectedComponents\":1,\"minMaximumDegree\":3}},\"responseSchema\":{\"version\":1,\"parts\":[{\"id\":\"local1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]},\"imageTitles\":[]}"
+        },
+        "framePaths": [],
+        "note": "User serialization reconstructed from frozen runner; local Python JSON escapes Unicode. Same semantic payload."
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "timestamp": null,
+      "callIndex": null,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "model-input"
+    },
+    {
+      "id": 1,
+      "actor": "model",
+      "kind": "response",
+      "title": "模型响应 1",
+      "payload": {
+        "raw": "{\"version\":1,\"parts\":[{\"id\":\"p1\",\"partId\":\"3035\",\"color\":\"blue\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0},{\"id\":\"p2\",\"partId\":\"3005\",\"color\":\"red\",\"x\":3,\"y\":1,\"z\":1,\"turn\":0},{\"id\":\"p3\",\"partId\":\"3005\",\"color\":\"red\",\"x\":4,\"y\":1,\"z\":1,\"turn\":0},{\"id\":\"p4\",\"partId\":\"3005\",\"color\":\"red\",\"x\":3,\"y\":1,\"z\":2,\"turn\":0},{\"id\":\"p5\",\"partId\":\"3005\",\"color\":\"red\",\"x\":4,\"y\":1,\"z\":2,\"turn\":0},{\"id\":\"p6\",\"partId\":\"3001\",\"color\":\"green\",\"x\":2,\"y\":3,\"z\":1,\"turn\":0},{\"id\":\"p7\",\"partId\":\"3001\",\"color\":\"green\",\"x\":4,\"y\":3,\"z\":1,\"turn\":0},{\"id\":\"p8\",\"partId\":\"3001\",\"color\":\"green\",\"x\":3,\"y\":3,\"z\":2,\"turn\":0},{\"id\":\"p9\",\"partId\":\"3001\",\"color\":\"green\",\"x\":5,\"y\":3,\"z\":2,\"turn\":0},{\"id\":\"p10\",\"partId\":\"3004\",\"color\":\"yellow\",\"x\":3,\"y\":6,\"z\":1,\"turn\":0},{\"id\":\"p11\",\"partId\":\"3004\",\"color\":\"yellow\",\"x\":4,\"y\":6,\"z\":1,\"turn\":0},{\"id\":\"p12\",\"partId\":\"3004\",\"color\":\"yellow\",\"x\":3,\"y\":6,\"z\":2,\"turn\":0},{\"id\":\"p13\",\"partId\":\"3004\",\"color\":\"yellow\",\"x\":4,\"y\":6,\"z\":2,\"turn\":0},{\"id\":\"p14\",\"partId\":\"3005\",\"color\":\"red\",\"x\":3,\"y\":8,\"z\":1,\"turn\":0},{\"id\":\"p15\",\"partId\":\"3005\",\"color\":\"red\",\"x\":4,\"y\":8,\"z\":1,\"turn\":0},{\"id\":\"p16\",\"partId\":\"3005\",\"color\":\"red\",\"x\":3,\"y\":8,\"z\":2,\"turn\":0},{\"id\":\"p17\",\"partId\":\"3005\",\"color\":\"red\",\"x\":4,\"y\":8,\"z\":2,\"turn\":0}]}",
+        "generationId": "gen-1789188011-JtNEktpi4kXJS5YhP88Q",
+        "provider": "OpenAI",
+        "tokens": {
+          "input": 1107,
+          "output": 537
+        },
+        "latencyMs": 4652,
+        "billing": "OpenRouter usage receipt",
+        "originalReceiptCost": 0.001302,
+        "finishReason": "stop"
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0.001302,
+      "provenance": "recorded",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 2,
+      "actor": "harness",
+      "kind": "decode",
+      "title": "结构集合展开，不代表装配计划",
+      "payload": {
+        "version": 1,
+        "parts": [
+          {
+            "id": "p1",
+            "partId": "3035",
+            "color": "blue",
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "turn": 0
+          },
+          {
+            "id": "p2",
+            "partId": "3005",
+            "color": "red",
+            "x": 3,
+            "y": 1,
+            "z": 1,
+            "turn": 0
+          },
+          {
+            "id": "p3",
+            "partId": "3005",
+            "color": "red",
+            "x": 4,
+            "y": 1,
+            "z": 1,
+            "turn": 0
+          },
+          {
+            "id": "p4",
+            "partId": "3005",
+            "color": "red",
+            "x": 3,
+            "y": 1,
+            "z": 2,
+            "turn": 0
+          },
+          {
+            "id": "p5",
+            "partId": "3005",
+            "color": "red",
+            "x": 4,
+            "y": 1,
+            "z": 2,
+            "turn": 0
+          },
+          {
+            "id": "p6",
+            "partId": "3001",
+            "color": "green",
+            "x": 2,
+            "y": 3,
+            "z": 1,
+            "turn": 0
+          },
+          {
+            "id": "p7",
+            "partId": "3001",
+            "color": "green",
+            "x": 4,
+            "y": 3,
+            "z": 1,
+            "turn": 0
+          },
+          {
+            "id": "p8",
+            "partId": "3001",
+            "color": "green",
+            "x": 3,
+            "y": 3,
+            "z": 2,
+            "turn": 0
+          },
+          {
+            "id": "p9",
+            "partId": "3001",
+            "color": "green",
+            "x": 5,
+            "y": 3,
+            "z": 2,
+            "turn": 0
+          },
+          {
+            "id": "p10",
+            "partId": "3004",
+            "color": "yellow",
+            "x": 3,
+            "y": 6,
+            "z": 1,
+            "turn": 0
+          },
+          {
+            "id": "p11",
+            "partId": "3004",
+            "color": "yellow",
+            "x": 4,
+            "y": 6,
+            "z": 1,
+            "turn": 0
+          },
+          {
+            "id": "p12",
+            "partId": "3004",
+            "color": "yellow",
+            "x": 3,
+            "y": 6,
+            "z": 2,
+            "turn": 0
+          },
+          {
+            "id": "p13",
+            "partId": "3004",
+            "color": "yellow",
+            "x": 4,
+            "y": 6,
+            "z": 2,
+            "turn": 0
+          },
+          {
+            "id": "p14",
+            "partId": "3005",
+            "color": "red",
+            "x": 3,
+            "y": 8,
+            "z": 1,
+            "turn": 0
+          },
+          {
+            "id": "p15",
+            "partId": "3005",
+            "color": "red",
+            "x": 4,
+            "y": 8,
+            "z": 1,
+            "turn": 0
+          },
+          {
+            "id": "p16",
+            "partId": "3005",
+            "color": "red",
+            "x": 3,
+            "y": 8,
+            "z": 2,
+            "turn": 0
+          },
+          {
+            "id": "p17",
+            "partId": "3005",
+            "color": "red",
+            "x": 4,
+            "y": 8,
+            "z": 2,
+            "turn": 0
+          }
+        ]
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 3,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p1",
+        "partId": "3035",
+        "color": "blue",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "e041419418719e93942448b92047f262a7d01c11dc6e5faddc532d4d9502f8fa",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 4,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p2",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      "before": "e041419418719e93942448b92047f262a7d01c11dc6e5faddc532d4d9502f8fa",
+      "after": "a30310b1594c1b5126ad3491d2878a77a445cf494e33554f15080c83f64d44a7",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 5,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p3",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 1,
+        "turn": 0
+      },
+      "before": "a30310b1594c1b5126ad3491d2878a77a445cf494e33554f15080c83f64d44a7",
+      "after": "227c072c7322d2f918ee7690ff7ac3f8f4b308ec7f46040390dce1a40a8606d3",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 6,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p4",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      "before": "227c072c7322d2f918ee7690ff7ac3f8f4b308ec7f46040390dce1a40a8606d3",
+      "after": "103a8bfcb56724b238216db80b40feddddc3da27f1eb41bea12a67fd6150b7b8",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 7,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p5",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "z": 2,
+        "turn": 0
+      },
+      "before": "103a8bfcb56724b238216db80b40feddddc3da27f1eb41bea12a67fd6150b7b8",
+      "after": "10a654e19d0cd543a8fa90696d43d4a181f820dd9cd21a9e8ff25163937e5c3d",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 8,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p6",
+        "partId": "3001",
+        "color": "green",
+        "x": 2,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      "before": "10a654e19d0cd543a8fa90696d43d4a181f820dd9cd21a9e8ff25163937e5c3d",
+      "after": "0bb678ffbbb4d00747f55c7722ec93cff61e10448f1224c81f2437e876a2a43b",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 9,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p7",
+        "partId": "3001",
+        "color": "green",
+        "x": 4,
+        "y": 3,
+        "z": 1,
+        "turn": 0
+      },
+      "before": "0bb678ffbbb4d00747f55c7722ec93cff61e10448f1224c81f2437e876a2a43b",
+      "after": "d88692506bac4d7049a387695c4387fea6a4db9045b494ac21f06d546ac8591d",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 10,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p8",
+        "partId": "3001",
+        "color": "green",
+        "x": 3,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      "before": "d88692506bac4d7049a387695c4387fea6a4db9045b494ac21f06d546ac8591d",
+      "after": "02fd24f868ebadae4d7f0675730c15f36aa14c96802bc21e9ae0b03b7b6c3346",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 11,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p9",
+        "partId": "3001",
+        "color": "green",
+        "x": 5,
+        "y": 3,
+        "z": 2,
+        "turn": 0
+      },
+      "before": "02fd24f868ebadae4d7f0675730c15f36aa14c96802bc21e9ae0b03b7b6c3346",
+      "after": "5dcd4f142dd2710cda499d19c2bb1db6c4952d9326eb3c0112581060d5487c9d",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 12,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p10",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      "before": "5dcd4f142dd2710cda499d19c2bb1db6c4952d9326eb3c0112581060d5487c9d",
+      "after": "b2cdc77d7c4af6055897d194f4b62bd406a4bcab6b5ddf91deeaf52bbc70480a",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 13,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p11",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 1,
+        "turn": 0
+      },
+      "before": "b2cdc77d7c4af6055897d194f4b62bd406a4bcab6b5ddf91deeaf52bbc70480a",
+      "after": "67122140b8fa8a4baebe26fbdec3cceb8613da30d4fd1174d9d02b3583a36a07",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 14,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p12",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      },
+      "before": "67122140b8fa8a4baebe26fbdec3cceb8613da30d4fd1174d9d02b3583a36a07",
+      "after": "59596216aba71ea3f8f164ca0ff146d9da472405e4bc55609a0e432df28944a6",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 15,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p13",
+        "partId": "3004",
+        "color": "yellow",
+        "x": 4,
+        "y": 6,
+        "z": 2,
+        "turn": 0
+      },
+      "before": "59596216aba71ea3f8f164ca0ff146d9da472405e4bc55609a0e432df28944a6",
+      "after": "e54c44d7163429d0b640eb6c33227a76fdb70e752aed2c79c6784cbfd82379a5",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 16,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p14",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 8,
+        "z": 1,
+        "turn": 0
+      },
+      "before": "e54c44d7163429d0b640eb6c33227a76fdb70e752aed2c79c6784cbfd82379a5",
+      "after": "2402531f42af674997729dfb184c414209dc0ad06b9d1471aa84d05012f87fb6",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 17,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p15",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 8,
+        "z": 1,
+        "turn": 0
+      },
+      "before": "2402531f42af674997729dfb184c414209dc0ad06b9d1471aa84d05012f87fb6",
+      "after": "1ba9598858484d884b1d3998ba9a6ca1f9968d5dfece03029010d8bc568344bb",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 18,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p16",
+        "partId": "3005",
+        "color": "red",
+        "x": 3,
+        "y": 8,
+        "z": 2,
+        "turn": 0
+      },
+      "before": "1ba9598858484d884b1d3998ba9a6ca1f9968d5dfece03029010d8bc568344bb",
+      "after": "1bb5667eb1e19b94e9a18a0a1147c589820e46473259e62df39bea2684358130",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 19,
+      "actor": "harness",
+      "kind": "unfold",
+      "title": "展示输出集合中的零件",
+      "payload": {
+        "id": "p17",
+        "partId": "3005",
+        "color": "red",
+        "x": 4,
+        "y": 8,
+        "z": 2,
+        "turn": 0
+      },
+      "before": "1bb5667eb1e19b94e9a18a0a1147c589820e46473259e62df39bea2684358130",
+      "after": "275a5b997c259cfe5a2a89931bd9e73f3f383ae70ecc5cafd51e6c2b245a88a6",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 20,
+      "actor": "evaluator",
+      "kind": "score",
+      "title": "第 1 次输出的事后评分",
+      "payload": {
+        "metrics": {
+          "format": 1,
+          "valid": 0,
+          "success": 0,
+          "constraintAccuracy": 0.6666666666666666
+        },
+        "issues": [
+          "overlap",
+          "unsupported",
+          "extent",
+          "connected"
+        ]
+      },
+      "before": "275a5b997c259cfe5a2a89931bd9e73f3f383ae70ecc5cafd51e6c2b245a88a6",
+      "after": "275a5b997c259cfe5a2a89931bd9e73f3f383ae70ecc5cafd51e6c2b245a88a6",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    }
+  ],
+  "differences": [
+    {
+      "kind": "missing",
+      "expectedId": "pee78624",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "pdce8cf8",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "p6dee4fd",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "p211788c",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "p9498bec",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "pa38b518",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "pf905efb",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "p326870d",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "pb6aa8d4",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "p909ccbc",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "pe303590",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "pa31cccd",
+      "actualId": null
+    },
+    {
+      "kind": "missing",
+      "expectedId": "p7894a09",
+      "actualId": null
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p1"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p2"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p3"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p4"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p5"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p6"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p7"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p8"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p9"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p10"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p11"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p12"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p13"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p14"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p15"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p16"
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "p17"
+    }
+  ],
+  "verdict": {
+    "metrics": {
+      "format": 1,
+      "valid": 0,
+      "success": 0,
+      "constraintAccuracy": 0.6666666666666666
+    },
+    "issues": [
+      "overlap",
+      "unsupported",
+      "extent",
+      "connected"
+    ]
+  },
+  "evidence": {
+    "scoreMatches": true,
+    "responseCount": 1,
+    "cost": 0.001302,
+    "reusedFirstResponse": false,
+    "outputMeaning": "submitted-structure",
+    "referenceIsExample": true,
+    "note": "Historical replay. Responses are recorded; decoding, feedback reconstruction and geometry playback are derived. No internal thoughts or historical timestamps were recorded. Collection unfolding is not a model assembly plan. Difference labels beyond exact matches are diagnostic, not the scorer."
+  }
+}

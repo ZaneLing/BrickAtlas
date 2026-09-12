@@ -1,0 +1,284 @@
+{
+  "version": "trace-v1",
+  "runId": "2026-09-11T18-40-18-464Z-validator-once",
+  "caseIndex": 0,
+  "taskId": "d751edac4dbbb2c674e7397c",
+  "model": "openai/gpt-4.1-mini",
+  "kind": "parts",
+  "mode": "validator-once",
+  "input": {
+    "id": "d751edac4dbbb2c674e7397c",
+    "kind": "parts",
+    "split": "test_id",
+    "family": "platform",
+    "prompt": "Identify this isolated part from the public catalog. Return its partId, color, and number of top studs. Do not copy the example answer.",
+    "input": {},
+    "responseSchema": {
+      "partId": "string",
+      "color": "string",
+      "studs": "integer"
+    },
+    "imageTitles": [
+      "Query iso",
+      "Query top"
+    ]
+  },
+  "frames": [
+    "frames/dd02a4ce267002ce442492823a45d1a4b259164efaca25bf49e66adc3591a201.png",
+    "frames/de56c3155efaf140bd619cb7acee4af8ff4e34b884baba07acac6c33d37f6a9f.png"
+  ],
+  "modelInput": {
+    "system": "BrickAtlas grid-v1: x,z use studs (8 mm), y uses plate heights (3.2 mm).\nPart position is the MINIMUM x,z corner and BOTTOM y. turn is 0,1,2,3 quarter-turns:\nodd turns swap catalog w,d; 180-degree symmetric bricks have equal footprints.\nAll bricks/plates are opaque rectangular bodies with top studs and bottom sockets.\nOnly integer coordinates 0..24 and at most 64 pieces; bodies must fit within [0,32]^3.\nNo overlap. Every elevated part needs at least one directly supporting stud below it.\nOnly vertical +Y removal and -Y insertion are allowed in plan tasks; overhead overlap blocks passage.\nThis is discrete geometry/connectivity, NOT force, stability or robot-control simulation.\nProgram output: {\"version\":1,\"parts\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]}.\nAlternative reversible output: {\"version\":1,\"nodes\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\n\"parent\":null,\"offset\":[0,0,0],\"turn\":0}, ...]}.\nRelative offsets are in GLOBAL grid axes from parent's minimum corner; turn remains absolute.\nParents must occur earlier. This relative program is not a guarantee of a stud attachment.\nReturn exactly one JSON object; no markdown or chain of thought.\nPublic catalog: {\"2456\":{\"name\":\"Brick 2x6\",\"w\":6,\"d\":2,\"h\":3},\"3001\":{\"name\":\"Brick 2x4\",\"w\":4,\"d\":2,\"h\":3},\"3002\":{\"name\":\"Brick 2x3\",\"w\":3,\"d\":2,\"h\":3},\"3003\":{\"name\":\"Brick 2x2\",\"w\":2,\"d\":2,\"h\":3},\"3004\":{\"name\":\"Brick 1x2\",\"w\":2,\"d\":1,\"h\":3},\"3005\":{\"name\":\"Brick 1x1\",\"w\":1,\"d\":1,\"h\":3},\"3007\":{\"name\":\"Brick 2x8\",\"w\":8,\"d\":2,\"h\":3},\"3008\":{\"name\":\"Brick 1x8\",\"w\":8,\"d\":1,\"h\":3},\"3009\":{\"name\":\"Brick 1x6\",\"w\":6,\"d\":1,\"h\":3},\"3010\":{\"name\":\"Brick 1x4\",\"w\":4,\"d\":1,\"h\":3},\"3020\":{\"name\":\"Plate 2x4\",\"w\":4,\"d\":2,\"h\":1},\"3021\":{\"name\":\"Plate 2x3\",\"w\":3,\"d\":2,\"h\":1},\"3022\":{\"name\":\"Plate 2x2\",\"w\":2,\"d\":2,\"h\":1},\"3023\":{\"name\":\"Plate 1x2\",\"w\":2,\"d\":1,\"h\":1},\"3024\":{\"name\":\"Plate 1x1\",\"w\":1,\"d\":1,\"h\":1},\"3031\":{\"name\":\"Plate 4x4\",\"w\":4,\"d\":4,\"h\":1},\"3032\":{\"name\":\"Plate 4x6\",\"w\":6,\"d\":4,\"h\":1},\"3034\":{\"name\":\"Plate 2x8\",\"w\":8,\"d\":2,\"h\":1},\"3035\":{\"name\":\"Plate 4x8\",\"w\":8,\"d\":4,\"h\":1},\"3460\":{\"name\":\"Plate 1x8\",\"w\":8,\"d\":1,\"h\":1},\"3622\":{\"name\":\"Brick 1x3\",\"w\":3,\"d\":1,\"h\":3},\"3623\":{\"name\":\"Plate 1x3\",\"w\":3,\"d\":1,\"h\":1},\"3666\":{\"name\":\"Plate 1x6\",\"w\":6,\"d\":1,\"h\":1},\"3710\":{\"name\":\"Plate 1x4\",\"w\":4,\"d\":1,\"h\":1},\"3795\":{\"name\":\"Plate 2x6\",\"w\":6,\"d\":2,\"h\":1}}\nNo tools or target feedback are available on the one-shot track. Follow task-specific response schema.",
+    "user": "{\"id\":\"d751edac4dbbb2c674e7397c\",\"kind\":\"parts\",\"split\":\"test_id\",\"family\":\"platform\",\"prompt\":\"Identify this isolated part from the public catalog. Return its partId, color, and number of top studs. Do not copy the example answer.\",\"input\":{},\"responseSchema\":{\"partId\":\"string\",\"color\":\"string\",\"studs\":\"integer\"},\"imageTitles\":[\"Query iso\",\"Query top\"]}"
+  },
+  "source": [],
+  "reference": [
+    {
+      "id": "query",
+      "partId": "3710",
+      "color": "yellow",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "turn": 0
+    }
+  ],
+  "output": [
+    {
+      "id": "predicted",
+      "partId": "3009",
+      "color": "yellow",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "turn": 0
+    }
+  ],
+  "states": {
+    "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945": [],
+    "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e": [
+      {
+        "id": "predicted",
+        "partId": "3009",
+        "color": "yellow",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "turn": 0
+      }
+    ]
+  },
+  "events": [
+    {
+      "id": 0,
+      "actor": "harness",
+      "kind": "input",
+      "title": "固定模型输入",
+      "payload": {
+        "messages": {
+          "system": "BrickAtlas grid-v1: x,z use studs (8 mm), y uses plate heights (3.2 mm).\nPart position is the MINIMUM x,z corner and BOTTOM y. turn is 0,1,2,3 quarter-turns:\nodd turns swap catalog w,d; 180-degree symmetric bricks have equal footprints.\nAll bricks/plates are opaque rectangular bodies with top studs and bottom sockets.\nOnly integer coordinates 0..24 and at most 64 pieces; bodies must fit within [0,32]^3.\nNo overlap. Every elevated part needs at least one directly supporting stud below it.\nOnly vertical +Y removal and -Y insertion are allowed in plan tasks; overhead overlap blocks passage.\nThis is discrete geometry/connectivity, NOT force, stability or robot-control simulation.\nProgram output: {\"version\":1,\"parts\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]}.\nAlternative reversible output: {\"version\":1,\"nodes\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\n\"parent\":null,\"offset\":[0,0,0],\"turn\":0}, ...]}.\nRelative offsets are in GLOBAL grid axes from parent's minimum corner; turn remains absolute.\nParents must occur earlier. This relative program is not a guarantee of a stud attachment.\nReturn exactly one JSON object; no markdown or chain of thought.\nPublic catalog: {\"2456\":{\"name\":\"Brick 2x6\",\"w\":6,\"d\":2,\"h\":3},\"3001\":{\"name\":\"Brick 2x4\",\"w\":4,\"d\":2,\"h\":3},\"3002\":{\"name\":\"Brick 2x3\",\"w\":3,\"d\":2,\"h\":3},\"3003\":{\"name\":\"Brick 2x2\",\"w\":2,\"d\":2,\"h\":3},\"3004\":{\"name\":\"Brick 1x2\",\"w\":2,\"d\":1,\"h\":3},\"3005\":{\"name\":\"Brick 1x1\",\"w\":1,\"d\":1,\"h\":3},\"3007\":{\"name\":\"Brick 2x8\",\"w\":8,\"d\":2,\"h\":3},\"3008\":{\"name\":\"Brick 1x8\",\"w\":8,\"d\":1,\"h\":3},\"3009\":{\"name\":\"Brick 1x6\",\"w\":6,\"d\":1,\"h\":3},\"3010\":{\"name\":\"Brick 1x4\",\"w\":4,\"d\":1,\"h\":3},\"3020\":{\"name\":\"Plate 2x4\",\"w\":4,\"d\":2,\"h\":1},\"3021\":{\"name\":\"Plate 2x3\",\"w\":3,\"d\":2,\"h\":1},\"3022\":{\"name\":\"Plate 2x2\",\"w\":2,\"d\":2,\"h\":1},\"3023\":{\"name\":\"Plate 1x2\",\"w\":2,\"d\":1,\"h\":1},\"3024\":{\"name\":\"Plate 1x1\",\"w\":1,\"d\":1,\"h\":1},\"3031\":{\"name\":\"Plate 4x4\",\"w\":4,\"d\":4,\"h\":1},\"3032\":{\"name\":\"Plate 4x6\",\"w\":6,\"d\":4,\"h\":1},\"3034\":{\"name\":\"Plate 2x8\",\"w\":8,\"d\":2,\"h\":1},\"3035\":{\"name\":\"Plate 4x8\",\"w\":8,\"d\":4,\"h\":1},\"3460\":{\"name\":\"Plate 1x8\",\"w\":8,\"d\":1,\"h\":1},\"3622\":{\"name\":\"Brick 1x3\",\"w\":3,\"d\":1,\"h\":3},\"3623\":{\"name\":\"Plate 1x3\",\"w\":3,\"d\":1,\"h\":1},\"3666\":{\"name\":\"Plate 1x6\",\"w\":6,\"d\":1,\"h\":1},\"3710\":{\"name\":\"Plate 1x4\",\"w\":4,\"d\":1,\"h\":1},\"3795\":{\"name\":\"Plate 2x6\",\"w\":6,\"d\":2,\"h\":1}}\nNo tools or target feedback are available on the one-shot track. Follow task-specific response schema.",
+          "user": "{\"id\":\"d751edac4dbbb2c674e7397c\",\"kind\":\"parts\",\"split\":\"test_id\",\"family\":\"platform\",\"prompt\":\"Identify this isolated part from the public catalog. Return its partId, color, and number of top studs. Do not copy the example answer.\",\"input\":{},\"responseSchema\":{\"partId\":\"string\",\"color\":\"string\",\"studs\":\"integer\"},\"imageTitles\":[\"Query iso\",\"Query top\"]}"
+        },
+        "framePaths": [
+          "frames/dd02a4ce267002ce442492823a45d1a4b259164efaca25bf49e66adc3591a201.png",
+          "frames/de56c3155efaf140bd619cb7acee4af8ff4e34b884baba07acac6c33d37f6a9f.png"
+        ],
+        "note": "User serialization reconstructed from frozen runner; local Python JSON escapes Unicode. Same semantic payload."
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "timestamp": null,
+      "callIndex": null,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "model-input"
+    },
+    {
+      "id": 1,
+      "actor": "model",
+      "kind": "response",
+      "title": "模型响应 1",
+      "payload": {
+        "raw": "{\"partId\":\"3009\",\"color\":\"yellow\",\"studs\":4}",
+        "generationId": "gen-1789152020-T68baydD5V2JTgLig6YI",
+        "provider": "OpenAI",
+        "tokens": {
+          "input": 1950,
+          "output": 17
+        },
+        "latencyMs": 3287,
+        "billing": "OpenRouter usage receipt",
+        "originalReceiptCost": 0.0008072,
+        "finishReason": "stop"
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0.0008072,
+      "provenance": "recorded",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 2,
+      "actor": "harness",
+      "kind": "decode",
+      "title": "将型号选择转换为候选零件",
+      "payload": {
+        "partId": "3009",
+        "color": "yellow",
+        "studs": 4
+      },
+      "before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after": "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 3,
+      "actor": "evaluator",
+      "kind": "score",
+      "title": "第 1 次输出的事后评分",
+      "payload": {
+        "metrics": {
+          "format": 1,
+          "valid": 1,
+          "success": 0,
+          "fieldAccuracy": 0.6666666666666666
+        },
+        "issues": [
+          "answer_mismatch"
+        ]
+      },
+      "before": "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e",
+      "after": "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e",
+      "timestamp": null,
+      "callIndex": 0,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 4,
+      "actor": "harness",
+      "kind": "feedback",
+      "title": "固定合法性反馈（由历史版本重建）",
+      "payload": {
+        "syntax": true,
+        "legality": [
+          "No decodable structure; for QA/planning, check the requested response schema."
+        ]
+      },
+      "before": "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e",
+      "after": "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "model-input"
+    },
+    {
+      "id": 5,
+      "actor": "model",
+      "kind": "response",
+      "title": "模型响应 2",
+      "payload": {
+        "raw": "{\"partId\":\"3009\",\"color\":\"yellow\",\"studs\":4}",
+        "generationId": "gen-1789152022-4rn16GYcG9av6olklLW7",
+        "provider": "OpenAI",
+        "tokens": {
+          "input": 2018,
+          "output": 17
+        },
+        "latencyMs": 1232,
+        "billing": "OpenRouter usage receipt",
+        "originalReceiptCost": 0.0003736,
+        "finishReason": "stop"
+      },
+      "before": "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e",
+      "after": "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0.0003736,
+      "provenance": "recorded",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 6,
+      "actor": "harness",
+      "kind": "decode",
+      "title": "将型号选择转换为候选零件",
+      "payload": {
+        "partId": "3009",
+        "color": "yellow",
+        "studs": 4
+      },
+      "before": "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e",
+      "after": "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    },
+    {
+      "id": 7,
+      "actor": "evaluator",
+      "kind": "score",
+      "title": "第 2 次输出的事后评分",
+      "payload": {
+        "metrics": {
+          "format": 1,
+          "valid": 1,
+          "success": 0,
+          "fieldAccuracy": 0.6666666666666666
+        },
+        "issues": [
+          "answer_mismatch"
+        ]
+      },
+      "before": "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e",
+      "after": "7aaf46e01ae79a3b1720b8db96bd5e05857303fad1d73eae8289e9f1fa6a4d8e",
+      "timestamp": null,
+      "callIndex": 1,
+      "cost": 0,
+      "provenance": "derived",
+      "visibility": "posthoc"
+    }
+  ],
+  "differences": [
+    {
+      "kind": "missing",
+      "expectedId": "query",
+      "actualId": null
+    },
+    {
+      "kind": "extra",
+      "expectedId": null,
+      "actualId": "predicted"
+    }
+  ],
+  "verdict": {
+    "metrics": {
+      "format": 1,
+      "valid": 1,
+      "success": 0,
+      "fieldAccuracy": 0.6666666666666666
+    },
+    "issues": [
+      "answer_mismatch"
+    ]
+  },
+  "evidence": {
+    "scoreMatches": true,
+    "responseCount": 2,
+    "cost": 0.0011808,
+    "reusedFirstResponse": false,
+    "outputMeaning": "part-choice",
+    "referenceIsExample": false,
+    "note": "Historical replay. Responses are recorded; decoding, feedback reconstruction and geometry playback are derived. No internal thoughts or historical timestamps were recorded. Collection unfolding is not a model assembly plan. Difference labels beyond exact matches are diagnostic, not the scorer."
+  }
+}
