@@ -41,12 +41,55 @@ Do not ask an LLM to impersonate reviewers or fill the human-attestation fields.
 The coordinator preserves separately submitted originals and documents genuine
 independence; the public source code can unblind this development packet.
 
-Private ingestion path, relative to the repository:
-`benchmark/.runtime/study-human-audit/labels.jsonl`.
-`human-audit-status` validates the records, version and duplicates. It deliberately
-does not certify identities or automatically resolve disagreement. Adjudication
-requires a new versioned record retaining both original labels, an adjudicator,
-the decision, reason and evidence. Adjudication ingestion is not implemented yet.
+The automatic acceptance reference and statistical endpoints are frozen in
+`../artifacts/study/human-audit/calibration-contract.json`, bound to the packet,
+automatic-judgment digest, scoring/analysis sources and image hashes. Freezing
+after labels exist is refused; changing the protocol requires a new version.
+This freezes development calibration, not a confirmatory population experiment.
+
+Use `import-human-labels <file.jsonl>` to ingest real submissions. Each fully
+validated original input is stored unchanged in an immutable private batch under
+`benchmark/.runtime/study-human-audit/batches/`. Identical re-import is idempotent;
+duplicate reviewer/item judgments, corruption and concurrent writes are rejected.
+The old `labels.jsonl` path is supported for compatibility but must not be edited
+after use; use the importer for new submissions. Do not publish private batches.
+
+`human-adjudication-queue` writes a private queue including original reviews and
+their hash, without automatic scores. A different human inspects the same item.
+Adjudication JSONL records require these fields:
+
+| Field | Required meaning |
+| --- | --- |
+| version | `human-adjudication-1` |
+| packetHash, itemId | Exact current packet and item |
+| reviewedLabelsHash | Hash supplied by the queue, binding all original reviews |
+| adjudicatorCode | Human pseudonym distinct from this item's original reviewers |
+| judgment | `accept`, `reject` or `uncertain` |
+| humanAttested, independent | Actual human self-attestations; not inferred by software |
+| notes, evidence | Specific reason and reviewed evidence, at least eight characters each |
+
+`import-human-adjudications <file.jsonl>` retains adjudications alongside originals.
+It does not overwrite labels, resolve by majority, or accept stale label hashes.
+Late labels that invalidate an existing adjudication are refused; corrections
+require a separately versioned packet/protocol rather than silent replacement.
+Two agreeing uncertain reviews, or an uncertain adjudication, remain unresolved.
+The software validates records, not actual identity or independence.
+
+`report-human-calibration` emits a public aggregate and immutable aggregate history.
+It reports both error directions with human-reference denominators, all-label and
+binary-only original reviewer pair agreement, coverage/status counts, task/variant
+strata and whole-source bootstrap intervals. A missing denominator is null; a
+one-source estimate has no interval. Zero-width empirical intervals are explicitly
+not population guarantees. Notes, reviewer codes and evidence text stay private.
+Batch hashes identify the private inputs without publishing their content.
+
+After real records exist, regeneration requires those exact private batches.
+The report refuses to replace prior evidence with an empty or changed store.
+`verify-human-calibration` alone checks the frozen automatic reference without
+human records; it explicitly does not claim to verify submitted human judgments.
+The current runtime-free test covers the empty-store release only. A future
+independent replay of real judgments needs a consented/redacted label release
+or controlled access; aggregate hashes alone are not sufficient.
 
 Before claiming metric calibration, extend the packet to cover alternative
 correct answers, near-correct outputs, all key variants and the external domain.

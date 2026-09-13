@@ -34,6 +34,8 @@ import { prepareHumanAudit, humanAuditStatus } from './human-audit';
 import { prepareOrderStudy } from './order-study';
 import { runOrderStudy, replayOrderStudy } from './order-run';
 import { researchReadiness } from './readiness';
+import { freezeHumanCalibration, verifyHumanCalibration, importHumanReview,
+  humanAdjudicationQueue, reportHumanCalibration } from './human-calibration-run';
 
 const [command, ...args] = process.argv.slice(2);
 let result: unknown;
@@ -41,6 +43,14 @@ if (command === 'audit') result = await audit();
 else if (command === 'exposure-audit') result = exposureAudit();
 else if (command === 'prepare-human-audit') result = prepareHumanAudit();
 else if (command === 'human-audit-status') result = humanAuditStatus();
+else if (command === 'freeze-human-calibration') result = freezeHumanCalibration();
+else if (command === 'verify-human-calibration') result = verifyHumanCalibration();
+else if (command === 'import-human-labels' || command === 'import-human-adjudications') {
+  if (args.length !== 1) throw new Error('Exactly one JSONL input file is required');
+  result = importHumanReview(command === 'import-human-labels' ? 'labels' : 'adjudications', args[0]);
+}
+else if (command === 'human-adjudication-queue') result = humanAdjudicationQueue();
+else if (command === 'report-human-calibration') result = reportHumanCalibration();
 else if (command === 'research-readiness') result = researchReadiness();
 else if (command === 'replay-order-study') result = replayOrderStudy();
 else if (command === 'prepare-order-study') {

@@ -15,6 +15,7 @@ import { replayLadder } from './reconstruction-ladder';
 import { replayPoseProbes } from './pose-run';
 import { replayOrderStudy } from './order-run';
 import { researchReadiness } from './readiness';
+import { verifyHumanCalibration } from './human-calibration-run';
 
 const walk = (path: string): string[] => readdirSync(path).flatMap(name => {
   const file = resolve(path, name); return statSync(file).isDirectory() ? walk(file) : [file];
@@ -74,6 +75,8 @@ if (order) {
 for (const command of ['exposure-audit', 'human-audit-status', 'research-readiness']) {
   assert.ok(evidence['clean-verification.json'].commands.includes(command));
 }
+const humanCalibration = verifyHumanCalibration();
+assert.ok(evidence['clean-verification.json'].commands.includes('verify-human-calibration'));
 const readiness = researchReadiness();
 const files = walk(STUDY).filter(path => !path.endsWith('/release-manifest.json')
   && !relative(STUDY, path).startsWith('.local-import-'));
@@ -95,6 +98,8 @@ const manifest = { checkedAt: new Date().toISOString(), completedLocalJobs: loca
   orderStudy: order ? { status: order.status, responses: order.responses,
     sourceGroups: order.sourceGroups, newCost: orderAnalysis.newCost } : null,
   researchReadiness: { allPassed: readiness.allPassed, passed: readiness.passed, pending: readiness.pending },
+  humanCalibration: { packetHash: humanCalibration.packetHash, frozenReferenceVerified: humanCalibration.verified,
+    humanLabelsVerified: false, items: humanCalibration.items, sourceGroups: humanCalibration.sourceGroups },
   noMachineLocalPaths: true,
   evidence: Object.fromEntries(Object.entries(evidence).map(([name, report]) => [name,
     name === 'failure-diagnostics.json'

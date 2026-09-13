@@ -29,6 +29,7 @@ try {
     commands.push('replay-pose-probes', 'report-pose-probes');
   }
   if (existsSync(resolve(target, 'suite/artifacts/study/order-study/run.json'))) commands.push('replay-order-study');
+  if (existsSync(resolve(target, 'suite/artifacts/study/human-audit/calibration-contract.json'))) commands.push('verify-human-calibration');
   commands.push('exposure-audit', 'human-audit-status', 'research-readiness');
   for (const command of commands) {
     execFileSync(process.execPath, [resolve(temporary, 'node_modules/tsx/dist/cli.mjs'),

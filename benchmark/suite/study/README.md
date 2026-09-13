@@ -247,8 +247,36 @@ zero in this development sample. The run cost $0.282100356; cumulative API spend
 is $3.097410574. It shares the existing $2 allocation and $4.50 campaign cap.
 No additional paid execution is needed to reproduce the scores.
 
-The clean-copy check runs 19 commands without runtime models or an API key;
+The clean-copy check runs 20 commands without runtime models or an API key;
 installed dependencies are shared. Technical release checks include order replay
 and record research readiness separately. A technical pass never supplies absent
 human labels, data rights, effective baselines or independent confirmation.
 The reviewer packet has 96 candidates and zero submitted human reviews.
+
+## Human Metric Calibration
+
+The existing packet is preserved. Its automatic acceptance reference and
+source-group statistical endpoints are frozen separately, before human labels.
+No model or synthetic test fixture is ingested as a human reviewer.
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts verify-human-calibration
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts import-human-labels /path/to/actual-reviews.jsonl
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts human-adjudication-queue
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts import-human-adjudications /path/to/actual-adjudications.jsonl
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts report-human-calibration
+```
+
+Imports retain original JSONL in private immutable batches, with an exclusive
+writer lock, content hash and idempotent re-import. Adjudication requires actual
+conflicting/uncertain double review, a different person and the exact original
+label hash. Existing labels are never rewritten. Uncertain outcomes stay unresolved.
+These record checks cannot authenticate human identities or independence.
+
+`human-audit/calibration.json` and `CALIBRATION.md` report error counts, their
+human-reference denominators, reviewer agreement before adjudication, coverage,
+task strata and source-cluster intervals. Empty denominators are unavailable, not
+zero. Synthetic regression fixtures live only in tests. Public aggregates omit
+reviewer codes, notes and evidence text; private batches are not published.
+Missing private inputs cannot erase a previous published report.
+`EXTERNAL_VALIDATION.md` defines the exact schema and remaining human/domain gates.

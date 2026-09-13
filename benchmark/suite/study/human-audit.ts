@@ -9,6 +9,7 @@ import { STUDY, selection } from './protocol';
 import { evaluateStrict } from './strict-evaluate';
 import { copyInputAnswer } from './model-validation-report';
 import type { PublicTask } from '../shared';
+import { readAuditRecords } from './human-records';
 
 export interface AuditItem {
   id: string; caseId: string; group: string; publicInput: PublicTask;
@@ -42,9 +43,11 @@ export function auditItems(): AuditItem[] {
   return rows.sort((a, b) => a.id.localeCompare(b.id));
 }
 
-export function summarizeAudit(items: AuditItem[], labels: AuditLabel[], packetHash: string) {
+export function summarizeAudit(items: Pick<AuditItem, 'id'>[], labels: AuditLabel[], packetHash: string) {
+  assert.ok(items.length > 0 && new Set(items.map(i => i.id)).size === items.length, 'Unique nonempty packet required');
   const validIds = new Set(items.map(i => i.id)), seen = new Set<string>();
   for (const label of labels) {
+    assert.ok(label && typeof label === 'object' && !Array.isArray(label), 'Invalid review label');
     assert.ok(validIds.has(label.itemId), 'Unknown review item');
     assert.equal(label.packetHash, packetHash, 'Review is for a different packet');
     assert.match(label.reviewerCode, /^[A-Za-z0-9_-]{3,40}$/);
@@ -90,9 +93,11 @@ export function prepareHumanAudit() {
 }
 export function humanAuditStatus() {
   const items = auditItems(), packetHash = digest(items);
-  const path = resolve(BENCHMARK, '.runtime/study-human-audit/labels.jsonl');
-  const labels = existsSync(path) ? readFileSync(path, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)) : [];
+  const { labels } = readAuditRecords(resolve(BENCHMARK, '.runtime/study-human-audit'));
   const status = summarizeAudit(items, labels, packetHash);
-  atomicJson(resolve(STUDY, 'human-audit/status.json'), status);
+  const path = resolve(STUDY, 'human-audit/status.json');
+  if (existsSync(path)) assert.ok(JSON.parse(readFileSync(path, 'utf8')).submissions <= status.submissions,
+    'Private review labels missing; refuse to erase published status');
+  atomicJson(path, status);
   return status;
 }
