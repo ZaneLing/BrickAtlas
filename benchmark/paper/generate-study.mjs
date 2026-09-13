@@ -10,7 +10,9 @@ const files = ['statistics.json', 'replay.json', 'independent-audit.json', 'exac
   'mutation-audit.json', 'render-verification.json', 'training-bundle-verification.json',
   'merge-verification.json', 'training-token-audit.json', 'test-token-audit.json', 'local-statistics.json',
   'failure-diagnostics.json', 'interface-probes/replay.json', 'observability-witness.json',
-  'calibration/protocol.json', 'calibration/input-verification.json'];
+  'calibration/protocol.json', 'calibration/input-verification.json',
+  'model-validation/analysis.json', 'model-validation/ladder/replay.json',
+  'model-validation/ladder-normalized/replay.json', 'pose-probes/analysis.json', 'pose-probes/protocol.json'];
 const data = Object.fromEntries(files.map(name => [name, JSON.parse(readFileSync(resolve(study, name), 'utf8'))]));
 assert.equal(data['replay.json'].reduce((n, r) => n + r.cases, 0), 730);
 assert.equal(data['independent-audit.json'].differences.length, 0);
@@ -43,6 +45,18 @@ write('study-training', data['local-summary.json'].map(r => {
   const success = Object.values(r.byTask).reduce((n, t) => n + t.successes, 0);
   return `${tex(r.condition)} & ${r.seed} & ${r.steps} & ${r.supervisedTokens.toLocaleString('en-US')} & ${success}/${r.predictions} \\\\`;
 }));
+const probe = data['pose-probes/analysis.json'];
+assert.equal(probe.status, 'complete'); assert.equal(probe.responses, 96);
+const modelIds = data['pose-probes/protocol.json'].models.map(m => m.id);
+write('study-pose', [
+  ['full-rgb', 'Full structure (RGB)'], ['pose-rgb', 'Local pose (RGB)'],
+  ['choice-rgb', 'Choice (RGB)'], ['choice-permuted', 'Choice (permuted)'],
+  ['choice-no-image', 'Choice (no image)'], ['pose-symbolic', 'Local pose (symbolic)'],
+].map(([arm, label]) => `${label} & ${modelIds.map(model => {
+  const r = probe.summary.find(r => r.arm === arm && r.model === model);
+  assert.equal(r.n, 4); assert.equal(r.missing, 0);
+  return `${r.successes}/${r.n}`;
+}).join(' & ')} \\\\`));
 writeFileSync(resolve(here, 'study-evidence.json'), JSON.stringify({
   scope: 'Completed v2 API study and completed local jobs only; small-sample exploratory evidence.',
   localJobsComplete: data['local-summary.json'].length, plannedLocalJobs: 10,
@@ -51,4 +65,4 @@ writeFileSync(resolve(here, 'study-evidence.json'), JSON.stringify({
     sha256: createHash('sha256').update(readFileSync(resolve(study, name))).digest('hex'),
   }])),
 }, null, 2) + '\n');
-console.log(JSON.stringify({ tables: 3, localJobsComplete: data['local-summary.json'].length }));
+console.log(JSON.stringify({ tables: 4, localJobsComplete: data['local-summary.json'].length }));

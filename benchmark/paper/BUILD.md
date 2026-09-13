@@ -8,7 +8,7 @@
 - Official CVPR author-kit revision:
   `291758547e923160eb4d37079b7b9f0dfce82355`.
 - Template files are unmodified; their hashes are recorded in `evidence.json`.
-- Output: nine US Letter pages, including references.
+- Output: ten US Letter pages, including references.
 - TeX log: no unresolved citations/references or overfull boxes.
 - PDF inspection: text on every page, no text outside page boundaries.
 - All-page contact sheet and detailed formula/result pages inspected visually:
@@ -19,3 +19,6 @@
 The compiler and TeX caches are runtime dependencies, not committed project files.
 The paper uses report mode with page numbers, not a fabricated anonymous submission.
 No author identity or submission number was invented.
+This expanded development report is not a page-limit-compliant submission
+claim; historical pilots and engineering detail must be condensed or moved
+to supplementary material when preparing the target venue's final manuscript.

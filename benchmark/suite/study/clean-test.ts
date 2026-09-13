@@ -25,6 +25,9 @@ try {
     if (existsSync(resolve(target, 'suite/artifacts/study/model-validation/ladder-normalized/run.json'))) commands.push('replay-normalized-ladder');
     commands.push('report-model-validation');
   }
+  if (existsSync(resolve(target, 'suite/artifacts/study/pose-probes/run.json'))) {
+    commands.push('replay-pose-probes', 'report-pose-probes');
+  }
   for (const command of commands) {
     execFileSync(process.execPath, [resolve(temporary, 'node_modules/tsx/dist/cli.mjs'),
       resolve(target, 'suite/study/cli.ts'), command], { cwd: target, env, encoding: 'utf8', maxBuffer: 8_000_000 });

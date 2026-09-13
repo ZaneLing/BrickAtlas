@@ -76,6 +76,15 @@ was observed in the leave-edit conditions.
 The 112-call two-model study, 24-call paired control, and five Qwen LoRA/base runs
 belong to earlier releases and are explicitly separated.
 
+Additional development diagnostics comprise a four-model 180-call screen,
+two separately versioned 24-call reconstruction ladders, and 96 local-pose
+and candidate-selection calls on four unused source groups. The main text
+reports coordinate-origin confounds, copy-input baselines, output-protocol
+differences and permutation sensitivity rather than a pooled leaderboard.
+`tables/study-pose.tex` is generated from the frozen pose-probe evidence.
+These adaptive experiments do not establish a stable model ranking or a
+causal attribution of errors to perception, reasoning or output generation.
+
 Independent human review, rich human-designed data, broader model baselines,
 and confirmatory experiments remain outstanding.
 The original local `RESEARCH_ROADMAP.md` remains excluded from publication.

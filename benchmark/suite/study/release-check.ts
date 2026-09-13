@@ -12,6 +12,7 @@ import { replayInterfaceProbes } from './interface-probes';
 import { verifyCalibrationInputs } from './calibration-export';
 import { replayModelValidation } from './model-validation';
 import { replayLadder } from './reconstruction-ladder';
+import { replayPoseProbes } from './pose-run';
 
 const walk = (path: string): string[] => readdirSync(path).flatMap(name => {
   const file = resolve(path, name); return statSync(file).isDirectory() ? walk(file) : [file];
@@ -59,6 +60,7 @@ assert.ok(api.every(r => r.status === 'complete'));
 const validation = existsSync(resolve(STUDY, 'model-validation/run.json')) ? replayModelValidation() : null;
 const ladder = existsSync(resolve(STUDY, 'model-validation/ladder/run.json')) ? replayLadder() : null;
 const normalized = existsSync(resolve(STUDY, 'model-validation/ladder-normalized/run.json')) ? replayLadder(true) : null;
+const pose = existsSync(resolve(STUDY, 'pose-probes/run.json')) ? replayPoseProbes() : null;
 const files = walk(STUDY).filter(path => !path.endsWith('/release-manifest.json')
   && !relative(STUDY, path).startsWith('.local-import-'));
 const sensitive = /sk-or-v1-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{20,}|github_pat_[a-zA-Z0-9_]{20,}/;
@@ -75,6 +77,7 @@ const manifest = { checkedAt: new Date().toISOString(), completedLocalJobs: loca
   } : null,
   normalizedLadder: normalized ? { status: normalized.status, responses: normalized.responses,
     newCost: normalized.newCost, sourceGroups: normalized.sourceGroups } : null,
+  poseProbes: pose ? { status: pose.status, responses: pose.responses, newCost: pose.newCost } : null,
   noMachineLocalPaths: true,
   evidence: Object.fromEntries(Object.entries(evidence).map(([name, report]) => [name,
     name === 'failure-diagnostics.json'

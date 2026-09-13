@@ -1,0 +1,1346 @@
+{
+  "version": "pose-probe-1",
+  "models": [
+    {
+      "id": "openai/gpt-4.1-mini",
+      "prompt": 0.5,
+      "completion": 2
+    },
+    {
+      "id": "openai/gpt-4.1",
+      "prompt": 2.1,
+      "completion": 8.5
+    },
+    {
+      "id": "google/gemini-2.5-flash",
+      "prompt": 0.4,
+      "completion": 3
+    },
+    {
+      "id": "qwen/qwen3-vl-32b-instruct",
+      "prompt": 0.3,
+      "completion": 1
+    }
+  ],
+  "rows": [
+    {
+      "id": "454e3c4cbef86d903c93ee7d",
+      "group": "eaca7743f50e67bf678c1191825f947730fbe93d55b83431c5559e2aeb8b337b",
+      "arm": "full-rgb",
+      "input": {
+        "prompt": "Return the full two-piece structure matching the images and supplied known part identities.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3001:blue": 1
+        },
+        "query": {
+          "partId": "3001",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "version": 1,
+          "parts": [
+            {
+              "id": "piece",
+              "partId": "3005",
+              "color": "red",
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "turn": 0
+            }
+          ]
+        }
+      },
+      "images": [
+        "images/5870d762336bad357ae015e51fc901b9020b0314faf2b73fe266afe15cf20cec.png",
+        "images/782b0d7e6ca5552289efe2d7ad21452585cd94fad754be9957499aa0dd3678f6.png",
+        "images/01ac52fdbbf7572ca8369db23cb2598f916a88b47c6ddc56b3025759704d9c63.png",
+        "images/ae9b5e3cca342aaeb92666d8176754a6e1c6cd4a3f89ceb2f73dc6d445ba9678.png"
+      ]
+    },
+    {
+      "id": "69f3c79d3eed898ba9bb2b3c",
+      "group": "eaca7743f50e67bf678c1191825f947730fbe93d55b83431c5559e2aeb8b337b",
+      "arm": "pose-rgb",
+      "input": {
+        "prompt": "Return only the BLUE query piece pose as {\"x\":0,\"y\":0,\"z\":0,\"turn\":0}, matching the reference.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3001:blue": 1
+        },
+        "query": {
+          "partId": "3001",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "x": "integer",
+          "y": "integer",
+          "z": "integer",
+          "turn": "0|1|2|3"
+        }
+      },
+      "images": [
+        "images/5870d762336bad357ae015e51fc901b9020b0314faf2b73fe266afe15cf20cec.png",
+        "images/782b0d7e6ca5552289efe2d7ad21452585cd94fad754be9957499aa0dd3678f6.png",
+        "images/01ac52fdbbf7572ca8369db23cb2598f916a88b47c6ddc56b3025759704d9c63.png",
+        "images/ae9b5e3cca342aaeb92666d8176754a6e1c6cd4a3f89ceb2f73dc6d445ba9678.png"
+      ]
+    },
+    {
+      "id": "1c7ed3f9677c55c1a7d4de93",
+      "group": "eaca7743f50e67bf678c1191825f947730fbe93d55b83431c5559e2aeb8b337b",
+      "arm": "choice-rgb",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3001:blue": 1
+        },
+        "query": {
+          "partId": "3001",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 2,
+            "y": 1,
+            "z": 0,
+            "turn": 0
+          },
+          {
+            "label": "B",
+            "x": 7,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "label": "C",
+            "x": 0,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "label": "D",
+            "x": 6,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          }
+        ]
+      },
+      "images": [
+        "images/5870d762336bad357ae015e51fc901b9020b0314faf2b73fe266afe15cf20cec.png",
+        "images/782b0d7e6ca5552289efe2d7ad21452585cd94fad754be9957499aa0dd3678f6.png",
+        "images/01ac52fdbbf7572ca8369db23cb2598f916a88b47c6ddc56b3025759704d9c63.png",
+        "images/ae9b5e3cca342aaeb92666d8176754a6e1c6cd4a3f89ceb2f73dc6d445ba9678.png"
+      ]
+    },
+    {
+      "id": "9b8fe17adf47b1d115a442f8",
+      "group": "eaca7743f50e67bf678c1191825f947730fbe93d55b83431c5559e2aeb8b337b",
+      "arm": "choice-permuted",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3001:blue": 1
+        },
+        "query": {
+          "partId": "3001",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 7,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "label": "B",
+            "x": 0,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "label": "C",
+            "x": 6,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "label": "D",
+            "x": 2,
+            "y": 1,
+            "z": 0,
+            "turn": 0
+          }
+        ]
+      },
+      "images": [
+        "images/5870d762336bad357ae015e51fc901b9020b0314faf2b73fe266afe15cf20cec.png",
+        "images/782b0d7e6ca5552289efe2d7ad21452585cd94fad754be9957499aa0dd3678f6.png",
+        "images/01ac52fdbbf7572ca8369db23cb2598f916a88b47c6ddc56b3025759704d9c63.png",
+        "images/ae9b5e3cca342aaeb92666d8176754a6e1c6cd4a3f89ceb2f73dc6d445ba9678.png"
+      ]
+    },
+    {
+      "id": "06e99b5373bca6c7c7872c06",
+      "group": "eaca7743f50e67bf678c1191825f947730fbe93d55b83431c5559e2aeb8b337b",
+      "arm": "choice-no-image",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3001:blue": 1
+        },
+        "query": {
+          "partId": "3001",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 2,
+            "y": 1,
+            "z": 0,
+            "turn": 0
+          },
+          {
+            "label": "B",
+            "x": 7,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "label": "C",
+            "x": 0,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "label": "D",
+            "x": 6,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          }
+        ],
+        "observation": "Images withheld; no reference pose supplied. Guess one of the four candidates."
+      },
+      "images": []
+    },
+    {
+      "id": "5cd1826c9fc64c8f0dea1343",
+      "group": "eaca7743f50e67bf678c1191825f947730fbe93d55b83431c5559e2aeb8b337b",
+      "arm": "pose-symbolic",
+      "input": {
+        "prompt": "Return only the BLUE query piece pose as {\"x\":0,\"y\":0,\"z\":0,\"turn\":0}, matching the reference.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3001:blue": 1
+        },
+        "query": {
+          "partId": "3001",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "x": "integer",
+          "y": "integer",
+          "z": "integer",
+          "turn": "0|1|2|3"
+        },
+        "reference": {
+          "version": 1,
+          "parts": [
+            {
+              "id": "base",
+              "partId": "3035",
+              "color": "gray",
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "turn": 0
+            },
+            {
+              "id": "query",
+              "partId": "3001",
+              "color": "blue",
+              "x": 2,
+              "y": 1,
+              "z": 0,
+              "turn": 0
+            }
+          ]
+        }
+      },
+      "images": []
+    },
+    {
+      "id": "13e52c18ce9f43e86ff78ecc",
+      "group": "c6f6e3bf87f7d07f25a3673d6b86b8d94b324b1dba939f5cd335ac38867f87eb",
+      "arm": "full-rgb",
+      "input": {
+        "prompt": "Return the full two-piece structure matching the images and supplied known part identities.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "version": 1,
+          "parts": [
+            {
+              "id": "piece",
+              "partId": "3005",
+              "color": "red",
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "turn": 0
+            }
+          ]
+        }
+      },
+      "images": [
+        "images/62326495c075c4d2af2080530fed1d20b08e083fc8d0ad86fecf062dc48a8397.png",
+        "images/a8bff5cdf9706c5a57e0941e4d2cf946c2a3fe5d62afa375c9fd670fac16d81a.png",
+        "images/564bbfe1f59c8dcc33caa9e71783a53e5b7f928b29900ba2079d6d35a91aceb7.png",
+        "images/43e9959a6b5a6525636d4665eea20e8f48ef2f6347d6b55b08ebfc7a0d146e5a.png"
+      ]
+    },
+    {
+      "id": "63f442140d204034c8498f4a",
+      "group": "c6f6e3bf87f7d07f25a3673d6b86b8d94b324b1dba939f5cd335ac38867f87eb",
+      "arm": "pose-rgb",
+      "input": {
+        "prompt": "Return only the BLUE query piece pose as {\"x\":0,\"y\":0,\"z\":0,\"turn\":0}, matching the reference.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "x": "integer",
+          "y": "integer",
+          "z": "integer",
+          "turn": "0|1|2|3"
+        }
+      },
+      "images": [
+        "images/62326495c075c4d2af2080530fed1d20b08e083fc8d0ad86fecf062dc48a8397.png",
+        "images/a8bff5cdf9706c5a57e0941e4d2cf946c2a3fe5d62afa375c9fd670fac16d81a.png",
+        "images/564bbfe1f59c8dcc33caa9e71783a53e5b7f928b29900ba2079d6d35a91aceb7.png",
+        "images/43e9959a6b5a6525636d4665eea20e8f48ef2f6347d6b55b08ebfc7a0d146e5a.png"
+      ]
+    },
+    {
+      "id": "35c9ccb1210d294db658065e",
+      "group": "c6f6e3bf87f7d07f25a3673d6b86b8d94b324b1dba939f5cd335ac38867f87eb",
+      "arm": "choice-rgb",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 3,
+            "y": 1,
+            "z": 2,
+            "turn": 3
+          },
+          {
+            "label": "B",
+            "x": 6,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "C",
+            "x": 2,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "D",
+            "x": 5,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          }
+        ]
+      },
+      "images": [
+        "images/62326495c075c4d2af2080530fed1d20b08e083fc8d0ad86fecf062dc48a8397.png",
+        "images/a8bff5cdf9706c5a57e0941e4d2cf946c2a3fe5d62afa375c9fd670fac16d81a.png",
+        "images/564bbfe1f59c8dcc33caa9e71783a53e5b7f928b29900ba2079d6d35a91aceb7.png",
+        "images/43e9959a6b5a6525636d4665eea20e8f48ef2f6347d6b55b08ebfc7a0d146e5a.png"
+      ]
+    },
+    {
+      "id": "e0f96d166fc0402837ca8747",
+      "group": "c6f6e3bf87f7d07f25a3673d6b86b8d94b324b1dba939f5cd335ac38867f87eb",
+      "arm": "choice-permuted",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 6,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "B",
+            "x": 2,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "C",
+            "x": 5,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "D",
+            "x": 3,
+            "y": 1,
+            "z": 2,
+            "turn": 3
+          }
+        ]
+      },
+      "images": [
+        "images/62326495c075c4d2af2080530fed1d20b08e083fc8d0ad86fecf062dc48a8397.png",
+        "images/a8bff5cdf9706c5a57e0941e4d2cf946c2a3fe5d62afa375c9fd670fac16d81a.png",
+        "images/564bbfe1f59c8dcc33caa9e71783a53e5b7f928b29900ba2079d6d35a91aceb7.png",
+        "images/43e9959a6b5a6525636d4665eea20e8f48ef2f6347d6b55b08ebfc7a0d146e5a.png"
+      ]
+    },
+    {
+      "id": "b150fc808175b776943ec51c",
+      "group": "c6f6e3bf87f7d07f25a3673d6b86b8d94b324b1dba939f5cd335ac38867f87eb",
+      "arm": "choice-no-image",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 3,
+            "y": 1,
+            "z": 2,
+            "turn": 3
+          },
+          {
+            "label": "B",
+            "x": 6,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "C",
+            "x": 2,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "D",
+            "x": 5,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          }
+        ],
+        "observation": "Images withheld; no reference pose supplied. Guess one of the four candidates."
+      },
+      "images": []
+    },
+    {
+      "id": "b8c2911727496c25fd4bed72",
+      "group": "c6f6e3bf87f7d07f25a3673d6b86b8d94b324b1dba939f5cd335ac38867f87eb",
+      "arm": "pose-symbolic",
+      "input": {
+        "prompt": "Return only the BLUE query piece pose as {\"x\":0,\"y\":0,\"z\":0,\"turn\":0}, matching the reference.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "x": "integer",
+          "y": "integer",
+          "z": "integer",
+          "turn": "0|1|2|3"
+        },
+        "reference": {
+          "version": 1,
+          "parts": [
+            {
+              "id": "base",
+              "partId": "3035",
+              "color": "gray",
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "turn": 0
+            },
+            {
+              "id": "query",
+              "partId": "3024",
+              "color": "blue",
+              "x": 6,
+              "y": 1,
+              "z": 0,
+              "turn": 3
+            }
+          ]
+        }
+      },
+      "images": []
+    },
+    {
+      "id": "2323f343699950dd2140b625",
+      "group": "e8f5fd113a2cd87181a8c7da9efeaea2acb2db0778b212acbdf3b85490d53a10",
+      "arm": "full-rgb",
+      "input": {
+        "prompt": "Return the full two-piece structure matching the images and supplied known part identities.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3623:blue": 1
+        },
+        "query": {
+          "partId": "3623",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "version": 1,
+          "parts": [
+            {
+              "id": "piece",
+              "partId": "3005",
+              "color": "red",
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "turn": 0
+            }
+          ]
+        }
+      },
+      "images": [
+        "images/acddf1d46a2fdfe17d55d58b2b7c7912dad999b8c3c16351d1976ecad9adb531.png",
+        "images/2f54ba7ea90117c972dec30ce83716d040a51493345474030a767e7fbb294924.png",
+        "images/05bc365278b8336f193b2ec7d3542f0b471d82c84fd89ae192871f948ac2bb48.png",
+        "images/4629edb5f1d10a4aacdb7f56791ab2de80f6be0b9c3c60ec083b84e011bed223.png"
+      ]
+    },
+    {
+      "id": "62e1dd5d770d5903c4f20487",
+      "group": "e8f5fd113a2cd87181a8c7da9efeaea2acb2db0778b212acbdf3b85490d53a10",
+      "arm": "pose-rgb",
+      "input": {
+        "prompt": "Return only the BLUE query piece pose as {\"x\":0,\"y\":0,\"z\":0,\"turn\":0}, matching the reference.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3623:blue": 1
+        },
+        "query": {
+          "partId": "3623",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "x": "integer",
+          "y": "integer",
+          "z": "integer",
+          "turn": "0|1|2|3"
+        }
+      },
+      "images": [
+        "images/acddf1d46a2fdfe17d55d58b2b7c7912dad999b8c3c16351d1976ecad9adb531.png",
+        "images/2f54ba7ea90117c972dec30ce83716d040a51493345474030a767e7fbb294924.png",
+        "images/05bc365278b8336f193b2ec7d3542f0b471d82c84fd89ae192871f948ac2bb48.png",
+        "images/4629edb5f1d10a4aacdb7f56791ab2de80f6be0b9c3c60ec083b84e011bed223.png"
+      ]
+    },
+    {
+      "id": "d9f9622c60f18683fcd681a3",
+      "group": "e8f5fd113a2cd87181a8c7da9efeaea2acb2db0778b212acbdf3b85490d53a10",
+      "arm": "choice-rgb",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3623:blue": 1
+        },
+        "query": {
+          "partId": "3623",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 1,
+            "y": 1,
+            "z": 0,
+            "turn": 0
+          },
+          {
+            "label": "B",
+            "x": 3,
+            "y": 1,
+            "z": 0,
+            "turn": 0
+          },
+          {
+            "label": "C",
+            "x": 0,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "label": "D",
+            "x": 5,
+            "y": 1,
+            "z": 2,
+            "turn": 0
+          }
+        ]
+      },
+      "images": [
+        "images/acddf1d46a2fdfe17d55d58b2b7c7912dad999b8c3c16351d1976ecad9adb531.png",
+        "images/2f54ba7ea90117c972dec30ce83716d040a51493345474030a767e7fbb294924.png",
+        "images/05bc365278b8336f193b2ec7d3542f0b471d82c84fd89ae192871f948ac2bb48.png",
+        "images/4629edb5f1d10a4aacdb7f56791ab2de80f6be0b9c3c60ec083b84e011bed223.png"
+      ]
+    },
+    {
+      "id": "15ea3122d0ec92ccd637c59a",
+      "group": "e8f5fd113a2cd87181a8c7da9efeaea2acb2db0778b212acbdf3b85490d53a10",
+      "arm": "choice-permuted",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3623:blue": 1
+        },
+        "query": {
+          "partId": "3623",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 3,
+            "y": 1,
+            "z": 0,
+            "turn": 0
+          },
+          {
+            "label": "B",
+            "x": 0,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "label": "C",
+            "x": 5,
+            "y": 1,
+            "z": 2,
+            "turn": 0
+          },
+          {
+            "label": "D",
+            "x": 1,
+            "y": 1,
+            "z": 0,
+            "turn": 0
+          }
+        ]
+      },
+      "images": [
+        "images/acddf1d46a2fdfe17d55d58b2b7c7912dad999b8c3c16351d1976ecad9adb531.png",
+        "images/2f54ba7ea90117c972dec30ce83716d040a51493345474030a767e7fbb294924.png",
+        "images/05bc365278b8336f193b2ec7d3542f0b471d82c84fd89ae192871f948ac2bb48.png",
+        "images/4629edb5f1d10a4aacdb7f56791ab2de80f6be0b9c3c60ec083b84e011bed223.png"
+      ]
+    },
+    {
+      "id": "eb2bed02f7f26ef0afe205e7",
+      "group": "e8f5fd113a2cd87181a8c7da9efeaea2acb2db0778b212acbdf3b85490d53a10",
+      "arm": "choice-no-image",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3623:blue": 1
+        },
+        "query": {
+          "partId": "3623",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 1,
+            "y": 1,
+            "z": 0,
+            "turn": 0
+          },
+          {
+            "label": "B",
+            "x": 3,
+            "y": 1,
+            "z": 0,
+            "turn": 0
+          },
+          {
+            "label": "C",
+            "x": 0,
+            "y": 1,
+            "z": 3,
+            "turn": 0
+          },
+          {
+            "label": "D",
+            "x": 5,
+            "y": 1,
+            "z": 2,
+            "turn": 0
+          }
+        ],
+        "observation": "Images withheld; no reference pose supplied. Guess one of the four candidates."
+      },
+      "images": []
+    },
+    {
+      "id": "d97745101b8b2b7646198730",
+      "group": "e8f5fd113a2cd87181a8c7da9efeaea2acb2db0778b212acbdf3b85490d53a10",
+      "arm": "pose-symbolic",
+      "input": {
+        "prompt": "Return only the BLUE query piece pose as {\"x\":0,\"y\":0,\"z\":0,\"turn\":0}, matching the reference.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3623:blue": 1
+        },
+        "query": {
+          "partId": "3623",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "x": "integer",
+          "y": "integer",
+          "z": "integer",
+          "turn": "0|1|2|3"
+        },
+        "reference": {
+          "version": 1,
+          "parts": [
+            {
+              "id": "base",
+              "partId": "3035",
+              "color": "gray",
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "turn": 0
+            },
+            {
+              "id": "query",
+              "partId": "3623",
+              "color": "blue",
+              "x": 0,
+              "y": 1,
+              "z": 3,
+              "turn": 0
+            }
+          ]
+        }
+      },
+      "images": []
+    },
+    {
+      "id": "5cff0c083f18342fc66110f3",
+      "group": "5b0cceb71d87f55214665f9e4b05689e441d2aa0f7e4fd24cd670ac6ec3a46c1",
+      "arm": "full-rgb",
+      "input": {
+        "prompt": "Return the full two-piece structure matching the images and supplied known part identities.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "version": 1,
+          "parts": [
+            {
+              "id": "piece",
+              "partId": "3005",
+              "color": "red",
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "turn": 0
+            }
+          ]
+        }
+      },
+      "images": [
+        "images/9f089530c30d8a36e14797efcdd235ad9f34496293c70997d5f03912ac99229b.png",
+        "images/e2e675de3b8d527ebd4e9f02e98b67e5c2ffd8a5d2ace0ec42b1e9e29999e249.png",
+        "images/509ce056df168fc1d1528e77352cbb40f7a23d95542be20ab06232c90dfe3139.png",
+        "images/59d81536e0eec3ca16c46ffb13f0bf803ad1a949913d827688641a520b833138.png"
+      ]
+    },
+    {
+      "id": "6b8aada278cd93c4c8ef8c3e",
+      "group": "5b0cceb71d87f55214665f9e4b05689e441d2aa0f7e4fd24cd670ac6ec3a46c1",
+      "arm": "pose-rgb",
+      "input": {
+        "prompt": "Return only the BLUE query piece pose as {\"x\":0,\"y\":0,\"z\":0,\"turn\":0}, matching the reference.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "x": "integer",
+          "y": "integer",
+          "z": "integer",
+          "turn": "0|1|2|3"
+        }
+      },
+      "images": [
+        "images/9f089530c30d8a36e14797efcdd235ad9f34496293c70997d5f03912ac99229b.png",
+        "images/e2e675de3b8d527ebd4e9f02e98b67e5c2ffd8a5d2ace0ec42b1e9e29999e249.png",
+        "images/509ce056df168fc1d1528e77352cbb40f7a23d95542be20ab06232c90dfe3139.png",
+        "images/59d81536e0eec3ca16c46ffb13f0bf803ad1a949913d827688641a520b833138.png"
+      ]
+    },
+    {
+      "id": "e39c6b9dbe3be5dc201a4edf",
+      "group": "5b0cceb71d87f55214665f9e4b05689e441d2aa0f7e4fd24cd670ac6ec3a46c1",
+      "arm": "choice-rgb",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 2,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "B",
+            "x": 5,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "C",
+            "x": 1,
+            "y": 1,
+            "z": 2,
+            "turn": 3
+          },
+          {
+            "label": "D",
+            "x": 3,
+            "y": 1,
+            "z": 2,
+            "turn": 3
+          }
+        ]
+      },
+      "images": [
+        "images/9f089530c30d8a36e14797efcdd235ad9f34496293c70997d5f03912ac99229b.png",
+        "images/e2e675de3b8d527ebd4e9f02e98b67e5c2ffd8a5d2ace0ec42b1e9e29999e249.png",
+        "images/509ce056df168fc1d1528e77352cbb40f7a23d95542be20ab06232c90dfe3139.png",
+        "images/59d81536e0eec3ca16c46ffb13f0bf803ad1a949913d827688641a520b833138.png"
+      ]
+    },
+    {
+      "id": "b40ceb95c0789126c2ba445a",
+      "group": "5b0cceb71d87f55214665f9e4b05689e441d2aa0f7e4fd24cd670ac6ec3a46c1",
+      "arm": "choice-permuted",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 5,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "B",
+            "x": 1,
+            "y": 1,
+            "z": 2,
+            "turn": 3
+          },
+          {
+            "label": "C",
+            "x": 3,
+            "y": 1,
+            "z": 2,
+            "turn": 3
+          },
+          {
+            "label": "D",
+            "x": 2,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          }
+        ]
+      },
+      "images": [
+        "images/9f089530c30d8a36e14797efcdd235ad9f34496293c70997d5f03912ac99229b.png",
+        "images/e2e675de3b8d527ebd4e9f02e98b67e5c2ffd8a5d2ace0ec42b1e9e29999e249.png",
+        "images/509ce056df168fc1d1528e77352cbb40f7a23d95542be20ab06232c90dfe3139.png",
+        "images/59d81536e0eec3ca16c46ffb13f0bf803ad1a949913d827688641a520b833138.png"
+      ]
+    },
+    {
+      "id": "895fca9c1ba32c3bd3ebb9f2",
+      "group": "5b0cceb71d87f55214665f9e4b05689e441d2aa0f7e4fd24cd670ac6ec3a46c1",
+      "arm": "choice-no-image",
+      "input": {
+        "prompt": "Select the candidate pose of the BLUE query piece. All candidates are legal. Exactly one matches the reference. Return only {\"choice\":\"A\"} with the selected label.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "choice": "A|B|C|D"
+        },
+        "candidates": [
+          {
+            "label": "A",
+            "x": 2,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "B",
+            "x": 5,
+            "y": 1,
+            "z": 0,
+            "turn": 3
+          },
+          {
+            "label": "C",
+            "x": 1,
+            "y": 1,
+            "z": 2,
+            "turn": 3
+          },
+          {
+            "label": "D",
+            "x": 3,
+            "y": 1,
+            "z": 2,
+            "turn": 3
+          }
+        ],
+        "observation": "Images withheld; no reference pose supplied. Guess one of the four candidates."
+      },
+      "images": []
+    },
+    {
+      "id": "e6b46ff11ca45361f5a3702d",
+      "group": "5b0cceb71d87f55214665f9e4b05689e441d2aa0f7e4fd24cd670ac6ec3a46c1",
+      "arm": "pose-symbolic",
+      "input": {
+        "prompt": "Return only the BLUE query piece pose as {\"x\":0,\"y\":0,\"z\":0,\"turn\":0}, matching the reference.",
+        "convention": {
+          "projection": "Orthographic; views recentered/rescaled to fit the structure.",
+          "origin": "Minimum X/Y/Z of the entire structure are each 0.",
+          "position": "Minimum body X/Z corner and bottom Y. X/Z are stud units; Y is plate-height units, 0.4 stud per unit.",
+          "front": "Camera on positive Z, looking toward negative Z. Image right is +X, image up is +Y.",
+          "side": "Camera on positive X, looking toward negative X. Image right is -Z, image up is +Y.",
+          "top": "Camera on positive Y with tiny positive Z offset. Image right is +X, image down is +Z. Grid labels mark stud-cell centers.",
+          "turn": "0 or 2: catalog width along X, depth along Z. 1 or 3 swaps width and depth. Equivalent yaw footprints are accepted."
+        },
+        "billOfMaterials": {
+          "3035:gray": 1,
+          "3024:blue": 1
+        },
+        "query": {
+          "partId": "3024",
+          "color": "blue"
+        },
+        "responseSchema": {
+          "x": "integer",
+          "y": "integer",
+          "z": "integer",
+          "turn": "0|1|2|3"
+        },
+        "reference": {
+          "version": 1,
+          "parts": [
+            {
+              "id": "base",
+              "partId": "3035",
+              "color": "gray",
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "turn": 0
+            },
+            {
+              "id": "query",
+              "partId": "3024",
+              "color": "blue",
+              "x": 3,
+              "y": 1,
+              "z": 2,
+              "turn": 3
+            }
+          ]
+        }
+      },
+      "images": []
+    }
+  ],
+  "plannedCalls": 96,
+  "sourceGroups": [
+    "eaca7743f50e67bf678c1191825f947730fbe93d55b83431c5559e2aeb8b337b",
+    "c6f6e3bf87f7d07f25a3673d6b86b8d94b324b1dba939f5cd335ac38867f87eb",
+    "e8f5fd113a2cd87181a8c7da9efeaea2acb2db0778b212acbdf3b85490d53a10",
+    "5b0cceb71d87f55214665f9e4b05689e441d2aa0f7e4fd24cd670ac6ec3a46c1"
+  ],
+  "temperature": 0,
+  "maxTokens": 2200,
+  "newSpendCap": 0.6,
+  "pairedUnits": 4,
+  "scope": "Four distinct normalized two-piece prefixes from four unused calibration sources. Colors canonicalized to gray base/blue query; part identities supplied. Adaptive development diagnosis, not independent confirmatory testing.",
+  "caveats": [
+    "Choice alternatives add candidate information, so choice vs generation is not an information-matched causal comparison.",
+    "Permutation consistency does not imply correctness; no-image is a guessing control with chance expectation 25%, not a guaranteed score.",
+    "Correct labels are balanced over four scenes; candidate poses differ and all are legal.",
+    "Top/front/side conventions are declared, but no new camera calibration algorithm or human observability study is claimed.",
+    "Full-structure output is only two pieces here: do not call differences a demonstrated long-output bottleneck."
+  ]
+}

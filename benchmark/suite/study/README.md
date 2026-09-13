@@ -195,3 +195,30 @@ and create a separate revision with each prefix anchored at XYZ=0 and explicit
 origin wording. This revision also shares the $2 allocation. Re-rendering,
 wording changes and re-sampling are joint interventions, not a clean causal
 estimate of normalization alone.
+
+## Pose And Choice Diagnostics
+
+`pose-probes/` contains 96 further calls on four unused source groups, using
+distinct normalized two-piece geometries and canonical gray/blue colors.
+Six conditions share each scene: full RGB structure, local RGB pose, RGB
+candidate choice, permuted choice, no-image choice and privileged symbolic pose.
+All candidates pass independent geometry checks, have the same part/yaw/height,
+and differ in position. Correct labels are balanced across scenes; chance
+expectation is 25%. Known types/BOM and explicit camera conventions narrow the
+interpretation: this is not part recognition or a broad reconstruction test.
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts prepare-pose-probes
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts run-pose-probes --paid
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts replay-pose-probes
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts report-pose-probes
+```
+
+Preparation uses the running renderer. Only the `--paid` execution sends model
+requests, with the existing client, ledger and lock, a $0.60 subcap, the shared
+$2 validation cap and the unchanged $4.50 campaign cap. Existing runs cannot be
+silently overwritten. Replay and report need no credential or runtime models.
+Reports preserve X/Y/Z/yaw errors and compare actual selected poses after
+permutation. Candidate information differs from generation; consistency is not
+correctness and the four source groups do not establish stable model rankings.
+The experiment remains separate from the historical 4,100-response UI audit.

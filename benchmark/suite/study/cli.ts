@@ -26,10 +26,24 @@ import { SuiteRenderer } from '../render';
 import { prepareModelValidation, runModelValidation, replayModelValidation } from './model-validation';
 import { validationReport } from './model-validation-report';
 import { prepareLadder, runLadder, replayLadder } from './reconstruction-ladder';
+import { preparePoseProbes } from './pose-probes';
+import { runPoseProbes, replayPoseProbes } from './pose-run';
+import { poseReport } from './pose-report';
 
 const [command, ...args] = process.argv.slice(2);
 let result: unknown;
 if (command === 'audit') result = await audit();
+else if (command === 'prepare-pose-probes') {
+  const { url } = JSON.parse(readFileSync(resolve(BENCHMARK, '.runtime/suite-server.json'), 'utf8'));
+  const renderer = new SuiteRenderer(url);
+  try { result = await preparePoseProbes(renderer); } finally { await renderer.close(); }
+}
+else if (command === 'run-pose-probes') {
+  if (!args.includes('--paid')) throw new Error('Explicit --paid required');
+  result = await runPoseProbes();
+}
+else if (command === 'replay-pose-probes') result = replayPoseProbes();
+else if (command === 'report-pose-probes') result = poseReport();
 else if (command === 'prepare-model-validation') result = prepareModelValidation();
 else if (command === 'replay-model-validation') result = replayModelValidation();
 else if (command === 'report-model-validation') result = validationReport();

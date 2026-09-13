@@ -101,6 +101,13 @@ These are implemented capabilities, not claims of state-of-the-art
 performance or submission readiness. New v2 model evidence and earlier
 pilots are reported separately rather than pooled across dataset versions.
 
+Our diagnostic question is whether failure under one output protocol
+also predicts failure under another on the same object. We distinguish
+full-structure generation, local-pose recovery, and candidate selection.
+Candidate lists and symbolic references provide additional information;
+comparisons are conditional measurements, not automatic evidence of a
+single latent spatial ability or a causal perception bottleneck.
+
 \section{Related Work and Positioning}
 \paragraph{Generation and structural representations.}
 BrickGPT~\cite{pun2025brickgpt}, previously released under the LegoGPT
@@ -605,6 +612,63 @@ All raw predictions are retained, including malformed responses.}
 \label{tab:vlm}
 \end{table}
 
+\subsection{Output Protocol and Coordinate Diagnostics}
+A separate four-model development screen uses three calibration objects
+of 12, 20, and 29 pieces: 156 primary responses and 24 reconstruction
+controls. Five of 13 task variants have differing per-case model outcomes,
+six have zero exact successes, and two (recolor/removal) are saturated.
+Size is confounded with construction policy; these observations do not
+establish a stable model ranking. A public-input copy baseline obtains
+85.9\% mean part F1 on completion, exceeding all four models, showing why
+global similarity must be accompanied by addition and preservation metrics.
+
+A 24-call follow-up on nested 2/4/8-piece prefixes revealed a coordinate
+confound: cropping left minimum $Z=1$ for two prefixes, despite inherited
+minimum-corner origin wording. One failed response matched up to translation.
+We preserve its original score and run a separate 24-call revision with
+each prefix anchored at minimum $X=Y=Z=0$ and explicit wording. RGB+BOM
+success is 1/12 and symbolic success 11/12 in that revision. Re-rendering,
+wording changes and re-sampling prevent attributing changes solely to
+origin normalization.
+
+We then select four unused source groups with distinct two-piece
+geometries, normalize origins, and standardize gray bases and blue query
+pieces. Part identities and BOM are given; orthographic camera directions,
+grid units and minimum-corner poses are declared. The same four models
+answer six conditions per scene (96 calls; Table~\ref{tab:pose}).
+Four candidate poses have equal part identity, yaw and height, differ
+in position, and independently pass nominal geometry checks. Correct
+labels are balanced across scenes. A cyclic permutation changes labels
+but not candidates, and a no-image control retains all other input.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrrr}
+\toprule
+Condition & Mini & GPT-4.1 & Flash & Qwen\\
+\midrule
+\tableinput{tables/study-pose.tex}
+\bottomrule
+\end{tabular}
+\caption{Adaptive output-protocol diagnostics on four two-piece scenes.
+Mini is GPT-4.1 mini; Flash is Gemini 2.5 Flash; Qwen is Qwen3-VL-32B-Instruct.
+Rows are separate information/output conditions, not a pooled leaderboard.}
+\label{tab:pose}
+\end{table}
+
+Full-structure and local-pose successes both total 8/16; shortening the
+output alone is not supported as a general remedy here. Candidate success
+is 10/16 with images, 8/16 after permutation, and 5/16 without images.
+Only 6/16 paired selections preserve the same actual pose after
+permutation, despite unchanged candidate content. Local-pose outputs all
+pass format checks; $X$ and yaw are correct in 16/16, while $Y$ and $Z$
+are correct in 12/16 and 11/16. Symbolic poses succeed in 16/16.
+These are descriptive results on four object clusters, not significance
+tests. Candidate information, known part identities, recoloring and simple
+geometry restrict the claims. All trials remain adaptive development
+evidence; independent data, human metric calibration and broader
+replication are still required.
+
 \subsection{Earlier Neural Pilots: Separate Evidence}
 \label{sec:pilots}
 Two preceding releases provide neural pipeline evidence but not a v2
@@ -685,7 +749,7 @@ and checked case by case, rather than inferred from a few examples.
 A full offline replay independently re-evaluates the deterministic
 baseline and reconstructs all event state chains.
 
-Engineering validation passes 96 benchmark tests and 69 original
+Engineering validation passes 108 benchmark tests and 69 original
 application unit tests, TypeScript checking, and production frontend
 build. Browser checks cover 1,440-pixel desktop and 390-pixel mobile
 layouts, nonblank canvas pixels, camera interaction, input/truth
@@ -715,6 +779,11 @@ pilot, and \$0.04997633 for the paired controls. The new v2 study adds
 730 settled requests costing \$1.50635072, bringing the cumulative
 campaign to 1,093 requests and \$1.95737583. Construction and offline
 verification add no API requests.
+The subsequent four-model screen and two ladder versions add 228 calls
+and \$0.695073176; the local-pose study adds 96 calls and \$0.162861212.
+The resulting campaign totals 1,417 calls and \$2.815310218. These newer
+responses have offline replay evidence, not coverage by the older
+4,100-response browser audit.
 We preserve the cumulative ledger and its \$4.50 internal cap rather
 than resetting the budget between releases.
 
