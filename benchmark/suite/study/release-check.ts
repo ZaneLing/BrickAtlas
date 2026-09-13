@@ -8,6 +8,7 @@ import { localEvidenceRuns, replayLocalEvidence } from './local-evidence';
 import { LOCAL_JOBS, localMatrixComplete } from './local-contract';
 import { studyRuns } from './results';
 import { SUITE } from '../storage';
+import { replayInterfaceProbes } from './interface-probes';
 
 const walk = (path: string): string[] => readdirSync(path).flatMap(name => {
   const file = resolve(path, name); return statSync(file).isDirectory() ? walk(file) : [file];
@@ -15,7 +16,9 @@ const walk = (path: string): string[] => readdirSync(path).flatMap(name => {
 const evidenceNames = ['strict-audit.json', 'strict-roundtrip.json', 'mutation-audit.json',
   'independent-audit.json', 'exact-near-duplicates.json', 'connector-audit.json',
   'render-verification.json', 'training-bundle-verification.json', 'backend-corpus-check.json',
-  'merge-verification.json', 'training-token-audit.json', 'test-token-audit.json'];
+  'merge-verification.json', 'training-token-audit.json', 'test-token-audit.json',
+  'failure-diagnostics.json', 'observability-witness.json', 'calibration/protocol.json',
+  'ui/verification.json', 'clean-verification.json'];
 const evidence = Object.fromEntries(evidenceNames.map(name => [name, JSON.parse(readFileSync(resolve(STUDY, name), 'utf8'))]));
 assert.equal(evidence['strict-audit.json'].oracleCases, 117910);
 assert.deepEqual(evidence['strict-audit.json'].differences, []);
@@ -26,6 +29,16 @@ assert.equal(evidence['backend-corpus-check.json'].allTokenAndPixelDigestsMatch,
 assert.equal(evidence['training-bundle-verification.json'].hashesVerified, true);
 assert.equal(evidence['training-token-audit.json'].cases, 840);
 assert.equal(evidence['training-token-audit.json'].promptLabelsMasked, true);
+assert.equal(evidence['failure-diagnostics.json'].rows.length, 4100);
+assert.equal(evidence['observability-witness.json'].scores.ordinary.metrics.success, 1);
+assert.equal(evidence['observability-witness.json'].scores.symbolic.metrics.success, 0);
+assert.equal(evidence['calibration/protocol.json'].status, 'inputs-frozen-not-evaluated');
+assert.equal(evidence['calibration/protocol.json'].cases.length, 468);
+assert.equal(evidence['ui/verification.json'].cases, 730);
+assert.equal(evidence['ui/verification.json'].localCases, 3370);
+assert.deepEqual(evidence['ui/verification.json'].errors, []);
+assert.equal(evidence['clean-verification.json'].passed, true);
+assert.equal(replayInterfaceProbes().actualModelCalls, 36);
 const locals = localEvidenceRuns(), api = studyRuns();
 const completedNames = locals.map(run => `${run.manifest.condition}-seed${run.manifest.seed}`);
 const trainingMatrixComplete = localMatrixComplete(completedNames);
@@ -49,7 +62,11 @@ for (const path of files.filter(p => /\.(json|jsonl|md|txt|tex)$/.test(p))) {
 const manifest = { checkedAt: new Date().toISOString(), completedLocalJobs: locals.length, plannedLocalJobs: LOCAL_JOBS.length,
   completedLocalJobNames: completedNames, pendingLocalJobs: LOCAL_JOBS.filter(name => !completedNames.includes(name)),
   trainingMatrixComplete, newPaidRequests: 730, credentialScanPassed: true,
-  noMachineLocalPaths: true, evidence,
+  noMachineLocalPaths: true,
+  evidence: Object.fromEntries(Object.entries(evidence).map(([name, report]) => [name,
+    name === 'failure-diagnostics.json'
+      ? { version: report.version, responses: report.rows.length, strata: report.groups.length, apiRequests: report.apiRequests }
+      : report])),
   sourceHashes: Object.fromEntries(walk(resolve(SUITE, 'study')).filter(path => /\.(ts|py|mjs|txt)$/.test(path)).map(path =>
     [relative(SUITE, path), createHash('sha256').update(readFileSync(path)).digest('hex')])),
   hashes: Object.fromEntries(files.map(path => [relative(STUDY, path),

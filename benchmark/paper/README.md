@@ -69,13 +69,15 @@ V2 has 5,120 objects, 117,910 task-condition cases, and one complete public-inpu
 algorithmic baseline plus complete height-sorted planning audits.
 The new v2 study contains 674 one-shot and 56 control API calls on 24 shared
 held-out objects and 25 catalog questions; it remains exploratory, not powered.
-Only completed SmolVLM jobs appear in the training table; `study-evidence.json`
-records the completed count out of ten planned jobs.
+All ten planned SmolVLM jobs are complete: 3,370 predictions, 1,080 updates and
+552,960 supervised answer tokens. `study-evidence.json` links their evidence.
+Exact successes occur only in relation tasks; no positive edit-transfer result
+was observed in the leave-edit conditions.
 The 112-call two-model study, 24-call paired control, and five Qwen LoRA/base runs
 belong to earlier releases and are explicitly separated.
 
 Independent human review, rich human-designed data, broader model baselines,
-confirmatory experiments and any unfinished training jobs remain outstanding.
+and confirmatory experiments remain outstanding.
 The original local `RESEARCH_ROADMAP.md` remains excluded from publication.
 
 Chinese companions: `../suite/study/OVERVIEW.zh-CN.md` and `../suite/study/REPORT.zh-CN.md`.

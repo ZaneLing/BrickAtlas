@@ -14,6 +14,9 @@ node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts strict-audit
 node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts verify-training
 node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts replay-local
 node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts local-statistics
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts diagnose
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts observability
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts replay-probes
 node node_modules/tsx/dist/cli.mjs benchmark/suite/v2/cli.ts replay
 ```
 
@@ -113,3 +116,22 @@ the paper compilation and PDF inspection commands are run.
 - Public ground-truth artifacts are a protocol boundary, not a hidden test server.
 - No arbitrary CAD, force, clutch, human preference, or real-robot claim is made.
 - Only jobs with a complete manifest and all predictions are imported or reported.
+
+## Development Diagnostics
+
+`failure-diagnostics.json` classifies 4,100 existing responses by the first
+observable rejection gate, without changing scores or dropping failures.
+These stages are not cognitive explanations. Base SmolVLM fails JSON/schema
+on every main-study response, so zero success does not isolate perception.
+
+`interface-probes/` stores 36 additional local text-only calls and their replay:
+three tiny towers, three operations, two metadata formats, two checkpoints.
+They are post-hoc calibration, excluded from the main matrix and its 4,100-row
+browser audit. `observability-witness.json` supplies a hidden-tiling counterexample:
+equal BOM/colored occupancy/surface signatures need not imply the same graph.
+It makes no claim of identical rendered pixels.
+
+`freeze-calibration` freezes 468 questions on 36 unused validation objects.
+It does not run inference or export the required PNGs. The reviewer packet
+contains zero completed reviews. None of these development artifacts is a new
+independent confirmatory test.

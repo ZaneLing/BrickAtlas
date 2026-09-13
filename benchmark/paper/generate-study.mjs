@@ -7,7 +7,9 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url)), study = resolve(here, '../suite/artifacts/study');
 const files = ['statistics.json', 'replay.json', 'independent-audit.json', 'exact-near-duplicates.json',
   'connector-audit.json', 'strict-audit.json', 'backend-corpus-check.json', 'local-summary.json',
-  'mutation-audit.json', 'render-verification.json', 'training-bundle-verification.json'];
+  'mutation-audit.json', 'render-verification.json', 'training-bundle-verification.json',
+  'merge-verification.json', 'training-token-audit.json', 'test-token-audit.json', 'local-statistics.json',
+  'failure-diagnostics.json', 'interface-probes/replay.json', 'observability-witness.json'];
 const data = Object.fromEntries(files.map(name => [name, JSON.parse(readFileSync(resolve(study, name), 'utf8'))]));
 assert.equal(data['replay.json'].reduce((n, r) => n + r.cases, 0), 730);
 assert.equal(data['independent-audit.json'].differences.length, 0);
