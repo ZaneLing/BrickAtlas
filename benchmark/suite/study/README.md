@@ -132,6 +132,21 @@ equal BOM/colored occupancy/surface signatures need not imply the same graph.
 It makes no claim of identical rendered pixels.
 
 `freeze-calibration` freezes 468 questions on 36 unused validation objects.
-It does not run inference or export the required PNGs. The reviewer packet
-contains zero completed reviews. None of these development artifacts is a new
-independent confirmatory test.
+It does not run inference. `export-calibration` renders their permitted images
+using the running suite server; `verify-calibration` checks the portable inputs
+offline. The exported bundle contains 720 image uses and 144 nonblank PNGs,
+with public fields, case order, recipe associations and hashes checked.
+The verification report explicitly counts missing policy/size bins.
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts export-calibration
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts verify-calibration
+```
+
+Use only `calibration/inputs/public.jsonl` and its `images/` directory as model
+inputs. Manifests, reviewer packets and diagnostic witnesses are evaluator
+material. A complete input manifest is not a completed evaluation.
+The reviewer packet contains zero completed reviews. None of these development
+artifacts is a new independent confirmatory test. The clean-copy test now
+replays diagnostics and probes and checks calibration inputs without `.runtime`
+or a model API key; rendering and fresh inference are not repeated there.

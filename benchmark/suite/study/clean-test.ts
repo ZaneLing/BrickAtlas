@@ -17,7 +17,8 @@ try {
   symlinkSync(resolve(BENCHMARK, '../node_modules'), resolve(temporary, 'node_modules'), 'dir');
   assert.equal(existsSync(resolve(target, '.runtime')), false);
   const env = { ...process.env }; delete env.OPENROUTER_API_KEY;
-  const commands = ['replay', 'verify-training', 'replay-local', 'local-statistics'];
+  const commands = ['replay', 'verify-training', 'replay-local', 'local-statistics',
+    'diagnose', 'observability', 'replay-probes', 'freeze-calibration', 'verify-calibration'];
   for (const command of commands) {
     execFileSync(process.execPath, [resolve(temporary, 'node_modules/tsx/dist/cli.mjs'),
       resolve(target, 'suite/study/cli.ts'), command], { cwd: target, env, encoding: 'utf8', maxBuffer: 8_000_000 });

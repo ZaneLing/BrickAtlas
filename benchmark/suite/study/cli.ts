@@ -18,6 +18,11 @@ import { failureDiagnostics } from './failure-diagnostics';
 import { observabilityAudit } from './observability';
 import { prepareInterfaceProbes, replayInterfaceProbes } from './interface-probes';
 import { freezeCalibration } from './calibration';
+import { exportCalibration, verifyCalibrationInputs } from './calibration-export';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { BENCHMARK } from '../storage';
+import { SuiteRenderer } from '../render';
 
 const [command, ...args] = process.argv.slice(2);
 let result: unknown;
@@ -27,6 +32,12 @@ else if (command === 'observability') result = observabilityAudit();
 else if (command === 'prepare-probes') result = prepareInterfaceProbes();
 else if (command === 'replay-probes') result = replayInterfaceProbes();
 else if (command === 'freeze-calibration') result = freezeCalibration();
+else if (command === 'verify-calibration') result = verifyCalibrationInputs();
+else if (command === 'export-calibration') {
+  const { url } = JSON.parse(readFileSync(resolve(BENCHMARK, '.runtime/suite-server.json'), 'utf8'));
+  const renderer = new SuiteRenderer(url);
+  try { result = await exportCalibration(renderer); } finally { await renderer.close(); }
+}
 else if (command === 'mutation-audit') result = mutationAudit();
 else if (command === 'duplicates') result = exactNearDuplicates();
 else if (command === 'connectors') result = auditV2Connectors();
@@ -45,5 +56,5 @@ else if (command === 'restore-training') result = trainingBundle('restore');
 else if (command === 'replay-local') result = replayLocalEvidence();
 else if (command === 'local-statistics') result = localStatistics();
 else if (command === 'report') result = writeStudyReport();
-else throw new Error('Commands: diagnose | observability | audit | strict-audit | duplicates | connectors | prepare | prepare-training | export-training | verify-training | restore-training | run --paid | controls --paid | replay | statistics | import-local | replay-local | local-statistics | report');
+else throw new Error('Commands: diagnose | observability | prepare-probes | replay-probes | freeze-calibration | export-calibration | verify-calibration | audit | strict-audit | duplicates | connectors | prepare | prepare-training | export-training | verify-training | restore-training | run --paid | controls --paid | replay | statistics | import-local | replay-local | local-statistics | report');
 console.log(JSON.stringify(result, null, 2));

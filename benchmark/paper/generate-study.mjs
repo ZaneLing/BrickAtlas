@@ -9,12 +9,16 @@ const files = ['statistics.json', 'replay.json', 'independent-audit.json', 'exac
   'connector-audit.json', 'strict-audit.json', 'backend-corpus-check.json', 'local-summary.json',
   'mutation-audit.json', 'render-verification.json', 'training-bundle-verification.json',
   'merge-verification.json', 'training-token-audit.json', 'test-token-audit.json', 'local-statistics.json',
-  'failure-diagnostics.json', 'interface-probes/replay.json', 'observability-witness.json'];
+  'failure-diagnostics.json', 'interface-probes/replay.json', 'observability-witness.json',
+  'calibration/protocol.json', 'calibration/input-verification.json'];
 const data = Object.fromEntries(files.map(name => [name, JSON.parse(readFileSync(resolve(study, name), 'utf8'))]));
 assert.equal(data['replay.json'].reduce((n, r) => n + r.cases, 0), 730);
 assert.equal(data['independent-audit.json'].differences.length, 0);
 assert.equal(data['strict-audit.json'].differences.length, 0);
 assert.equal(data['backend-corpus-check.json'].allTokenAndPixelDigestsMatch, true);
+assert.equal(data['calibration/input-verification.json'].cases, 468);
+assert.equal(data['calibration/input-verification.json'].uniqueImages, 144);
+assert.equal(data['calibration/input-verification.json'].modelCalls, 0);
 const tex = s => String(s).replaceAll('_', '\\_');
 const write = (name, rows) => writeFileSync(resolve(here, 'tables', name + '.tex'),
   '% Generated from study evidence; do not edit.\n' + rows.join('\n') + '\n');

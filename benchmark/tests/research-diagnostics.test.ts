@@ -8,6 +8,8 @@ import { evaluateStrict } from '../suite/study/strict-evaluate';
 import { bom, cells, contact, dims, edges } from '../suite/geometry';
 import { independentCheck } from '../suite/research/independent-check';
 import { surfaceSignature } from '../suite/research/tasks';
+import { PNG } from 'pngjs';
+import { imageEvidence, verifyCalibrationInputs } from '../suite/study/calibration-export';
 
 test('failure stages distinguish parse, envelope, domain, geometry and correctness without rescuing responses', () => {
   const { target } = observabilityWitness(), task = witnessTask(target);
@@ -81,4 +83,21 @@ test('calibration objects exclude all previous train, validation and test study 
   }
   assert.ok(objects.filter(o => o.policy === 'tip-walk').every(o => o.difficulty === 'small'));
   assert.deepEqual(calibrationSelection().objects, objects);
+});
+
+test('calibration images reject wrong dimensions and blank renders', () => {
+  const blank = new PNG({ width: 640, height: 480 });
+  blank.data.fill(255);
+  assert.throws(() => imageEvidence(PNG.sync.write(blank)), /uniform/);
+  const wrong = new PNG({ width: 1, height: 1 });
+  assert.throws(() => imageEvidence(PNG.sync.write(wrong)));
+});
+
+test('portable calibration inputs cover all frozen cases with nonblank permitted images', () => {
+  const report = verifyCalibrationInputs();
+  assert.equal(report.cases, 468); assert.equal(report.sourceGroups, 36);
+  assert.equal(report.imageUses, 720); assert.equal(report.uniqueImages, 144);
+  assert.equal(report.coverage.reduce((n, r) => n + r.selectedObjects, 0), 36);
+  assert.ok(report.coverage.some(r => r.selectedObjects === 0), 'Unrepresented size bins remain explicit');
+  assert.equal(report.modelCalls, 0);
 });

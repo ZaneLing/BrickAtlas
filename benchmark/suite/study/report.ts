@@ -6,11 +6,13 @@ import { replayStudy } from './results';
 import { localStatus } from './local-status';
 import { importVLM } from './import-local';
 import { localStatistics } from './local-statistics';
+import { verifyCalibrationInputs } from './calibration-export';
 
 export function writeStudyReport() {
   const replay = replayStudy(); statistics();
   const data = JSON.parse(readFileSync(resolve(STUDY, 'statistics.json'), 'utf8'));
   const local = importVLM(), state = localStatus(); localStatistics();
+  const calibration = existsSync(resolve(STUDY, 'calibration/inputs/manifest.json')) ? verifyCalibrationInputs() : null;
   const aggregate = new Map<string, { n: number; success: number }>();
   for (const r of data.groups) {
     const k = r.stratum.split('|').slice(0, 3).join(' / ');
@@ -97,7 +99,10 @@ oracle仅用于离线长度诊断，没有附加到模型输入。
 这些控制不是主矩阵、不是新的留出测试，也不在4100条网页回放覆盖内；原答及离线复算见interface-probes/。
 同BOM、彩色体素和声明的表面签名可对应不同连接图，构造反例见observability-witness.json。
 需要隐藏关系的下游任务必须增加观察或允许不确定/集合答案，不能强制唯一隐藏GT。
-另冻结36个此前未用验证对象的468题校准协议；模型评测、完整图片导出和真实人工评审仍未完成。
+另冻结36个此前未用验证对象的468题校准协议。
+${calibration ? `输入包已完成：${calibration.imageUses}次图片使用、${calibration.uniqueImages}张独立PNG，公开题面、哈希及非空检查通过。`
+    : '完整图片输入包尚未导出。'}
+按实际可用尺寸轮转抽样，缺失的策略/尺寸层单列；模型评测和真实人工评审仍未完成。
 
 ## 评分版本与复现
 

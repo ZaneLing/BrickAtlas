@@ -9,6 +9,7 @@ import { LOCAL_JOBS, localMatrixComplete } from './local-contract';
 import { studyRuns } from './results';
 import { SUITE } from '../storage';
 import { replayInterfaceProbes } from './interface-probes';
+import { verifyCalibrationInputs } from './calibration-export';
 
 const walk = (path: string): string[] => readdirSync(path).flatMap(name => {
   const file = resolve(path, name); return statSync(file).isDirectory() ? walk(file) : [file];
@@ -18,7 +19,7 @@ const evidenceNames = ['strict-audit.json', 'strict-roundtrip.json', 'mutation-a
   'render-verification.json', 'training-bundle-verification.json', 'backend-corpus-check.json',
   'merge-verification.json', 'training-token-audit.json', 'test-token-audit.json',
   'failure-diagnostics.json', 'observability-witness.json', 'calibration/protocol.json',
-  'ui/verification.json', 'clean-verification.json'];
+  'calibration/input-verification.json', 'ui/verification.json', 'clean-verification.json'];
 const evidence = Object.fromEntries(evidenceNames.map(name => [name, JSON.parse(readFileSync(resolve(STUDY, name), 'utf8'))]));
 assert.equal(evidence['strict-audit.json'].oracleCases, 117910);
 assert.deepEqual(evidence['strict-audit.json'].differences, []);
@@ -38,6 +39,8 @@ assert.equal(evidence['ui/verification.json'].cases, 730);
 assert.equal(evidence['ui/verification.json'].localCases, 3370);
 assert.deepEqual(evidence['ui/verification.json'].errors, []);
 assert.equal(evidence['clean-verification.json'].passed, true);
+assert.ok(evidence['clean-verification.json'].commands.includes('verify-calibration'));
+assert.deepEqual(verifyCalibrationInputs(), evidence['calibration/input-verification.json']);
 assert.equal(replayInterfaceProbes().actualModelCalls, 36);
 const locals = localEvidenceRuns(), api = studyRuns();
 const completedNames = locals.map(run => `${run.manifest.condition}-seed${run.manifest.seed}`);
