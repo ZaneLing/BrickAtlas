@@ -23,10 +23,40 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { BENCHMARK } from '../storage';
 import { SuiteRenderer } from '../render';
+import { prepareModelValidation, runModelValidation, replayModelValidation } from './model-validation';
+import { validationReport } from './model-validation-report';
+import { prepareLadder, runLadder, replayLadder } from './reconstruction-ladder';
 
 const [command, ...args] = process.argv.slice(2);
 let result: unknown;
 if (command === 'audit') result = await audit();
+else if (command === 'prepare-model-validation') result = prepareModelValidation();
+else if (command === 'replay-model-validation') result = replayModelValidation();
+else if (command === 'report-model-validation') result = validationReport();
+else if (command === 'replay-ladder') result = replayLadder();
+else if (command === 'replay-normalized-ladder') result = replayLadder(true);
+else if (command === 'prepare-normalized-ladder') {
+  const { url } = JSON.parse(readFileSync(resolve(BENCHMARK, '.runtime/suite-server.json'), 'utf8'));
+  const renderer = new SuiteRenderer(url);
+  try { result = await prepareLadder(renderer, true); } finally { await renderer.close(); }
+}
+else if (command === 'run-normalized-ladder') {
+  if (!args.includes('--paid')) throw new Error('Explicit --paid required');
+  result = await runLadder(true);
+}
+else if (command === 'prepare-ladder') {
+  const { url } = JSON.parse(readFileSync(resolve(BENCHMARK, '.runtime/suite-server.json'), 'utf8'));
+  const renderer = new SuiteRenderer(url);
+  try { result = await prepareLadder(renderer); } finally { await renderer.close(); }
+}
+else if (command === 'run-ladder') {
+  if (!args.includes('--paid')) throw new Error('Explicit --paid required');
+  result = await runLadder();
+}
+else if (command === 'run-model-validation') {
+  if (!args.includes('--paid')) throw new Error('Explicit --paid required');
+  result = await runModelValidation();
+}
 else if (command === 'diagnose') result = failureDiagnostics();
 else if (command === 'observability') result = observabilityAudit();
 else if (command === 'prepare-probes') result = prepareInterfaceProbes();

@@ -19,6 +19,12 @@ try {
   const env = { ...process.env }; delete env.OPENROUTER_API_KEY;
   const commands = ['replay', 'verify-training', 'replay-local', 'local-statistics',
     'diagnose', 'observability', 'replay-probes', 'freeze-calibration', 'verify-calibration'];
+  if (existsSync(resolve(target, 'suite/artifacts/study/model-validation/run.json'))) {
+    commands.push('replay-model-validation');
+    if (existsSync(resolve(target, 'suite/artifacts/study/model-validation/ladder/run.json'))) commands.push('replay-ladder');
+    if (existsSync(resolve(target, 'suite/artifacts/study/model-validation/ladder-normalized/run.json'))) commands.push('replay-normalized-ladder');
+    commands.push('report-model-validation');
+  }
   for (const command of commands) {
     execFileSync(process.execPath, [resolve(temporary, 'node_modules/tsx/dist/cli.mjs'),
       resolve(target, 'suite/study/cli.ts'), command], { cwd: target, env, encoding: 'utf8', maxBuffer: 8_000_000 });

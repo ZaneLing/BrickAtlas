@@ -150,3 +150,48 @@ The reviewer packet contains zero completed reviews. None of these development
 artifacts is a new independent confirmatory test. The clean-copy test now
 replays diagnostics and probes and checks calibration inputs without `.runtime`
 or a model API key; rendering and fresh inference are not repeated there.
+
+## OpenRouter Validation Screen
+
+The separate `model-validation/` artifacts compare GPT-4.1 mini, GPT-4.1,
+Gemini 2.5 Flash and Qwen3-VL-32B on the same three calibration objects.
+There are 39 primary questions per model and six reconstruction controls,
+180 planned calls in total. The protocol is frozen before outcomes are observed.
+This does not change the earlier 730-call study or its published scores.
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts prepare-model-validation
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts run-model-validation --paid
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts replay-model-validation
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts report-model-validation
+```
+
+Only `run-model-validation --paid` makes model requests. It shares the original
+campaign ledger and exclusive `pilot.lock`, limits new validation spend to $2,
+and never resets the $4.50 cumulative cap. Each request reserves a conservative
+ceiling, then settles actual cost. HTTP/ambiguous billing errors stop the run
+without retry; partial results and missing comparisons remain visible.
+Price and supported-parameter checks precede execution. JSON mode, decoding
+settings, raw replies and actual provider routing are recorded.
+
+`model-validation/REPORT.zh-CN.md` is the generated report; `analysis.json`
+contains task/variant, object-size, failure-stage and paired-control summaries.
+Three independent objects cannot establish stable model rankings, and size is
+confounded with geometry/policy. Conditional controls never enter primary totals.
+
+The `prepare-ladder`, `run-ladder --paid`, and `replay-ladder` commands supply an
+adaptive 2/4/8-piece reconstruction follow-up, with ordinary RGB+BOM and
+privileged-symbolic tracks. It uses one other source object and shares the same
+$2 validation allocation. Its 24 planned responses are not part of the fixed
+180-call screen; nested prefixes are not independent samples. Preparation
+renders the six task inputs and verifies oracle validity, not model ability.
+
+The first ladder exposed an origin confound: cropping a prefix left minimum
+Z=1 in the 2/4-piece scenes while the inherited image footer described a
+minimum-corner origin. `originAudit` records translation-only matches without
+changing any original score. `prepare-normalized-ladder`,
+`run-normalized-ladder --paid`, and `replay-normalized-ladder` preserve v1
+and create a separate revision with each prefix anchored at XYZ=0 and explicit
+origin wording. This revision also shares the $2 allocation. Re-rendering,
+wording changes and re-sampling are joint interventions, not a clean causal
+estimate of normalization alone.

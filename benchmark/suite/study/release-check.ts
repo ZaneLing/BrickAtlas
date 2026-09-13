@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 import { createHash } from 'node:crypto';
 import { atomicJson } from '../../core/budget';
@@ -10,6 +10,8 @@ import { studyRuns } from './results';
 import { SUITE } from '../storage';
 import { replayInterfaceProbes } from './interface-probes';
 import { verifyCalibrationInputs } from './calibration-export';
+import { replayModelValidation } from './model-validation';
+import { replayLadder } from './reconstruction-ladder';
 
 const walk = (path: string): string[] => readdirSync(path).flatMap(name => {
   const file = resolve(path, name); return statSync(file).isDirectory() ? walk(file) : [file];
@@ -54,6 +56,9 @@ assert.ok(merges.every((run: any) => run.passed === true && run.adaptedMatrices 
   && run.unchangedTensors === 411 && Number.isFinite(run.maxAbsoluteCPUMergeDifference)));
 assert.equal(api.reduce((n, r) => n + r.rows.length, 0), 730);
 assert.ok(api.every(r => r.status === 'complete'));
+const validation = existsSync(resolve(STUDY, 'model-validation/run.json')) ? replayModelValidation() : null;
+const ladder = existsSync(resolve(STUDY, 'model-validation/ladder/run.json')) ? replayLadder() : null;
+const normalized = existsSync(resolve(STUDY, 'model-validation/ladder-normalized/run.json')) ? replayLadder(true) : null;
 const files = walk(STUDY).filter(path => !path.endsWith('/release-manifest.json')
   && !relative(STUDY, path).startsWith('.local-import-'));
 const sensitive = /sk-or-v1-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{20,}|github_pat_[a-zA-Z0-9_]{20,}/;
@@ -65,6 +70,11 @@ for (const path of files.filter(p => /\.(json|jsonl|md|txt|tex)$/.test(p))) {
 const manifest = { checkedAt: new Date().toISOString(), completedLocalJobs: locals.length, plannedLocalJobs: LOCAL_JOBS.length,
   completedLocalJobNames: completedNames, pendingLocalJobs: LOCAL_JOBS.filter(name => !completedNames.includes(name)),
   trainingMatrixComplete, newPaidRequests: 730, credentialScanPassed: true,
+  additionalValidation: validation, additionalLadder: ladder ? {
+    status: ladder.status, responses: ladder.responses, newCost: ladder.newCost, sourceGroups: ladder.sourceGroups,
+  } : null,
+  normalizedLadder: normalized ? { status: normalized.status, responses: normalized.responses,
+    newCost: normalized.newCost, sourceGroups: normalized.sourceGroups } : null,
   noMachineLocalPaths: true,
   evidence: Object.fromEntries(Object.entries(evidence).map(([name, report]) => [name,
     name === 'failure-diagnostics.json'
