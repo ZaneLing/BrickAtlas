@@ -29,10 +29,29 @@ import { prepareLadder, runLadder, replayLadder } from './reconstruction-ladder'
 import { preparePoseProbes } from './pose-probes';
 import { runPoseProbes, replayPoseProbes } from './pose-run';
 import { poseReport } from './pose-report';
+import { exposureAudit } from './exposure';
+import { prepareHumanAudit, humanAuditStatus } from './human-audit';
+import { prepareOrderStudy } from './order-study';
+import { runOrderStudy, replayOrderStudy } from './order-run';
+import { researchReadiness } from './readiness';
 
 const [command, ...args] = process.argv.slice(2);
 let result: unknown;
 if (command === 'audit') result = await audit();
+else if (command === 'exposure-audit') result = exposureAudit();
+else if (command === 'prepare-human-audit') result = prepareHumanAudit();
+else if (command === 'human-audit-status') result = humanAuditStatus();
+else if (command === 'research-readiness') result = researchReadiness();
+else if (command === 'replay-order-study') result = replayOrderStudy();
+else if (command === 'prepare-order-study') {
+  const { url } = JSON.parse(readFileSync(resolve(BENCHMARK, '.runtime/suite-server.json'), 'utf8'));
+  const renderer = new SuiteRenderer(url);
+  try { result = await prepareOrderStudy(renderer); } finally { await renderer.close(); }
+}
+else if (command === 'run-order-study') {
+  if (!args.includes('--paid')) throw new Error('Explicit --paid required');
+  result = await runOrderStudy();
+}
 else if (command === 'prepare-pose-probes') {
   const { url } = JSON.parse(readFileSync(resolve(BENCHMARK, '.runtime/suite-server.json'), 'utf8'));
   const renderer = new SuiteRenderer(url);

@@ -542,61 +542,27 @@ These are exploratory diagnostics without confirmatory power or a
 causal claim about reasoning or transfer.
 
 \subsection{Image-Conditioned Training Protocol}
-The new local pilot uses the public SmolVLM-256M-Instruct checkpoint~\cite{marafioti2025smolvlm}
-at revision \texttt{7e3e67ed}, unquantized. Ninety-six training objects
-and 24 disjoint validation objects provide seven task families
-(672/168 examples) with actual supplied PNG views. Language-side
-query/value rank-8 LoRA has 460,800 trainable parameters.
-Single-reconstruction, multi-task, and leave-edit conditions each use
-seeds 17, 29, and 43; base is untrained. Every trained condition uses
-120 updates, exactly 512 supervised answer tokens per update
-(61,440 total), AdamW at $2\times10^{-4}$, and gradient clipping at 1.
-Full prompts and answers are retained; loss-bearing answer positions
-are deterministically subsampled to match supervision.
+We train language-side rank-8 LoRA on unquantized
+SmolVLM-256M-Instruct~\cite{marafioti2025smolvlm}, using 96 training
+and 24 disjoint validation objects. Single-reconstruction, multi-task
+and leave-edit each use three seeds, 120 updates and 61,440 supervised
+answer tokens; base is untrained. Supervision is matched, not compute.
+All ten jobs complete the same 337-case MLX inference protocol
+(Table~\ref{tab:vlm}); preprocessing and merged weights are audited.
+Implementation, token budgets and validation details are in the supplement.
 
-This matches supervision, not input tokens, image tokens, time, or
-compute. Validation NLL uses two fixed examples per task, not all
-validation examples. Training uses PyTorch/MPS; every formal checkpoint
-uses MLX for greedy 2,200-token inference on the same 337 cases.
-Token, pixel, and mask digests match across both preprocessing backends
-on all cases; floating-point kernels need not produce identical output.
-All 840 training/validation prompt prefixes retain token identity when
-answers are appended; the longest full sequence is 5,176 tokens.
-Compact test-oracle answers use at most 1,793 SmolVLM tokens, below the
-2,200-token cap. These private length diagnostics are never model inputs.
-All ten planned jobs are complete (Table~\ref{tab:vlm}): 3,370 predictions,
-1,080 optimizer updates, and 552,960 supervised answer tokens.
-All exact successes are relation answers. Multi-task seeds achieve
-9, 2, and 9 successes; leave-edit seeds achieve 7, 8, and 9, respectively.
-Base and single-task runs have no exact successes. No trained condition
-achieves exact edit success, including the held-out rotation task.
-Thus the completed pilot provides no positive evidence for edit transfer
-or visual reconstruction success. Validation NLL improvements cannot
-substitute for these task outcomes.
+Exact successes occur only in relation answers. No trained condition
+solves an edit exactly, including the excluded rotation task, so this pilot
+does not demonstrate edit transfer. All 337 base replies fail JSON
+parsing (298) or schema (39), preventing a perception-only interpretation.
+Separate text-only interface probes yield 0/9 for base and 1/9 for
+multi-task seed 17 under both full and minimal metadata.
 
-Post-hoc rejection diagnostics expose an interface confound: all 337 base
-responses fail JSON parsing (298) or response schema (39). These outcomes
-cannot isolate visual reasoning. In 36 additional text-only interface
-probes, base succeeds on 0/9 cases with either full or minimal metadata;
-multi-task seed 17 succeeds on 1/9 with either format. These development
-controls are separate from the main matrix and its browser replay audit.
-A constructive hidden-tiling witness also has identical BOM, colored
-occupancy, and declared surface signatures but different contact graphs.
-Visual acceptance therefore does not establish hidden-relation equivalence.
-This is not a pixel-identity proof or a population estimate.
-
-For subsequent development, we freeze 468 cases on 36 validation objects
-excluded from the earlier study and training/validation bundle. Selection
-cycles through available size bins within each of six seen policies;
-absent bins are explicitly reported. Their portable inputs contain 720
-image uses and 144 PNGs, checked for public-input identity, hashes and
-nonblank rendering. This is input preparation, not a new model evaluation
-or an independent confirmatory test.
-
-Each of the nine saved adapters is checked against its merged checkpoint:
-60 adapted matrices and 411 unchanged tensors per run agree with an
-independently computed CPU merge using the actual bfloat16 cast-before-add
-semantics. All formal runs retain identical input-token hashes.
+An independent constructive witness has equal BOM, colored occupancy and
+declared visible surfaces but different contact graphs. Visual acceptance
+therefore need not imply hidden-relation equivalence; this establishes
+possibility, not prevalence or pixel identity. Subsequent diagnostics
+use explicitly frozen development selections, never relabeled hidden tests.
 
 \begin{table}[t]
 \centering\small
@@ -669,123 +635,59 @@ geometry restrict the claims. All trials remain adaptive development
 evidence; independent data, human metric calibration and broader
 replication are still required.
 
+\paragraph{Reordering versus resampling.}
+The four-scene probe lacks a same-order repeat, so it cannot distinguish
+ordering effects from sampling instability. A follow-up freezes 12 new
+validation sources (two per seen policy), distinct normalized two-piece
+geometries, and four conditions: original, identical repeat, permutation,
+and no-image choice. Repeat/permutation timing is counterbalanced.
+All 192 calls complete. Within each source/model, let $d_r$ and $d_p$
+indicate changes in the actual selected pose relative to the first reply
+under repetition and permutation, respectively. We summarize $d_p-d_r$
+with 1,000 fixed-seed source-bootstrap resamples (Table~\ref{tab:order}).
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrl}
+\toprule
+Model & Repeat & Permute & Excess [95\% interval]\\
+\midrule
+\tableinput{tables/study-order.tex}
+\bottomrule
+\end{tabular}
+\caption{Selection mismatches relative to the original answer, not
+errors relative to ground truth. Labels follow Table~\ref{tab:pose}.
+Intervals summarize 12 selected source groups, not broad population coverage.}
+\label{tab:order}
+\end{table}
+
+Reordering produces more mismatches than identical repetition for all
+four models in this sample. This supports order sensitivity beyond the
+observed repeat baseline, while provider, time and candidate construction
+remain limitations. The study is adaptive development replication, not
+an independently sourced confirmatory test or evidence of a universal
+model ranking.
+
 \subsection{Earlier Neural Pilots: Separate Evidence}
 \label{sec:pilots}
-Two preceding releases provide neural pipeline evidence but not a v2
-leaderboard. A 576-object composition pilot evaluated four held-out
-objects with GPT-4.1 mini and Gemini 2.5 Flash. Each model answered 56
-cases, for 112 API requests. Table~\ref{tab:pilot} shows visual task
-counts; all cells have only four objects. Both models failed ordinary
-and layer reconstruction/completion, but succeeded with the privileged
-symbolic reference. This suggests a useful perception-versus-structure
-diagnostic, not a statistically established model comparison.
-V2 also changes some scoring rules, including full-structure requirements
-under layer disclosure; cross-version scores must not be pooled.
-
-\begin{table}[t]
-\centering\small
-\begin{tabular}{llccc}
-\toprule
-Task & Model & RGB & Layers & Symbolic\\
-\midrule
-\tableinput{tables/pilot.tex}
-\bottomrule
-\end{tabular}
-\caption{Earlier composition-v1 pilot only. Gemini Flash denotes
-Gemini 2.5 Flash. These 112 API calls are not v2 model evaluation.}
-\label{tab:pilot}
-\end{table}
-
-A further Gemini control reuses the identical first answer and input
-for 12 ordinary-condition generation/reconstruction/repair cases.
-One additional call either requests reflection without new scene
-information or supplies target-blind legality feedback. Both arms remain
-at 2/12 exact successes, with no gained or lost successes.
-The 24 new requests are billed once; reused historical receipts are
-not charged again. Arms ran sequentially rather than interleaved,
-and the sample is too small to establish that validation tools are
-generally ineffective.
-
-An older Grid-v1 text/structure pilot uses Qwen3-0.6B and rank-8 LoRA
-on query/value projections, with 1,146,880 trainable parameters,
-AdamW learning rate $2\times10^{-4}$, and 120 optimizer steps per
-trained run. The maximum sequence length is 3,072; overlength training
-examples are excluded rather than truncating answers. Greedy inference
-allows 1,200 new tokens. Single-task training uses editing; multi-task
-training uses relations, generation, editing, and planning. Table
-~\ref{tab:training} reports actual outputs, not a proposed recipe.
-All successes are editing cases. Multi-task seeds average 16.7\%
-with a sample standard deviation of 7.2 percentage points, without
-evidence of broad transfer.
-
-\begin{table}[t]
-\centering\small
-\begin{tabular}{lrrrr}
-\toprule
-Condition & Seed & Steps & Tokens & Success\\
-\midrule
-\tableinput{tables/training.tex}
-\bottomrule
-\end{tabular}
-\caption{Earlier Grid-v1 local text/structure pilot, eight test cases
-per row. Tokens count processed input plus output training tokens.
-Base/single have one seed each. This is not v2 or multimodal training.}
-\label{tab:training}
-\end{table}
-
-The single/multi runs are step-matched, not token-matched, and use
-different supervision diversity. A lower validation NLL is not evidence
-of execution success. Four adapters, five prediction sets, and all 480
-optimizer-step records are bundled. Training used an Apple M4 Pro
-with 48\,GB memory and MPS; local computation consumed real resources
-despite having no API bill.
+The supplement preserves the preceding 112-call composition pilot,
+24-call fixed feedback comparison, and five Grid-v1 Qwen base/LoRA
+runs. They use different datasets and scoring contracts and are not
+pooled with v2. Their negative visual and transfer results remain
+available, alongside all original predictions, adapters and training
+records; they are historical development evidence rather than a
+second evaluation of the present claims.
 
 \subsection{Verification and Resource Accounting}
-All 117,910 v2 oracle answers pass and all empty answers fail. The
-artifact verifier regenerates every ground truth and compares all
-public inputs and private render recipes, checking 476,760 serialized
-rows across 14 compressed shards. Ground truth is therefore materialized
-and checked case by case, rather than inferred from a few examples.
-A full offline replay independently re-evaluates the deterministic
-baseline and reconstructs all event state chains.
-
-Engineering validation passes 108 benchmark tests and 69 original
-application unit tests, TypeScript checking, and production frontend
-build. Browser checks cover 1,440-pixel desktop and 390-pixel mobile
-layouts, nonblank canvas pixels, camera interaction, input/truth
-separation, pagination, scoring, and replay export. A render audit tests
-115 views across the largest sample in each policy. All dataset render
-recipes are verified, but not all possible PNGs are pre-rendered.
-A 46-case external-input export verifies 125 image uses and 25 unique
-image hashes.
-
-For the new study, all 1,177 train/validation/test input records are
-checked against their task recipes: 1,970 image uses and 626 distinct
-renders match by regeneration. The portable training bundle contains
-840 records and 480 unique PNGs with verified input/answer and split
-identity. Rendering equality is checked on the same browser/GPU stack,
-not claimed across arbitrary rasterizers.
-
-A copied environment without the original runtime directory or API key
-regenerates the complete casebank audit and replays all evaluations.
-It shares the installed pinned Node dependencies; this is not a clean
-operating-system installation, a second-person reproduction, or a
-repeated stochastic model training run.
-
-The earlier API campaign contains 363 settled requests totaling
-\$0.45102511: \$0.10992152 for CARE-mini and diagnostics,
-\$0.08908686 for Grid-v1 experiments, \$0.20204040 for the composition
-pilot, and \$0.04997633 for the paired controls. The new v2 study adds
-730 settled requests costing \$1.50635072, bringing the cumulative
-campaign to 1,093 requests and \$1.95737583. Construction and offline
-verification add no API requests.
-The subsequent four-model screen and two ladder versions add 228 calls
-and \$0.695073176; the local-pose study adds 96 calls and \$0.162861212.
-The resulting campaign totals 1,417 calls and \$2.815310218. These newer
-responses have offline replay evidence, not coverage by the older
-4,100-response browser audit.
-We preserve the cumulative ledger and its \$4.50 internal cap rather
-than resetting the budget between releases.
+All 117,910 oracle answers pass and empty answers fail. Source manifests,
+independent metric comparisons, render recipes and baseline state chains
+are checked case by case. The supplement details training assets,
+browser coverage and engineering verification. A runtime-free, key-free
+copied environment reproduces scores using shared pinned dependencies;
+this is not independent second-person reproduction. Paid requests retain
+receipts and per-run costs, with a persistent \$4.50 campaign cap.
+New diagnostics have offline evidence and are not retroactively included
+in older browser-audit counts.
 
 \section{Limitations and Research Readiness}
 \paragraph{Data and domain.}

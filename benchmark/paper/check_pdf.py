@@ -1,6 +1,7 @@
 """Verify the compiled manuscript and render pages for visual inspection."""
 import hashlib
 import json
+import argparse
 from pathlib import Path
 import re
 
@@ -8,18 +9,26 @@ import fitz
 from PIL import Image, ImageOps, ImageDraw
 
 ROOT = Path(__file__).resolve().parent
-document = fitz.open(ROOT / "main.pdf")
-log = (ROOT / "main.log").read_text(errors="replace")
+parser = argparse.ArgumentParser()
+parser.add_argument("--paper", choices=["main", "supplement"], default="main")
+args = parser.parse_args()
+document = fitz.open(ROOT / (args.paper + ".pdf"))
+log = (ROOT / (args.paper + ".log")).read_text(errors="replace")
 assert not re.search(r"Overfull \\[hv]box|Citation .* undefined|Reference .* undefined|^!", log, re.M)
 assert len(document) > 0
 output = ROOT.parent / ".runtime/paper-inspection"
+if args.paper == "supplement":
+    output = output / "supplement"
 output.mkdir(parents=True, exist_ok=True)
 pages = []
 out_of_bounds = []
 text = ""
+references_start = None
 for index, page in enumerate(document):
     assert abs(page.rect.width - 612) < 1 and abs(page.rect.height - 792) < 1
     page_text = page.get_text()
+    if references_start is None and re.search(r"(?m)^References$", page_text):
+        references_start = index + 1
     assert len(page_text.strip()) > 100
     text += page_text
     for word in page.get_text("words"):
@@ -36,8 +45,9 @@ for index, page in enumerate(document):
     ImageDraw.Draw(frame).text((12, 550), f"Page {index+1}", fill="black")
     pages.append(frame)
 assert not out_of_bounds, out_of_bounds
-assert "117,910" in text and "5,120" in text
-assert "References" in text
+if args.paper == "main":
+    assert "117,910" in text and "5,120" in text
+    assert references_start is not None
 assert not re.search(r"\[\?\]", text)
 contact = Image.new("RGB", (420*3, 570*((len(pages)+2)//3)), "#dddddd")
 for i, image in enumerate(pages):
@@ -47,8 +57,10 @@ result = {
     "pages": len(document), "paperSize": "US Letter", "textOnEveryPage": True,
     "unresolvedCitationsOrReferences": False, "overfullBoxes": False,
     "textOutsidePage": out_of_bounds,
-    "pdfSha256": hashlib.sha256((ROOT / "main.pdf").read_bytes()).hexdigest(),
+    "pdfSha256": hashlib.sha256((ROOT / (args.paper + ".pdf")).read_bytes()).hexdigest(),
+    "referencesStartPage": references_start,
+    "mainContentPageUpperBound": references_start if references_start else len(document),
     "scope": "Compile, page-boundary and textual checks; visual page inspection performed separately.",
 }
-(ROOT / "pdf-verification.json").write_text(json.dumps(result, indent=2) + "\n")
+(ROOT / ("pdf-verification.json" if args.paper == "main" else "supplement-verification.json")).write_text(json.dumps(result, indent=2) + "\n")
 print(json.dumps(result, indent=2))

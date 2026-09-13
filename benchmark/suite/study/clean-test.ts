@@ -11,7 +11,7 @@ try {
   const target = resolve(temporary, 'benchmark'); mkdirSync(target);
   for (const entry of ['suite', 'core', 'package.json', 'tsconfig.json']) {
     cpSync(resolve(BENCHMARK, entry), resolve(target, entry), {
-      recursive: true, filter: file => !file.endsWith('RESEARCH_ROADMAP.md'),
+      recursive: true, filter: file => !file.endsWith('RESEARCH_ROADMAP.md') && !file.endsWith('RESEARCH_MASTER_PLAN.zh-CN.md'),
     });
   }
   symlinkSync(resolve(BENCHMARK, '../node_modules'), resolve(temporary, 'node_modules'), 'dir');
@@ -28,6 +28,8 @@ try {
   if (existsSync(resolve(target, 'suite/artifacts/study/pose-probes/run.json'))) {
     commands.push('replay-pose-probes', 'report-pose-probes');
   }
+  if (existsSync(resolve(target, 'suite/artifacts/study/order-study/run.json'))) commands.push('replay-order-study');
+  commands.push('exposure-audit', 'human-audit-status', 'research-readiness');
   for (const command of commands) {
     execFileSync(process.execPath, [resolve(temporary, 'node_modules/tsx/dist/cli.mjs'),
       resolve(target, 'suite/study/cli.ts'), command], { cwd: target, env, encoding: 'utf8', maxBuffer: 8_000_000 });

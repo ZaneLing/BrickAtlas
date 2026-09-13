@@ -12,7 +12,8 @@ const files = ['statistics.json', 'replay.json', 'independent-audit.json', 'exac
   'failure-diagnostics.json', 'interface-probes/replay.json', 'observability-witness.json',
   'calibration/protocol.json', 'calibration/input-verification.json',
   'model-validation/analysis.json', 'model-validation/ladder/replay.json',
-  'model-validation/ladder-normalized/replay.json', 'pose-probes/analysis.json', 'pose-probes/protocol.json'];
+  'model-validation/ladder-normalized/replay.json', 'pose-probes/analysis.json', 'pose-probes/protocol.json',
+  'order-study/analysis.json'];
 const data = Object.fromEntries(files.map(name => [name, JSON.parse(readFileSync(resolve(study, name), 'utf8'))]));
 assert.equal(data['replay.json'].reduce((n, r) => n + r.cases, 0), 730);
 assert.equal(data['independent-audit.json'].differences.length, 0);
@@ -57,6 +58,14 @@ write('study-pose', [
   assert.equal(r.n, 4); assert.equal(r.missing, 0);
   return `${r.successes}/${r.n}`;
 }).join(' & ')} \\\\`));
+const orderStudy = data['order-study/analysis.json'];
+assert.equal(orderStudy.status, 'complete'); assert.equal(orderStudy.responses, 192);
+const labels = ['Mini', 'GPT-4.1', 'Flash', 'Qwen'];
+write('study-order', orderStudy.byModel.map((row, index) => {
+  assert.equal(row.pairedGroups, 12);
+  const ci = row.excessMismatchInterval;
+  return `${labels[index]} & ${row.repeatMismatch}/12 & ${row.permutationMismatch}/12 & ${ci.mean.toFixed(2)} [${ci.low.toFixed(2)}, ${ci.high.toFixed(2)}] \\\\`;
+}));
 writeFileSync(resolve(here, 'study-evidence.json'), JSON.stringify({
   scope: 'Completed v2 API study and completed local jobs only; small-sample exploratory evidence.',
   localJobsComplete: data['local-summary.json'].length, plannedLocalJobs: 10,
@@ -65,4 +74,4 @@ writeFileSync(resolve(here, 'study-evidence.json'), JSON.stringify({
     sha256: createHash('sha256').update(readFileSync(resolve(study, name))).digest('hex'),
   }])),
 }, null, 2) + '\n');
-console.log(JSON.stringify({ tables: 4, localJobsComplete: data['local-summary.json'].length }));
+console.log(JSON.stringify({ tables: 5, localJobsComplete: data['local-summary.json'].length }));

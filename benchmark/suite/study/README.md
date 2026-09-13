@@ -222,3 +222,33 @@ Reports preserve X/Y/Z/yaw errors and compare actual selected poses after
 permutation. Candidate information differs from generation; consistency is not
 correctness and the four source groups do not establish stable model rankings.
 The experiment remains separate from the historical 4,100-response UI audit.
+
+## Six-Package Research Validation
+
+`RESEARCH_CONTRACT.md` fixes the claims, negative-result policy and statistical
+unit. `EXTERNAL_VALIDATION.md` specifies the outstanding source, reviewer,
+confirmation and independent-reproduction evidence. The cumulative summary is
+`../artifacts/study/governance/SUMMARY.zh-CN.md`; it explicitly remains incomplete.
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts replay-order-study
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts exposure-audit
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts prepare-human-audit
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts human-audit-status
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts research-readiness
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/clean-test.ts
+```
+
+The 192-call order study pairs original/repeat/permuted/no-image conditions on
+12 new sources. Its complete original answers, inputs, receipts and analysis
+remain in `order-study/`, outside the historical UI audit. Excess permutation
+mismatch is 0.50-0.75 across four models, with source-bootstrap intervals above
+zero in this development sample. The run cost $0.282100356; cumulative API spend
+is $3.097410574. It shares the existing $2 allocation and $4.50 campaign cap.
+No additional paid execution is needed to reproduce the scores.
+
+The clean-copy check runs 19 commands without runtime models or an API key;
+installed dependencies are shared. Technical release checks include order replay
+and record research readiness separately. A technical pass never supplies absent
+human labels, data rights, effective baselines or independent confirmation.
+The reviewer packet has 96 candidates and zero submitted human reviews.

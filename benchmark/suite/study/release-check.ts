@@ -13,6 +13,8 @@ import { verifyCalibrationInputs } from './calibration-export';
 import { replayModelValidation } from './model-validation';
 import { replayLadder } from './reconstruction-ladder';
 import { replayPoseProbes } from './pose-run';
+import { replayOrderStudy } from './order-run';
+import { researchReadiness } from './readiness';
 
 const walk = (path: string): string[] => readdirSync(path).flatMap(name => {
   const file = resolve(path, name); return statSync(file).isDirectory() ? walk(file) : [file];
@@ -61,6 +63,18 @@ const validation = existsSync(resolve(STUDY, 'model-validation/run.json')) ? rep
 const ladder = existsSync(resolve(STUDY, 'model-validation/ladder/run.json')) ? replayLadder() : null;
 const normalized = existsSync(resolve(STUDY, 'model-validation/ladder-normalized/run.json')) ? replayLadder(true) : null;
 const pose = existsSync(resolve(STUDY, 'pose-probes/run.json')) ? replayPoseProbes() : null;
+const order = existsSync(resolve(STUDY, 'order-study/run.json')) ? replayOrderStudy() : null;
+const orderAnalysis = order ? JSON.parse(readFileSync(resolve(STUDY, 'order-study/analysis.json'), 'utf8')) : null;
+if (order) {
+  assert.equal(order.status, 'complete');
+  assert.equal(order.responses, 192);
+  assert.equal(order.sourceGroups, 12);
+  assert.ok(evidence['clean-verification.json'].commands.includes('replay-order-study'));
+}
+for (const command of ['exposure-audit', 'human-audit-status', 'research-readiness']) {
+  assert.ok(evidence['clean-verification.json'].commands.includes(command));
+}
+const readiness = researchReadiness();
 const files = walk(STUDY).filter(path => !path.endsWith('/release-manifest.json')
   && !relative(STUDY, path).startsWith('.local-import-'));
 const sensitive = /sk-or-v1-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{20,}|github_pat_[a-zA-Z0-9_]{20,}/;
@@ -78,6 +92,9 @@ const manifest = { checkedAt: new Date().toISOString(), completedLocalJobs: loca
   normalizedLadder: normalized ? { status: normalized.status, responses: normalized.responses,
     newCost: normalized.newCost, sourceGroups: normalized.sourceGroups } : null,
   poseProbes: pose ? { status: pose.status, responses: pose.responses, newCost: pose.newCost } : null,
+  orderStudy: order ? { status: order.status, responses: order.responses,
+    sourceGroups: order.sourceGroups, newCost: orderAnalysis.newCost } : null,
+  researchReadiness: { allPassed: readiness.allPassed, passed: readiness.passed, pending: readiness.pending },
   noMachineLocalPaths: true,
   evidence: Object.fromEntries(Object.entries(evidence).map(([name, report]) => [name,
     name === 'failure-diagnostics.json'
@@ -89,4 +106,4 @@ const manifest = { checkedAt: new Date().toISOString(), completedLocalJobs: loca
     createHash('sha256').update(readFileSync(path)).digest('hex')])) };
 atomicJson(resolve(STUDY, 'release-manifest.json'), manifest);
 console.log(JSON.stringify({ files: files.length, completedLocalJobs: locals.length,
-  trainingMatrixComplete, credentialScanPassed: true }));
+  trainingMatrixComplete, credentialScanPassed: true, researchReady: readiness.allPassed }));
