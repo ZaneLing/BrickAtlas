@@ -5,6 +5,8 @@
 
 ## 文档
 
+- [九维度审稿评分、合同修复与全模型图集](../REVIEW_REPORT.zh-CN.md)
+
 - [Case、Ground Truth、正确/错误操作与模型测试说明](../CASE_GUIDE.zh-CN.md)
 - [难度升级、相关工作对比与 Challenge Casebank](../CHALLENGE_REPORT.zh-CN.md)
 - [当前能测什么、研究目标与整体结构](study/OVERVIEW.zh-CN.md)

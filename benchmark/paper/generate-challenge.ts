@@ -4,11 +4,11 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const here = dirname(fileURLToPath(import.meta.url)), root = resolve(here, '../challenge-cases');
+const here = dirname(fileURLToPath(import.meta.url)), root = resolve(here, '../challenge-cases-v2');
 const sha = (path: string) => createHash('sha256').update(readFileSync(path)).digest('hex');
 const manifest = JSON.parse(readFileSync(resolve(root, 'manifest.json'), 'utf8'));
 const figures = JSON.parse(readFileSync(resolve(root, 'figure-evidence.json'), 'utf8'));
-assert.equal(manifest.version, 'brickatlas-challenge-casebank-1');
+assert.equal(manifest.version, 'brickatlas-challenge-casebank-2');
 assert.equal(manifest.models.length, 6);
 assert.equal(manifest.tasks.length, 12);
 assert.equal(manifest.totals.placedPartInstances, 329);

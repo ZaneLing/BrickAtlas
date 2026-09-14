@@ -1,0 +1,79 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Grand Railway Terminal</title><style>
+body{font:15px/1.6 system-ui;margin:24px;color:#192126}a{color:#076452}h1{font-size:26px}h2{font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px}
+article{border-bottom:1px solid #cdd4d5;padding:12px 0;min-width:0}img{width:100%;height:auto;aspect-ratio:4/3;object-fit:contain}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}code{overflow-wrap:anywhere}nav{display:flex;gap:16px;flex-wrap:wrap}
+</style><h1>Grand Railway Terminal</h1><nav><a href="index.html">全部模型</a><a href="procedural-001.html">5,120 个程序结构</a></nav><section><h2>compound-edit / 784592203ea29dc17078f9eb</h2><p>Apply all clauses atomically: recolor the blue canopy red, remove bench-2 and bench-4, add the two specified yellow roof lights, and preserve every other part.</p>
+      <div class="grid"><article><h3>输入 / 上下文</h3><img src="case-27-input.jpg"></article>
+      <article><h3>正确参考</h3><img src="case-27-good.jpg"></article>
+      <article><h3>构造错误 / FAIL</h3><img src="case-27-bad.jpg"></article></div>
+      <p>字段题图像仅作上下文，请核对 JSON 字段。正反例为程序构造对照，不是模型实测。</p>
+      <a href="case-27.json">完整题面、正误答案与评分 JSON</a>
+      <details><summary>正反评分</summary><pre>{
+  "positive": {
+    "success": 1,
+    "metrics": {
+      "format": 1,
+      "valid": 1,
+      "partF1": 1,
+      "edgeF1": 1,
+      "exact": 1,
+      "preservation": 1,
+      "changedTargetRecall": 1
+    },
+    "issues": []
+  },
+  "negative": {
+    "success": 0,
+    "metrics": {
+      "format": 1,
+      "valid": 1,
+      "partF1": 0.9908256880733946,
+      "edgeF1": 0.96875,
+      "exact": 0,
+      "preservation": 0.9787234042553191,
+      "changedTargetRecall": 1
+    },
+    "issues": [
+      "target_mismatch"
+    ]
+  }
+}</pre></details></section><section><h2>multi-fault-repair / e8c2121ecc177d0237e011dd</h2><p>Repair three simultaneous faults: one recolor, one shifted part, and one extra part. Return the corrected structure and all wrong CURRENT IDs. Layer disclosure is supplied: recover complete geometry up to piece yaw symmetry, not exterior RGB alone.</p>
+      <div class="grid"><article><h3>输入 / 上下文</h3><img src="case-28-input.jpg"></article>
+      <article><h3>正确参考</h3><img src="case-28-good.jpg"></article>
+      <article><h3>构造错误 / FAIL</h3><img src="case-28-bad.jpg"></article></div>
+      <p>字段题图像仅作上下文，请核对 JSON 字段。正反例为程序构造对照，不是模型实测。</p>
+      <a href="case-28.json">完整题面、正误答案与评分 JSON</a>
+      <details><summary>正反评分</summary><pre>{
+  "positive": {
+    "success": 1,
+    "metrics": {
+      "format": 1,
+      "valid": 1,
+      "partF1": 1,
+      "edgeF1": 1,
+      "exact": 1,
+      "preservation": 1,
+      "changedTargetRecall": 1,
+      "faultSetExact": 1
+    },
+    "issues": []
+  },
+  "negative": {
+    "success": 0,
+    "metrics": {
+      "format": 1,
+      "valid": 1,
+      "partF1": 0.954954954954955,
+      "edgeF1": 0.9323308270676691,
+      "exact": 0,
+      "preservation": 1,
+      "changedTargetRecall": 0,
+      "faultSetExact": 0
+    },
+    "issues": [
+      "target_mismatch",
+      "fault_mismatch"
+    ]
+  }
+}</pre></details></section></html>

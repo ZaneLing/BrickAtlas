@@ -1,0 +1,50 @@
+{
+  "id": "770a5b457843640c815ff8ef",
+  "version": "brickatlas-challenge-casebank-2",
+  "kind": "scene-reconstruction",
+  "rules": "BrickAtlas grid-v1: x,z use studs (8 mm), y uses plate heights (3.2 mm).\nPart position is the MINIMUM x,z corner and BOTTOM y. turn is 0,1,2,3 quarter-turns:\nodd turns swap catalog w,d; 180-degree symmetric bricks have equal footprints.\nAll bricks/plates are opaque rectangular bodies with top studs and bottom sockets.\nOnly integer coordinates 0..24 and at most 64 pieces; bodies must fit within [0,32]^3.\nNo overlap. Every elevated part needs at least one directly supporting stud below it.\nOnly vertical +Y removal and -Y insertion are allowed in plan tasks; overhead overlap blocks passage.\nThis is discrete geometry/connectivity, NOT force, stability or robot-control simulation.\nProgram output: {\"version\":1,\"parts\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\"x\":0,\"y\":0,\"z\":0,\"turn\":0}]}.\nAlternative reversible output: {\"version\":1,\"nodes\":[{\"id\":\"p1\",\"partId\":\"3005\",\"color\":\"red\",\n\"parent\":null,\"offset\":[0,0,0],\"turn\":0}, ...]}.\nRelative offsets are in GLOBAL grid axes from parent's minimum corner; turn remains absolute.\nParents must occur earlier. This relative program is not a guarantee of a stud attachment.\nReturn exactly one JSON object; no markdown or chain of thought.",
+  "prompt": "Reconstruct the complete 53-part market from four views and its bill of materials. Repeated columns and signs remain distinct instances. Layer disclosure is supplied: recover complete geometry up to piece yaw symmetry, not exterior RGB alone.",
+  "input": {
+    "billOfMaterials": {
+      "3035:green": 3,
+      "3710:green": 2,
+      "3005:white": 28,
+      "3035:red": 3,
+      "3710:yellow": 5,
+      "3020:yellow": 6,
+      "3004:red": 6
+    }
+  },
+  "responseSchema": {
+    "version": 1,
+    "parts": [
+      "full structure"
+    ]
+  },
+  "imageTitles": [
+    "Market view: iso",
+    "Market view: top",
+    "Market view: front",
+    "Market view: side",
+    "Disclosed bottom-Y layer 0; other parts removed",
+    "Disclosed bottom-Y layer 1; other parts removed",
+    "Disclosed bottom-Y layer 4; other parts removed",
+    "Disclosed bottom-Y layer 7; other parts removed",
+    "Disclosed bottom-Y layer 8; other parts removed",
+    "Disclosed bottom-Y layer 9; other parts removed"
+  ],
+  "maxActions": null,
+  "images": [
+    "input/reference-01-iso.png",
+    "input/reference-02-top.png",
+    "input/reference-03-front.png",
+    "input/reference-04-side.png",
+    "input/reference-05-top.png",
+    "input/reference-06-top.png",
+    "input/reference-07-top.png",
+    "input/reference-08-top.png",
+    "input/reference-09-top.png",
+    "input/reference-10-top.png"
+  ],
+  "note": "Only this file and its referenced PNGs are model input. Context and ground-truth images are reviewer-only."
+}

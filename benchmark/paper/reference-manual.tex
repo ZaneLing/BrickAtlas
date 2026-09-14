@@ -1,0 +1,241 @@
+\clearpage
+\onecolumn
+\section{Reference Manual and Evaluation Tracks}
+\label{sec:manual}
+This appendix specifies the executable development benchmark, not a claim of independent
+validation. Dataset and model documentation follow the accountability motivation of
+Datasheets~\cite{gebru2021datasheets} and Model Cards~\cite{mitchell2019modelcards};
+accuracy, robustness and efficiency are distinct axes, as emphasized by
+HELM~\cite{liang2023helm}. These references motivate reporting, not numerical guarantees.
+
+\subsection{Units and Version Boundaries}
+The frozen v2 population has 5,120 geometrically deduplicated assemblies and 119,070
+placed part instances. Each source yields 13 task variants and 23 input-conditioned
+cases: $5120(2+3+1+3+3+2+9)+150=117910$.
+The additional 150 queries are 25 known part types in six colors, not new assemblies.
+The 12 curated sources contain 193 parts and eight original demonstrations.
+The six challenge sources contain 329 parts and twelve task contracts.
+The audit gallery adds 24 illustrative plan/repair controls for the curated sources,
+and reuses the twelve revised challenge cases: 36 positive/negative control pairs on
+18 sources. These controls are not paid or learned-model predictions.
+All 5,120 frozen source thumbnails are published on 80 offline catalog pages, each
+with two actual case IDs (ordinary reconstruction and assembly planning), totaling
+10,240 case links. The full 117,910 tasks remain in the compressed shards.
+
+Challenge revision 1 is retained under \texttt{challenge-cases/} for provenance and
+deprecated for new scoring. Revision 2 under \texttt{challenge-cases-v2/} changes
+input and scoring contracts, and receives new versioned case IDs. No historical
+model score is translated into a revision-2 result. The original v2 population is
+unchanged. Exact hash reproducibility is not reproducibility of stochastic API answers.
+
+\subsection{Task Contracts}
+\begin{tabularx}{\textwidth}{@{}lXXX@{}}
+\toprule
+Family & Public observation & Required response & Acceptance and negative control\\
+\midrule
+Parts & Two isolated RGB views & Type, color, stud count & Exact fields; wrong type/color/count fails\\
+Relations & Assembly JSON and queried IDs & Connected, above, contact studs, path length & Typed fields; side proximity is not a stud join\\
+Reconstruction & RGB+BOM, layers, or symbolic reference & Full typed placement multiset & Declared surface or full match; shifted origin fails\\
+Generation & Six numeric constraints & Any satisfying assembly & Legal, anchored, extent/count/color/graph constraints; not witness matching\\
+Completion & Current assembly and reference & Completed full assembly & Target rule plus preserved input and additions; copy-current fails\\
+Edit & Current assembly and operation & Full edited assembly & Requested change and no collateral change; no-operation fails\\
+Plan & Full target and assemble/disassemble direction & Ordered IDs & Original order executes; missing, duplicate and blocked steps fail\\
+Repair & Current assembly, BOM and reference & Full assembly and wrong current IDs & Restore, preserve, localize; empty fault set required in normal controls\\
+\bottomrule
+\end{tabularx}
+
+\paragraph{Visual information.}
+Ordinary v2 RGB uses four assembled views and a colored positive-axis first-hit
+surface criterion plus BOM and nominal legality. This proxy is not a theorem of
+pixel equivalence. Layer disclosure supplies every bottom-$Y$ layer and requires
+full geometry; symbolic reference supplies full coordinates and is privileged.
+Revised challenge scene reconstruction, distributed completion and multi-fault
+repair now add layer disclosure, because their evaluator requires complete geometry.
+We have not established uniqueness from the old exterior images. The corrected
+claim is an input-sufficiency safeguard, not a measured ambiguous-pair discovery.
+
+\subsection{Advanced Contracts and Corrections}
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+Task & Revision-2 contract & Failure tested\\
+\midrule
+Recovery & Initial/target JSON, at most 256 remove/place actions; replay without reordering & Continue without removing decks: blocked corridor\\
+Support counterfactual & Delete the public ID set simultaneously; iteratively remove unsupported bodies & Omit cascading losses\\
+Compound edit & All blue pieces to red, two bench removals, two explicit additions & Partial instruction or missing addition\\
+Multi-fault repair & Current structure, BOM, full layer observations; wrong current-ID set & Correct geometry with incomplete fault set\\
+Inspection & Query, returned observation, final answer; success and query cost separate & Answer before query, invalid/repeated query\\
+Graph reasoning & Full public geometry; shortest contact path and all articulation pieces & Wrong path, missing or duplicate articulation ID\\
+Distributed completion & Eight missing columns across two tiers; disclosed layers & Copy-current or collateral change\\
+Module transform & Public module IDs and translation; preserve lower tier & Omitted module piece or wrong translation\\
+Step selection & Public current geometry and nine complete candidate poses & Any illegal selected candidate or omitted legal candidate\\
+Pose & Selected post, current structure and reference; yaw modulo footprint symmetry & Wrong coordinate or yaw outside allowed domain\\
+Scene reconstruction & 53-part market; four assembled views plus complete layers & Missing piece or wrong pose\\
+Constrained redesign & Public foundation, inventory, extent and count thresholds & Missing anchor, inventory overrun or unmet constraint\\
+\bottomrule
+\end{tabularx}
+
+\paragraph{Inspection is not an optimality theorem.}
+\texttt{InspectionEpisode.query()} accepts one known query, returns a renderer recipe
+or an explicitly privileged structure/graph, and logs cost. A trusted renderer must
+convert a recipe to PNG before sending it to a VLM. Submission before querying and
+repeated submissions are rejected. Layer and full-symbolic disclosure both satisfy
+the explicit disclosure policy, with costs 2 and 4. This is a small executable
+information-acquisition control, not a calibrated test of optimal active perception.
+No robot, network inference runner, or learned inspection policy is claimed.
+Tool use is related to ReAct~\cite{yao2023react}; single-response refinement controls
+are related to Self-Refine~\cite{madaan2023selfrefine}, but our receipts do not record
+private internal reasoning.
+
+\paragraph{Graph and support meaning.}
+Shortest paths use undirected stud contacts. Articulation points use depth-first
+low-link logic~\cite{tarjan1972} and are independently checked by deleting each vertex
+and recounting components. Cascading support deletion is a monotone discrete rule:
+remove any elevated part lacking direct support, repeat to a fixed point.
+It is not gravity integration, force equilibrium, clutch strength or damage simulation.
+The redesign ``roof'' metric counts occupied three-dimensional cells of parts whose
+bottom $Y\geq7$; it is a volume proxy and does not verify an architectural roof.
+
+\subsection{Metrics and Edge Cases}
+Let $T$ and $A$ be target and submitted part multisets; let $m$ be the one-to-one
+match count by type, color and footprint pose, modulo per-part yaw symmetry.
+Arbitrary IDs are ignored for geometric matching, but queried and faulty current IDs
+remain task-specific handles. There is no silent global alignment.
+\begin{align}
+P_{\rm part}&=m/|A|,&R_{\rm part}&=m/|T|,&F_{\rm part}&=2m/(|A|+|T|),\\
+{\rm IoU}&=|V(T)\cap V(A)|/|V(T)\cup V(A)|,&
+{\rm Preserve}&=|\{p\in P:k(p)\in k(A)\}|/|P|.
+\end{align}
+Here $P$ is the protected input region. Set denominators equal to zero receive the
+implementation's explicit empty-set convention, not a dropped observation:
+the pairwise F1 helper returns 1 when both sets are empty; a required full structure
+cannot be empty and still succeed. Invalid schemas receive format=0 and success=0.
+All selected missing responses remain failures in applicable means.
+
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+Metric & Definition & Interpretation boundary\\
+\midrule
+BOM F1 & Multiset type/color overlap, pose ignored & High BOM does not prove reconstruction\\
+Edge F1 & Matched endpoint pair and contact-stud count & Nominal contacts only\\
+Surface F1 & Colored first-hit grid-cell set overlap & Not rendered image similarity\\
+Addition F1 (v2) & Matched missing-target parts against submitted additions & Copy-current must not earn added-region credit\\
+Changed-target recall (challenge) & Fraction of changed target pieces present & Not addition precision; deletions also require final exact\\
+Preservation & Protected input pieces retained by typed pose & Extra/missing pieces still affect final success\\
+Fault-set exact & Exact unique current-ID set & No-fault controls have an empty set\\
+Legal prefix & Successfully executed actions / submitted actions & Always pair with finalExact and coverage; short valid prefix is not success\\
+Pose field accuracy & Correct X,Y,Z and equivalent yaw / 4 & Square yaw classes collapse; not robot SE(3) error\\
+Constraint success & Conjunction of validity, extent, inventory, anchors, volume and color-count checks & Multiple witnesses accepted\\
+Query cost & Cost of the executed query & Success is not forced to use the cheapest query\\
+\bottomrule
+\end{tabularx}
+
+Global F1 is intentionally insufficient: copied v2 completion inputs reach 87.1\%
+part F1 and copied removal inputs reach 97.4\% without doing the task.
+These controls are motivated by shortcut-learning concerns~\cite{geirhos2020shortcut}.
+Percentages from different tasks or information conditions are not averaged into one rank.
+Report cluster bootstrap intervals over source groups~\cite{efron1979bootstrap};
+Wilson intervals~\cite{wilson1927} are descriptive only where binomial trial
+assumptions are justified. Derived cases and reruns of the same source are not independent.
+
+\subsection{Method-Specific Tracks, Shared Comparison Rules}
+Different output interfaces deserve different tracks, not easier private questions
+for a favored model. Within a track all systems receive the same case IDs, observation
+bytes, feedback allowance, output budget, and scorer revision.
+\begin{tabularx}{\textwidth}{@{}lXXX@{}}
+\toprule
+Track & Applicable methods & Task category & What may be compared\\
+\midrule
+Symbolic & LLM, graph solver, program synthesizer & Graph, counterfactual, compound edit, module, selection, redesign & Same public geometry or numeric constraints\\
+Disclosed vision & VLM, reconstruction specialist & Reconstruction, completion, multi-fault repair & Same assembled and layer images; no hidden coordinates\\
+Local pose & VLM or geometric estimator & Selected-piece placement & Same target views and current assembly\\
+Open-loop recovery & LLM/search planner & Remove-and-rebuild programs & Same 256-action cap, initial state and goal\\
+Inspection & Tool agent & Query followed by answer & Returned observation and cost logged; not merged with one-shot\\
+Robot control & OpenVLA/RT-2-style policy & Continuous robot execution & Not implemented; no score or eligibility claim\\
+\bottomrule
+\end{tabularx}
+OpenVLA~\cite{kim2024openvla} and RT-2~\cite{brohan2023rt2} predict robot actions in
+an embodiment, unlike digital integer-grid placements. Their appearance in a method
+plan does not mean an adapter or experiment exists. BrickNet's LDraw
+representation~\cite{kulits2026bricknet,ldraw}, BrickGPT's physical
+generation~\cite{pun2025brickgpt}, and BC-Bench's manual-based
+selection/pose~\cite{liu2026composer} likewise need audited adapters; unavailable
+methods are marked unsupported rather than assigned synthetic zero scores.
+
+\subsection{Model and Software Sources}
+The eight-model development matrix uses GPT-4.1 and mini~\cite{openai2025gpt41},
+Gemini variants~\cite{googlemodels}, Qwen3-VL checkpoints~\cite{qwen3vl},
+Claude Haiku 4.5~\cite{anthropic2025haiku}, and Llama 4
+Maverick~\cite{meta2025llama4}. Official model pages identify the families;
+exact runtime model IDs, providers, prices, input hashes and 2,200-token caps are
+in the archived protocols and OpenRouter receipts~\cite{openrouterapi}.
+These living web pages are not evidence of fixed server weights or deterministic sampling.
+SmolVLM and Qwen text pilots retain their own citations and cohorts.
+
+Three.js~\cite{threejs} renders the grid geometry. Training uses
+PyTorch~\cite{paszke2019pytorch}, Transformers~\cite{wolf2020transformers} and
+LoRA~\cite{hu2022lora}; local inference uses MLX~\cite{mlx}.
+The reproducibility stack additionally uses Node/TypeScript~\cite{nodets}, tsx,
+Vite~\cite{vite}, Playwright~\cite{playwright}, pngjs, Python,
+Pillow~\cite{pillow}, Matplotlib~\cite{hunter2007matplotlib},
+NumPy~\cite{harris2020numpy}, PyMuPDF~\cite{pymupdf}, Tectonic~\cite{tectonic}
+and the official author kit~\cite{cvprkit}.
+Their pinned versions are in lockfiles, \texttt{requirements.txt} and
+\texttt{BUILD.md}; no numerical performance property is inferred from those tools.
+
+\subsection{Efficiency, Robustness, Fairness and Contamination}
+For each future inference report separately: model latency, rendering latency,
+parsing/scoring latency, input/output tokens, query/action count, billed USD,
+hardware, numerical precision and peak local device memory. Remote model memory is
+unobservable and remains null. The protocol includes these fields without filling
+unrun measurements. Report per-track p50/p95 latency only after sufficient runs.
+Match total budgets when comparing feedback or search; matching optimization steps
+does not match input tokens or compute.
+
+Robustness should cross repeated identical input, candidate permutation, ID
+renaming, equivalent yaw, camera/palette perturbation and no-image controls.
+Permutations preserve the answer mapping; missing images alter the information
+condition. Report consistency separately from correctness. The current paired order
+study is a development diagnostic, not proof of model-wide reliability.
+
+Group splits exclude full geometric duplicates across train/test under the defined
+normalization. MinHash/LSH screening~\cite{broder1997} does not establish exhaustive
+subassembly separation, nor exclusion from unknown pretraining corpora. All current
+cases and this gallery are public: they must not be called hidden tests.
+Future confirmation requires unseen source groups, frozen selection before outcomes,
+an exposure ledger, timestamped revisions and independent labels. No hypothetical
+dynamic update mechanism is counted as implemented contamination protection.
+
+\subsection{Audit Scope}
+Four revision-1 defects were independently confirmed by two code-review passes:
+missing candidate poses, an inspection task without returned observations, primitive
+field coercion, and incorrect square-yaw rejection. They are regression-tested in
+revision 2. Exterior-image uniqueness was not proven false for all examples;
+additional layers make the revised exact-match contract explicit.
+Technical validation, independent code checks, semantic human review and model
+performance are different evidence types. No real human judgments or new paid
+challenge evaluations were created by this revision.
+
+\subsection{Nine-Dimension Internal Readiness Assessment}
+This is an author-side, evidence-based assessment, not a conference review or an
+empirical model score. The 0--10 anchors are: absent (0), concept/demo (2),
+narrow-domain executable (4), repeated technical evidence (6), independent
+cross-domain evidence (8), and sustained external validation (10). No average is
+reported because a validity failure cannot be offset by good engineering.
+\begin{tabularx}{\textwidth}{@{}lrrX@{}}
+\toprule Dimension & Before & After & Evidence and remaining gate\\
+\midrule
+Representativeness & 3 & 3 & Rectangular grid, mainly architecture/furniture; licensed real workflows missing\\
+Sensitivity & 2 & 2 & Measured floors/ceilings; no challenge-model runs to justify a gain\\
+Multidimensional coverage & 4 & 5 & Explicit tracks, metrics, resource fields and controls; efficiency not yet fully measured\\
+Difficulty gradient & 3 & 4 & All 8--63-part authored objects inspectable; no human difficulty calibration\\
+Reproducibility & 6 & 6 & Hash replay and reproducible figures; independent installation and API repeats outstanding\\
+Fairness & 4 & 6 & Input sufficiency, strict types and yaw corrections; specialist/provider confounds remain\\
+Transparency & 7 & 8 & Full source gallery, task links, positive/negative scores and recorded limitations\\
+Contamination resistance & 2 & 2 & Public development data; unknown pretraining exposure, no hidden confirmation set\\
+Version stability & 5 & 7 & Deprecated v1 preserved, v2 IDs and contracts explicit, regression tests added\\
+\bottomrule
+\end{tabularx}
+These scores prioritize the next scientific work: frozen unseen-source comparisons
+with effective baselines, licensed external designs, blinded real human calibration,
+and independent reproduction. Documentation alone does not raise representativeness,
+model sensitivity or contamination resistance.

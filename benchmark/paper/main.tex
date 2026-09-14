@@ -46,10 +46,8 @@ grammar. A separate renderer audit verifies identical exterior pixels
 across admissible layouts. An eight-model development matrix and
 same-source algorithmic controls expose different failure patterns,
 while full-casebank copying achieves 87.1\% completion F1 and 97.4\%
-removal F1 without completing either task. Ground-truth and execution
-visualizations make these distinctions inspectable. We release
-replayable outputs, source-level audits, and an explicit experimental
-matrix. The model sample is small; independent confirmation, richer
+removal F1 without completing either task. We release replayable outputs
+and source-level audits. The model sample is small; independent confirmation, richer
 licensed objects, and real human metric calibration remain outstanding.
 \end{abstract}
 
@@ -64,10 +62,9 @@ notion of ``structural intelligence'' obscures what a model accomplished.
 BrickAtlas uses shared source assemblies to separate these endpoints.
 Figure~\ref{fig:tasks} shows actual inputs and ground truth, while
 Fig.~\ref{fig:execution} distinguishes a valid sequence from a dead end.
-The benchmark records what information is provided, what output is
-required, and which equivalences the evaluator accepts. A correct
-answer may be a structure, a relation tuple, an executable permutation,
-or a set-valued statement that the available observation is insufficient.
+Following dataset/model reporting and holistic evaluation
+principles~\cite{gebru2021datasheets,mitchell2019modelcards,liang2023helm},
+we separate information, outputs, equivalences and efficiency.
 
 This is not a claim to originate brick generation, reconstruction, or
 multi-model assembly evaluation. BrickGPT~\cite{pun2025brickgpt} and
@@ -215,8 +212,9 @@ and height sorting solves all 10,240 v2 plans, a separate challenge
 release adds six connected 49--63-part structures (329 placed instances)
 and twelve contracts spanning dead-end recovery, counterfactuals,
 multi-fault/compound changes, module operations, selection, and pose.
-All oracles and targeted near misses are evaluator-checked; model cells
-remain unmeasured. Neither layer changes v2 counts or replaces licensed
+Challenge revision 2 corrects candidate inputs, schema and yaw handling,
+adds layer disclosure and query-return inspection; model cells remain
+unmeasured. Neither layer changes v2 counts or replaces licensed
 human-designed data; details are in the supplement.
 
 \begin{figure*}[t]
@@ -443,11 +441,12 @@ unfolding of an unordered structure is never called a model plan.
 \subsection{Eight-Model Development Matrix}
 We evaluate the same 39 default/ordinary task cases from three
 already-exposed development objects (12/20/29 parts) with eight
-models. Four models retain their original verified responses; four
+models~\cite{openai2025gpt41,googlemodels,qwen3vl,anthropic2025haiku,meta2025llama4}.
+Four models retain their original verified responses; four
 new models receive identical prompts, image bytes, and the 2,200-token
 JSON output cap. Temperature is zero, model order rotates by case,
 automatic retries and provider fallback are disabled, and provider,
-tokens, truncation, latency, and settled charges are retained.
+tokens, truncation, latency, and settled OpenRouter charges~\cite{openrouterapi} are retained.
 Gemini reasoning is disabled; other models have no requested reasoning
 budget. Cross-round time/provider differences remain potential confounds.
 
@@ -552,7 +551,7 @@ $a_g,a_g^r,a_g^\pi$, the paired endpoint is
 D_g=\mathbf{1}[a_g^\pi\ne a_g]-\mathbf{1}[a_g^r\ne a_g].
 \end{equation}
 Mean excess mismatch is 0.50--0.75 across models, with all 192
-requests retained. Source-bootstrap intervals and per-model counts
+requests retained. Source-bootstrap intervals~\cite{efron1979bootstrap} and per-model counts
 are in the supplement. Mismatch is inconsistency, not incorrectness,
 and the same 12 sources do not become 48 independent objects.
 
@@ -593,7 +592,7 @@ Small adaptive model studies and same-machine replay do not replace
 independent confirmation and second-environment reproduction.
 
 Within this scope, the benchmark makes useful distinctions executable:
-changed-region success is not global similarity; an admissible structure
+changed-region success is not global similarity~\cite{geirhos2020shortcut}; an admissible structure
 does not determine every hidden relation; and a plausible final object
 does not certify a submitted plan. Stronger claims require the remaining
 external and human evidence, not more task variants.

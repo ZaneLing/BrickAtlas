@@ -39,6 +39,13 @@ function byId(id: string) {
 function make(model: ChallengeModel, kind: ChallengeKind, prompt: string, input: Record<string, unknown>,
   responseSchema: Record<string, unknown>, target: Structure, source: Structure | null,
   oracle: unknown, changedIds: string[], frames: FrameSpec[] = [], privateData: Record<string, unknown> = {}) {
+  if (['scene-reconstruction', 'distributed-completion', 'multi-fault-repair'].includes(kind)) {
+    frames = [...frames, ...[...new Set(target.parts.map(p => p.y))].sort((a, b) => a - b).map(y => ({
+      parts: target.parts.filter(p => p.y === y), view: 'top' as const, layer: y,
+      title: `Disclosed bottom-Y layer ${y}; other parts removed`,
+    }))];
+    prompt += ' Layer disclosure is supplied: recover complete geometry up to piece yaw symmetry, not exterior RGB alone.';
+  }
   const task: ChallengeTask = {
     id: digest({ version: CHALLENGE_VERSION, model: model.id, kind }).slice(0, 24),
     kind, model, prompt, input, responseSchema, target, source, oracle, changedIds,
@@ -164,8 +171,8 @@ export function challengeTasks() {
 
   const gate = byId('expert-fortress-gatehouse');
   tasks.push(make(gate, 'active-inspection',
-    'Choose the minimum-cost inspection that reveals the complete gate-beam layer, then answer whether two parallel spanning beams exist.',
-    { initialViews: ['front', 'side'], queryOptions: [
+    'Select a query, read its returned observation, then report how many parallel rows the white gate beams occupy. Each row can contain multiple beam parts. Success requires a layer-disclosing query; cost is scored separately, not an optimality proof.',
+    { initialViews: ['front', 'side'], requiredDisclosure: 'gate-beam-layer', queryOptions: [
       { id: 'rear-rgb', cost: 1, reveals: 'rear exterior only' },
       { id: 'top-rgb', cost: 1, reveals: 'assembled top view with occlusion' },
       { id: 'layer-y-13', cost: 2, reveals: 'all and only parts whose bottom Y=13' },
@@ -216,7 +223,7 @@ export function challengeTasks() {
   assert.equal(legalIds.length, 6);
   tasks.push(make(aqueduct, 'step-selection',
     'Select every candidate that can legally be inserted next into the current partial aqueduct. Do not use the target order as an answer.',
-    { current: aqueductPrefix, candidates: candidates.map(({ id, partId, color }) => ({ id, partId, color })) },
+    { current: aqueductPrefix, candidates },
     { legalIds: ['candidate ID'] }, aqueduct.structure, aqueductPrefix, { legalIds }, legalIds));
 
   const selected = aqueduct.structure.parts.find(p => p.id.startsWith('parapet-post-') && p.y === 18 && p.x === 15)!;
@@ -224,7 +231,7 @@ export function challengeTasks() {
     p.y <= 17 || p.y === 18 && p.id !== selected.id) };
   const pose = { x: selected.x, y: selected.y, z: selected.z, turn: selected.turn };
   tasks.push(make(aqueduct, 'pose-estimation',
-    'Place the selected repeated pier into its exact target pose from the current state and reference views.',
+    'Place the selected parapet post into its target pose from the current state and reference views; accept equivalent yaw for its footprint.',
     { current: poseCurrent, selected: { id: selected.id, partId: selected.partId, color: selected.color } },
     { x: 'integer', y: 'integer', z: 'integer', turn: '0|1|2|3' },
     aqueduct.structure, poseCurrent, pose, [selected.id], views(aqueduct.structure.parts, 'Reference aqueduct')));
@@ -243,7 +250,7 @@ export function challengeTasks() {
   };
   const marketFoundation: Structure = { version: 1, parts: redesignRequirements.anchors };
   tasks.push(make(market, 'constrained-redesign',
-    'Design any connected market hall that preserves the supplied foundation, stays within inventory, matches the exact extent, uses four color roles, and meets the roof-coverage threshold.',
+    'Design any connected grid structure preserving the foundation, within inventory and exact extent, with at least four colors and minRoofCells occupied 3D cells among parts whose bottom Y>=7. This measures a volume proxy, not semantic roof coverage.',
     { foundation: marketFoundation, requirements: {
       extent: redesignRequirements.extent, inventory: redesignRequirements.inventory,
       anchorIds: redesignRequirements.anchors.map(p => p.id), minRoofCells: redesignRequirements.minRoofCells,

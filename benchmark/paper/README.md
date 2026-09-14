@@ -8,6 +8,13 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 
 ## Contents
 
+- `reference-manual.tex`: full input/output contracts, metrics, method-specific
+  tracks, revision-2 corrections, resource reporting and contamination limits.
+- `tables/review-case-studies.tex`: all 18 authored sources, 36 scored positive/negative
+  controls with images. These are evaluator checks, not learned-model results.
+- `../review-gallery/index.html`: all authored sources; `procedural-001.html` starts
+  the complete 80-page / 5,120-source frozen population gallery.
+
 - `main.tex`: three research questions, closest-work comparison, eight-task contract,
   source coverage, information conditions, accepted-answer semantics, full-casebank
   copy controls, measured model diagnostics, and explicit research limits.
@@ -23,8 +30,9 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 - `../curated-cases/`: reviewer-facing case directory with 12 original structures,
   per-case JSON, four views, occupied layers, exploded views, legal steps,
   eight task input/ground-truth folders, contact sheets, and a static HTML index.
-- `../challenge-cases/`: six connected 49--63-part structures and twelve advanced
+- `../challenge-cases-v2/`: six connected 49--63-part structures and twelve advanced
   task contracts. Oracle checks are complete; model result cells remain blank.
+  Original `../challenge-cases/` is retained but deprecated for new evaluation.
 - `figures/`: the main teaser, task/ground-truth and execution figures are generated
   from the curated directory. Historical procedural figures remain separately named.
 - `evidence.json`: source paths/hashes for numerical evidence and upstream template.

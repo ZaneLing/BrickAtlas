@@ -20,12 +20,17 @@ assert.equal(curatedManifest.models.length, 12); assert.equal(curatedManifest.ta
 for (const file of curatedManifest.files) assert.equal(sha('../curated-cases/' + file.path), file.sha256, file.path);
 for (const [path, hash] of Object.entries(curated.paperFigures)) assert.equal(sha('figures/' + path), hash, path);
 assert.equal(sha('generate-challenge.ts'), challenge.generatorSha256);
-assert.equal(sha('../challenge-cases/manifest.json'), challenge.manifestSha256);
-assert.equal(sha('../challenge-cases/figure-evidence.json'), challenge.figureEvidenceSha256);
-const challengeManifest = read('../challenge-cases/manifest.json');
+assert.equal(sha('../challenge-cases-v2/manifest.json'), challenge.manifestSha256);
+assert.equal(sha('../challenge-cases-v2/figure-evidence.json'), challenge.figureEvidenceSha256);
+const challengeManifest = read('../challenge-cases-v2/manifest.json');
+assert.equal(challengeManifest.version, 'brickatlas-challenge-casebank-2');
+for (const [path, hash] of Object.entries(challengeManifest.sourceHashes)) {
+  const text = readFileSync(resolve(here, '../suite', path), 'utf8');
+  assert.equal(createHash('sha256').update(text).digest('hex'), hash, path);
+}
 assert.equal(challengeManifest.models.length, 6); assert.equal(challengeManifest.tasks.length, 12);
 assert.equal(challengeManifest.totals.placedPartInstances, 329);
-for (const file of challengeManifest.files) assert.equal(sha('../challenge-cases/' + file.path), file.sha256, file.path);
+for (const file of challengeManifest.files) assert.equal(sha('../challenge-cases-v2/' + file.path), file.sha256, file.path);
 for (const [path, hash] of Object.entries(challenge.paperFigures)) assert.equal(sha('figures/' + path), hash, path);
 assert.equal(challenge.measuredModelResults, 0);
 assert.equal(figures.figures.length, 5);

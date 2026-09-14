@@ -1,5 +1,9 @@
 # BrickAtlas 难度升级与 Challenge Casebank 报告
 
+> 历史版本1报告，部分输入/指标叙述已被修订：候选位姿、inspection查询返回、
+> strict类型和yaw等价修复见[最新审核报告](REVIEW_REPORT.zh-CN.md)。
+> 新版完整结构视觉任务增加层披露；本页旧合同不用于新评分。旧图片保留。
+
 日期：2026-09-14
 
 ## 一、结论先行

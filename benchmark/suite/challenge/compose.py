@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from PIL import Image, ImageOps, ImageDraw
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent.parent / "challenge-cases"
+ROOT = HERE.parent.parent / "challenge-cases-v2"
 PAPER = HERE.parent.parent / "paper" / "figures"
 manifest = json.loads((ROOT / "manifest.json").read_text())
 models = {model["id"]: model for model in manifest["models"]}

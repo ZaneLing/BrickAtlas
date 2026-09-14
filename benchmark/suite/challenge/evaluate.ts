@@ -1,5 +1,6 @@
-import { bom, bounds, cells, compare, components, decode, insertIssue, key, removeIssue, validate } from '../geometry';
-import type { Part, Structure } from '../shared';
+import { bom, bounds, cells, compare, components, decode, dims, insertIssue, key, removeIssue, validate } from '../geometry';
+import type { Part } from '../shared';
+import { structureSchemaValid } from '../study/strict-evaluate';
 import type { ChallengeTask } from './tasks';
 
 export interface ChallengeVerdict {
@@ -14,10 +15,8 @@ const sameSet = (a: unknown, expected: string[]) =>
   && expected.every(v => a.includes(v));
 
 function structureAnswer(answer: unknown) {
-  if (answer && typeof answer === 'object' && 'structure' in answer) {
-    return decode((answer as { structure: unknown }).structure);
-  }
-  return decode(answer);
+  const raw = answer && typeof answer === 'object' && 'structure' in answer ? answer.structure : answer;
+  return structureSchemaValid(raw) ? decode(raw) : null;
 }
 
 function exactStructure(task: ChallengeTask, answer: unknown) {
@@ -46,7 +45,7 @@ function recovery(task: ChallengeTask, answer: unknown): ChallengeVerdict {
   const actions = answer && typeof answer === 'object' && Array.isArray((answer as any).actions)
     ? (answer as any).actions : null;
   const metrics: Record<string, number> = { format: Number(Boolean(actions)), legalPrefix: 0, finalExact: 0 };
-  if (!actions) return { success: 0, metrics, issues: ['format'] };
+  if (!actions || actions.length > 256) return { success: 0, metrics: { ...metrics, format: 0 }, issues: ['format_or_action_cap'] };
   let current = structuredClone(task.source?.parts ?? []), legal = 0;
   for (const action of actions) {
     if (!action || !['remove', 'place'].includes(action.type) || typeof action.id !== 'string') break;
@@ -112,7 +111,8 @@ export function evaluateChallenge(task: ChallengeTask, answer: unknown): Challen
   if (task.kind === 'active-inspection') {
     const actual = answer as { queryId?: string; answer?: string } | null;
     const expected = task.oracle as { queryId: string; answer: string };
-    const query = Number(actual?.queryId === expected.queryId), result = Number(actual?.answer === expected.answer);
+    const query = Number(['layer-y-13', 'symbolic-graph'].includes(actual?.queryId ?? ''));
+    const result = Number(actual?.answer === expected.answer);
     const option = (task.input.queryOptions as Array<{ id: string; cost: number }>).find(o => o.id === actual?.queryId);
     const success = Number(query === 1 && result === 1);
     return { success, metrics: { format: Number(Boolean(actual)), queryExact: query, answerExact: result,
@@ -130,7 +130,12 @@ export function evaluateChallenge(task: ChallengeTask, answer: unknown): Challen
   if (task.kind === 'pose-estimation') {
     const actual = answer as Record<string, unknown> | null, expected = task.oracle as Record<string, number>;
     const fields = ['x', 'y', 'z', 'turn'];
-    const correct = fields.filter(field => actual?.[field] === expected[field]).length;
+    const selected = task.input.selected as { partId: string };
+    const yaw = actual?.turn;
+    const yawCorrect = typeof yaw === 'number' && [0, 1, 2, 3].includes(yaw)
+      && dims({ partId: selected.partId, turn: yaw }).w === dims({ partId: selected.partId, turn: expected.turn }).w
+      && dims({ partId: selected.partId, turn: yaw }).d === dims({ partId: selected.partId, turn: expected.turn }).d;
+    const correct = fields.filter(field => field === 'turn' ? yawCorrect : actual?.[field] === expected[field]).length;
     const success = Number(correct === fields.length);
     return { success, metrics: { format: Number(Boolean(actual)), poseFieldAccuracy: correct / fields.length, exact: success },
       issues: success ? [] : ['answer_mismatch'] };

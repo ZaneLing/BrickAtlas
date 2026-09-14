@@ -10,8 +10,9 @@ import { insertIssue, removeIssue } from '../geometry';
 import type { PaperFrame } from '../web/paper-render';
 import { CHALLENGE_VERSION, challengeModels } from './models';
 import { challengeTasks } from './tasks';
+import { publicChallenge, challengeProtocol } from './protocol';
 
-export const CHALLENGE_OUTPUT = resolve(dirname(fileURLToPath(import.meta.url)), '../../challenge-cases');
+export const CHALLENGE_OUTPUT = resolve(dirname(fileURLToPath(import.meta.url)), '../../challenge-cases-v2');
 const sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sha = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex');
 
@@ -93,11 +94,15 @@ export async function renderChallengeCases(url: string) {
       await render(`${root}/input/context.png`, {
         parts: task.source?.parts ?? task.target.parts, frameParts: task.target.parts, highlightIds: marked,
       });
+      const modelImages: string[] = [];
       for (const [index, frame] of task.frames.entries()) {
+        modelImages.push(`input/reference-${String(index + 1).padStart(2, '0')}-${frame.view}.png`);
         await render(`${root}/input/reference-${String(index + 1).padStart(2, '0')}-${frame.view}.png`, {
           parts: frame.parts, view: frame.view,
         });
       }
+      json(`${root}/public.json`, { ...publicChallenge(task), images: modelImages,
+        note: 'Only this file and its referenced PNGs are model input. Context and ground-truth images are reviewer-only.' });
       await render(`${root}/ground-truth/iso.png`, { parts: task.target.parts, highlightIds: task.changedIds });
       await render(`${root}/ground-truth/exploded.png`, {
         parts: task.target.parts, explode: .65, highlightIds: task.changedIds,
@@ -138,10 +143,11 @@ export async function renderChallengeCases(url: string) {
       }
     }
 
+    json('protocol.json', challengeProtocol());
     const manifest = {
       version: CHALLENGE_VERSION, generatedAt: 'deterministic-from-source',
       sourceHashes: Object.fromEntries(
-        ['challenge/models.ts', 'challenge/tasks.ts', 'challenge/evaluate.ts', 'challenge/render.ts', 'web/paper-render.ts']
+        ['challenge/models.ts', 'challenge/tasks.ts', 'challenge/evaluate.ts', 'challenge/inspection.ts', 'challenge/protocol.ts', 'challenge/render.ts', 'web/paper-render.ts']
           .map(path => [path, digest(readFileSync(resolve(sourceRoot, path), 'utf8'))]),
       ),
       models: challengeModels().map(model => ({

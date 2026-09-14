@@ -9,7 +9,8 @@
   `291758547e923160eb4d37079b7b9f0dfce82355`.
 - Template files are unmodified; their hashes are recorded in `evidence.json`.
 - Output: eight US Letter main-content pages and one separate reference page;
-  eighteen supplementary pages. No margin or negative-spacing modifications.
+  forty-three supplementary pages, including the full contract manual and all
+  eighteen authored-model case-study pages. No margin or negative-spacing modifications.
 - TeX log: no unresolved citations/references or overfull boxes.
 - PDF inspection: text on every page, no text outside page boundaries.
 - All-page contact sheet and detailed formula/result pages inspected visually:
@@ -30,7 +31,13 @@
   60 admissible layouts, and 240 renderer checks with pixel-identical exteriors.
 - Runtime-free, key-free copied-environment replay passes 23 commands, including
   the expanded model receipts and ambiguity ground-truth verifier.
-- Benchmark regression: 150 tests pass; TypeScript check passes.
+- Benchmark regression: 156 tests pass; TypeScript check passes.
+- Challenge revision 2 has new IDs, complete candidate poses, strict field types,
+  yaw-equivalent pose scoring, layer disclosures, and a query-return episode API.
+  Revision 1 artifacts are retained and deprecated, not overwritten.
+- Review gallery: all 5,120 frozen sources, 10,240 real task links, 18 authored
+  models with 36 scored positive/negative control pairs. No new model inferences.
+- Bibliography: 48 used entries across main and supplement; no undefined keys.
 - Twelve prospective result tables retain 460 blank cells (JSON null).
 - `verify-artifacts.mjs` checks model/audit/figure/PDF hashes, 3D render framing,
   ambiguity counts, and blank-table accounting.

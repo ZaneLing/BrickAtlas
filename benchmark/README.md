@@ -1,5 +1,10 @@
 # Brick Atlas 模型测试场
 
+最新：[九维度审稿与修订报告](REVIEW_REPORT.zh-CN.md) ·
+[18 个模型逐例报告](review-gallery/REPORT.zh-CN.md) ·
+[全部 5,120 个程序模型](review-gallery/procedural-001.html)。
+Challenge v1 保留作历史记录，新输入与评分使用 `challenge-cases-v2/`。
+
 ## 多任务套件（新）
 
 覆盖八类能力的新套件位于 [suite/](suite/README.md)，入口默认 http://127.0.0.1:5175。

@@ -3,7 +3,7 @@ import { type Color, type Part, type Structure } from '../shared';
 import { components, insertIssue, validate } from '../geometry';
 import { independentCheck } from '../research/independent-check';
 
-export const CHALLENGE_VERSION = 'brickatlas-challenge-casebank-1';
+export const CHALLENGE_VERSION = 'brickatlas-challenge-casebank-2';
 export type ChallengeTier = 'advanced' | 'expert';
 
 export interface ChallengeModel {

@@ -1,0 +1,74 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Covered Market Hall</title><style>
+body{font:15px/1.6 system-ui;margin:24px;color:#192126}a{color:#076452}h1{font-size:26px}h2{font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px}
+article{border-bottom:1px solid #cdd4d5;padding:12px 0;min-width:0}img{width:100%;height:auto;aspect-ratio:4/3;object-fit:contain}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}code{overflow-wrap:anywhere}nav{display:flex;gap:16px;flex-wrap:wrap}
+</style><h1>Covered Market Hall</h1><nav><a href="index.html">全部模型</a><a href="procedural-001.html">5,120 个程序结构</a></nav><section><h2>scene-reconstruction / 770a5b457843640c815ff8ef</h2><p>Reconstruct the complete 53-part market from four views and its bill of materials. Repeated columns and signs remain distinct instances. Layer disclosure is supplied: recover complete geometry up to piece yaw symmetry, not exterior RGB alone.</p>
+      <div class="grid"><article><h3>输入 / 上下文</h3><img src="case-35-input.jpg"></article>
+      <article><h3>正确参考</h3><img src="case-35-good.jpg"></article>
+      <article><h3>构造错误 / FAIL</h3><img src="case-35-bad.jpg"></article></div>
+      <p>字段题图像仅作上下文，请核对 JSON 字段。正反例为程序构造对照，不是模型实测。</p>
+      <a href="case-35.json">完整题面、正误答案与评分 JSON</a>
+      <details><summary>正反评分</summary><pre>{
+  "positive": {
+    "success": 1,
+    "metrics": {
+      "format": 1,
+      "valid": 1,
+      "partF1": 1,
+      "edgeF1": 1,
+      "exact": 1
+    },
+    "issues": []
+  },
+  "negative": {
+    "success": 0,
+    "metrics": {
+      "format": 1,
+      "valid": 1,
+      "partF1": 0.9904761904761905,
+      "edgeF1": 0.9921259842519685,
+      "exact": 0
+    },
+    "issues": [
+      "target_mismatch"
+    ]
+  }
+}</pre></details></section><section><h2>constrained-redesign / 320d35b94f077a31b364afa0</h2><p>Design any connected grid structure preserving the foundation, within inventory and exact extent, with at least four colors and minRoofCells occupied 3D cells among parts whose bottom Y&gt;=7. This measures a volume proxy, not semantic roof coverage.</p>
+      <div class="grid"><article><h3>输入 / 上下文</h3><img src="case-36-input.jpg"></article>
+      <article><h3>正确参考</h3><img src="case-36-good.jpg"></article>
+      <article><h3>构造错误 / FAIL</h3><img src="case-36-bad.jpg"></article></div>
+      <p>字段题图像仅作上下文，请核对 JSON 字段。正反例为程序构造对照，不是模型实测。</p>
+      <a href="case-36.json">完整题面、正误答案与评分 JSON</a>
+      <details><summary>正反评分</summary><pre>{
+  "positive": {
+    "success": 1,
+    "metrics": {
+      "format": 1,
+      "valid": 1,
+      "extent": 1,
+      "connected": 1,
+      "inventory": 1,
+      "anchors": 1,
+      "roofCoverage": 1,
+      "colorRoles": 1
+    },
+    "issues": []
+  },
+  "negative": {
+    "success": 0,
+    "metrics": {
+      "format": 1,
+      "valid": 1,
+      "extent": 1,
+      "connected": 1,
+      "inventory": 1,
+      "anchors": 1,
+      "roofCoverage": 0,
+      "colorRoles": 1
+    },
+    "issues": [
+      "roofCoverage"
+    ]
+  }
+}</pre></details></section></html>

@@ -6,6 +6,7 @@ import { CHALLENGE_KINDS, challengeTasks } from '../suite/challenge/tasks';
 import { components, insertIssue, validate } from '../suite/geometry';
 import { independentCheck } from '../suite/research/independent-check';
 import type { Part } from '../suite/shared';
+import { InspectionEpisode } from '../suite/challenge/inspection';
 
 test('challenge models are connected 49-63 part structures with executable orders', () => {
   const models = challengeModels();
@@ -54,7 +55,7 @@ test('near-miss advanced answers are rejected', () => {
     if (task.kind === 'recovery-plan') answer.actions = answer.actions.slice(1);
     else if (task.kind === 'support-counterfactual') answer.unsupportedIds = answer.unsupportedIds.slice(1);
     else if (task.kind === 'multi-fault-repair') answer.faultIds = answer.faultIds.slice(1);
-    else if (task.kind === 'active-inspection') answer.queryId = 'symbolic-graph';
+    else if (task.kind === 'active-inspection') answer.queryId = 'unknown-query';
     else if (task.kind === 'graph-reasoning') answer.shortestPath++;
     else if (task.kind === 'step-selection') answer.legalIds = answer.legalIds.slice(1);
     else if (task.kind === 'pose-estimation') answer.x++;
@@ -64,4 +65,60 @@ test('near-miss advanced answers are rejected', () => {
     }
     assert.equal(evaluateChallenge(task, answer).success, 0, task.kind);
   }
+});
+
+test('public candidate poses alone suffice to reproduce next-action labels', () => {
+  const task = challengeTasks().find(t => t.kind === 'step-selection')!;
+  const { current, candidates } = task.input as { current: { parts: Part[] }; candidates: Part[] };
+  const legalIds = candidates.filter(p => !insertIssue(current.parts, p)).map(p => p.id).sort();
+  assert.deepEqual({ legalIds }, task.oracle);
+});
+
+test('strict challenge decoding rejects coercion without changing legacy sources', () => {
+  const task = challengeTasks().find(t => t.kind === 'scene-reconstruction')!;
+  for (const field of ['partId', 'color']) {
+    const bad = structuredClone(task.oracle) as any;
+    bad.parts[0][field] = [bad.parts[0][field]];
+    assert.equal(evaluateChallenge(task, bad).metrics.format, 0);
+  }
+});
+
+test('pose scoring accepts square yaw equivalence and rejects wrong position', () => {
+  const task = challengeTasks().find(t => t.kind === 'pose-estimation')!;
+  for (const turn of [0, 1, 2, 3]) {
+    assert.equal(evaluateChallenge(task, { ...(task.oracle as object), turn }).success, 1);
+  }
+  assert.equal(evaluateChallenge(task, { ...(task.oracle as object), turn: 4 }).success, 0);
+});
+
+test('full-target visual tasks disclose every part at its bottom layer', () => {
+  for (const task of challengeTasks().filter(t =>
+    ['scene-reconstruction', 'distributed-completion', 'multi-fault-repair'].includes(t.kind))) {
+    assert.deepEqual(task.frames.filter(f => f.layer !== null).flatMap(f => f.parts.map(p => p.id)).sort(),
+      task.target.parts.map(p => p.id).sort());
+  }
+});
+
+test('inspection enforces query before response and records cost independently', () => {
+  const task = challengeTasks().find(t => t.kind === 'active-inspection')!;
+  const episode = new InspectionEpisode(task);
+  assert.throws(() => episode.submit('two-parallel-beams'));
+  assert.throws(() => episode.query('unknown'));
+  const observation = episode.query('layer-y-13');
+  assert.ok(observation.frame?.parts.every(p => p.y === 13));
+  assert.throws(() => episode.query('top-rgb'));
+  assert.equal(episode.submit('two-parallel-beams').success, 1);
+  assert.throws(() => episode.submit('two-parallel-beams'));
+  const symbolic = new InspectionEpisode(task);
+  assert.ok(symbolic.query('symbolic-graph').structure);
+  const verdict = symbolic.submit('two-parallel-beams');
+  assert.equal(verdict.success, 1);
+  assert.equal(verdict.metrics.queryCost, 4);
+});
+
+test('articulation oracle agrees with independent delete-and-count enumeration', () => {
+  const task = challengeTasks().find(t => t.kind === 'graph-reasoning')!;
+  const parts = task.target.parts, count = components(parts);
+  const ids = parts.filter(p => components(parts.filter(q => q.id !== p.id)) > count).map(p => p.id).sort();
+  assert.deepEqual(ids, (task.oracle as { articulationIds: string[] }).articulationIds);
 });
