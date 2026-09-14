@@ -23,11 +23,12 @@ Reasoning on Shared Brick Assemblies}
 \maketitle
 \centering
 \includegraphics[width=.96\textwidth]{figures/brick-teaser.pdf}
-\captionof{figure}{\textbf{BrickAtlas source assemblies.} Actual three-dimensional
-examples from eight procedural policies, selected near each policy's median
-piece count with a fixed hash tie-break. Shared objects support reconstruction,
-completion, edits, relations, repair, and executable planning. These are
-controlled grid structures, not human-designed semantic objects.}
+\captionof{figure}{\textbf{Curated BrickAtlas calibration cases.}
+Eight of twelve original, explicitly authored structures span furniture,
+architecture, infrastructure, and landmarks at easy, medium, and hard
+difficulty. Every model uses at most four role-based colors and has
+verified geometry and an executable assembly order. This curated layer
+is separate from the 5,120-source procedural population.}
 \label{fig:teaser}
 }]
 
@@ -36,7 +37,8 @@ Understanding a brick assembly requires distinguishing its appearance,
 hidden structure, requested changes, and executable construction.
 BrickAtlas connects eight task families through 5,120 procedural source
 assemblies and 117,910 task-condition cases with explicit input privileges
-and typed success criteria. We add a finite-grammar ambiguity track:
+and typed success criteria. A separate twelve-object curated layer supplies
+coherent task exemplars at three difficulty levels. We add a finite-grammar ambiguity track:
 600 paired conditions have exhaustively checked answer sets, and
 90 exterior-only queries are genuinely undetermined within the declared
 grammar. A separate renderer audit verifies identical exterior pixels
@@ -165,8 +167,8 @@ nominally valid if bodies do not overlap and every elevated part has
 at least one directly supporting stud. Force balance, clutch, arbitrary
 CAD geometry, and robotic grasping are outside this contract.
 
-Eight seeded policies accept 640 geometrically unique sources each
-(Fig.~\ref{fig:teaser}). They vary attachment height, branching, thin
+Eight seeded policies accept 640 geometrically unique sources each.
+They vary attachment height, branching, thin
 parts, columns, alternating beams, explicit paired supports, and
 enclosed interiors. Every source starts from a 4-by-8 plate, a deliberate
 control and a diversity limitation.
@@ -202,6 +204,19 @@ independent; full distributions, missing strata, and catalog counts
 are provided in the supplement. More views or task conditions do not
 create more independent objects.
 
+\paragraph{Curated calibration layer.}
+The procedural population provides controlled scale but often lacks a
+recognizable object silhouette. We therefore add twelve explicitly
+authored, CC0 cases without changing v2 or its historical scores:
+four easy, four medium, and four hard structures across furniture,
+architecture, infrastructure, and landmarks (Fig.~\ref{fig:teaser}).
+Each has two to four functional color roles, exact structure JSON,
+four views, occupied-layer renders, exploded ground truth, and verified
+assembly checkpoints. Eight task demonstrations bind one such object
+to each task contract. This is a qualitative/calibration layer, not
+twelve independent semantic test families or a substitute for licensed
+human-designed data.
+
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/dataset-distribution.pdf}
@@ -215,15 +230,13 @@ types remain visible rather than being hidden by derived task counts.}
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/brick-tasks.pdf}
-\caption{\textbf{What the benchmark asks, using actual source and
-ground-truth geometry.} Reconstruction is illustrated by an assembled
-render and exploded reference. Completion must add missing pieces;
-editing must rotate the whole object; repair must restore the shifted
-piece and identify its current ID. Remaining panels illustrate catalog,
-relation, generation, and recoloring targets. Black outlines identify
-queried/changed pieces. Exploded offsets are display-only, not valid
-part poses or ordinary model observations. This high-resolution figure
-does not replace archived evaluation images.}
+\caption{\textbf{Task-specific curated input and ground truth.}
+Reconstruction maps gate views to typed poses; bridge completion restores
+rails; station editing changes only the canopy color; lighthouse repair
+restores the shifted roof. Bottom panels illustrate part recognition,
+a typed relation query, one valid generation witness, and a verified
+planning prefix. Exploded offsets are display-only, not valid poses or
+ordinary model observations.}
 \label{fig:tasks}
 \end{figure*}
 
@@ -396,12 +409,12 @@ Complete baseline and planned VLM tables are in the supplement.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=.95\textwidth]{figures/brick-execution.pdf}
-\caption{\textbf{Ground-truth construction versus a dead end.}
-Four snapshots follow one verified height-sorted assembly sequence,
-with newly added pieces outlined. The last two panels are exploded
-views of a greedy dead end and the complete target: placing a span
-early prevents inserting remaining lower parts. The evaluator retains
-the submitted order and first rejection rather than repairing the plan.}
+\caption{\textbf{Ground-truth construction versus a designed dead end.}
+Four snapshots follow the curated double-span bridge's verified
+height-sorted sequence. The last two panels contrast a legal prefix
+that places both decks before the inner piers with the exploded target;
+the missing inner pier can no longer descend vertically. The evaluator
+retains the submitted order and first rejection rather than repairing it.}
 \label{fig:execution}
 \end{figure*}
 

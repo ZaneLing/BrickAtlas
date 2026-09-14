@@ -110,8 +110,12 @@ const manifest = { checkedAt: new Date().toISOString(), completedLocalJobs: loca
     name === 'failure-diagnostics.json'
       ? { version: report.version, responses: report.rows.length, strata: report.groups.length, apiRequests: report.apiRequests }
       : report])),
-  sourceHashes: Object.fromEntries(walk(resolve(SUITE, 'study')).filter(path => /\.(ts|py|mjs|txt)$/.test(path)).map(path =>
-    [relative(SUITE, path), createHash('sha256').update(readFileSync(path)).digest('hex')])),
+  sourceHashes: Object.fromEntries(
+    [resolve(SUITE, 'study'), resolve(SUITE, 'curated')]
+      .flatMap(root => walk(root))
+      .filter(path => /\.(ts|py|mjs|txt)$/.test(path))
+      .map(path => [relative(SUITE, path), createHash('sha256').update(readFileSync(path)).digest('hex')]),
+  ),
   hashes: Object.fromEntries(files.map(path => [relative(STUDY, path),
     createHash('sha256').update(readFileSync(path)).digest('hex')])) };
 atomicJson(resolve(STUDY, 'release-manifest.json'), manifest);

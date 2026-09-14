@@ -22,6 +22,69 @@ future experiments. The latter have blank result cells and must not be
 interpreted as zero accuracy. All new figures are generated from archived
 renders or machine-readable evidence, not illustrative model outputs.
 
+\subsection{Curated Calibration Cases}
+The 5,120-source v2 population remains unchanged and preserves all
+historical scores. A new \texttt{curated-casebank-1} layer provides
+twelve original, explicitly authored cases for qualitative inspection,
+task calibration, and future human studies. It is not counted as
+5,132 v2 sources and is not a hidden confirmation set.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/curated-contact-sheet.pdf}
+\caption{The complete curated set: four easy, four medium, and four
+hard structures. Difficulty combines part count, occupied levels,
+occlusion, support structure, and span length. Colors encode functional
+roles and never exceed four per object.}
+\label{fig:curated-all}
+\end{figure*}
+
+\begin{table*}[t]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}lccrrrrX@{}}
+\toprule
+Model & Difficulty & Style & Parts & Colors & Levels & Occlusion / support\\
+\midrule
+\tableinput{tables/curated-cases.tex}
+\bottomrule
+\end{tabularx}
+\caption{Curated-case specification. These labels describe explicit
+design contracts, not measured human difficulty. Exact structures,
+palettes, legal orders, views, layers, and steps are stored under
+\texttt{benchmark/curated-cases/}.}
+\label{tab:curated}
+\end{table*}
+
+Every structure passes both geometry implementations and a piece-by-piece
+vertical insertion check. The examples span furniture (bench, picnic
+table), architecture (staircase, gate, pavilion, townhouse, station),
+infrastructure (single- and double-span bridges), and landmarks
+(watchtower, lighthouse, two-tier pagoda). They use two to four
+role-based colors rather than independently sampled part colors.
+``Hard'' may denote a long dependency chain or multiple separated
+supports rather than only more pieces.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/curated-task-ground-truth.pdf}
+\caption{All eight curated task demonstrations. Text panels show
+non-image labels or constraints; visual panels show actual input
+structures and evaluator ground truth. Generation has no unique target,
+so the pavilion is explicitly one satisfying witness. Planning ground
+truth is a verified prefix, not merely a final object render.}
+\label{fig:curated-tasks}
+\end{figure*}
+
+Each model directory includes \texttt{structure.json},
+\texttt{metadata.json}, four views, every occupied layer, an exploded
+view, and legal assembly checkpoints. Each task directory includes
+the public task contract, expected output, input renders where
+applicable, and ground-truth renders. \texttt{CONTACT\_SHEET.png},
+\texttt{TASK\_GROUND\_TRUTH.png}, and \texttt{index.html} provide
+direct review entry points. The designs are original CC0 BrickAtlas
+assets; no official-set geometry is copied. Their semantic
+recognizability remains a claim to validate with independent people.
+
 \subsection{Source Policies and Catalog}
 Figure~\ref{fig:policies} shows all eight construction procedures.
 Table~\ref{tab:policy} gives their measured means; height uses plate

@@ -39,7 +39,7 @@ fig, axes = plt.subplots(2, 4, figsize=(12, 4.4))
 for ax, policy in zip(axes.flat, policies):
     panel(ax, "gallery-" + policy, policy.replace("-", " ").title())
 fig.subplots_adjust(wspace=.02, hspace=.14)
-save(fig, "brick-teaser")
+save(fig, "procedural-policy-gallery")
 
 fig, axes = plt.subplots(3, 4, figsize=(12, 7.4))
 panels = [
@@ -59,7 +59,7 @@ panels = [
 for ax, (name, title) in zip(axes.flat, panels):
     panel(ax, name, title)
 fig.subplots_adjust(wspace=.02, hspace=.17)
-save(fig, "brick-tasks")
+save(fig, "procedural-task-examples")
 
 fig, axes = plt.subplots(2, 3, figsize=(12, 5.2))
 for i in range(4):
@@ -69,7 +69,7 @@ blocked = images["step-blocked"]["metadata"]
 panel(axes.flat[4], "step-blocked", f'Greedy dead end: {len(blocked["order"])} parts')
 panel(axes.flat[5], "step-target", "Target: missing piece outlined")
 fig.subplots_adjust(wspace=.02, hspace=.15)
-save(fig, "brick-execution")
+save(fig, "procedural-planning-example")
 
 fig, axes = plt.subplots(1, 4, figsize=(12, 3.5))
 for ax, name, title in zip(axes, ["hidden-exterior-0", "hidden-exterior-1", "hidden-exploded-0", "hidden-exploded-1"],

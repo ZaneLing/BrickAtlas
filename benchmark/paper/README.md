@@ -20,8 +20,11 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 - `references.bib`: brick generation, manual parsing, interactive assembly,
   visual programs, diagnostic VQA, BLINK, selection bias, and baseline references.
 - `tables/*.tex`: tables generated from actual artifacts, not manually invented values.
-- `figures/`: five generated information figures (vector PDF and PNG), plus actual
-  benchmark renders and four new 3D figure plates built from 30 actual renders.
+- `../curated-cases/`: reviewer-facing case directory with 12 original structures,
+  per-case JSON, four views, occupied layers, exploded views, legal steps,
+  eight task input/ground-truth folders, contact sheets, and a static HTML index.
+- `figures/`: the main teaser, task/ground-truth and execution figures are generated
+  from the curated directory. Historical procedural figures remain separately named.
 - `evidence.json`: source paths/hashes for numerical evidence and upstream template.
 - `generate-tables.mjs`: table generation and evidence assertions.
 - `generate-study.mjs`, `study-evidence.json`: new study tables and source hashes.
@@ -33,9 +36,12 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 - `verify-artifacts.mjs`: figure/source hashes, blank-table and PDF-check consistency.
 - `generate-expanded.ts`, `expanded-evidence.json`: eight-model main/diagnostic
   tables, five public-input algorithmic baselines, and finite-grammar task results.
-- `render-structures.ts`, `compose-structures.py`: new three-dimensional gallery,
-  input/ground-truth, execution, and hidden-layout plates. Render recipes and
-  hashes are in `structure-evidence.json` and `structure-figure-evidence.json`.
+- `render-structures.ts`, `compose-structures.py`: historical procedural and
+  hidden-layout audit plates; these no longer provide the paper teaser/task examples.
+- `../suite/curated/{cases,tasks,render}.ts`, `../suite/curated/compose.py`:
+  explicit curated geometry, task contracts, case-folder export, and paper plates.
+- `generate-curated.ts`, `curated-evidence.json`: verify the 264 generated curated
+  files and produce the exact specification table.
 
 ## Compile
 
@@ -66,20 +72,24 @@ virtual environment, then generate figures before compiling:
 ```bash
 python -m pip install -r benchmark/paper/requirements.txt
 python benchmark/paper/generate-figures.py
+python benchmark/suite/curated/compose.py
 python benchmark/paper/compose-structures.py
+node node_modules/tsx/dist/cli.mjs benchmark/paper/generate-curated.ts
 ```
 
-The archived 30 high-resolution renders are sufficient to compose the 3D plates.
-To rerender them, start the existing suite server, set `BRICKATLAS_URL` if it is
-not `http://127.0.0.1:5175`, and run:
+The archived curated images are sufficient to compose all review and paper
+plates. To rerender every per-case view/layer/step image, start the suite server,
+set `BRICKATLAS_URL` if it is not `http://127.0.0.1:5175`, and run:
 
 ```bash
-node node_modules/tsx/dist/cli.mjs benchmark/paper/render-structures.ts
+node node_modules/tsx/dist/cli.mjs benchmark/suite/curated/render.ts
+python benchmark/suite/curated/compose.py
 ```
 
-This uses a separate paper renderer and does not change historical model images.
-It checks nonblank pixels, framing, oracle targets, legal plan prefixes, and
-240 finite-grammar view renders. Exploded layers are display-only.
+This uses a separate display renderer and does not change historical model images.
+It checks nonblank pixels, framing, 12 structures, all task oracles, legal
+assembly orders, and a designed planning dead end. Exploded layers are display-only.
+`benchmark/curated-cases/index.html` can be opened directly.
 
 Build or verify the new ambiguity track without network requests:
 
@@ -190,6 +200,13 @@ Its paired observations produce 90 exterior `undetermined` labels that become
 determinate with support disclosure. Under the fixed paper renderer, all 204
 nontrivial alternative-view comparisons match the 36 reference frames exactly.
 These are symbolic known-geometry reasoning inputs, not a pure visual benchmark.
+
+The curated layer is deliberately separate from v2. It has four easy, four
+medium, and four hard structures across furniture, architecture, infrastructure,
+and landmark styles. Each object uses two to four role-based colors rather than
+independent random colors. These are original CC0 BrickAtlas structures, not
+copies of official sets. They improve qualitative/task calibration but do not
+replace independent semantic data or human recognition judgments.
 
 The additional renderer-aware baseline uses only public BOM/candidates, three
 RGB views and the known simulator. It solves all 16 original-source choices

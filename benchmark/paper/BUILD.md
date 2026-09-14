@@ -9,15 +9,16 @@
   `291758547e923160eb4d37079b7b9f0dfce82355`.
 - Template files are unmodified; their hashes are recorded in `evidence.json`.
 - Output: eight US Letter main-content pages and one separate reference page;
-  fourteen supplementary pages. No margin or negative-spacing modifications.
+  sixteen supplementary pages. No margin or negative-spacing modifications.
 - TeX log: no unresolved citations/references or overfull boxes.
 - PDF inspection: text on every page, no text outside page boundaries.
 - All-page contact sheet and detailed formula/result pages inspected visually:
   two-column text, actual rendered structures, tables and equations remain legible
   and do not overlap.
-- Five main figures include four plates composed from 30 actual high-resolution
-  3D renders: policy teaser, task/ground-truth pairs, verified construction
-  prefixes/dead end, and observation-equivalent hidden layouts.
+- The first-page teaser, task/ground-truth figure, and execution figure come
+  from 12 explicitly authored curated models, not random procedural samples.
+  The review directory contains 264 generated per-case files plus contact sheets.
+- The hidden-layout plate remains a separate 60-layout finite-grammar audit.
 - New full-casebank audit: 35,840 copy controls on 5,120 sources reproduced
   exactly with `paper-audit.ts --verify`; assembled catalog coverage is 19/25.
 - Eight-model matrix: 312 responses on the same three sources; four new models
@@ -26,7 +27,7 @@
   60 admissible layouts, and 240 renderer checks with pixel-identical exteriors.
 - Runtime-free, key-free copied-environment replay passes 23 commands, including
   the expanded model receipts and ambiguity ground-truth verifier.
-- Benchmark regression: 142 tests pass; TypeScript check passes.
+- Benchmark regression: 146 tests pass; TypeScript check passes.
 - Twelve prospective result tables retain 460 blank cells (JSON null).
 - `verify-artifacts.mjs` checks model/audit/figure/PDF hashes, 3D render framing,
   ambiguity counts, and blank-table accounting.
