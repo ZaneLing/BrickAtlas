@@ -85,6 +85,80 @@ direct review entry points. The designs are original CC0 BrickAtlas
 assets; no official-set geometry is copied. Their semantic
 recognizability remains a claim to validate with independent people.
 
+\subsection{Advanced Challenge Layer}
+The measured v2 study exposes two opposite regimes: one-clause
+recoloring and removal are saturated, while ordinary reconstruction,
+completion, and shifted-pose repair often remain at zero exact success.
+Moreover, a height-sorted algorithm solves all v2 planning cases.
+The separate \texttt{challenge-casebank-1} layer therefore changes
+both scale and task structure without modifying v2 or historical scores.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/challenge-scale.pdf}
+\caption{Six original challenge structures. They contain 49--63 parts
+each (329 placed instances total), compared with 8--28 parts in the
+curated calibration layer. All are connected and have verified
+piece-wise vertical insertion orders.}
+\label{fig:challenge-scale}
+\end{figure*}
+
+\begin{table*}[t]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}lccrX@{}}
+\toprule
+Model & Tier & Domain & Parts & Intended pressure\\
+\midrule
+\tableinput{tables/challenge-models.tex}
+\bottomrule
+\end{tabularx}
+\caption{Challenge structures and design intent. Tiers are controlled
+design strata, not human-calibrated difficulty labels.}
+\label{tab:challenge-models}
+\end{table*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/challenge-tasks.pdf}
+\caption{Twelve advanced contracts, each shown as input/context
+(left) and oracle target or disclosed consequence (right). Visual
+targets do not replace the typed JSON oracle. Constrained redesign
+accepts any satisfying structure rather than only the displayed witness.}
+\label{fig:challenge-tasks}
+\end{figure*}
+
+\begin{table*}[t]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}llrX@{}}
+\toprule
+Task & Source & Parts & Model result\\
+\midrule
+\tableinput{tables/challenge-tasks.tex}
+\bottomrule
+\end{tabularx}
+\caption{\textbf{Unmeasured.} The challenge task list. Blank cells are
+deliberate: oracle and near-miss validation are complete, but no model
+has been run on these new cases.}
+\label{tab:challenge-tasks}
+\end{table*}
+
+The contracts are recovery planning from a legal dead end, iterative
+support counterfactuals, a three-clause compound edit, simultaneous
+color/pose/extra-part repair, costed active inspection, shortest-path
+and articulation reasoning, non-suffix distributed completion, rigid
+subassembly translation, legal-next-part set prediction, selected-part
+pose estimation, 53-part reconstruction, and inventory-constrained
+redesign. Recovery actions are executed in submitted order. The
+counterfactual repeatedly removes newly unsupported parts. The
+selection oracle returns all legal candidates, not one arbitrary next
+piece. Multi-fault repair requires both exact restoration and the
+complete set of wrong current IDs.
+
+This layer remains far smaller than BrickNet and lacks LDraw connector
+diversity, force stability, manuals, and robot actions. Its purpose is
+controlled cross-capability stress testing, not a claim of comparable
+asset scale or generative realism.
+
 \subsection{Source Policies and Catalog}
 Figure~\ref{fig:policies} shows all eight construction procedures.
 Table~\ref{tab:policy} gives their measured means; height uses plate
@@ -850,6 +924,11 @@ node node_modules/tsx/dist/cli.mjs \
 node node_modules/tsx/dist/cli.mjs \
   benchmark/paper/render-structures.ts
 python benchmark/paper/compose-structures.py
+node node_modules/tsx/dist/cli.mjs \
+  benchmark/suite/challenge/render.ts
+python benchmark/suite/challenge/compose.py
+node node_modules/tsx/dist/cli.mjs \
+  benchmark/paper/generate-challenge.ts
 \end{verbatim}
 Then compile both TeX documents using the instructions in
 \texttt{paper/README.md}. \texttt{audit-evidence.json} binds new tables

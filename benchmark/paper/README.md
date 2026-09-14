@@ -23,6 +23,8 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 - `../curated-cases/`: reviewer-facing case directory with 12 original structures,
   per-case JSON, four views, occupied layers, exploded views, legal steps,
   eight task input/ground-truth folders, contact sheets, and a static HTML index.
+- `../challenge-cases/`: six connected 49--63-part structures and twelve advanced
+  task contracts. Oracle checks are complete; model result cells remain blank.
 - `figures/`: the main teaser, task/ground-truth and execution figures are generated
   from the curated directory. Historical procedural figures remain separately named.
 - `evidence.json`: source paths/hashes for numerical evidence and upstream template.
@@ -42,6 +44,8 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
   explicit curated geometry, task contracts, case-folder export, and paper plates.
 - `generate-curated.ts`, `curated-evidence.json`: verify the 264 generated curated
   files and produce the exact specification table.
+- `../suite/challenge/`, `generate-challenge.ts`, `challenge-evidence.json`:
+  advanced models, evaluators, renders, tables, and evidence hashes.
 
 ## Compile
 
@@ -75,6 +79,8 @@ python benchmark/paper/generate-figures.py
 python benchmark/suite/curated/compose.py
 python benchmark/paper/compose-structures.py
 node node_modules/tsx/dist/cli.mjs benchmark/paper/generate-curated.ts
+python benchmark/suite/challenge/compose.py
+node node_modules/tsx/dist/cli.mjs benchmark/paper/generate-challenge.ts
 ```
 
 The archived curated images are sufficient to compose all review and paper
@@ -84,6 +90,8 @@ set `BRICKATLAS_URL` if it is not `http://127.0.0.1:5175`, and run:
 ```bash
 node node_modules/tsx/dist/cli.mjs benchmark/suite/curated/render.ts
 python benchmark/suite/curated/compose.py
+node node_modules/tsx/dist/cli.mjs benchmark/suite/challenge/render.ts
+python benchmark/suite/challenge/compose.py
 ```
 
 This uses a separate display renderer and does not change historical model images.

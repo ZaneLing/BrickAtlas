@@ -9,7 +9,7 @@
   `291758547e923160eb4d37079b7b9f0dfce82355`.
 - Template files are unmodified; their hashes are recorded in `evidence.json`.
 - Output: eight US Letter main-content pages and one separate reference page;
-  sixteen supplementary pages. No margin or negative-spacing modifications.
+  eighteen supplementary pages. No margin or negative-spacing modifications.
 - TeX log: no unresolved citations/references or overfull boxes.
 - PDF inspection: text on every page, no text outside page boundaries.
 - All-page contact sheet and detailed formula/result pages inspected visually:
@@ -19,6 +19,9 @@
   from 12 explicitly authored curated models, not random procedural samples.
   The review directory contains 264 generated per-case files plus contact sheets.
 - The hidden-layout plate remains a separate 60-layout finite-grammar audit.
+- Challenge layer: six connected 49--63-part structures, 329 placed instances,
+  and twelve advanced task contracts. Oracle and near-miss tests pass; measured
+  model results remain zero because the new evaluation has not been run.
 - New full-casebank audit: 35,840 copy controls on 5,120 sources reproduced
   exactly with `paper-audit.ts --verify`; assembled catalog coverage is 19/25.
 - Eight-model matrix: 312 responses on the same three sources; four new models
@@ -27,7 +30,7 @@
   60 admissible layouts, and 240 renderer checks with pixel-identical exteriors.
 - Runtime-free, key-free copied-environment replay passes 23 commands, including
   the expanded model receipts and ambiguity ground-truth verifier.
-- Benchmark regression: 146 tests pass; TypeScript check passes.
+- Benchmark regression: 150 tests pass; TypeScript check passes.
 - Twelve prospective result tables retain 460 blank cells (JSON null).
 - `verify-artifacts.mjs` checks model/audit/figure/PDF hashes, 3D render framing,
   ambiguity counts, and blank-table accounting.

@@ -111,7 +111,7 @@ const manifest = { checkedAt: new Date().toISOString(), completedLocalJobs: loca
       ? { version: report.version, responses: report.rows.length, strata: report.groups.length, apiRequests: report.apiRequests }
       : report])),
   sourceHashes: Object.fromEntries(
-    [resolve(SUITE, 'study'), resolve(SUITE, 'curated')]
+    [resolve(SUITE, 'study'), resolve(SUITE, 'curated'), resolve(SUITE, 'challenge')]
       .flatMap(root => walk(root))
       .filter(path => /\.(ts|py|mjs|txt)$/.test(path))
       .map(path => [relative(SUITE, path), createHash('sha256').update(readFileSync(path)).digest('hex')]),

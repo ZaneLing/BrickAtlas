@@ -262,3 +262,5 @@ agent 接口，但仍是离散数字积木环境，不是机械臂控制。
 更详细的冻结数据说明见
 [`suite/v2/REPORT.zh-CN.md`](suite/v2/REPORT.zh-CN.md)，
 指标公式见 [`suite/v2/METRICS.md`](suite/v2/METRICS.md)。
+49--63 件结构和十二项高级任务见
+[`CHALLENGE_REPORT.zh-CN.md`](CHALLENGE_REPORT.zh-CN.md)。

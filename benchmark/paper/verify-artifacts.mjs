@@ -9,6 +9,7 @@ const read = path => JSON.parse(readFileSync(resolve(here, path), 'utf8'));
 const sha = path => createHash('sha256').update(readFileSync(resolve(here, path))).digest('hex');
 const figures = read('figure-evidence.json'), audit = read('audit-evidence.json');
 const curated = read('curated-evidence.json');
+const challenge = read('challenge-evidence.json');
 assert.equal(sha('generate-figures.py'), figures.generatorSha256);
 assert.equal(sha('generate-audit.mjs'), audit.generatorSha256);
 assert.equal(sha('generate-curated.ts'), curated.generatorSha256);
@@ -18,6 +19,15 @@ const curatedManifest = read('../curated-cases/manifest.json');
 assert.equal(curatedManifest.models.length, 12); assert.equal(curatedManifest.tasks.length, 8);
 for (const file of curatedManifest.files) assert.equal(sha('../curated-cases/' + file.path), file.sha256, file.path);
 for (const [path, hash] of Object.entries(curated.paperFigures)) assert.equal(sha('figures/' + path), hash, path);
+assert.equal(sha('generate-challenge.ts'), challenge.generatorSha256);
+assert.equal(sha('../challenge-cases/manifest.json'), challenge.manifestSha256);
+assert.equal(sha('../challenge-cases/figure-evidence.json'), challenge.figureEvidenceSha256);
+const challengeManifest = read('../challenge-cases/manifest.json');
+assert.equal(challengeManifest.models.length, 6); assert.equal(challengeManifest.tasks.length, 12);
+assert.equal(challengeManifest.totals.placedPartInstances, 329);
+for (const file of challengeManifest.files) assert.equal(sha('../challenge-cases/' + file.path), file.sha256, file.path);
+for (const [path, hash] of Object.entries(challenge.paperFigures)) assert.equal(sha('figures/' + path), hash, path);
+assert.equal(challenge.measuredModelResults, 0);
 assert.equal(figures.figures.length, 5);
 for (const [path, hash] of Object.entries(figures.sourcesSha256)) assert.equal(sha('../' + path), hash, path);
 for (const [path, hash] of Object.entries(figures.outputSha256)) assert.equal(sha('figures/' + path), hash, path);
@@ -58,7 +68,9 @@ for (const paper of ['main', 'supplement']) {
   assert.equal(report.unresolvedCitationsOrReferences, false);
 }
 assert.ok(read('pdf-verification.json').mainContentPageUpperBound <= 8);
-console.log(JSON.stringify({ verified: true, figures: figures.figures.length + plates.figures.length + Object.keys(curated.paperFigures).length,
+console.log(JSON.stringify({ verified: true, figures: figures.figures.length + plates.figures.length
+    + Object.keys(curated.paperFigures).length + Object.keys(challenge.paperFigures).length,
   curatedModels: curated.models, curatedTasks: curated.tasks, curatedFiles: curated.files, renders3D: structures.images.length,
+  challengeModels: challenge.models, challengeTasks: challenge.tasks, challengeParts: challenge.placedPartInstances,
   models: expanded.models, newCalls: expanded.newCalls, ambiguityCases: expanded.ambiguityCases,
   plannedTables: plan.tables.length, unmeasuredCells: cells, mainContentPages: read('pdf-verification.json').mainContentPageUpperBound }));

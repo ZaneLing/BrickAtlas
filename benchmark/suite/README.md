@@ -6,6 +6,7 @@
 ## 文档
 
 - [Case、Ground Truth、正确/错误操作与模型测试说明](../CASE_GUIDE.zh-CN.md)
+- [难度升级、相关工作对比与 Challenge Casebank](../CHALLENGE_REPORT.zh-CN.md)
 - [当前能测什么、研究目标与整体结构](study/OVERVIEW.zh-CN.md)
 - [最新v2神经实测、训练与全链路审计报告](study/REPORT.zh-CN.md)
 - [最新实验与严格评分复现](study/README.md)

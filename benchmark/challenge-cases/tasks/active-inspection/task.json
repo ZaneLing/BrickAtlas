@@ -1,0 +1,45 @@
+{
+  "version": "brickatlas-challenge-casebank-1",
+  "id": "bb25e821b1e3a76f385f5fc3",
+  "kind": "active-inspection",
+  "sourceId": "expert-fortress-gatehouse",
+  "tier": "expert",
+  "prompt": "Choose the minimum-cost inspection that reveals the complete gate-beam layer, then answer whether two parallel spanning beams exist.",
+  "input": {
+    "initialViews": [
+      "front",
+      "side"
+    ],
+    "queryOptions": [
+      {
+        "id": "rear-rgb",
+        "cost": 1,
+        "reveals": "rear exterior only"
+      },
+      {
+        "id": "top-rgb",
+        "cost": 1,
+        "reveals": "assembled top view with occlusion"
+      },
+      {
+        "id": "layer-y-13",
+        "cost": 2,
+        "reveals": "all and only parts whose bottom Y=13"
+      },
+      {
+        "id": "symbolic-graph",
+        "cost": 4,
+        "reveals": "complete typed contact graph"
+      }
+    ]
+  },
+  "responseSchema": {
+    "queryId": "string",
+    "answer": "one-beam|two-parallel-beams"
+  },
+  "groundTruth": {
+    "queryId": "layer-y-13",
+    "answer": "two-parallel-beams"
+  },
+  "scoring": "benchmark/suite/challenge/evaluate.ts"
+}

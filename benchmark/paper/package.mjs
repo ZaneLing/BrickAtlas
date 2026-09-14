@@ -13,6 +13,7 @@ execFileSync('zip', ['-q', '-r', temporary, 'main.tex', 'supplement.tex', 'refer
   'experiments.json', 'requirements.txt', 'verify-artifacts.mjs', 'REVIEW.zh-CN.md',
   'RESEARCH_UPDATE.zh-CN.md', 'generate-expanded.ts', 'render-structures.ts', 'compose-structures.py',
   'expanded-evidence.json', 'structure-evidence.json', 'structure-figure-evidence.json',
-  'generate-curated.ts', 'curated-evidence.json'], { cwd: here });
+  'generate-curated.ts', 'curated-evidence.json', 'generate-challenge.ts',
+  'challenge-evidence.json'], { cwd: here });
 renameSync(temporary, output);
 console.log(output);
