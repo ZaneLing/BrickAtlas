@@ -14,6 +14,7 @@ execFileSync('zip', ['-q', '-r', temporary, 'main.tex', 'supplement.tex', 'refer
   'RESEARCH_UPDATE.zh-CN.md', 'generate-expanded.ts', 'render-structures.ts', 'compose-structures.py',
   'expanded-evidence.json', 'structure-evidence.json', 'structure-figure-evidence.json',
   'generate-curated.ts', 'curated-evidence.json', 'generate-challenge.ts',
-  'challenge-evidence.json', 'reference-manual.tex', 'verify-review.mjs', 'review-evidence.json'], { cwd: here });
+  'challenge-evidence.json', 'reference-manual.tex', 'verify-review.mjs', 'review-evidence.json',
+  'frontier-manual.tex', 'frontier-evidence.json', 'verify-frontier.mjs'], { cwd: here });
 renameSync(temporary, output);
 console.log(output);

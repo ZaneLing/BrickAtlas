@@ -1,0 +1,1012 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Four-Tower Citadel</title><style>*{box-sizing:border-box}body{margin:0;color:#202827;background:#fff;font:15px/1.55 system-ui,sans-serif}main{max-width:1280px;margin:auto;padding:24px}a{color:#166b79}h1{font-size:28px}h2{font-size:23px;margin-top:36px}h3{font-size:18px}header{border-bottom:2px solid #16816c;padding-bottom:18px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}img{width:100%;height:auto;aspect-ratio:4/3;object-fit:contain}article{border-bottom:1px solid #ccd4d2;padding:16px 0}pre{overflow:auto;background:#f2f5f4;padding:12px;max-height:260px}table{border-collapse:collapse;width:100%}th,td{text-align:left;border-bottom:1px solid #ccd4d2;padding:8px;overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}figure{margin:0}figcaption{font-size:13px}details{margin:10px 0}@media(max-width:700px){main{padding:16px}.grid{grid-template-columns:1fr}h1{font-size:24px}}</style><main><header><a href="index.html">全部模型</a><h1>Four-Tower Citadel</h1><p>Four hollow six-course towers, connected curtain walls, elevated walkways and aligned battlements around an open court.</p><p>236 件 · 11 层 · 依赖深度 11 · X/Y/Z 32/25/24</p><a href="four-tower-citadel.json">结构与模块 JSON</a></header><div class="grid"><figure><img src="four-tower-citadel-iso.png" alt="iso"><figcaption>iso</figcaption></figure><figure><img src="four-tower-citadel-top.png" alt="top"><figcaption>top</figcaption></figure><figure><img src="four-tower-citadel-front.png" alt="front"><figcaption>front</figcaption></figure><figure><img src="four-tower-citadel-side.png" alt="side"><figcaption>side</figcaption></figure><figure><img src="four-tower-citadel-exploded.png" alt="exploded"><figcaption>exploded</figcaption></figure></div><article><h2>最小拆装修复</h2><p>Replace the marked buried component and restore the entire target. Only remove/place by ID; place uses the target inventory pose/color. Minimize action count. Every intermediate state must remain valid. Output {actions:[{op,id}]}.</p><div class="grid"><figure><img loading="lazy" src="four-tower-citadel-iso.png"><figcaption>完整结构上下文，非额外允许输入</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-service-plan-good.png"><figcaption>正确参考 · success=1</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-service-plan-bad.png"><figcaption>构造错误 · success=0 · blocked</figcaption></figure></div><p><a href="four-tower-citadel-service-plan-public.json">公开题面</a> · <a href="four-tower-citadel-service-plan-review.json">裁判与正反答案</a></p><details><summary>指标、正例和反例 JSON</summary><pre>{
+  "metrics": {
+    "actions": 28,
+    "lowerBound": 28,
+    "finalExact": 1,
+    "legalPrefix": 1,
+    "excessActions": 0
+  },
+  "positive": {
+    "actions": [
+      {
+        "op": "remove",
+        "id": "p0113"
+      },
+      {
+        "op": "remove",
+        "id": "p0114"
+      },
+      {
+        "op": "remove",
+        "id": "p0115"
+      },
+      {
+        "op": "remove",
+        "id": "p0116"
+      },
+      {
+        "op": "remove",
+        "id": "p0117"
+      },
+      {
+        "op": "remove",
+        "id": "p0118"
+      },
+      {
+        "op": "remove",
+        "id": "p0111"
+      },
+      {
+        "op": "remove",
+        "id": "p0112"
+      },
+      {
+        "op": "remove",
+        "id": "p0109"
+      },
+      {
+        "op": "remove",
+        "id": "p0105"
+      },
+      {
+        "op": "remove",
+        "id": "p0101"
+      },
+      {
+        "op": "remove",
+        "id": "p0097"
+      },
+      {
+        "op": "remove",
+        "id": "p0093"
+      },
+      {
+        "op": "remove",
+        "id": "p0089"
+      },
+      {
+        "op": "place",
+        "id": "p0089"
+      },
+      {
+        "op": "place",
+        "id": "p0093"
+      },
+      {
+        "op": "place",
+        "id": "p0097"
+      },
+      {
+        "op": "place",
+        "id": "p0101"
+      },
+      {
+        "op": "place",
+        "id": "p0105"
+      },
+      {
+        "op": "place",
+        "id": "p0109"
+      },
+      {
+        "op": "place",
+        "id": "p0112"
+      },
+      {
+        "op": "place",
+        "id": "p0111"
+      },
+      {
+        "op": "place",
+        "id": "p0118"
+      },
+      {
+        "op": "place",
+        "id": "p0117"
+      },
+      {
+        "op": "place",
+        "id": "p0116"
+      },
+      {
+        "op": "place",
+        "id": "p0115"
+      },
+      {
+        "op": "place",
+        "id": "p0114"
+      },
+      {
+        "op": "place",
+        "id": "p0113"
+      }
+    ]
+  },
+  "negative": {
+    "actions": [
+      {
+        "op": "remove",
+        "id": "p0089"
+      },
+      {
+        "op": "place",
+        "id": "p0089"
+      }
+    ]
+  }
+}</pre></details></article><article><h2>最小访问集合与可执行证书</h2><p>Return the minimum set of IDs that must be removed to access every service ID, including the service IDs. Also certify an executable removal order. Output {removeIds,order}; no detached group moves.</p><div class="grid"><figure><img loading="lazy" src="four-tower-citadel-iso.png"><figcaption>完整结构上下文，非额外允许输入</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-access-certificate-good.png"><figcaption>正确参考 · success=1</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-access-certificate-bad.png"><figcaption>构造错误 · success=0 · minimum_set</figcaption></figure></div><p><a href="four-tower-citadel-access-certificate-public.json">公开题面</a> · <a href="four-tower-citadel-access-certificate-review.json">裁判与正反答案</a></p><details><summary>指标、正例和反例 JSON</summary><pre>{
+  "metrics": {
+    "removals": 14
+  },
+  "positive": {
+    "removeIds": [
+      "p0113",
+      "p0114",
+      "p0115",
+      "p0116",
+      "p0117",
+      "p0118",
+      "p0111",
+      "p0112",
+      "p0109",
+      "p0105",
+      "p0101",
+      "p0097",
+      "p0093",
+      "p0089"
+    ],
+    "order": [
+      "p0113",
+      "p0114",
+      "p0115",
+      "p0116",
+      "p0117",
+      "p0118",
+      "p0111",
+      "p0112",
+      "p0109",
+      "p0105",
+      "p0101",
+      "p0097",
+      "p0093",
+      "p0089"
+    ]
+  },
+  "negative": {
+    "removeIds": [
+      "p0089"
+    ],
+    "order": [
+      "p0089"
+    ]
+  }
+}</pre></details></article><article><h2>多工位依赖调度</h2><p>Schedule all IDs in synchronous rounds with four abstract workers. Prerequisites are every lower part whose footprint overlaps; ALL must be in earlier rounds. At most four IDs per round; each ID once. Return {batches:[IDs]}. Report makespan; optimality is not required and no robot motion is modeled.</p><div class="grid"><figure><img loading="lazy" src="four-tower-citadel-iso.png"><figcaption>完整结构上下文，非额外允许输入</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-parallel-schedule-good.png"><figcaption>正确参考 · success=1</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-parallel-schedule-bad.png"><figcaption>构造错误 · success=0 · batch_schema</figcaption></figure></div><p><a href="four-tower-citadel-parallel-schedule-public.json">公开题面</a> · <a href="four-tower-citadel-parallel-schedule-review.json">裁判与正反答案</a></p><details><summary>指标、正例和反例 JSON</summary><pre>{
+  "metrics": {
+    "coverage": 1,
+    "makespan": 59,
+    "workerLowerBound": 59
+  },
+  "positive": {
+    "batches": [
+      [
+        "p0001",
+        "p0002",
+        "p0003",
+        "p0004"
+      ],
+      [
+        "p0005",
+        "p0006",
+        "p0007",
+        "p0008"
+      ],
+      [
+        "p0009",
+        "p0010",
+        "p0011",
+        "p0012"
+      ],
+      [
+        "p0013",
+        "p0014",
+        "p0015",
+        "p0016"
+      ],
+      [
+        "p0017",
+        "p0018",
+        "p0019",
+        "p0020"
+      ],
+      [
+        "p0021",
+        "p0022",
+        "p0023",
+        "p0024"
+      ],
+      [
+        "p0025",
+        "p0026",
+        "p0027",
+        "p0028"
+      ],
+      [
+        "p0029",
+        "p0030",
+        "p0031",
+        "p0032"
+      ],
+      [
+        "p0033",
+        "p0034",
+        "p0035",
+        "p0036"
+      ],
+      [
+        "p0037",
+        "p0038",
+        "p0039",
+        "p0040"
+      ],
+      [
+        "p0041",
+        "p0042",
+        "p0043",
+        "p0044"
+      ],
+      [
+        "p0045",
+        "p0046",
+        "p0047",
+        "p0048"
+      ],
+      [
+        "p0049",
+        "p0050",
+        "p0051",
+        "p0052"
+      ],
+      [
+        "p0053",
+        "p0054",
+        "p0055",
+        "p0056"
+      ],
+      [
+        "p0057",
+        "p0058",
+        "p0059",
+        "p0060"
+      ],
+      [
+        "p0061",
+        "p0062",
+        "p0063",
+        "p0064"
+      ],
+      [
+        "p0065",
+        "p0066",
+        "p0067",
+        "p0068"
+      ],
+      [
+        "p0069",
+        "p0070",
+        "p0071",
+        "p0072"
+      ],
+      [
+        "p0073",
+        "p0074",
+        "p0075",
+        "p0076"
+      ],
+      [
+        "p0077",
+        "p0078",
+        "p0079",
+        "p0080"
+      ],
+      [
+        "p0081",
+        "p0082",
+        "p0083",
+        "p0084"
+      ],
+      [
+        "p0085",
+        "p0086",
+        "p0087",
+        "p0088"
+      ],
+      [
+        "p0089",
+        "p0090",
+        "p0119",
+        "p0120"
+      ],
+      [
+        "p0121",
+        "p0122",
+        "p0151",
+        "p0152"
+      ],
+      [
+        "p0153",
+        "p0154",
+        "p0183",
+        "p0184"
+      ],
+      [
+        "p0185",
+        "p0186",
+        "p0215",
+        "p0218"
+      ],
+      [
+        "p0221",
+        "p0224",
+        "p0227",
+        "p0230"
+      ],
+      [
+        "p0091",
+        "p0092",
+        "p0093",
+        "p0094"
+      ],
+      [
+        "p0123",
+        "p0124",
+        "p0125",
+        "p0126"
+      ],
+      [
+        "p0155",
+        "p0156",
+        "p0157",
+        "p0158"
+      ],
+      [
+        "p0187",
+        "p0188",
+        "p0189",
+        "p0190"
+      ],
+      [
+        "p0216",
+        "p0219",
+        "p0222",
+        "p0225"
+      ],
+      [
+        "p0228",
+        "p0231",
+        "p0095",
+        "p0096"
+      ],
+      [
+        "p0097",
+        "p0098",
+        "p0127",
+        "p0128"
+      ],
+      [
+        "p0129",
+        "p0130",
+        "p0159",
+        "p0160"
+      ],
+      [
+        "p0161",
+        "p0162",
+        "p0191",
+        "p0192"
+      ],
+      [
+        "p0193",
+        "p0194",
+        "p0217",
+        "p0220"
+      ],
+      [
+        "p0223",
+        "p0226",
+        "p0229",
+        "p0232"
+      ],
+      [
+        "p0099",
+        "p0100",
+        "p0101",
+        "p0102"
+      ],
+      [
+        "p0131",
+        "p0132",
+        "p0133",
+        "p0134"
+      ],
+      [
+        "p0163",
+        "p0164",
+        "p0165",
+        "p0166"
+      ],
+      [
+        "p0195",
+        "p0196",
+        "p0197",
+        "p0198"
+      ],
+      [
+        "p0233",
+        "p0234",
+        "p0235",
+        "p0236"
+      ],
+      [
+        "p0103",
+        "p0104",
+        "p0105",
+        "p0106"
+      ],
+      [
+        "p0135",
+        "p0136",
+        "p0137",
+        "p0138"
+      ],
+      [
+        "p0167",
+        "p0168",
+        "p0169",
+        "p0170"
+      ],
+      [
+        "p0199",
+        "p0200",
+        "p0201",
+        "p0202"
+      ],
+      [
+        "p0107",
+        "p0108",
+        "p0109",
+        "p0110"
+      ],
+      [
+        "p0139",
+        "p0140",
+        "p0141",
+        "p0142"
+      ],
+      [
+        "p0171",
+        "p0172",
+        "p0173",
+        "p0174"
+      ],
+      [
+        "p0203",
+        "p0204",
+        "p0205",
+        "p0206"
+      ],
+      [
+        "p0111",
+        "p0112",
+        "p0143",
+        "p0144"
+      ],
+      [
+        "p0175",
+        "p0176",
+        "p0207",
+        "p0208"
+      ],
+      [
+        "p0113",
+        "p0114",
+        "p0115",
+        "p0116"
+      ],
+      [
+        "p0117",
+        "p0118",
+        "p0145",
+        "p0146"
+      ],
+      [
+        "p0147",
+        "p0148",
+        "p0149",
+        "p0150"
+      ],
+      [
+        "p0177",
+        "p0178",
+        "p0179",
+        "p0180"
+      ],
+      [
+        "p0181",
+        "p0182",
+        "p0209",
+        "p0210"
+      ],
+      [
+        "p0211",
+        "p0212",
+        "p0213",
+        "p0214"
+      ]
+    ]
+  },
+  "negative": {
+    "batches": [
+      [
+        "p0001",
+        "p0002",
+        "p0003",
+        "p0004",
+        "p0005",
+        "p0006",
+        "p0007",
+        "p0008",
+        "p0009",
+        "p0010",
+        "p0011",
+        "p0012",
+        "p0013",
+        "p0014",
+        "p0015",
+        "p0016",
+        "p0017",
+        "p0018",
+        "p0019",
+        "p0020",
+        "p0021",
+        "p0022",
+        "p0023",
+        "p0024",
+        "p0025",
+        "p0026",
+        "p0027",
+        "p0028",
+        "p0029",
+        "p0030",
+        "p0031",
+        "p0032",
+        "p0033",
+        "p0034",
+        "p0035",
+        "p0036",
+        "p0037",
+        "p0038",
+        "p0039",
+        "p0040",
+        "p0041",
+        "p0042",
+        "p0043",
+        "p0044",
+        "p0045",
+        "p0046",
+        "p0047",
+        "p0048",
+        "p0049",
+        "p0050",
+        "p0051",
+        "p0052",
+        "p0053",
+        "p0054",
+        "p0055",
+        "p0056",
+        "p0057",
+        "p0058",
+        "p0059",
+        "p0060",
+        "p0061",
+        "p0062",
+        "p0063",
+        "p0064",
+        "p0065",
+        "p0066",
+        "p0067",
+        "p0068",
+        "p0069",
+        "p0070",
+        "p0071",
+        "p0072",
+        "p0073",
+        "p0074",
+        "p0075",
+        "p0076",
+        "p0077",
+        "p0078",
+        "p0079",
+        "p0080",
+        "p0081",
+        "p0082",
+        "p0083",
+        "p0084",
+        "p0085",
+        "p0086",
+        "p0087",
+        "p0088",
+        "p0089",
+        "p0090",
+        "p0091",
+        "p0092",
+        "p0093",
+        "p0094",
+        "p0095",
+        "p0096",
+        "p0097",
+        "p0098",
+        "p0099",
+        "p0100",
+        "p0101",
+        "p0102",
+        "p0103",
+        "p0104",
+        "p0105",
+        "p0106",
+        "p0107",
+        "p0108",
+        "p0109",
+        "p0110",
+        "p0111",
+        "p0112",
+        "p0113",
+        "p0114",
+        "p0115",
+        "p0116",
+        "p0117",
+        "p0118",
+        "p0119",
+        "p0120",
+        "p0121",
+        "p0122",
+        "p0123",
+        "p0124",
+        "p0125",
+        "p0126",
+        "p0127",
+        "p0128",
+        "p0129",
+        "p0130",
+        "p0131",
+        "p0132",
+        "p0133",
+        "p0134",
+        "p0135",
+        "p0136",
+        "p0137",
+        "p0138",
+        "p0139",
+        "p0140",
+        "p0141",
+        "p0142",
+        "p0143",
+        "p0144",
+        "p0145",
+        "p0146",
+        "p0147",
+        "p0148",
+        "p0149",
+        "p0150",
+        "p0151",
+        "p0152",
+        "p0153",
+        "p0154",
+        "p0155",
+        "p0156",
+        "p0157",
+        "p0158",
+        "p0159",
+        "p0160",
+        "p0161",
+        "p0162",
+        "p0163",
+        "p0164",
+        "p0165",
+        "p0166",
+        "p0167",
+        "p0168",
+        "p0169",
+        "p0170",
+        "p0171",
+        "p0172",
+        "p0173",
+        "p0174",
+        "p0175",
+        "p0176",
+        "p0177",
+        "p0178",
+        "p0179",
+        "p0180",
+        "p0181",
+        "p0182",
+        "p0183",
+        "p0184",
+        "p0185",
+        "p0186",
+        "p0187",
+        "p0188",
+        "p0189",
+        "p0190",
+        "p0191",
+        "p0192",
+        "p0193",
+        "p0194",
+        "p0195",
+        "p0196",
+        "p0197",
+        "p0198",
+        "p0199",
+        "p0200",
+        "p0201",
+        "p0202",
+        "p0203",
+        "p0204",
+        "p0205",
+        "p0206",
+        "p0207",
+        "p0208",
+        "p0209",
+        "p0210",
+        "p0211",
+        "p0212",
+        "p0213",
+        "p0214",
+        "p0215",
+        "p0216",
+        "p0217",
+        "p0218",
+        "p0219",
+        "p0220",
+        "p0221",
+        "p0222",
+        "p0223",
+        "p0224",
+        "p0225",
+        "p0226",
+        "p0227",
+        "p0228",
+        "p0229",
+        "p0230",
+        "p0231",
+        "p0232",
+        "p0233",
+        "p0234",
+        "p0235",
+        "p0236"
+      ]
+    ]
+  }
+}</pre></details></article><article><h2>最小支撑干预</h2><p>Choose a minimum-cardinality subset of allowed IDs whose forced simultaneous deletion makes the goal disappear under iterative zero-direct-support propagation. Forced deletions ignore access, and this is NOT force simulation. Output {removeIds,cascadeIds}, where cascadeIds includes forced deletions.</p><div class="grid"><figure><img loading="lazy" src="four-tower-citadel-iso.png"><figcaption>完整结构上下文，非额外允许输入</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-minimal-intervention-good.png"><figcaption>正确参考 · success=1</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-minimal-intervention-bad.png"><figcaption>构造错误 · success=0 · goal_survives</figcaption></figure></div><p><a href="four-tower-citadel-minimal-intervention-public.json">公开题面</a> · <a href="four-tower-citadel-minimal-intervention-review.json">裁判与正反答案</a></p><details><summary>指标、正例和反例 JSON</summary><pre>{
+  "metrics": {
+    "removals": 3,
+    "optimum": 3
+  },
+  "positive": {
+    "removeIds": [
+      "p0107",
+      "p0109",
+      "p0110"
+    ],
+    "cascadeIds": [
+      "p0107",
+      "p0109",
+      "p0110",
+      "p0111",
+      "p0113",
+      "p0115",
+      "p0117"
+    ]
+  },
+  "negative": {
+    "removeIds": [],
+    "cascadeIds": []
+  }
+}</pre></details></article><article><h2>库存受限等体积替代</h2><p>Retile the marked 8x4 plate footprint using ONLY the stated stock. Coordinates are local X/Z offsets; all plates share the replaced plate bottom Y, color and height. Cover every cell exactly once, without protrusion. Minimize number of pieces; accept any optimal tiling. Output {tiles:[{partId,x,z,turn}]}. Only occupied slab equivalence is claimed, not identical seams or stud connectivity.</p><div class="grid"><figure><img loading="lazy" src="four-tower-citadel-iso.png"><figcaption>完整结构上下文，非额外允许输入</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-inventory-cover-good.png"><figcaption>正确参考 · success=1</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-inventory-cover-bad.png"><figcaption>构造错误 · success=0 · uncovered</figcaption></figure></div><p><a href="four-tower-citadel-inventory-cover-public.json">公开题面</a> · <a href="four-tower-citadel-inventory-cover-review.json">裁判与正反答案</a></p><details><summary>指标、正例和反例 JSON</summary><pre>{
+  "metrics": {
+    "coverage": 1,
+    "tiles": 5,
+    "lowerBound": 5
+  },
+  "positive": {
+    "tiles": [
+      {
+        "partId": "3020",
+        "x": 0,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "partId": "3020",
+        "x": 0,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "partId": "3020",
+        "x": 4,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "partId": "3022",
+        "x": 4,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "partId": "3022",
+        "x": 6,
+        "z": 2,
+        "turn": 0
+      }
+    ]
+  },
+  "negative": {
+    "tiles": [
+      {
+        "partId": "3020",
+        "x": 0,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "partId": "3020",
+        "x": 4,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "partId": "3022",
+        "x": 4,
+        "z": 2,
+        "turn": 0
+      },
+      {
+        "partId": "3022",
+        "x": 6,
+        "z": 2,
+        "turn": 0
+      }
+    ]
+  }
+}</pre></details></article><article><h2>隐藏接缝的可行解集合</h2><p>The three marked foundation slabs each admit two four-brick tilings with the same colored occupied cells and BOM but different internal seams. Only knownStructure, finite grammar and the stated seam observation are disclosed; there is no seam RGB. Return {possibleIds} for EVERY compatible layout assignment. Do not choose one arbitrary hidden topology.</p><div class="grid"><figure><img loading="lazy" src="four-tower-citadel-iso.png"><figcaption>完整结构上下文，非额外允许输入</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-ambiguity-set-good.png"><figcaption>正确参考 · success=1</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-ambiguity-set-bad.png"><figcaption>构造错误 · success=0 · admissible_set</figcaption></figure></div><p><a href="four-tower-citadel-ambiguity-set-public.json">公开题面</a> · <a href="four-tower-citadel-ambiguity-set-review.json">裁判与正反答案</a></p><details><summary>指标、正例和反例 JSON</summary><pre>{
+  "metrics": {
+    "admissible": 4,
+    "falseCertainty": 0
+  },
+  "positive": {
+    "possibleIds": [
+      "h0",
+      "h2",
+      "h4",
+      "h6"
+    ]
+  },
+  "negative": {
+    "possibleIds": [
+      "h0"
+    ]
+  }
+}</pre></details></article><article><h2>预算内条件查询策略</h2><p>Return a contingent policy that identifies every admissible hidden assignment: {queryId,branches:{returnedValue:subpolicy}} or leaf {hypothesisId}. Query table and costs are public; one query per node, no repeated query on a path. Worst-case total cost &lt;=6. All eight worlds are scored, not just one lucky trace.</p><div class="grid"><figure><img loading="lazy" src="four-tower-citadel-iso.png"><figcaption>完整结构上下文，非额外允许输入</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-inspection-policy-good.png"><figcaption>正确参考 · success=1</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-inspection-policy-bad.png"><figcaption>构造错误 · success=0 · policy_coverage_or_budget</figcaption></figure></div><p><a href="four-tower-citadel-inspection-policy-public.json">公开题面</a> · <a href="four-tower-citadel-inspection-policy-review.json">裁判与正反答案</a></p><details><summary>指标、正例和反例 JSON</summary><pre>{
+  "metrics": {
+    "worldCoverage": 1,
+    "worstCost": 6
+  },
+  "positive": {
+    "queryId": "q0",
+    "branches": {
+      "lengthwise": {
+        "queryId": "q1",
+        "branches": {
+          "lengthwise": {
+            "queryId": "q2",
+            "branches": {
+              "lengthwise": {
+                "hypothesisId": "h0"
+              },
+              "crosswise": {
+                "hypothesisId": "h4"
+              }
+            }
+          },
+          "crosswise": {
+            "queryId": "q2",
+            "branches": {
+              "lengthwise": {
+                "hypothesisId": "h2"
+              },
+              "crosswise": {
+                "hypothesisId": "h6"
+              }
+            }
+          }
+        }
+      },
+      "crosswise": {
+        "queryId": "q1",
+        "branches": {
+          "lengthwise": {
+            "queryId": "q2",
+            "branches": {
+              "lengthwise": {
+                "hypothesisId": "h1"
+              },
+              "crosswise": {
+                "hypothesisId": "h5"
+              }
+            }
+          },
+          "crosswise": {
+            "queryId": "q2",
+            "branches": {
+              "lengthwise": {
+                "hypothesisId": "h3"
+              },
+              "crosswise": {
+                "hypothesisId": "h7"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "negative": {
+    "hypothesisId": "h0"
+  }
+}</pre></details></article><article><h2>跨区域混合故障修复</h2><p>Locate all corrupted current IDs against the full reference, then return ONLY replacement parts. Preserve every unlisted current part. Output {faultIds,replacements:[Part]}; repairs are a structural patch, not an executable physical action sequence. Exact IDs are required for patch addressing.</p><div class="grid"><figure><img loading="lazy" src="four-tower-citadel-iso.png"><figcaption>完整结构上下文，非额外允许输入</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-distributed-repair-good.png"><figcaption>正确参考 · success=1</figcaption></figure><figure><img loading="lazy" src="four-tower-citadel-distributed-repair-bad.png"><figcaption>构造错误 · success=0 · fault_set</figcaption></figure></div><p><a href="four-tower-citadel-distributed-repair-public.json">公开题面</a> · <a href="four-tower-citadel-distributed-repair-review.json">裁判与正反答案</a></p><details><summary>指标、正例和反例 JSON</summary><pre>{
+  "metrics": {
+    "finalExact": 1,
+    "changedRecall": 1
+  },
+  "positive": {
+    "faultIds": [
+      "p0089",
+      "p0236",
+      "p0091"
+    ],
+    "replacements": [
+      {
+        "id": "p0089",
+        "partId": "3001",
+        "color": "gray",
+        "x": 0,
+        "y": 3,
+        "z": 2,
+        "turn": 1
+      },
+      {
+        "id": "p0091",
+        "partId": "3007",
+        "color": "gray",
+        "x": 0,
+        "y": 6,
+        "z": 0,
+        "turn": 0
+      },
+      {
+        "id": "p0236",
+        "partId": "3035",
+        "color": "white",
+        "x": 16,
+        "y": 12,
+        "z": 20,
+        "turn": 0
+      }
+    ]
+  },
+  "negative": {
+    "faultIds": [],
+    "replacements": []
+  }
+}</pre></details></article></main></html>

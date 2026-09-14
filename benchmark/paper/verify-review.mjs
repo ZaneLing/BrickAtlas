@@ -15,7 +15,7 @@ assert.equal(gallery.controlCases, 36);
 assert.equal(gallery.proceduralModelsRendered, 5120);
 assert.equal(gallery.proceduralCaseLinks, 10240);
 assert.deepEqual(gallery.blankImages, []);
-const sources = ['paper/main.tex', 'paper/supplement.tex', 'paper/reference-manual.tex'];
+const sources = ['paper/main.tex', 'paper/supplement.tex', 'paper/reference-manual.tex', 'paper/frontier-manual.tex'];
 const keys = [...read('paper/references.bib').matchAll(/@\w+\{([^,]+),/g)].map(m => m[1]);
 assert.equal(new Set(keys).size, keys.length);
 const used = new Set(sources.flatMap(p => [...read(p).matchAll(/\\cite(?:\[[^\]]*\])?\{([^}]+)\}/g)]

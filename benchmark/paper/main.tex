@@ -22,24 +22,25 @@ Reasoning on Shared Brick Assemblies}
 \renewcommand\twocolumn[1][]{#1}
 \maketitle
 \centering
-\includegraphics[width=.96\textwidth]{figures/brick-teaser.pdf}
-\captionof{figure}{\textbf{Curated BrickAtlas calibration cases.}
-Eight of twelve original, explicitly authored structures span furniture,
-architecture, infrastructure, and landmarks at easy, medium, and hard
-difficulty. Every model uses at most four role-based colors and has
-verified geometry and an executable assembly order. This curated layer
-is separate from the 5,120-source procedural population.}
+\includegraphics[width=.84\textwidth]{figures/frontier-models.pdf}
+\captionof{figure}{\textbf{All six new Frontier structures.}
+Original 158--408-part models add deep courtyards, service galleries,
+hollow towers and stacked floors. Eight contracts per object connect
+maintenance, access certificates, resource constraints and uncertainty.
+These 48 public-development tasks are separate from the historical
+5,120-source population and have no learned-model results.}
 \label{fig:teaser}
 }]
 
 \begin{abstract}
 Understanding a brick assembly requires distinguishing its appearance,
 hidden structure, requested changes, and executable construction.
-BrickAtlas connects eight task families through 5,120 procedural source
-assemblies and 117,910 task-condition cases with explicit input privileges
-and typed success criteria. A twelve-object curated layer supplies
-coherent exemplars; a separate six-object challenge layer raises structures
-to 49--63 parts and defines twelve unmeasured advanced contracts. We add a finite-grammar ambiguity track:
+BrickAtlas separates appearance, structural change and executable
+success with explicit input privileges. Its historical audit contains
+5,120 procedural sources and 117,910 conditions. A new Frontier release
+adds six original 158--408-part objects and 48 maintenance, resource,
+certificate and uncertainty tasks, with public-input algorithmic controls
+but no learned-model results. A finite-grammar ambiguity track provides
 600 paired conditions have exhaustively checked answer sets, and
 90 exterior-only queries are genuinely undetermined within the declared
 grammar. A separate renderer audit verifies identical exterior pixels
@@ -71,8 +72,9 @@ multi-model assembly evaluation. BrickGPT~\cite{pun2025brickgpt} and
 BrickNet~\cite{kulits2026bricknet} provide strong generative foundations;
 MEPNet~\cite{wang2022manual}, Neural Assembler~\cite{yan2024assembler},
 and TreeSBA~\cite{guo2024treesba} address visual assembly.
-BC-Bench~\cite{liu2026composer} directly evaluates multimodal models on
-brick selection and single-step pose estimation. Our narrower opportunity
+BC-Bench~\cite{liu2026composer} evaluates selection and pose;
+PhyBlock~\cite{ma2025phyblock} covers diagnosis and planning robustness.
+Our narrower opportunity
 is \emph{measurement validity across shared objects}: when does a
 plausible appearance, a high similarity score, or one valid reference
 justify a downstream structural conclusion?
@@ -93,8 +95,8 @@ new finite-grammar, observation-conditioned relation track with
 exhaustive ground-truth sets and public-input enumeration; and (3)
 full-population shortcut audits, an eight-model descriptive matrix,
 and paired protocol controls; and (4) a versioned challenge layer for
-recovery, counterfactual, multi-fault, module-level, selection, and pose
-tasks. We separate implemented capability, measured development
+maintenance certificates, minimum intervention, resource constraints
+and finite-world inspection. We separate implemented capability, measured development
 evidence, and unrun experiments throughout.
 
 \section{Related Work and Position}
@@ -117,12 +119,13 @@ image or symbolic submissions and require audited adapters for comparison.
 \paragraph{The closest multimodal benchmark.}
 BC-Bench/Brick-Composer~\cite{liu2026composer} evaluates diverse-brick
 selection and pose estimation from manual context and current state,
-including feedback and training studies. Thus ``many models assembling
-bricks'' is not sufficient novelty. BrickAtlas instead makes
-acceptable alternatives, changed-region preservation, current-ID
-localization, and observation-conditioned answer sets explicit across
-tasks. Table~\ref{tab:position} states the distinction without claiming
-superior diversity or equating different sample units.
+including feedback and training. LEGO-Puzzles~\cite{tang2025legopuzzles}
+also includes multi-step plans; PhyBlock~\cite{ma2025phyblock} studies
+progressive planning, diagnosis and counterfactuals. Co-builder~\cite{huang2025cobuilder}
+addresses state detection, and WorkBenchMark~\cite{ma2026workbenchmark}
+includes robot/VLA assembly. These are not empty research areas.
+Our bounded distinction is shared-object, costed maintenance and
+observation-consistent certificates, not first-ever assembly reasoning.
 
 \begin{table*}[t]
 \centering\small
@@ -196,26 +199,22 @@ isolated recognition questions, not 150 new assembly objects.}
 \label{tab:splits}
 \end{table}
 
-The source census measures 9--47 parts per assembly and \textbf{19
-assembled types from a 25-type catalog}. Six catalog types occur only
-in recognition. Size bins contain 1,445 small ($\leq16$), 2,141 medium
-(17--28), and 1,534 large ($>28$) objects. Policy and size are not
-independent; full distributions, missing strata, and catalog counts
-are provided in the supplement. More views or task conditions do not
-create more independent objects.
+Historical sources contain 9--47 parts and 19 assembled types from the
+25-type catalog. Policy and size are confounded; the supplement gives
+the full census. More views do not create independent objects.
 
 \paragraph{Curated and challenge layers.}
-Twelve authored CC0 objects provide recognizable 8--28-part exemplars,
-role-based colors, exact JSON, multiple views, and legal checkpoints
-(Fig.~\ref{fig:teaser}). Because one-clause recoloring/removal saturates
-and height sorting solves all 10,240 v2 plans, a separate challenge
-release adds six connected 49--63-part structures (329 placed instances)
-and twelve contracts spanning dead-end recovery, counterfactuals,
-multi-fault/compound changes, module operations, selection, and pose.
-Challenge revision 2 corrects candidate inputs, schema and yaw handling,
-adds layer disclosure and query-return inspection; model cells remain
-unmeasured. Neither layer changes v2 counts or replaces licensed
-human-designed data; details are in the supplement.
+The twelve 8--28-part curated objects and six 49--63-part Challenge-2
+objects remain calibration layers. Frontier-1 (Fig.~\ref{fig:teaser})
+adds six 158--408-part objects, 1,509 placed parts, 14--24-stud depth,
+and dependency chains up to 19. Its separate 512-part, 96-cell envelope
+does not change historical limits. Eight tasks per object cover
+minimum-action service, access certificates, parallel scheduling,
+minimum support intervention, inventory replacement, hidden seam sets,
+contingent inspection and mixed-fault repair. Public-input solvers pass
+all 48 tasks; learned-model cells remain empty. Maintenance witnesses
+take 10--50 actions. These are symbolic/finite-observation contracts,
+not image-only or physically validated robot tasks.
 
 \begin{figure*}[t]
 \centering
@@ -475,15 +474,11 @@ is supported by three objects. Recognition is separate in the
 \label{tab:main}
 \end{table*}
 
-The main matrix groups variants only within each task family.
-The supplement breaks out all 13 variants to expose floors and
-ceilings. Same-source controls include copying current geometry,
-train-only BOM/extent retrieval, symbolic rules, greedy legal actions,
-and height sorting. Unsupported method/task pairs are not scored as
-failed attempts. Table~\ref{tab:partial} reports local metrics alongside
-exact success so schema failure, pose error, and doing nothing are
-not conflated. Global scores alone cannot identify a model's internal
-perceptual or reasoning failure.
+The supplement separates all 13 variants and same-source controls:
+copying, train-only retrieval, symbolic rules and height sorting.
+Unsupported pairs are not failures. Table~\ref{tab:partial} separates
+format, local changes and exact success; scores do not identify
+internal perceptual or reasoning mechanisms.
 \input{tables/expanded-findings.tex}
 
 \begin{table*}[t]
@@ -565,24 +560,20 @@ and candidate enumeration favor this method, so it is a signal
 control, not a general learned reconstruction baseline.
 
 \section{Experimental Coverage and Remaining Work}
-The supplement keeps twelve prospective tables blank and adds the
-implemented challenge contracts with unmeasured model cells. Planned
-work covers independent confirmation, observation and representation
-ablations, robust candidate controls, external assets, human calibration,
-training transfer, and audited adapters for specialized methods; no
-published cross-dataset score is copied. Next we must license external
-structures, validate mappings, obtain independent review, establish
-effective baselines, and freeze new source selections. Public development
-cases cannot be relabeled as an independent test, and missing paired
-outcomes require coverage and worst-case bounds.
+The supplement preserves twelve unmeasured experimental tables and
+adds Frontier contracts, algorithmic controls and all 48 case pairs.
+Priorities remain licensed external objects, independent review,
+matched-budget models and audited specialized adapters. Public
+development cases cannot be relabeled as independent confirmation.
 
 \section{Limitations and Conclusion}
 BrickAtlas is currently a controlled grid benchmark, not a comprehensive
 semantic or physically validated assembly benchmark. V2 retains its
 common base, 19 assembled types, suffix-only completion, topmost repairs,
-and height-solvable planning. The challenge layer removes several task
-shortcuts and raises size to 63 parts, but remains within the same
-25-type rectangular grid vocabulary and has no model measurements.
+and height-solvable planning. Frontier raises size to 408 parts, but retains
+the 25-type rectangular vocabulary and has no learned-model measurements.
+Its access closure is polynomial and local tiling is small; size alone
+does not prove difficult reasoning or empirical discrimination.
 The ambiguity extension
 is exhaustive only within its stated grammar; nine parameter families
 are not independent external sources. Pixel equality is verified on

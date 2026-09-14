@@ -1,6 +1,10 @@
 # Brick Atlas 模型测试场
 
-最新：[九维度审稿与修订报告](REVIEW_REPORT.zh-CN.md) ·
+最新：[相关工作核查与158–408件Frontier升级](FRONTIER_REPORT.zh-CN.md) ·
+[六个大结构与48题图集](frontier-cases/index.html)。
+旧117,910题保留作历史审计，不计入新层规模。
+
+上一轮：[九维度审稿与修订报告](REVIEW_REPORT.zh-CN.md) ·
 [18 个模型逐例报告](review-gallery/REPORT.zh-CN.md) ·
 [全部 5,120 个程序模型](review-gallery/procedural-001.html)。
 Challenge v1 保留作历史记录，新输入与评分使用 `challenge-cases-v2/`。
