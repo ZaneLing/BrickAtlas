@@ -13,7 +13,7 @@ const files = ['statistics.json', 'replay.json', 'independent-audit.json', 'exac
   'calibration/protocol.json', 'calibration/input-verification.json',
   'model-validation/analysis.json', 'model-validation/ladder/replay.json',
   'model-validation/ladder-normalized/replay.json', 'pose-probes/analysis.json', 'pose-probes/protocol.json',
-  'order-study/analysis.json'];
+  'order-study/analysis.json', 'visual-choice/analysis.json'];
 const data = Object.fromEntries(files.map(name => [name, JSON.parse(readFileSync(resolve(study, name), 'utf8'))]));
 assert.equal(data['replay.json'].reduce((n, r) => n + r.cases, 0), 730);
 assert.equal(data['independent-audit.json'].differences.length, 0);
@@ -66,6 +66,13 @@ write('study-order', orderStudy.byModel.map((row, index) => {
   const ci = row.excessMismatchInterval;
   return `${labels[index]} & ${row.repeatMismatch}/12 & ${row.permutationMismatch}/12 & ${ci.mean.toFixed(2)} [${ci.low.toFixed(2)}, ${ci.high.toFixed(2)}] \\\\`;
 }));
+const visual = data['visual-choice/analysis.json'];
+assert.equal(visual.status, 'complete'); assert.equal(visual.predictions, 60);
+assert.equal(visual.pairs.length, 16); assert.equal(visual.apiRequests, 0);
+write('study-visual-choice', visual.arms.map(row => {
+  const label = row.name.replace('pose-probes:', 'Pose/').replace('order-study:', 'Order/');
+  return `${tex(label)} & ${row.successes}/${row.cases} & ${row.abstentions} & ${row.sourceGroups} \\\\`;
+}));
 writeFileSync(resolve(here, 'study-evidence.json'), JSON.stringify({
   scope: 'Completed v2 API study and completed local jobs only; small-sample exploratory evidence.',
   localJobsComplete: data['local-summary.json'].length, plannedLocalJobs: 10,
@@ -74,4 +81,4 @@ writeFileSync(resolve(here, 'study-evidence.json'), JSON.stringify({
     sha256: createHash('sha256').update(readFileSync(resolve(study, name))).digest('hex'),
   }])),
 }, null, 2) + '\n');
-console.log(JSON.stringify({ tables: 5, localJobsComplete: data['local-summary.json'].length }));
+console.log(JSON.stringify({ tables: 6, localJobsComplete: data['local-summary.json'].length }));

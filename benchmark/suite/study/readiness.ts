@@ -20,6 +20,7 @@ export function researchReadiness() {
   const audit = humanAuditStatus(), exposure = exposureAudit();
   const calibration = existsSync(resolve(STUDY, 'human-audit/calibration-contract.json')) ? reportHumanCalibration() : null;
   const clean = read('clean-verification.json'), order = read('order-study/analysis.json');
+  const visual = read('visual-choice/analysis.json');
   const external = EXTERNAL_SOURCE_CANDIDATES.map(asset => ({ asset, gate: sourceGate(asset) }));
   const gates: Gate[] = [
     { id: 'research-contract', passed: existsSync(resolve(BENCHMARK, 'suite/study/RESEARCH_CONTRACT.md')),
@@ -57,7 +58,7 @@ export function researchReadiness() {
     '| 1. 研究定位 | 最近邻核心比较、H1-H5及反证条件、信息/统计合同 | 最终全文相关工作核对与独立研究判断 |\n' +
     '| 2. 数据与划分 | 暴露登记、分组隔离、许可发布检查 | 实际有授权的外部语义层、新冻结确认测试 |\n' +
     `| 3. 测量有效性 | 多解/原点/复制基线/字段诊断，重复对照${order?.status ?? '未完成'} | 人类指标校准及外部域有效性 |\n` +
-    `| 4. 模型与统计 | 既有四模型验证、10组训练、重复/换序${order?.responses ?? 0}/192调用 | 充分来源与有效专用基线、独立确认性结论 |\n` +
+    `| 4. 模型与统计 | 既有四模型验证、10组训练、重复/换序${order?.responses ?? 0}/192调用，已知渲染器视觉基线${visual?.status ?? '未执行'} | 更广任务的有效专用基线、充分来源与独立确认性结论 |\n` +
     `| 5. 独立审核复现 | 96候选审核包、不可覆盖导入、哈希绑定仲裁、来源级校准统计、同机离线复算 | ${audit.submissions}条提交标签；身份独立性与第二人复现仍待完成 |\n` +
     '| 6. 论文与交付 | 论文、表格、原始日志、证据与总验收报告 | 主张收敛、科学门槛和实际届次提交核验 |\n\n' +
     '## 核心结果与解释\n\n' +
@@ -74,6 +75,12 @@ export function researchReadiness() {
     `已有${audit.submissions}条标签、${calibration?.adjudications ?? 0}条仲裁，${calibration?.overall.resolved ?? 0}/${audit.queued}候选形成明确结论。` +
     '报告见../human-audit/CALIBRATION.md。误接受以人类拒绝数为分母，误拒绝以人类接受数为分母；没有有效分母时为不可估计，不报告零错误率。' +
     '原标签及仲裁理由留在私有目录，公开聚合不包含审核者代码或自由文本。程序完成不代表真人审核完成。\n\n' +
+    (visual ? '## 专用视觉基线\n\n' +
+      `公开输入渲染匹配基线已完成${visual.predictions}题、${visual.replacements}次换图控制，生成${visual.renders}个候选视图，0次API调用。` +
+      `图像条件成功${visual.arms.filter((a: any) => !a.name.includes('no-image')).reduce((n: number, a: any) => n + a.successes, 0)}` +
+      `/${visual.arms.filter((a: any) => !a.name.includes('no-image')).reduce((n: number, a: any) => n + a.cases, 0)}，` +
+      `换序保持同位姿${visual.pairs.filter((p: any) => p.permutationSamePose === true).length}/${visual.pairs.length}。` +
+      '只有4+12个既有开发来源；重复/换序不增加独立样本数。使用已知渲染器、规范配色和候选信息，不能当通用模型、真人观察验证或独立确认。报告见../visual-choice/REPORT.zh-CN.md。\n\n' : '') +
     '## 门槛明细\n\n' + gates.map(g => `- ${g.passed ? '通过' : '待完成'}：${g.id}。${g.reason}`).join('\n') +
     '\n\n## 必须由外部提供的证据\n\n真实审核者的独立标签与仲裁、数据权利方许可及实际结构文件、第二环境执行记录。若确认研究超出原累计$4.50预算，需要新的明确费用授权，不能重置账本。\n' +
     '\n具体交接与冻结要求见../../../study/EXTERNAL_VALIDATION.md。剩余研究不只需要外部参与：外部数据适配、有效专用基线及确认性实验仍需实现和验证，不能把全部缺口转交给人工。\n' +

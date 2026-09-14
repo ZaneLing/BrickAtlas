@@ -11,7 +11,7 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 - `main.tex`: abstract, motivation, related work, data, ground truth, metrics,
   auditable replay, v2 algorithmic audits and neural study, protocol diagnostics, limitations.
 - `main.pdf`: nine pages; references begin on page eight.
-- `supplement.tex`, `supplement.pdf`: two pages of historical pilots and implementation details.
+- `supplement.tex`, `supplement.pdf`: three pages of historical pilots, implementation details and the renderer-aware baseline.
 - `references.bib`: verified core references; not an exhaustive related-work survey.
 - `tables/*.tex`: tables generated from actual artifacts, not manually invented values.
 - `figures/*.png`: actual benchmark renders from the largest-case-per-policy audit.
@@ -95,6 +95,16 @@ permutation mismatch is 0.50-0.75; source-bootstrap intervals exclude zero in
 this selected small sample. This is not independent population confirmation.
 `tables/study-order.tex` is generated from its archived analysis. Total historical
 API accounting is 1,609 calls and $3.097410574, not the size of a single study.
+
+The additional renderer-aware baseline uses only public BOM/candidates, three
+RGB views and the known simulator. It solves all 16 original-source choices
+and preserves all 16 after permutation. Across repeated/permuted conditions
+the image total is 44/44, not 44 independent objects. All 16 no-image cases
+abstain. Replacing the source images yields one abstention and 9/15 changed
+jointly answered selections. The run generates 384 template views in 29.7
+seconds without API calls; its results are in `tables/study-visual-choice.tex`.
+This post-hoc, canonical-color control is not a general learned baseline,
+independent human validity check or new confirmation dataset.
 
 Independent human review, rich human-designed data, broader model baselines,
 and confirmatory experiments remain outstanding.

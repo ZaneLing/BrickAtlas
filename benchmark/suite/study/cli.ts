@@ -36,6 +36,8 @@ import { runOrderStudy, replayOrderStudy } from './order-run';
 import { researchReadiness } from './readiness';
 import { freezeHumanCalibration, verifyHumanCalibration, importHumanReview,
   humanAdjudicationQueue, reportHumanCalibration } from './human-calibration-run';
+import { freezeVisualChoice, runVisualChoice, replayVisualChoice } from './visual-choice-run';
+import { reportVisualChoice } from './visual-choice-report';
 
 const [command, ...args] = process.argv.slice(2);
 let result: unknown;
@@ -51,6 +53,14 @@ else if (command === 'import-human-labels' || command === 'import-human-adjudica
 }
 else if (command === 'human-adjudication-queue') result = humanAdjudicationQueue();
 else if (command === 'report-human-calibration') result = reportHumanCalibration();
+else if (command === 'freeze-visual-choice') result = freezeVisualChoice();
+else if (command === 'replay-visual-choice') result = await replayVisualChoice();
+else if (command === 'report-visual-choice') result = await reportVisualChoice();
+else if (command === 'run-visual-choice') {
+  const { url } = JSON.parse(readFileSync(resolve(BENCHMARK, '.runtime/suite-server.json'), 'utf8'));
+  const renderer = new SuiteRenderer(url);
+  try { result = await runVisualChoice(renderer); } finally { await renderer.close(); }
+}
 else if (command === 'research-readiness') result = researchReadiness();
 else if (command === 'replay-order-study') result = replayOrderStudy();
 else if (command === 'prepare-order-study') {

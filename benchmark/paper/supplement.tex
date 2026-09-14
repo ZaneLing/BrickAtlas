@@ -144,6 +144,56 @@ repeat mismatch within each source/model, with temporal order balanced
 across source groups. Source-level bootstrap intervals describe only this
 selected development sample; they do not establish population coverage
 or stable model rankings.
+
+\subsection{Renderer-Aware Analysis by Synthesis}
+To test whether candidate locations contain usable image signal, a
+post-hoc deterministic baseline consumes only public BOM, candidate
+poses and RGB views. For the two-piece blue-on-gray domain, the supplied
+positive query height and support rules imply a grounded gray piece.
+Its horizontal positions and both distinct yaw footprints are enumerated
+under minimum-corner and contact constraints, not obtained from ground truth.
+Every legal candidate scene is rendered with the public renderer.
+
+We threshold blue chroma ($B>80$, $B>1.25R$, $B>1.1G$) inside image
+rows 32--447, excluding title/footer and neutral grid/text. A candidate
+receives the smallest mean mask-IoU distance over its legal hypotheses
+in top, front and side views. Equal candidate scores or missing blue
+masks cause abstention. No-image inputs abstain without rendering.
+The thresholds and enumeration are fixed in code before this run, but
+the method was designed after the preceding development experiments.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+Development condition & Success & Abstain & Sources\\
+\midrule
+\tableinput{tables/study-visual-choice.tex}
+\bottomrule
+\end{tabular}
+\caption{Specialized known-renderer baseline. The 60 conditions
+reuse only 16 sources. No-image zeros are deliberate abstentions,
+not random-guess accuracy. This is not an additional neural model.}
+\end{table}
+
+All 44 image-conditioned responses succeed, representing only 16
+original sources with repeated/permuted conditions. All 16 permutations
+preserve the selected pose. Cyclic replacement with the next source's
+views causes one abstention and changes 9/15 jointly answered selections;
+these mismatched BOM/image inputs test
+dependence on pixels, not valid-task accuracy. The implementation has no
+calibrated out-of-domain rejection threshold for nonblank inputs.
+The run generates 384 candidate views in 29.7 seconds on the local
+browser stack, including 60 predictions and 16 image replacements,
+with no API calls. Cached templates enable offline rescoring.
+
+Using the exact renderer, canonical colors and candidate information
+strongly favors this method. It is an algorithmic simulator-aware control,
+not a general reconstruction system, novel learned model, independent
+human validation or confirmation on new sources. Original VLM prompts
+also contained an isometric view, which this baseline does not use.
+Prediction production precedes loading evaluator targets for scoring.
+
 \section{Resource Accounting}
 The earlier 363-call campaign cost \$0.45102511, and the 730-call v2
 study cost \$1.50635072. The four-model screen and both ladder versions

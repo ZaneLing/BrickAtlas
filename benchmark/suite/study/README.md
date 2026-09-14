@@ -247,7 +247,7 @@ zero in this development sample. The run cost $0.282100356; cumulative API spend
 is $3.097410574. It shares the existing $2 allocation and $4.50 campaign cap.
 No additional paid execution is needed to reproduce the scores.
 
-The clean-copy check runs 20 commands without runtime models or an API key;
+The clean-copy check runs 21 commands without runtime models or an API key;
 installed dependencies are shared. Technical release checks include order replay
 and record research readiness separately. A technical pass never supplies absent
 human labels, data rights, effective baselines or independent confirmation.
@@ -280,3 +280,36 @@ zero. Synthetic regression fixtures live only in tests. Public aggregates omit
 reviewer codes, notes and evidence text; private batches are not published.
 Missing private inputs cannot erase a previous published report.
 `EXTERNAL_VALIDATION.md` defines the exact schema and remaining human/domain gates.
+
+## Renderer-Aware Visual Choice Baseline
+
+`visual-choice.ts` consumes public BOM/candidates and RGB images, not task IDs,
+source geometry or oracle answers. It enumerates legal gray-base poses and yaw
+under the declared minimum-corner origin, blue-on-gray two-piece domain and
+nominal support rules. Public-renderer template views are compared using mean
+blue-mask IoU distance over top/front/side. Labels never break ties.
+No-image, missing-blue and ambiguous predictions abstain.
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts replay-visual-choice
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/cli.ts report-visual-choice
+```
+
+`freeze-visual-choice` freezes input/source hashes and the method contract.
+`run-visual-choice` requires the suite renderer and refuses an existing run.
+It makes no model requests. All 60 predictions and 16 next-source image
+replacements are retained with 384 rendered template views. Offline replay
+re-executes hypothesis generation, segmentation and matching from public inputs
+and cached templates, without ground truth or a browser; scoring is separate.
+It does not independently re-render stored templates.
+
+Original choices succeed on 16/16 sources, with 16/16 permutation consistency.
+All image conditions total 44/44, but repeated/permuted cases are not independent.
+No-image conditions abstain on 16/16. Replaced images cause one abstention and
+change 9/15 jointly answered choices; they
+are incompatible observations, not a valid accuracy benchmark. There is no
+calibrated rejection threshold for arbitrary out-of-domain nonblank images.
+The baseline uses known renderer access and canonical colors and was designed
+after development outcomes. It is not a general VLM, novel learned method,
+independent human observability check or a new confirmatory dataset.
+See `../artifacts/study/visual-choice/REPORT.zh-CN.md` for results and limits.

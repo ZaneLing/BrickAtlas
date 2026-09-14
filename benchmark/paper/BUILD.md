@@ -9,7 +9,7 @@
   `291758547e923160eb4d37079b7b9f0dfce82355`.
 - Template files are unmodified; their hashes are recorded in `evidence.json`.
 - Output: nine US Letter main pages, with references beginning on page eight;
-  two supplementary pages. Main content ends within eight pages.
+  three supplementary pages. Main content ends within eight pages.
 - TeX log: no unresolved citations/references or overfull boxes.
 - PDF inspection: text on every page, no text outside page boundaries.
 - All-page contact sheet and detailed formula/result pages inspected visually:

@@ -16,6 +16,7 @@ import { replayPoseProbes } from './pose-run';
 import { replayOrderStudy } from './order-run';
 import { researchReadiness } from './readiness';
 import { verifyHumanCalibration } from './human-calibration-run';
+import { reportVisualChoice } from './visual-choice-report';
 
 const walk = (path: string): string[] => readdirSync(path).flatMap(name => {
   const file = resolve(path, name); return statSync(file).isDirectory() ? walk(file) : [file];
@@ -77,6 +78,8 @@ for (const command of ['exposure-audit', 'human-audit-status', 'research-readine
 }
 const humanCalibration = verifyHumanCalibration();
 assert.ok(evidence['clean-verification.json'].commands.includes('verify-human-calibration'));
+const visualChoice = existsSync(resolve(STUDY, 'visual-choice/run.json')) ? await reportVisualChoice() : null;
+if (visualChoice) assert.ok(evidence['clean-verification.json'].commands.includes('report-visual-choice'));
 const readiness = researchReadiness();
 const files = walk(STUDY).filter(path => !path.endsWith('/release-manifest.json')
   && !relative(STUDY, path).startsWith('.local-import-'));
@@ -100,6 +103,8 @@ const manifest = { checkedAt: new Date().toISOString(), completedLocalJobs: loca
   researchReadiness: { allPassed: readiness.allPassed, passed: readiness.passed, pending: readiness.pending },
   humanCalibration: { packetHash: humanCalibration.packetHash, frozenReferenceVerified: humanCalibration.verified,
     humanLabelsVerified: false, items: humanCalibration.items, sourceGroups: humanCalibration.sourceGroups },
+  visualChoice: visualChoice ? { status: visualChoice.status, predictions: visualChoice.predictions,
+    replacements: visualChoice.replacements, renders: visualChoice.renders, apiRequests: 0 } : null,
   noMachineLocalPaths: true,
   evidence: Object.fromEntries(Object.entries(evidence).map(([name, report]) => [name,
     name === 'failure-diagnostics.json'
