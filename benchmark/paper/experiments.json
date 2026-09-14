@@ -23,6 +23,10 @@
         {"label": "GPT-4.1", "values": [null, null, null, null, null, null, null, null, null]},
         {"label": "Gemini 2.5 Flash", "values": [null, null, null, null, null, null, null, null, null]},
         {"label": "Qwen3-VL-32B", "values": [null, null, null, null, null, null, null, null, null]},
+        {"label": "Claude Haiku 4.5", "values": [null, null, null, null, null, null, null, null, null]},
+        {"label": "Gemini 3 Flash (preview)", "values": [null, null, null, null, null, null, null, null, null]},
+        {"label": "Qwen3-VL-8B", "values": [null, null, null, null, null, null, null, null, null]},
+        {"label": "Llama 4 Maverick", "values": [null, null, null, null, null, null, null, null, null]},
         {"label": "Additional open VLM", "values": [null, null, null, null, null, null, null, null, null]}
       ]
     },
@@ -111,6 +115,80 @@
         {"label": "Multi-task adaptation", "values": [null, null, null, null, null]},
         {"label": "Leave-edit-out adaptation", "values": [null, null, null, null, null]},
         {"label": "Second-environment replication", "values": [null, null, null, null, null]}
+      ]
+    },
+    {
+      "id": "feedback",
+      "title": "Equal-budget tools and correction",
+      "design": "Freeze one shared first response for each case. Distinguish a new model request from a replayed response. Compare equal call budgets and report actual token/time/renderer budgets. Only target-blind feedback is allowed; do not supply the hidden reference as tool feedback.",
+      "columns": ["N", "Success", "Local F1", "Legal prefix", "Cost"],
+      "rows": [
+        {"label": "One-shot / no tool", "values": [null, null, null, null, null]},
+        {"label": "One extra reflection", "values": [null, null, null, null, null]},
+        {"label": "One legality-check response", "values": [null, null, null, null, null]},
+        {"label": "Render own prediction + revise", "values": [null, null, null, null, null]},
+        {"label": "Active additional view", "values": [null, null, null, null, null]},
+        {"label": "Execution feedback + replan", "values": [null, null, null, null, null]},
+        {"label": "Fixed three-call tool budget", "values": [null, null, null, null, null]}
+      ]
+    },
+    {
+      "id": "representation",
+      "title": "Representation and decoder factorial",
+      "design": "Use identical source objects and observation payloads. Cross output representation with decoder support rather than changing them simultaneously. Relative offsets in global axes differ from local connector coordinates. A graph-backed adapter requires verified connector semantics; unsupported parts must be reported.",
+      "columns": ["N", "Format", "Pose F1", "Edge F1", "Success"],
+      "rows": [
+        {"label": "Absolute JSON / free decoding", "values": [null, null, null, null, null]},
+        {"label": "Absolute JSON / schema decoding", "values": [null, null, null, null, null]},
+        {"label": "Global-relative / free decoding", "values": [null, null, null, null, null]},
+        {"label": "Global-relative / schema decoding", "values": [null, null, null, null, null]},
+        {"label": "Connector graph / audited adapter", "values": [null, null, null, null, null]},
+        {"label": "Incremental placement / same images", "values": [null, null, null, null, null]}
+      ]
+    },
+    {
+      "id": "ambiguity",
+      "title": "Ambiguity-aware model evaluation",
+      "design": "New finite-grammar extension only, not v2. Evaluate exterior and support-disclosed arms separately with matched source families. Report class-balanced success because no/yes/undetermined are unequal. False certainty is conditional on ambiguous inputs; unnecessary abstention is conditional on determinate inputs. Do not equate nine grammar families with independent semantic sources.",
+      "columns": ["Families", "Balanced acc.", "False certainty", "Abstention", "Disclosure gain"],
+      "rows": [
+        {"label": "GPT-4.1 mini", "values": [null, null, null, null, null]},
+        {"label": "GPT-4.1", "values": [null, null, null, null, null]},
+        {"label": "Gemini 2.5 Flash", "values": [null, null, null, null, null]},
+        {"label": "Gemini 3 Flash (preview)", "values": [null, null, null, null, null]},
+        {"label": "Claude Haiku 4.5", "values": [null, null, null, null, null]},
+        {"label": "Qwen3-VL-8B / 32B", "values": [null, null, null, null, null]},
+        {"label": "Llama 4 Maverick", "values": [null, null, null, null, null]},
+        {"label": "Explicit candidate-layout enumeration", "values": [null, null, null, null, null]}
+      ]
+    },
+    {
+      "id": "planning",
+      "title": "Planning scope and harder action domains",
+      "design": "Current vertical full-target planning is solved by height sorting; keep that as a ceiling control. New action domains need separately versioned geometry and independently verified witnesses. Do not add an obstacle or nonvertical action to the old evaluator and compare scores as if the task was unchanged.",
+      "columns": ["Sources", "Actions", "Success", "Search nodes", "Time"],
+      "rows": [
+        {"label": "Vertical full-target / neural baseline", "values": [null, null, null, null, null]},
+        {"label": "Partial-target / dependency inference", "values": [null, null, null, null, null]},
+        {"label": "Removal for access / repair sequence", "values": [null, null, null, null, null]},
+        {"label": "Workspace obstacles / search", "values": [null, null, null, null, null]},
+        {"label": "Typed connector / articulated action", "values": [null, null, null, null, null]}
+      ]
+    },
+    {
+      "id": "crossbench",
+      "title": "Task-adapted comparisons and cross-benchmark validity",
+      "design": "These are unimplemented or unrun comparisons, not published method scores. Obtain actual licensed assets and pin native evaluator revisions. Report native metrics and BrickAtlas metrics separately, with supported input/task mappings, rejection rates, and training overlap. Do not produce a pooled rank across incompatible benchmarks.",
+      "columns": ["Sources", "Native metric", "Adapted success", "Reject rate", "Compute"],
+      "rows": [
+        {"label": "BC-Bench / Brick-Composer", "values": [null, null, null, null, null]},
+        {"label": "MEPNet / manual-step adapter", "values": [null, null, null, null, null]},
+        {"label": "Neural Assembler / multi-view", "values": [null, null, null, null, null]},
+        {"label": "TreeSBA / multi-view adapter", "values": [null, null, null, null, null]},
+        {"label": "BrECS / budgeted completion", "values": [null, null, null, null, null]},
+        {"label": "BrickGPT / semantic generation", "values": [null, null, null, null, null]},
+        {"label": "BrickNet / connector generation", "values": [null, null, null, null, null]},
+        {"label": "SpatialBabel / scene-code control", "values": [null, null, null, null, null]}
       ]
     }
   ]

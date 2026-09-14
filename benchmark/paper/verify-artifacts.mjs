@@ -26,6 +26,23 @@ for (const table of plan.tables) {
   cells += expected;
 }
 assert.equal(cells, audit.unmeasuredCells);
+const expanded = read('expanded-evidence.json'), structures = read('structure-evidence.json');
+const plates = read('structure-figure-evidence.json');
+assert.equal(expanded.models, 8);
+assert.equal(expanded.newCalls, 156);
+assert.equal(expanded.ambiguityCases, 600);
+assert.equal(expanded.allPixelIdentical, true);
+assert.equal(sha('generate-expanded.ts'), expanded.generatorHash);
+for (const [path, hash] of Object.entries(expanded.sourceHashes)) assert.equal(sha('../suite/artifacts/study/' + path), hash, path);
+for (const [path, hash] of Object.entries(structures.sources)) assert.equal(sha(path), hash, path);
+for (const image of structures.images) {
+  assert.equal(sha(image.file), image.sha256, image.file);
+  assert.ok(image.pixels.foreground > 1000 && image.pixels.edgeForeground === 0);
+}
+assert.equal(structures.images.length, 30);
+assert.equal(sha('compose-structures.py'), plates.generatorSha256);
+assert.equal(sha('structure-evidence.json'), plates.renderManifestSha256);
+for (const [path, hash] of Object.entries(plates.outputSha256)) assert.equal(sha('figures/' + path), hash, path);
 for (const paper of ['main', 'supplement']) {
   const report = read(paper === 'main' ? 'pdf-verification.json' : 'supplement-verification.json');
   assert.equal(sha(paper + '.pdf'), report.pdfSha256, 'Stale PDF check');
@@ -33,5 +50,6 @@ for (const paper of ['main', 'supplement']) {
   assert.equal(report.unresolvedCitationsOrReferences, false);
 }
 assert.ok(read('pdf-verification.json').mainContentPageUpperBound <= 8);
-console.log(JSON.stringify({ verified: true, figures: figures.figures.length,
+console.log(JSON.stringify({ verified: true, figures: figures.figures.length + plates.figures.length, renders3D: structures.images.length,
+  models: expanded.models, newCalls: expanded.newCalls, ambiguityCases: expanded.ambiguityCases,
   plannedTables: plan.tables.length, unmeasuredCells: cells, mainContentPages: read('pdf-verification.json').mainContentPageUpperBound }));

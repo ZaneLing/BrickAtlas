@@ -313,3 +313,34 @@ The baseline uses known renderer access and canonical colors and was designed
 after development outcomes. It is not a general VLM, novel learned method,
 independent human observability check or a new confirmatory dataset.
 See `../artifacts/study/visual-choice/REPORT.zh-CN.md` for results and limits.
+
+## Paper Model Matrix and Ambiguity Extension
+
+The paper expansion reuses the three source objects from the completed model
+validation screen. Four historical model outputs stay unchanged; four additional
+models receive the identical 39 ordinary/default inputs:
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/paper-models.ts replay
+```
+
+The offline replay verifies 312 response records, including 156 newly settled
+calls, input hashes, evaluator diagnoses, provider receipts, and the cumulative
+campaign ledger. Do not rerun the paid `run` command for reproduction. The three
+already-exposed objects support descriptive interface diagnostics only, not an
+independent model ranking.
+
+`AMBIGUITY.md` documents the additive `ambiguity-1` task. It supplies a
+finite grammar, known symbolic geometry, and paired exterior/support-disclosed
+conditions for a set-valued support relation:
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/ambiguity.ts --verify
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/ambiguity-score.ts predictions.jsonl report.json
+```
+
+The verifier checks 600 task conditions, 60 admissible layout states, exact
+finite-grammar answers and public-input isolation. A separate paper-render audit
+checks 240 fixed-view images, including 204 nontrivial alternative-layout
+comparisons, with identical exterior pixels. This extension remains development
+evidence: it has no VLM results or human labels, and it is not pooled into v2.

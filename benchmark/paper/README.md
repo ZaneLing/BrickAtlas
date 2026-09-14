@@ -12,23 +12,30 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
   source coverage, information conditions, accepted-answer semantics, full-casebank
   copy controls, measured model diagnostics, and explicit research limits.
 - `main.pdf`: eight main-content pages plus a separate reference page.
-- `supplement.tex`, `supplement.pdf`: nine pages of detailed task schemas, catalog
-  counts, policy gallery, historical experiments, implementation and future designs.
+- `supplement.tex`, `supplement.pdf`: detailed task schemas, catalog counts,
+  model variants, ambiguity controls, historical experiments, and future designs.
 - `REVIEW.zh-CN.md`: reviewer-oriented gap analysis and remaining evidence gates.
+- `RESEARCH_UPDATE.zh-CN.md`: updated nearest-work audit (including BC-Bench,
+  TreeSBA and SpatialBabel), figure rationale, contribution and remaining gaps.
 - `references.bib`: brick generation, manual parsing, interactive assembly,
   visual programs, diagnostic VQA, BLINK, selection bias, and baseline references.
 - `tables/*.tex`: tables generated from actual artifacts, not manually invented values.
 - `figures/`: five generated information figures (vector PDF and PNG), plus actual
-  benchmark renders from the largest-case-per-policy audit.
+  benchmark renders and four new 3D figure plates built from 30 actual renders.
 - `evidence.json`: source paths/hashes for numerical evidence and upstream template.
 - `generate-tables.mjs`: table generation and evidence assertions.
 - `generate-study.mjs`, `study-evidence.json`: new study tables and source hashes.
 - `generate-audit.mjs`, `audit-evidence.json`: full-population census/copy tables.
 - `generate-figures.py`, `figure-evidence.json`: source-bound overview, distributions,
   hidden-layout witness, score diagnostics, and paired-order plots.
-- `experiments.json`: seven prospective experiment tables, 254 null result cells.
+- `experiments.json`: twelve prospective experiment tables, 460 null result cells.
   No future result is treated as zero or filled from a pilot.
 - `verify-artifacts.mjs`: figure/source hashes, blank-table and PDF-check consistency.
+- `generate-expanded.ts`, `expanded-evidence.json`: eight-model main/diagnostic
+  tables, five public-input algorithmic baselines, and finite-grammar task results.
+- `render-structures.ts`, `compose-structures.py`: new three-dimensional gallery,
+  input/ground-truth, execution, and hidden-layout plates. Render recipes and
+  hashes are in `structure-evidence.json` and `structure-figure-evidence.json`.
 
 ## Compile
 
@@ -38,6 +45,8 @@ From the repository root, regenerate tables:
 node benchmark/paper/generate-tables.mjs
 node benchmark/paper/generate-study.mjs
 node benchmark/paper/generate-audit.mjs
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/paper-models.ts replay
+node node_modules/tsx/dist/cli.mjs benchmark/paper/generate-expanded.ts
 ```
 
 Regenerate or independently rescore the new full-casebank audit:
@@ -57,7 +66,32 @@ virtual environment, then generate figures before compiling:
 ```bash
 python -m pip install -r benchmark/paper/requirements.txt
 python benchmark/paper/generate-figures.py
+python benchmark/paper/compose-structures.py
 ```
+
+The archived 30 high-resolution renders are sufficient to compose the 3D plates.
+To rerender them, start the existing suite server, set `BRICKATLAS_URL` if it is
+not `http://127.0.0.1:5175`, and run:
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/paper/render-structures.ts
+```
+
+This uses a separate paper renderer and does not change historical model images.
+It checks nonblank pixels, framing, oracle targets, legal plan prefixes, and
+240 finite-grammar view renders. Exploded layers are display-only.
+
+Build or verify the new ambiguity track without network requests:
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/ambiguity.ts
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/ambiguity.ts --verify
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/ambiguity-score.ts predictions.jsonl report.json
+```
+
+The public schema and scoring contract are in `../suite/study/AMBIGUITY.md`.
+Do not run `paper-models.ts run` to reproduce results: that is the explicitly
+paid execution entry point. Use `replay` for offline verification.
 
 From `benchmark/paper/`, with a normal TeX Live installation:
 
@@ -137,7 +171,25 @@ four models and original/repeat/permuted/no-image conditions. Paired excess
 permutation mismatch is 0.50-0.75; source-bootstrap intervals exclude zero in
 this selected small sample. This is not independent population confirmation.
 `tables/study-order.tex` is generated from its archived analysis. Total historical
-API accounting is 1,609 calls and $3.097410574, not the size of a single study.
+API accounting before the expanded matrix is 1,609 calls and $3.097410574,
+not the size of a single study.
+
+The eight-model matrix adds Claude Haiku 4.5, Gemini 3 Flash preview,
+Qwen3-VL-8B and Llama 4 Maverick on the same 39 tasks used by the four-model
+screen, with three shared source objects and no new hidden test set.
+All 156 additional calls complete at $0.523093880. Cumulative accounting is
+1,765 calls and $3.620504454, under the unchanged $4.50 cap. The new allocation
+was $0.75. Endpoint, provider and time differences are recorded, not normalized
+away; the main table is descriptive rather than a stable model ranking.
+
+The separate ambiguity extension contains 600 task conditions from nine
+parameterized grammar families and 60 admissible layout states. Ground truth
+is exhaustive only within the explicit domino grammar. Public-input enumeration
+solves all cases; VLM experiments on this new track remain unrun.
+Its paired observations produce 90 exterior `undetermined` labels that become
+determinate with support disclosure. Under the fixed paper renderer, all 204
+nontrivial alternative-view comparisons match the 36 reference frames exactly.
+These are symbolic known-geometry reasoning inputs, not a pure visual benchmark.
 
 The additional renderer-aware baseline uses only public BOM/candidates, three
 RGB views and the known simulator. It solves all 16 original-source choices

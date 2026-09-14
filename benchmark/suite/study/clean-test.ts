@@ -31,6 +31,8 @@ try {
   if (existsSync(resolve(target, 'suite/artifacts/study/order-study/run.json'))) commands.push('replay-order-study');
   if (existsSync(resolve(target, 'suite/artifacts/study/human-audit/calibration-contract.json'))) commands.push('verify-human-calibration');
   if (existsSync(resolve(target, 'suite/artifacts/study/visual-choice/run.json'))) commands.push('report-visual-choice');
+  if (existsSync(resolve(target, 'suite/artifacts/study/paper-models/run.json'))) commands.push('replay-paper-models');
+  if (existsSync(resolve(target, 'suite/artifacts/study/ambiguity/audit.json'))) commands.push('verify-ambiguity');
   commands.push('exposure-audit', 'human-audit-status', 'research-readiness');
   for (const command of commands) {
     execFileSync(process.execPath, [resolve(temporary, 'node_modules/tsx/dist/cli.mjs'),

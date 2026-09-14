@@ -10,6 +10,8 @@ execFileSync('zip', ['-q', '-r', temporary, 'main.tex', 'supplement.tex', 'refer
   'tables', 'figures', 'README.md', 'BUILD.md', 'evidence.json', 'pdf-verification.json',
   'generate-tables.mjs', 'generate-study.mjs', 'study-evidence.json', 'check_pdf.py', 'supplement-verification.json',
   'generate-audit.mjs', 'generate-figures.py', 'audit-evidence.json', 'figure-evidence.json',
-  'experiments.json', 'requirements.txt', 'verify-artifacts.mjs', 'REVIEW.zh-CN.md'], { cwd: here });
+  'experiments.json', 'requirements.txt', 'verify-artifacts.mjs', 'REVIEW.zh-CN.md',
+  'RESEARCH_UPDATE.zh-CN.md', 'generate-expanded.ts', 'render-structures.ts', 'compose-structures.py',
+  'expanded-evidence.json', 'structure-evidence.json', 'structure-figure-evidence.json'], { cwd: here });
 renameSync(temporary, output);
 console.log(output);

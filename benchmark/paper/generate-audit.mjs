@@ -59,6 +59,15 @@ for (const table of plan.tables) {
     '\\bottomrule', '\\end{tabular*}',
   ]);
 }
+write('planned-additional', plan.tables.filter(t => ['feedback', 'representation', 'ambiguity', 'planning', 'crossbench'].includes(t.id))
+  .flatMap(table => [
+    `\\subsection{${tex(table.title)}}`,
+    tex(table.design),
+    '\\begin{table}[H]\\centering\\small',
+    `\\input{tables/planned-${table.id}.tex}`,
+    `\\caption{\\textbf{Unmeasured.} ${tex(table.title)}. Blank cells are unrun results, not zeros.}`,
+    '\\end{table}',
+  ]));
 writeFileSync(resolve(here, 'audit-evidence.json'), JSON.stringify({
   scope: 'Full source inventory and public-input copy controls; planned tables have no measured results.',
   audit: { path: source, sha256: sha(source) }, experimentPlanSha256: sha('experiments.json'),

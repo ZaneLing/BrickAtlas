@@ -38,6 +38,8 @@ import { freezeHumanCalibration, verifyHumanCalibration, importHumanReview,
   humanAdjudicationQueue, reportHumanCalibration } from './human-calibration-run';
 import { freezeVisualChoice, runVisualChoice, replayVisualChoice } from './visual-choice-run';
 import { reportVisualChoice } from './visual-choice-report';
+import { replayPaperModels } from './paper-models';
+import { ambiguityAudit } from './ambiguity';
 
 const [command, ...args] = process.argv.slice(2);
 let result: unknown;
@@ -56,6 +58,8 @@ else if (command === 'report-human-calibration') result = reportHumanCalibration
 else if (command === 'freeze-visual-choice') result = freezeVisualChoice();
 else if (command === 'replay-visual-choice') result = await replayVisualChoice();
 else if (command === 'report-visual-choice') result = await reportVisualChoice();
+else if (command === 'replay-paper-models') result = replayPaperModels();
+else if (command === 'verify-ambiguity') result = ambiguityAudit(true);
 else if (command === 'run-visual-choice') {
   const { url } = JSON.parse(readFileSync(resolve(BENCHMARK, '.runtime/suite-server.json'), 'utf8'));
   const renderer = new SuiteRenderer(url);
@@ -139,5 +143,5 @@ else if (command === 'restore-training') result = trainingBundle('restore');
 else if (command === 'replay-local') result = replayLocalEvidence();
 else if (command === 'local-statistics') result = localStatistics();
 else if (command === 'report') result = writeStudyReport();
-else throw new Error('Commands: diagnose | observability | prepare-probes | replay-probes | freeze-calibration | export-calibration | verify-calibration | audit | strict-audit | duplicates | connectors | prepare | prepare-training | export-training | verify-training | restore-training | run --paid | controls --paid | replay | statistics | import-local | replay-local | local-statistics | report');
+else throw new Error('Commands: replay-paper-models | verify-ambiguity | diagnose | observability | prepare-probes | replay-probes | freeze-calibration | export-calibration | verify-calibration | audit | strict-audit | duplicates | connectors | prepare | prepare-training | export-training | verify-training | restore-training | run --paid | controls --paid | replay | statistics | import-local | replay-local | local-statistics | report');
 console.log(JSON.stringify(result, null, 2));
