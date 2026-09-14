@@ -4,4 +4,4 @@ This folder contains 12 original, explicitly designed structures: four easy, fou
 
 The eight task folders contain the model-facing input contract, ground truth, and paired illustrations for recognition, relation, reconstruction, generation, completion, editing, planning, and repair.
 
-Open `index.html`, `CONTACT_SHEET.png`, and `TASK_GROUND_TRUTH.png` for review. These examples are original CC0 BrickAtlas designs and are not copied from official sets. Semantic quality still needs independent human review.
+Open `index.html`, `CONTACT_SHEET.png`, `TASK_GROUND_TRUTH.png`, and `CORRECT_VS_INCORRECT.png` for review. The Chinese case and evaluation report is `../CASE_GUIDE.zh-CN.md`. These examples are original CC0 BrickAtlas designs and are not copied from official sets. Semantic quality still needs independent human review.

@@ -96,7 +96,8 @@ fig.savefig(ROOT / "TASK_GROUND_TRUTH.pdf", bbox_inches="tight", metadata={"Crea
 fig.savefig(PAPER / "curated-task-ground-truth.pdf", bbox_inches="tight", metadata={"CreationDate": None, "ModDate": None})
 plt.close(fig)
 
-outputs = ["CONTACT_SHEET.png", "CONTACT_SHEET.pdf", "TASK_GROUND_TRUTH.png", "TASK_GROUND_TRUTH.pdf"]
+outputs = ["CONTACT_SHEET.png", "CONTACT_SHEET.pdf", "TASK_GROUND_TRUTH.png", "TASK_GROUND_TRUTH.pdf",
+           "CORRECT_VS_INCORRECT.png", "CORRECT_VS_INCORRECT.pdf"]
 
 teaser_ids = ["easy-garden-bench", "easy-staircase", "easy-garden-gate", "medium-canal-bridge",
               "medium-pavilion", "medium-townhouse", "hard-lighthouse", "hard-two-tier-pagoda"]
@@ -139,6 +140,8 @@ for ax, file in zip(axes.flat[:4], plan_steps):
 show(axes.flat[4], "tasks/plan/ground-truth/dead-end.png", "Invalid strategy: decks too early")
 show(axes.flat[5], "tasks/plan/ground-truth/dead-end-target.png", "Blocked inner pier outlined")
 fig.subplots_adjust(wspace=.02, hspace=.14)
+fig.savefig(ROOT / "CORRECT_VS_INCORRECT.png", dpi=180, bbox_inches="tight")
+fig.savefig(ROOT / "CORRECT_VS_INCORRECT.pdf", bbox_inches="tight", metadata={"CreationDate": None, "ModDate": None})
 fig.savefig(PAPER / "brick-execution.pdf", bbox_inches="tight", metadata={"CreationDate": None, "ModDate": None})
 fig.savefig(PAPER / "brick-execution.png", dpi=180, bbox_inches="tight")
 plt.close(fig)

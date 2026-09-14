@@ -4,6 +4,8 @@
 
 覆盖八类能力的新套件位于 [suite/](suite/README.md)，入口默认 http://127.0.0.1:5175。
 启动命令 `npm run suite:start`，数据准备 `npm run suite:prepare`。
+先读 [Case、Ground Truth 与模型测试中文说明](CASE_GUIDE.zh-CN.md)，其中区分
+5,120 个源结构、117,910 个任务条件、curated 案例和交互式操作回放。
 查看 [详细计划](PLAN-multitask.md)、[数据卡](suite/DATASET_CARD.md)、[指标](suite/METRICS.md) 和 [多任务实测报告](suite/REPORT.md)。
 不包含机械手、机器人或VLA。下面保留旧CARE-mini的文档和5174入口，旧实验不与新榜单合并。
 

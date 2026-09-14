@@ -143,7 +143,7 @@ export async function renderCuratedCases(url: string) {
       `This folder contains 12 original, explicitly designed structures: four easy, four medium, and four hard. ` +
       `Every model has coherent role-based colors, four views, occupied-layer renders, an exploded view, legal assembly snapshots, metadata, and exact structure JSON.\n\n` +
       `The eight task folders contain the model-facing input contract, ground truth, and paired illustrations for recognition, relation, reconstruction, generation, completion, editing, planning, and repair.\n\n` +
-      `Open \`index.html\`, \`CONTACT_SHEET.png\`, and \`TASK_GROUND_TRUTH.png\` for review. These examples are original CC0 BrickAtlas designs and are not copied from official sets. Semantic quality still needs independent human review.\n`));
+      `Open \`index.html\`, \`CONTACT_SHEET.png\`, \`TASK_GROUND_TRUTH.png\`, and \`CORRECT_VS_INCORRECT.png\` for review. The Chinese case and evaluation report is \`../CASE_GUIDE.zh-CN.md\`. These examples are original CC0 BrickAtlas designs and are not copied from official sets. Semantic quality still needs independent human review.\n`));
     write('index.html', Buffer.from(`<!doctype html><meta charset="utf-8"><title>BrickAtlas Curated Cases</title>
 <style>body{font:15px system-ui;margin:32px;color:#182428}h1,h2{letter-spacing:0}.grid{display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:18px}.card{border:1px solid #ccd5d7;padding:12px}.card img{width:100%;aspect-ratio:4/3;object-fit:contain}.meta{color:#526166}</style>
 <h1>BrickAtlas Curated Cases</h1><p>12 original structures; coherent palettes; verified geometry and assembly orders.</p>
