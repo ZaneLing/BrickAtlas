@@ -1,211 +1,213 @@
-% Development manuscript. No submission or acceptance is implied.
-% Official cvpr-org/author-kit revision is recorded in evidence.json.
+% Development manuscript. Actual submission metadata and scientific gates remain pending.
 \documentclass[10pt,twocolumn,letterpaper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[pagenumbers]{cvpr}
 \usepackage{microtype}
 \usepackage{tabularx}
-\definecolor{cvprblue}{rgb}{0.21,0.49,0.74}
+\definecolor{cvprblue}{rgb}{0.15,0.43,0.64}
 \usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
 \def\confName{CVPR}
 \def\confYear{2026}
 \makeatletter
 \newcommand{\tableinput}[1]{\@@input #1 }
 \makeatother
-\title{BrickAtlas: An Auditable Casebank for Multi-Task\\
-Visual and Symbolic Brick-Structure Reasoning}
+\newcommand{\unmeasured}{\phantom{00.0}}
+\title{BrickAtlas: Measuring Visual, Structural, and Executable\\
+Reasoning on Shared Brick Assemblies}
 \author{Development Manuscript\\
 Author and affiliation metadata intentionally omitted\\
-September 13, 2026}
+September 14, 2026}
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Brick-structure reasoning combines recognition, spatial relations,
-reconstruction, generation, editing, and executable planning. These tasks
-require different inputs and notions of correctness: a plausible hidden
-layout need not match one reference, while a submitted assembly order must
-actually execute. We present the current development release of
-BrickAtlas, a versioned casebank with 5,120 distinct procedural geometries,
-117,760 object-derived task-condition cases, and 150 separate known-part
-questions. Each case includes a machine-readable ground-truth record,
-an independently implemented integer-cell geometry certificate, applicable
-metrics, and replayable evaluation evidence. We separate ordinary RGB,
-layer disclosure, and privileged symbolic references, and distinguish
-model submissions from harness operations and evaluator diagnostics.
-On the complete casebank, a height-sorted planner solves all 10,240
-assembly/disassembly cases, whereas greedy assembly solves only
-2,364 of 5,120. Thus the present planning domain diagnoses constraint
-following, not difficult combinatorial search. A new two-model v2 study
-contains 674 one-shot calls and 56 controls on 24 shared held-out objects
-and 25 catalog questions. Both models fail exact ordinary reconstruction;
-privileged symbolic references solve all eight controlled reconstructions.
-All 117,910 v2 oracle answers pass, and 138,240 independently computed
-metric comparisons agree. The release is an executable research
-resource, not yet a confirmatory benchmark study: semantic diversity,
-independent human review, and broader empirical coverage remain limited.
+Recognizing a brick assembly, reconstructing its hidden parts, modifying
+it, and specifying an executable build order are different problems.
+Their scores become misleading when input privileges, acceptable
+alternative structures, or evaluator interventions are left implicit.
+We present BrickAtlas, a controlled benchmark resource that connects
+eight task families through 5,120 procedural source assemblies and
+117,910 task-condition cases. Explicit contracts separate ordinary
+RGB, layer disclosure, and privileged symbolic references, and distinguish
+visual compatibility from full structural recovery and plan execution.
+We introduce a source-level coverage audit and evaluate 35,840
+copy-current controls: doing nothing obtains 87.1\% part F1 on completion
+and 97.4\% on removal, while solving neither task. A height-sorted
+planner solves all 10,240 planning cases, delimiting this domain as
+constraint following rather than difficult search.
+An exploratory two-model study on 24 assemblies exposes reconstruction
+floors and editing ceilings. Four-model candidate diagnostics on 12
+additional development sources show more pose inconsistency under
+reordering than identical repetition. We release reproducible contracts,
+case-level outputs, figures, and audits, and explicitly separate these
+findings from the still-unmeasured independent confirmation, external-domain,
+and human-calibration experiments.
 \end{abstract}
 
 \section{Introduction}
-Building a structure from parts requires more than recognizing its final
-appearance. A system may identify a brick yet misunderstand a connection,
-produce a plausible exterior with a different hidden arrangement, or
-specify a legal final assembly in an impossible construction order.
-Conversely, failure to recover hidden geometry from an opaque image does
-not necessarily imply a reasoning failure. A benchmark must make these
-distinctions explicit before scores can support claims about model ability.
+What does it mean for a vision--language model to understand an
+assembly? A correct part list does not locate the parts. A matching
+exterior need not determine the interior. A high similarity score after
+an edit may simply preserve what was already correct. Even an accurate
+final configuration does not certify that a submitted construction
+sequence can execute. These distinctions matter when visual reasoning
+systems are evaluated as if recognition, structured prediction, and
+action planning were interchangeable.
 
-Prior work establishes strong foundations. BrickGPT generates buildable
-structures from text using autoregressive prediction with validity
-checking and physics-aware rollback~\cite{pun2025brickgpt}.
-BrickNet expands the data and connection vocabulary through human-designed
-LDraw objects and graph-backed assembly programs~\cite{kulits2026bricknet}.
-Break and Make evaluates interactive understanding by inspecting,
-disassembling, and rebuilding objects in LTRON~\cite{walsman2022break}.
-BrickAtlas does not claim to originate generation, connection reasoning,
-or disassembly-and-reconstruction. Its present focus is an explicit
-evaluation contract connecting several task families to the same source
-objects and making input privileges, alternative answers, and execution
-evidence inspectable.
-
-Three practical problems motivate this release. First, dataset size is
-easily overstated by counting colors, views, and task variants as
-independent objects. Second, ``ground truth'' may refer either to one
-valid witness or to the only acceptable answer. Conflating them penalizes
-legitimate alternatives. Third, a model's output can be improved or
-reordered by the surrounding harness without that intervention being
-visible in the reported result. A visualization of a final structure
-being unfolded piece by piece is not evidence that the model planned its
-assembly.
-
-We address these problems with a procedural casebank, typed evaluation,
-and auditable artifacts. The scope is deliberately digital: orthogonal
-rectangular bricks and plates, nominal stud contact, and vertical
-insertion/removal. We do not use a robot, manipulator, or
-vision--language--action controller. We do not equate nominal support
-with physical stability.
-
-The current contribution package is:
-\begin{enumerate}
-\item A versioned resource with 5,120 geometrically distinct objects from
-eight construction policies, preserving source-group membership across
-all derived tasks and input conditions.
-\item Per-case ground truth that records answer semantics, structural
-targets, protected regions, nominal connection ports, executable
-witnesses, and metric-specific oracle evaluations.
-\item A complete deterministic baseline and replay audit, including
-counterexamples that exposed ambiguous repair labels and metadata
-leakage during development.
-\end{enumerate}
-These are implemented capabilities, not claims of state-of-the-art
-performance or submission readiness. New v2 model evidence and earlier
-pilots are reported separately rather than pooled across dataset versions.
-
-Our diagnostic question is whether failure under one output protocol
-also predicts failure under another on the same object. We distinguish
-full-structure generation, local-pose recovery, and candidate selection.
-Candidate lists and symbolic references provide additional information;
-comparisons are conditional measurements, not automatic evidence of a
-single latent spatial ability or a causal perception bottleneck.
-
-\section{Related Work and Positioning}
-\paragraph{Generation and structural representations.}
-BrickGPT~\cite{pun2025brickgpt}, previously released under the LegoGPT
-name, couples a language model with external checks to generate stable
-brick structures from text. BrickNet~\cite{kulits2026bricknet} collects
-over 100,000 human-designed objects and scenes and models connectivity
-through graph-backed programs. These works cover substantially richer
-semantic or geometric settings than the current BrickAtlas grid domain.
-Our relative-coordinate encoding, inherited from an earlier release,
-is not a replacement for BrickNet's typed connector language. The present
-casebank asks a different engineering question: how should multiple
-tasks on shared objects be labeled, scored, and traced without silently
-changing the information available to a model?
-
-\paragraph{Interactive assembly.}
-Break and Make~\cite{walsman2022break} already studies structural
-understanding through disassembly and reconstruction. BrickAtlas's
-earlier CARE-mini track also uses an interactive action loop, but the
-v2 casebank evaluated here is primarily a fixed-input submission
-protocol. A static structure answer, a submitted plan, a fixed
-validation-feedback run, and autonomous tool use are separate tracks.
-We do not merge their scores into a single agent leaderboard.
-
-\paragraph{Training baselines.}
-We use a public Qwen3-0.6B checkpoint~\cite{qwen3model} with standard
-LoRA~\cite{hu2022lora} for an earlier text/structure pilot. This is
-an implementation baseline, not a new model architecture. The experiment
-does not train a vision encoder, does not use v2 data, and does not
-establish compute-matched multi-task transfer.
-
-\section{Casebank Construction}
-\label{sec:data}
-\subsection{Geometric Domain}
-A part is represented as
-\begin{equation}
-p=(\mathrm{id},t,c,x,y,z,r),
-\end{equation}
-where $t$ is one of 25 catalog types, $c$ is one of six colors,
-$(x,y,z)$ is the minimum body corner, and $r\in\{0,1,2,3\}$ is a
-quarter-turn yaw. Horizontal units are studs (8\,mm), and vertical units
-are plate heights (3.2\,mm). Coordinates are integers; the inherited
-validator limits part origins to $[0,24]^3$, bodies to $[0,32]^3$,
-and submissions to 64 parts. Generated v2 objects contain 9--47 parts.
-
-Nominal validity requires no body overlap and at least one supporting
-stud below every elevated part. Planning additionally checks unobstructed
-vertical insertion or removal. All structures start with a common
-4-by-8 plate; this improves controlled generation but restricts shape
-diversity. Types and colors are public rather than novel categories.
-Actual catalog coverage of assembled objects is smaller than the
-25-type recognition catalog.
+Brick assemblies make this problem concrete. They have discrete
+identities, poses, contacts, and operations, enabling explicit evaluation.
+At the same time, occlusion and repeated interchangeable components
+make one reference program an incomplete definition of correctness.
+A benchmark must specify both \emph{what information was available}
+and \emph{which answers that information justifies}.
+Figure~\ref{fig:overview} illustrates our evaluation contract.
 
 \begin{figure*}[t]
 \centering
-\begin{tabular}{@{}cccc@{}}
-\includegraphics[width=.23\textwidth]{figures/tip-walk.png}&
-\includegraphics[width=.23\textwidth]{figures/low-fan.png}&
-\includegraphics[width=.23\textwidth]{figures/shallow-terrace.png}&
-\includegraphics[width=.23\textwidth]{figures/plate-network.png}\\
-\small Tip walk & \small Low fan & \small Shallow terrace & \small Plate network\\
-\includegraphics[width=.23\textwidth]{figures/column-field.png}&
-\includegraphics[width=.23\textwidth]{figures/alternating-beams.png}&
-\includegraphics[width=.23\textwidth]{figures/two-support-bridge.png}&
-\includegraphics[width=.23\textwidth]{figures/enclosed-shell.png}\\
-\small Column field & \small Alternating beams & \small Two-support bridge & \small Enclosed shell
-\end{tabular}
-\caption{Rendered v2 examples, selected as the largest sample within each
-policy for a rendering stress test, not a random semantic showcase.
-Bridge and shell construction policies are reserved for the policy-held-out
-split. Shared grid primitives and the common root plate remain present
-across splits.}
-\label{fig:policies}
+\includegraphics[width=\textwidth]{figures/benchmark-overview.pdf}
+\caption{BrickAtlas overview. Real archived views of one two-piece
+development probe illustrate RGB input; they are not representative of
+the 9--47-piece casebank. Eight task families share source groups but
+not necessarily modalities: relations, edits, and plans receive
+symbolic structures. Layer and symbolic references explicitly add
+information. The evaluator scores the submitted answer without
+secretly repairing its geometry or reordering its plan.}
+\label{fig:overview}
 \end{figure*}
 
-\subsection{Policies, Groups, and Splits}
-We generate 640 accepted unique geometries per policy
-(Fig.~\ref{fig:policies}). Tip walk attaches at the current tip with
-one supporting parent; low fan samples low parents; shallow terrace
-restricts attachment height more strongly; plate network uses thin
-parts; column field constructs independent vertical profiles on a common
-base; alternating beams switch beam orientation. Two-support bridge
-explicitly constructs paired supports before spanning them, while
-enclosed shell constructs a perimeter and roof around varying interiors.
-These are different construction procedures, not a claim of eight
-disjoint semantic distributions.
+Existing work provides strong generation and assembly capabilities:
+BrickGPT produces stable, buildable structures from
+text~\cite{pun2025brickgpt}; BrickNet learns graph-backed programs from
+human-designed LDraw assemblies~\cite{kulits2026bricknet}; MEPNet parses
+visual manuals into component poses~\cite{wang2022manual}; and Break and
+Make studies interactive structural understanding~\cite{walsman2022break}.
+BrickAtlas does not replace their richer geometry, learned methods, or
+interactive settings. Its focus is a \emph{measurement problem}:
+which conclusions survive when observations, answer equivalences, and
+execution are accounted for explicitly on shared objects?
 
-Geometry is canonicalized over color removal, translation, and four
-global yaw rotations. Exact duplicate geometries are rejected both
-within v2 and against the two earlier procedural releases. Mirroring
-is not included in the equivalence group. All variants of an accepted
-object inherit one group and split.
+We organize the study around three questions.
+\textbf{RQ1:} When does a high global structure score fail to indicate
+that the requested operation was completed?
+\textbf{RQ2:} Does visual compatibility determine downstream structural
+relations?
+\textbf{RQ3:} Are candidate-selection outcomes stable to a change in
+presentation, beyond instability under an identical repeated request?
+Each has an explicit negative outcome: similarity may agree with task
+success, admissible layouts may agree on a query, or permutation may
+be no less stable than repetition. No preferred model ranking is assumed.
 
-Six policies use a deterministic geometry-hash partition into training,
-validation, and ID test objects. Bridge and shell policies are entirely
-held out. This is a \emph{policy holdout}: it does not prove that primitive
-motifs or geometric support are absent from training. Unlike an earlier
-pilot whose differently named families sometimes shared sampling code,
-v2 declares the actual policy distinction and its limits.
+Our contributions are threefold.
+First, we provide an eight-family casebank with source-group splits,
+typed answers, information conditions, and distinct visual, structural,
+and executable success criteria.
+Second, we provide full-population shortcut and coverage audits,
+a constructive hidden-structure counterexample, and original-order
+execution checks. These expose limits of the benchmark as well as
+limits of simple solvers.
+Third, we provide replayable exploratory model evidence and a concrete,
+unfilled confirmation matrix. This is a benchmark-development study,
+not a new model architecture or a claim of broad model superiority.
+
+\section{Related Work}
+\paragraph{Brick generation and reconstruction.}
+BrickGPT~\cite{pun2025brickgpt}, initially named LegoGPT, combines
+autoregressive generation with validity checks and physics-aware rollback.
+BrickNet~\cite{kulits2026bricknet} expands beyond voxel-like towers to
+human-designed objects and typed connections. Its paper reports 320,808
+samples and 9,743 part variants; those units are not directly equivalent
+to our deduplicated procedural source objects or 25-type catalog.
+Neither their dataset scale nor their physical scope can be claimed
+by importing only a small connector annotation subset.
+MEPNet~\cite{wang2022manual} uses component geometry and stepwise
+manual images for high-precision pose prediction. Its observation
+protocol differs from reconstructing an entire opaque assembly.
+Table~\ref{tab:position} summarizes the relevant distinctions without
+interpreting an unreported capability as absent.
+
+\begin{table*}[t]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}lXXX@{}}
+\toprule
+Resource / method & Input and domain & Main target & Relation to BrickAtlas\\
+\midrule
+BrickGPT~\cite{pun2025brickgpt} & Text; generated brick structures & Stable, buildable generation & Stability-aware generation, not our nominal grid check\\
+BrickNet~\cite{kulits2026bricknet} & Human-designed LDraw; typed connectors & Graph-backed generative programs & Richer part and connector coverage\\
+MEPNet~\cite{wang2022manual} & Stepwise manuals + component geometry & Component pose / executable plan & Strong task-specific baseline after input adaptation\\
+Break and Make~\cite{walsman2022break} & Interactive LTRON inspection & Disassemble and reconstruct & Interactive evidence, unlike fixed-input submissions\\
+CLEVR~\cite{johnson2017clevr} & Rendered scenes + questions & Compositional visual QA & Diagnostic control, without our assembly-edit contract\\
+BrickAtlas (this work) & Procedural grid; explicit RGB / symbolic arms & Shared-object, typed task evaluation & Nominal geometry; no physical-stability claim\\
+\bottomrule
+\end{tabularx}
+\caption{Positioning by published task and observation protocol, not
+a performance comparison. Specialized methods require audited task
+adapters before any scores can be compared.}
+\label{tab:position}
+\end{table*}
+
+\paragraph{Visual programs and diagnostic reasoning.}
+CSGNet~\cite{sharma2018csgnet} parses shapes into executable constructive
+solid geometry programs, establishing that visual-to-program prediction
+is not new. CLEVR~\cite{johnson2017clevr} uses controlled scenes and
+functional questions to diagnose compositional reasoning. BrickAtlas
+extends this diagnostic perspective to shared assembly objects, changed
+regions, admissible hidden layouts, and execution order. This controlled
+setting trades semantic realism for inspectable variables; procedural
+scale alone cannot justify generalization to natural images or arbitrary CAD.
+BLINK~\cite{fu2024blink} evaluates perceptual tasks including spatial
+relations and multi-view reasoning with human and specialist baselines.
+Our complementary target is executable, editable assembly structure;
+we do not claim that general visual perception is untested.
+
+\paragraph{Presentation bias and training controls.}
+Option-position sensitivity is established in language-model
+evaluation~\cite{zheng2024selectors}. Our candidate study therefore
+does not claim to discover that bias. It compares \emph{actual selected
+poses}, not answer letters, against a same-order repetition baseline
+in a geometric domain. We do not infer token-level mechanisms from API
+outputs. Earlier Qwen3~\cite{qwen3model} and
+SmolVLM~\cite{marafioti2025smolvlm} LoRA~\cite{hu2022lora} pilots are
+implementation controls, not proposed architectures or evidence of
+multi-task transfer.
+
+\section{The BrickAtlas Benchmark}
+\label{sec:data}
+\subsection{Domain and Source Construction}
+A part is $p=(i,t,c,x,y,z,r)$: instance ID, catalog type, color, minimum
+body corner, and quarter-turn yaw $r\in\{0,1,2,3\}$. The vertical axis
+is \textbf{$Y$}; $X,Z$ are horizontal. Horizontal units are 8\,mm studs;
+vertical units are 3.2\,mm plate heights. Odd yaw swaps the catalog
+width and depth. Origins are integer-valued in $[0,24]^3$, bodies must
+fit in $[0,32]^3$, and a submission contains at most 64 parts.
+Rectangular bricks have height three and plates height one.
+Nominal validity requires non-overlap and at least one supporting
+stud for each elevated part. It does not establish force balance,
+clutch strength, deformation, or robotic grasp feasibility.
+
+We accept 640 unique geometries from each of eight seeded construction
+policies (rendered gallery in the supplement). Tip walk extends a single supporting
+parent; low fan favors low attachments; shallow terrace limits height;
+plate network uses thin parts; column field varies independent columns;
+alternating beams alternates orientation. Two-support bridge constructs
+paired supports before a span, and enclosed shell places a perimeter
+and roof around varying interiors. All sources start with a 4-by-8
+plate. The generator normalizes minimum $X,Z$ to zero and checks
+insertion validity and an independently implemented cell certificate.
+
+Geometry is canonicalized after removing colors, translating, and
+enumerating four global yaw rotations. Exact duplicates within the
+release and against two earlier releases are rejected. Mirroring is
+not part of this equivalence. Every task, color condition, or derived
+prefix retains its source group; a new question is not a new independent
+object.
+
+\subsection{Splits and Measured Coverage}
+Six policies use a deterministic geometry-hash partition: seven hash
+buckets for training, one for validation, and two for ID testing.
+Bridge and shell are entirely policy-held-out.
+The realized counts are in Table~\ref{tab:splits}. ``Policy-held-out''
+describes the generator split, not absence of shared motifs or proof
+of learned out-of-distribution generalization.
 
 \begin{table}[t]
 \centering\small
@@ -218,136 +220,140 @@ Split & Source objects & Task-condition cases\\
 Total & 5,120 & 117,910\\
 \bottomrule
 \end{tabular}
-\caption{V2 counts. The ID case count additionally includes 150 isolated
-part/color questions, which are not counted among the 5,120 objects.}
+\caption{The ID case count includes 150 isolated catalog questions,
+separate from the 5,120 assemblies.}
 \label{tab:splits}
 \end{table}
 
-Table~\ref{tab:splits} reports the realized partition. Piece-count
-difficulty bins contain 1,445 small ($\leq16$), 2,141 medium (17--28),
-and 1,534 large ($>28$) structures. They are mechanical bins, not measured
-human difficulty.
+The new source census measures actual, not nominal, coverage
+(Fig.~\ref{fig:distribution}). Assemblies contain 9--47 parts and use
+\textbf{19 of the 25 catalog types}. Six types occur only in isolated
+recognition questions. Piece-count bins contain 1,445 small ($\leq16$),
+2,141 medium (17--28), and 1,534 large ($>28$) objects. These are
+mechanical bins, not calibrated human difficulty. The policy-by-size
+matrix exposes missing strata; in particular, policy and size are not
+independent. A marginal decline with piece count cannot by itself be
+attributed to sequence length.
 
-We run a lossless length/prefix Jaccard join on canonical part-position
-sets at threshold 0.8, then cross-check it by brute force over all
-8,305,836 cross-split pairs. No pair reaches the threshold.
-This is exhaustive only for the declared canonical token representation:
-canonical orientation can change under perturbations, and the check is
-not a best-aligned geometric distance, semantic leakage test, or
-pretraining contamination audit.
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/dataset-distribution.pdf}
+\caption{Source-level coverage computed from all 5,120 frozen records.
+Views and tasks do not contribute extra objects. Zero cells are retained
+in the policy-by-size matrix; the 25-type catalog exceeds the 19 types
+actually used in assemblies. Supplementary tables list exact type counts.}
+\label{fig:distribution}
+\end{figure*}
 
-\subsection{Task Expansion and Accounting}
-Each object produces 13 task variants and 23 task-condition cases:
-two relation queries (connected and separated), one reconstruction,
-one constrained generation, one suffix completion, three edits
-(rotation, recoloring, removal), two plans (assembly, disassembly),
-and three repairs (normal, color, shift).
-Reconstruction, completion, and each repair variant have three
-information conditions. Thus,
-\begin{align}
-N_{\mathrm{variant}}&=5{,}120\times13+150=66{,}710,\\
-N_{\mathrm{case}}&=5{,}120\times23+150=117{,}910.
-\end{align}
-The extra 150 cases cover 25 known catalog types in six colors.
-They form a separate recognition set rather than repeating the same
-isolated image once per assembly. Color instances share the catalog-type
-group when uncertainty is summarized.
+A length/prefix Jaccard join at threshold 0.8 on canonical part-position
+sets is cross-checked over all 8,305,836 cross-split pairs; none reaches
+the threshold. This result concerns that representation only:
+canonical orientation can change under perturbation, and the audit
+does not search for best-aligned subassemblies, semantic duplicates,
+or pretraining contamination. Existing model-exposed objects remain
+development evidence in a cumulative exposure register, even when
+their original dataset split was named ``test.''
 
-\section{Ground Truth and Information Boundaries}
-\subsection{A Witness Is Not Always a Unique Answer}
-Every case stores a ground-truth object containing the public-input
-hash, source group and split, target and starting geometry, bill of
-materials (BOM), extents, connection edges, individual nominal stud
-mates, changed and protected IDs, yaw symmetry, assembly and disassembly
-witnesses, applicable metric names, and an evaluated oracle answer.
-The record explicitly declares whether the answer is exact or whether
-the oracle is only one member of an acceptable set.
+\subsection{Eight Task Families}
+Each source produces 13 task variants and 23 task-condition cases
+(Table~\ref{tab:tasks}). Reconstruction, completion, and each of three
+repair variants have three information conditions. Two relation queries,
+generation, three edits, and two plans use their declared default
+inputs. Separately, 25 catalog types in six colors yield 150 recognition
+questions. Thus $5{,}120\times23+150=117{,}910$ cases; counting variants
+without repeated information conditions gives 66,710, not another dataset.
 
-For generation, the witness satisfies dimensions, zero anchoring,
-piece budget, color count, connectivity, and branching constraints;
-other satisfying layouts are accepted. For planning, any executable
-permutation is valid. Structure reconstruction ignores arbitrary
-instance IDs and symmetric yaw rotations. These equivalences are
-different and are not collapsed into one similarity score.
+\begin{table*}[t]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}lXXXr@{}}
+\toprule
+Family (variants) & Public input & Required output & Exact task success & Cases\\
+\midrule
+\tableinput{tables/task-contract.tex}
+\bottomrule
+\end{tabularx}
+\caption{Task contract and full-release counts. ``Reference'' means
+the declared RGB, layer, or symbolic condition. A structure is a
+typed, colored pose multiset; arbitrary output IDs are allowed except
+where a plan or fault localization explicitly refers to current IDs.}
+\label{tab:tasks}
+\end{table*}
 
-\subsection{Three Information Conditions}
-\paragraph{Ordinary RGB.}
-Four assembled views (isometric, top, front, side) and a BOM are provided
-for reconstruction, completion, and repair. Hidden layers are not
-revealed. The primary structural criterion accepts matching colored
-positive-axis first-hit surfaces plus BOM and nominal validity.
-It therefore does not force one unobservable interior arrangement.
-Preservation and localization gates remain mandatory where relevant.
+\paragraph{Recognition and relations.}
+Recognition uses isolated isometric/top images and returns type, color,
+and top-stud count. It is known-catalog identification, not novel-part
+generalization. Relations supply the full symbolic assembly and two
+IDs. One sampled pair has direct contact; the other lacks direct contact.
+The latter can still be connected by a longer graph path.
+Outputs include direct connectivity, vertical ordering, mating-stud
+count, and shortest undirected contact-graph distance.
+``Above'' means the entire first body starts at or above the second
+body's top, not overlap in a projected image.
 
-\paragraph{Layer disclosure.}
-An assembled view and separate top views for each occupied bottom-height
-layer reveal additional information. Unlike ordinary RGB, this condition
-requires the complete reference type/color/pose multiset, up to symmetry.
-It is not pooled with ordinary visual performance.
+\paragraph{Reconstruction and constrained generation.}
+Reconstruction returns a complete assembly matching its reference
+condition and bill of materials (BOM). Generation instead receives exact
+extents, zero anchoring, a piece budget, minimum color count, connected
+component count, and a minimum maximum graph degree. Any nominally valid
+structure satisfying these constraints is correct; similarity to a
+particular generated witness is not a generation-quality score.
+The current task is constraint generation, not natural-language
+semantic shape generation.
 
-\paragraph{Privileged symbolic reference.}
-The complete reference program is explicitly supplied. This diagnostic
-isolates failures that remain despite complete geometry information and
-requires full structural correctness. It is not a visual benchmark score.
-Other task families use their declared default inputs: symbolic structures
-for relations, edits, and plans; constraints for generation; isolated
-images for part recognition.
+\paragraph{Completion, editing, and repair.}
+Completion removes the last $\lfloor n/4\rfloor$ parts of the valid
+generation order and asks for the full restored structure while
+preserving the prefix. It tests suffix completion, not arbitrary holes.
+Edits comprise a whole-object quarter-turn, replacement of every
+instance of a selected color, and removal of one topmost piece.
+Rotation maps positive $X$ toward positive $Z$, retains $Y$, and
+reanchors minimum $X,Z$ to zero.
+Repair has no-fault, wrong-color, and one-stud-shift variants;
+positive faults affect an exposed topmost part, not arbitrary hidden
+corruption. It requires both a corrected structure and the faulty
+\emph{current} IDs. Variant labels and changed IDs are evaluator
+metadata, not ordinary prompt fields.
 
-\subsection{Independent Checks and Label Repairs}
-Generation uses the main axis-aligned geometry checker. A separately
-implemented integer-cell checker independently traverses occupied cells,
-support, collision, and insertion corridors. Connection stud totals must
-agree. Every ground-truth witness passes this cross-check and its task
-scorer. This independence is at the algorithm-implementation level; both
-checkers share the declared catalog and nominal geometric assumptions.
-It is not independent human validation.
+\paragraph{Assembly and disassembly.}
+The target program is supplied with IDs sorted lexically, preventing
+the source insertion order from directly serving as the answer.
+A model returns all IDs once in its chosen order. Only vertical
+insertion/removal is allowed. These tasks test order under known
+geometry, not visual reconstruction, motion planning, or grasping.
 
-A further independent implementation checks multiset, occupancy, colored
-surface, and edge metrics on 15,360 original/perturbed structures:
-138,240 comparisons agree. An independently relaxed shortest-path
-algorithm agrees on all 10,240 relation queries. Nominal connector counts
-agree on all 5,120 structures, still only within the grid catalog.
-An additional 107,520 mutation/invariance checks cover missing, duplicate,
-unknown, and reversed plan actions; no-op edits; wrong repair localization;
-and instance-ID/yaw equivalence. These finite checks are not a proof
-over all possible malformed submissions.
+\subsection{Information Conditions}
+\label{sec:information}
+\textbf{Ordinary RGB} provides opaque assembled isometric, top, front,
+and side views plus BOM. The three axis views look from positive
+$Y$, $Z$, and $X$, respectively. Cameras use orthographic projections
+and recenter/rescale the assembly; screen pixels are not absolute grid
+coordinates. Ordinary success accepts legal BOM-matched alternatives
+with equal colored positive-axis first-hit grid surfaces.
+\textbf{Layer disclosure} provides an assembled view and one top image
+per occupied bottom-$Y$ layer with other layers removed; it requires
+full type/color/pose recovery.
+\textbf{Symbolic reference} supplies the complete target program and
+also requires full recovery. It is privileged diagnostic information,
+not a visual score. All three retain applicable preservation and
+localization requirements. Render recipes and ground-truth records
+are never appended to ordinary model inputs.
 
-Full-case baseline testing exposed a subtle repair ambiguity during
-pre-release development. A shifted brick could occupy the same pose as
-another brick of the same type and color. The reference image then
-could not identify which of the two current IDs should be labeled faulty.
-We exclude these indistinguishable shifted poses before generating the
-release. Thirty cases exposed the issue in an initial symbolic repair
-baseline. The final casebank and baseline were rebuilt and re-audited;
-pre-release results are not reported as final scores.
-
-Fault type, changed IDs, target programs, and private render geometry are
-not carried in ordinary public input records. In particular, the
-normal/color/shift variant label is evaluator metadata, not a prompt field.
-The model exporter emits only a case ID, fixed system prompt, public
-task, and image paths. The full case index and ground-truth shards remain
-public research artifacts, so this separation is a protocol boundary,
-not protection against a participant deliberately consulting the answers.
-
-\section{Evaluation}
-\label{sec:metrics}
-\subsection{Structural and Task-Specific Metrics}
-Let $T$ and $A$ denote expected and submitted part multisets, and let
-$m$ be the number of exact type/color/pose matches after accounting
-for yaw symmetry. Part precision, recall, and F1 are
+\section{Evaluation and Measurement Validity}
+\subsection{Accepted Answers, Not Only Reference Programs}
+Let $T$ and $A$ be target and answer multisets, and $m$ the number of
+type/color/pose matches after part-yaw symmetry. Instance IDs do not
+affect these structural matches. We report
 \begin{equation}
-P=\frac{m}{|A|},\qquad R=\frac{m}{|T|},\qquad
-F_1=\frac{2m}{|A|+|T|}.
+P=m/|A|,\qquad R=m/|T|,\qquad F_1=2m/(|A|+|T|).
 \end{equation}
-The implementation defines empty-set conventions explicitly and prevents
-duplicate predictions from inflating multiset matches. BOM metrics
-ignore poses, while edge F1 requires matched endpoints and the correct
-number of mating studs. Occupancy IoU is computed both without color
-and on cell/color tuples.
+Multiset matching prevents duplicate predictions from increasing recall.
+BOM F1 removes poses; occupancy IoU removes part boundaries; colored
+occupancy preserves colors. Edge F1 requires matched endpoints and
+the correct number of mating studs. These quantities answer different
+questions and are not averaged into one ``intelligence'' score.
 
-For an ordinary visual case, let $S^+(T)$ be the set of colored
-first-hit cells along the positive X, Y, and Z axes. The visible
-structural predicate is
+Let $S^+(A)$ be the colored first-hit cell set along positive $X,Y,Z$.
+For ordinary visual cases, the base structural predicate is
 \begin{equation}
 \begin{aligned}
 V(A,T)={}&\mathbf{1}\{\mathrm{valid}(A)\}\\
@@ -355,407 +361,306 @@ V(A,T)={}&\mathbf{1}\{\mathrm{valid}(A)\}\\
  &{}\cdot\mathbf{1}\{S^+(A)=S^+(T)\}.
 \end{aligned}
 \end{equation}
-This is a nominal grid-surface proxy, not pixel similarity or a
-ray-tracing proof of what is visible from every perspective.
-Full-structure success is reported separately. A high surface F1 alone
-does not imply success.
+It is a grid-surface proxy, not pixel identity or a proof of observability
+from arbitrary cameras. Full-reference success is reported separately.
+For completion, retained source matches are subtracted before computing
+addition precision/recall/F1. Editing and repair require protected-piece
+preservation; repair also requires exact faulty-ID localization.
+False alarms are defined only on no-fault cases.
 
-Completion and editing additionally measure preservation of the protected
-source multiset. Completion reports precision/recall/F1 for additions
-after subtracting retained source matches. These addition diagnostics
-can disagree with a valid alternative hidden layout and therefore do
-not override ordinary-condition acceptance. Repair additionally
-requires exact faulty-current-ID localization, reports restoration and
-localization metrics separately, and measures false alarms only on
-normal cases.
+\paragraph{RQ1: why global F1 can reward doing nothing.}
+For a completion with $n$ target parts and $k$ missing parts, copying
+the current $n-k$ pieces yields
+\begin{equation}
+F_1^{\mathrm{copy}}=\frac{2(n-k)}{2n-k},
+\qquad F_{1,\mathrm{added}}^{\mathrm{copy}}=0.
+\label{eq:copy}
+\end{equation}
+With $k\approx n/4$, global F1 is already about $6/7$. For removing one
+piece, copying all $n$ original parts instead yields $2(n-1)/(2n-1)$,
+approaching one as assemblies grow. This is a property of the metric,
+not evidence that the model performed the operation.
 
-Part recognition reports type, color, and stud-count accuracy. Relations
-report direct connectivity, vertical ordering, contact-stud count, and
-shortest undirected contact-graph distance. Constrained generation is
-scored against its six public constraints and legality; similarity to
-one arbitrary witness is not a generation-quality metric.
+\paragraph{RQ2: matching observations need not match relations.}
+For the declared admissible set $\mathcal{A}(T)=\{A:V(A,T)=1\}$, a
+downstream query $q$ has a determined answer only if $q(A)$ is constant
+over $\mathcal{A}(T)$. Figure~\ref{fig:hidden} gives a constructive
+counterexample. Two hidden tilings have identical BOM, colored occupancy,
+and declared first-hit surfaces, but different contact graphs and a
+different answer to whether two upper pieces share one lower support.
+Therefore an ordinary accepted reconstruction cannot automatically
+inherit every relation label from the reference. This is one existence
+witness, not a prevalence estimate, human judgment, or pixel-equality
+claim. V2 relation questions avoid this ambiguity by supplying symbolic
+geometry; extending them to images would require additional observations
+or set-valued/undetermined answers.
 
-\subsection{Executable Plans}
-A plan is evaluated in its submitted order. Execution stops at the
-first unknown, duplicate, unsupported, colliding, or blocked action.
-The scorer records the zero-based failure step, legal-prefix fraction,
-executed coverage, unique submitted coverage, length accuracy, and
-duplicate-free status. Complete success requires every required ID
-exactly once and a fully executable sequence.
+\begin{figure*}[t]
+\centering
+\includegraphics[width=.94\textwidth]{figures/hidden-structure.pdf}
+\caption{A disclosed cross-section of the independently checked
+14-part hidden-layout witness, not an ordinary input render.
+Red rectangles show internal bricks at bottom $Y=1$; blue markers
+project the two query bricks at $Y=4$ onto that layer. The roof and
+upper walls are omitted only for explanation. In A, both blue bricks
+share one red supporter; in B, they do not.}
+\label{fig:hidden}
+\end{figure*}
 
-The evaluator does not sort a failed plan into a successful one.
-An incomplete but locally legal prefix is distinct from an attempted
-illegal action: its failure-step field is null, while success is zero.
-This distinction is important for greedy algorithms that run out of
-legal choices after prematurely covering a lower piece's insertion path.
+\subsection{Executable Order and a Simple Complete Baseline}
+Plans execute in the submitted order and stop at the first unknown,
+duplicate, unsupported, colliding, or blocked action. We record
+the zero-based failure step, legal-prefix fraction, executed coverage,
+unique submitted coverage, length accuracy, and duplicate-free status.
+An incomplete but legal prefix fails exact success and has no illegal
+step. The evaluator never sorts a failed plan into a passing one.
 
-\subsection{Denominators and Aggregation}
-A selection manifest freezes case IDs, filters, and a hash before
-scoring. Unknown or duplicate prediction IDs are rejected. Missing
-submissions produce explicit failure rows and remain in all applicable
-denominators. Malformed structure outputs receive zero structural
-metrics; malformed QA can retain correct-field partial credit but
-cannot receive exact success. A null metric means task-inapplicable,
-such as a false-alarm rate on a positive repair case, not an omitted
-failure.
+\paragraph{Height-order sufficiency.}
+Within the valid rectangular grid domain, sorting parts by increasing
+bottom $Y$ gives a complete assembly order. Every supporter lies strictly
+lower and is already inserted. Any earlier part overlapping the new
+footprint must end at or below its bottom, otherwise the final structure
+would overlap; hence no earlier part blocks insertion from above.
+Equal-height non-overlapping parts can be ordered arbitrarily.
+Reversing this sequence gives a valid disassembly order.
+The complete 10,240-case execution audit agrees with this construction.
+Consequently, failures of a myopic greedy planner demonstrate the
+importance of order but do not establish hard combinatorial search.
 
-The frozen v2 decoder had a JavaScript coercion gap: singleton arrays
-used as part-type or color fields could be accepted as string keys.
-New submissions use an explicitly versioned strict primitive-type gate;
-the legacy scorer remains available only for historical reproduction.
-All 117,910 oracle answers still pass, 5,120 malformed examples are
-rejected, and metrics on 118,640 existing baseline/API records are
-unchanged. Historical runs are not silently rewritten.
+\subsection{Denominators, Reproducibility, and Independent Checks}
+A selection manifest freezes IDs, filters, and hashes before scoring.
+Unknown/duplicate prediction IDs are rejected. Missing or malformed
+submissions stay in applicable denominators; null denotes inapplicability,
+not an omitted failure. A versioned strict primitive-type decoder
+closes a legacy JavaScript coercion gap without rewriting historical
+results. All 117,910 oracle answers still pass.
 
-Reports are stratified by task, variant, condition, and split, with
-additional policy and piece-count summaries. Every metric carries its
-actual denominator. Success uncertainty uses a fixed-seed, 1,000-resample
-bootstrap of source-group means. No aggregate mixes ordinary images,
-layer disclosure, and full symbolic references. These intervals quantify
-sampling variation within this procedural resource, not semantic
-coverage or immunity to contamination.
+Every ground-truth record links public-input hash, source/split, target,
+protected/changed IDs, contacts, nominal stud mates, metric definitions,
+and an executable witness. Separate implementations check cell geometry,
+structural metrics, and relation answers, with mutation/invariance tests
+for malformed submissions. These reduce coding risk but share catalog
+and nominal assumptions; they do not replace human calibration.
+Detailed counts and replay contracts are in the supplement.
 
-\section{Audit and Replay System}
-The replay format separates four actors: model, harness, environment,
-and evaluator. Events identify whether evidence was recorded or derived,
-and link content-addressed before/after states. Recorded API responses
-retain their original text and billing receipts. Decoding and
-deterministic reconstruction are marked as system operations.
-No unavailable internal reasoning or historical timestamp is invented.
+Replay distinguishes model output, harness operations, and evaluator
+diagnostics; unfolding a structure for display does not count as a
+model plan. Uncertainty uses 1,000 fixed-seed bootstrap resamples of
+source-group means, keeping derivatives clustered and information
+conditions separate.
 
-For a structure collection, the viewer unfolds submitted parts as a
-harness visualization, not as an assembly plan. For a plan, it executes
-the original order and displays the first rejection. Input, intermediate
-output, and reference views can be compared with synchronized cameras.
-The input-only view hides the judge scenes and diagnostics. Per-case
-JSONL export preserves events and manifests.
+\section{Experiments and Findings}
+\label{sec:experiments}
+\subsection{Full-Casebank Algorithmic and Shortcut Audits}
+The public-input deterministic baseline solves every relation and
+edit case and all 25,600 privileged symbolic reconstruction, completion,
+and repair cases. It abstains on unsupported visual and generation
+inputs; those zeros indicate coverage, not failed visual reasoning.
+Its immediately-legal greedy planner solves 2,364/5,120 assemblies
+(46.2\%) and all disassemblies. A roof can be placed legally before a
+lower piece and block its future insertion corridor. Height sorting
+solves both directions completely. Split-specific results are retained
+in the supplement; because neither planner is learned, their split
+contrast is not learned generalization.
 
-The v2 external-submission track stores submitted JSON, not a fabricated
-provider transcript. Missing token counts, latency, and receipts are
-explicitly unavailable; zero new calls during replay is not a claim
-that an external model's inference was free. Deterministic baseline
-outputs are labeled as harness/algorithm evidence rather than model
-responses. Every one of the 117,910 stored baseline cases has been
-replayed offline with score and state-chain checks; browser interaction
-tests are representative rather than 117,910 manual UI inspections.
-
-\section{Experiments and Current Results}
-\subsection{Complete V2 Algorithmic Baseline}
-The baseline accepts only public task input. It computes symbolic
-relations, applies declared edit operations, greedily chooses an
-immediately legal next plan action, and copies or compares an explicitly
-supplied symbolic reference. It has no visual perception or constrained
-generation solver. For unsupported inputs it abstains; the evaluation
-records a zero rather than silently removing those cases. These
-abstentions are coverage facts, not failed attempts by a visual model.
-
-All 117,910 selected cases were processed. The baseline solves all
-10,240 relation cases, all 15,360 edit cases, and all 25,600 privileged
-symbolic reconstruction/completion/repair cases. It solves 2,364 of
-5,120 assembly plans (46.2\%) and all 5,120 disassembly plans.
-Table~\ref{tab:planning} separates the splits. Since this baseline is
-not learned, the ID/policy-held-out contrast describes procedural
-difficulty for a fixed algorithm, not learned OOD generalization.
+We newly evaluate a copy-current predictor on \textbf{35,840 cases},
+one ordinary completion, three symbolic edits, and three ordinary
+repairs per source. Its predictor sees only public \texttt{current};
+it returns that structure unchanged and an empty fault list for repair.
+Table~\ref{tab:copy} is a census of the full released population,
+including training objects, not a new held-out model experiment.
+The 87.1\% completion and 97.4\% removal F1 scores confirm
+Eq.~\ref{eq:copy}. Zero addition F1 or target success correctly reveals
+that the requested change was not performed.
+No-fault repair is the intended exception: leaving a correct structure
+unchanged is the correct response.
 
 \begin{table}[t]
 \centering\small
-\begin{tabular}{llrrr}
+\begin{tabular}{lrrrr}
 \toprule
-Direction & Split & Cases & Successes & \%\\
+Copy-current task & Cases & Success & Part F1 & Local\\
 \midrule
-\tableinput{tables/planning.tex}
+\tableinput{tables/copy-controls.tex}
 \bottomrule
 \end{tabular}
-\caption{Public-input greedy plan baseline on v2. The stored order is
-never repaired by the scorer. These are algorithmic, not neural, results.}
-\label{tab:planning}
+\caption{New full-casebank no-operation audit, percentages. Local is
+addition F1 for completion, exact target success for edits, and
+localization F1 for repair. Rows share the same 5,120 sources.
+High global similarity is not successful task execution.}
+\label{tab:copy}
 \end{table}
 
-The assembly/disassembly asymmetry is mechanistically interpretable.
-Current insertion legality does not ensure that a later lower piece
-will retain an unobstructed vertical corridor. A greedy strategy can
-place a supported roof or bridge early and block that corridor.
-Disassembly starts from the complete valid structure and removes an
-eligible piece. The result shows that our process metric distinguishes
-final geometry from executable construction; it does not show that the
-tasks are hard for a suitable search or dependency-aware planner.
-
-A bottom-up height order, reversed for disassembly, solves all 10,240
-plans and passes an independent execution checker. Under the current
-valid-grid and vertical-insertion assumptions, higher parts cannot block
-earlier lower insertions. This simple complete construction limits the
-planning claim to constraint following. A train-only BOM/dimension
-retrieval baseline was also evaluated on all 2,430 non-training objects
-for ordinary reconstruction; it neither sees target geometry nor adapts
-the retrieved structure to it.
-
-\subsection{V2 Fixed-Input Model Study}
-We freeze three held-out objects per policy, covering available size
-strata, before observing results: 24 objects, all 13 default/ordinary
-task variants, and 25 catalog questions yield 337 cases per model.
+\subsection{Fixed-Input Visual and Symbolic Model Study}
+Before calls, we select three held-out objects per policy across
+available size bins: 24 assemblies, all 13 ordinary/default variants,
+and 25 separate catalog questions yield 337 cases per model.
 GPT-4.1 mini and Gemini 2.5 Flash run interleaved at temperature zero
-with a 2,200-token output cap. All 674 calls, failures, raw responses,
-images, token counts, latencies, and settled receipts are retained.
-Table~\ref{tab:study} gives exact successes; partial metrics and
-source-group bootstrap intervals are included in the artifacts.
+with a 2,200-token output cap. All 674 responses, failures, image
+references, token counts, latencies, and receipts are archived.
+Table~\ref{tab:study} reports actual successes, not a projected main
+leaderboard. Source-level bootstrap summaries and partial metrics are
+available in the accompanying evidence.
 
 \begin{table}[t]
 \centering\small
 \begin{tabular}{lrr}
 \toprule
-Task/variant & GPT-4.1 mini & Gemini Flash\\
+Task / variant & GPT-4.1 mini & Gemini Flash\\
 \midrule
 \tableinput{tables/study-main.tex}
 \bottomrule
 \end{tabular}
-\caption{New v2 one-shot results. Each structural variant has the same
-24 source objects; the 25 isolated-part questions are separate.}
+\caption{Exploratory v2 one-shot results. Each structural row uses
+the same 24 objects; recognition uses 25 isolated catalog types.
+Symbolic default tasks are not visual results.}
 \label{tab:study}
 \end{table}
 
-For Gemini, one preselected object per policy receives six reconstruction
-controls and one assembly representation control (56 new calls).
-Reflection and legality feedback reuse the identical recorded first
-answer, charging only the new request. Feedback is target-blind.
-Table~\ref{tab:controls} does not support a claim that images are ignored:
-zero exact successes create a floor effect. Symbolic references provide
-additional privileged information; relative-coordinate plans use the
-same target information, not BrickNet connector programs.
+Both models fail exact ordinary reconstruction, completion, generation,
+and rotation, while recoloring/removal saturate. This combination of
+floors and ceilings limits ranking resolution. Six reconstruction
+controls and one assembly-representation control on one source per
+policy add 56 Gemini calls. Symbolic references solve 8/8 controlled
+reconstructions; no-image, mismatched-image, repeat, reflection, and
+legality-feedback arms remain at zero exact reconstruction.
+That floor does not establish that the model ignores images.
+Reflection and validation reuse the identical first answer, and legality
+feedback is target-blind. Complete control results are in the supplement.
 
-\begin{table}[t]
-\centering\small
-\begin{tabular}{lrr}
-\toprule
-Control & Original & Control\\
-\midrule
-\tableinput{tables/study-controls.tex}
-\bottomrule
-\end{tabular}
-\caption{Paired Gemini controls on eight objects. Relative denotes
-assembly; all other arms denote reconstruction.}
-\label{tab:controls}
-\end{table}
+Figure~\ref{fig:diagnostics} distinguishes observed failure gates.
+JSON/schema/domain rejection, invalid geometry, and task mismatch
+are operational labels, not inferred cognitive causes.
+Ten local SmolVLM-256M base/LoRA jobs yield no positive edit transfer.
+Base fails JSON parsing on 298 cases and schema on 39, so zero success
+is not a perception-only finding. Matched-supervision training details
+and separate historical pilots are in the supplement.
 
-Cross-task associations are computed over 24 source objects, not 337
-independent trials. Constant marginals yield undefined correlations.
-These are exploratory diagnostics without confirmatory power or a
-causal claim about reasoning or transfer.
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/metric-diagnostics.pdf}
+\caption{Why a score needs context. Left: copying current geometry
+often gives high part F1 without task success (full-casebank census).
+Right: earliest observable rejection gates in the 337-case v2 study;
+bars mix tasks only to diagnose the interface, not to rank models.
+The two panels describe different populations and are not paired.}
+\label{fig:diagnostics}
+\end{figure*}
 
-\subsection{Image-Conditioned Training Protocol}
-We train language-side rank-8 LoRA on unquantized
-SmolVLM-256M-Instruct~\cite{marafioti2025smolvlm}, using 96 training
-and 24 disjoint validation objects. Single-reconstruction, multi-task
-and leave-edit each use three seeds, 120 updates and 61,440 supervised
-answer tokens; base is untrained. Supervision is matched, not compute.
-All ten jobs complete the same 337-case MLX inference protocol
-(Table~\ref{tab:vlm}); preprocessing and merged weights are audited.
-Implementation, token budgets and validation details are in the supplement.
+\subsection{Coordinate and Output-Protocol Diagnostics}
+A three-source screen adds GPT-4.1 and Qwen3-VL-32B-Instruct.
+A nested-prefix follow-up reveals inconsistent origin wording; the
+supplement documents a separately versioned correction without
+replacing original scores.
 
-Exact successes occur only in relation answers. No trained condition
-solves an edit exactly, including the excluded rotation task, so this pilot
-does not demonstrate edit transfer. All 337 base replies fail JSON
-parsing (298) or schema (39), preventing a perception-only interpretation.
-Separate text-only interface probes yield 0/9 for base and 1/9 for
-multi-task seed 17 under both full and minimal metadata.
+Four unused sources then provide distinct normalized two-piece scenes,
+gray bases, blue query parts, known identities, and explicit camera/grid
+conventions. Four models answer six conditions each (96 calls).
+Full-structure and local-pose success both total 8/16; shorter output
+alone is not supported as a general remedy. Candidates have equal
+identities, yaw, and height and differ in legal horizontal position.
+Only 6/16 paired candidate answers preserve the actual pose after
+reordering. These four-source probes lack an identical-repeat control,
+motivating the next experiment.
 
-An independent constructive witness has equal BOM, colored occupancy and
-declared visible surfaces but different contact graphs. Visual acceptance
-therefore need not imply hidden-relation equivalence; this establishes
-possibility, not prevalence or pixel identity. Subsequent diagnostics
-use explicitly frozen development selections, never relabeled hidden tests.
+\subsection{RQ3: Candidate Reordering Beyond Repetition}
+A follow-up freezes 12 new validation sources, two per seen policy,
+with distinct normalized two-piece geometries. Original, identical
+repeat, permutation, and no-image conditions yield 192 calls across
+four models. Correct-option positions and repeat/permutation timing
+are counterbalanced. For source $g$, let $a_g,a_g^r,a_g^\pi$ denote
+selected \emph{poses}, after mapping option labels back to content.
+The paired endpoint is
+\begin{equation}
+D_g=\mathbf{1}[a_g^\pi\ne a_g]-\mathbf{1}[a_g^r\ne a_g].
+\end{equation}
+Mismatch measures inconsistency, not incorrectness; a consistently
+wrong answer has zero mismatch. Figure~\ref{fig:order} reports the
+paired means and source-bootstrap intervals.
 
-\begin{table}[t]
-\centering\small
-\begin{tabular}{lrrrr}
-\toprule
-Condition & Seed & Steps & Supervision & Success\\
-\midrule
-\tableinput{tables/study-training.tex}
-\bottomrule
-\end{tabular}
-\caption{Complete v2 local VLM matrix. Each row evaluates 337 cases.
-All raw predictions are retained, including malformed responses.}
-\label{tab:vlm}
-\end{table}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/order-sensitivity.pdf}
+\caption{Adaptive development replication on 12 source groups shared
+across four models. Candidate permutation changes the selected pose
+more often than identical repetition. The paired excess mismatch
+intervals describe these selected sources, not broad population
+coverage or a confirmatory model ranking.}
+\label{fig:order}
+\end{figure*}
 
-\subsection{Output Protocol and Coordinate Diagnostics}
-A separate four-model development screen uses three calibration objects
-of 12, 20, and 29 pieces: 156 primary responses and 24 reconstruction
-controls. Five of 13 task variants have differing per-case model outcomes,
-six have zero exact successes, and two (recolor/removal) are saturated.
-Size is confounded with construction policy; these observations do not
-establish a stable model ranking. A public-input copy baseline obtains
-85.9\% mean part F1 on completion, exceeding all four models, showing why
-global similarity must be accompanied by addition and preservation metrics.
+Repeat/permutation mismatches are 2/9 for GPT-4.1 mini, 2/11 for
+GPT-4.1, 0/6 for Gemini, and 0/9 for Qwen, each out of 12 pairs.
+Excess mismatch ranges from 0.50 to 0.75.
+The result supports presentation sensitivity beyond the observed repeat
+baseline in this development sample. Candidate construction, provider,
+time, simple geometry, and prior adaptive protocol design remain
+limitations; the shared 12 sources do not become 48 independent objects
+by evaluating four models.
 
-A 24-call follow-up on nested 2/4/8-piece prefixes revealed a coordinate
-confound: cropping left minimum $Z=1$ for two prefixes, despite inherited
-minimum-corner origin wording. One failed response matched up to translation.
-We preserve its original score and run a separate 24-call revision with
-each prefix anchored at minimum $X=Y=Z=0$ and explicit wording. RGB+BOM
-success is 1/12 and symbolic success 11/12 in that revision. Re-rendering,
-wording changes and re-sampling prevent attributing changes solely to
-origin normalization.
+A post-hoc renderer-aware analysis-by-synthesis control enumerates
+legal two-piece scenes from public BOM and candidate poses and matches
+blue masks in three orthographic views. It solves all 16 original
+sources across the four-source and 12-source studies and preserves
+all 16 selected poses after permutation. All 44 image-conditioned
+answers succeed; those are repeated conditions, not 44 sources.
+No-image inputs abstain. Replacing views changes 9/15 jointly answered
+selections, with one abstention. This establishes usable simulator
+signal in this narrow domain, not general reconstruction or human
+observability. The method uses the exact renderer and extra compute;
+its enumeration, thresholds, and resource use are disclosed.
 
-We then select four unused source groups with distinct two-piece
-geometries, normalize origins, and standardize gray bases and blue query
-pieces. Part identities and BOM are given; orthographic camera directions,
-grid units and minimum-corner poses are declared. The same four models
-answer six conditions per scene (96 calls; Table~\ref{tab:pose}).
-Four candidate poses have equal part identity, yaw and height, differ
-in position, and independently pass nominal geometry checks. Correct
-labels are balanced across scenes. A cyclic permutation changes labels
-but not candidates, and a no-image control retains all other input.
+\section{Unmeasured Confirmation and Extensions}
+The preceding evidence is useful for developing a benchmark but does
+not supply independent confirmation. The supplement provides seven
+deliberately empty experiment tables: an eight-task main-result layout
+for new shared sources, paired information/representation controls, candidate
+invariance and debiasing, difficulty/nuisance factors, external-domain
+and specialized methods, human calibration, and effective training.
+The machine-readable plan marks every unmeasured value as null;
+neither the 24-object pilot nor scores from other papers can substitute
+for these missing experiments.
 
-\begin{table}[t]
-\centering\small
-\begin{tabular}{lrrrr}
-\toprule
-Condition & Mini & GPT-4.1 & Flash & Qwen\\
-\midrule
-\tableinput{tables/study-pose.tex}
-\bottomrule
-\end{tabular}
-\caption{Adaptive output-protocol diagnostics on four two-piece scenes.
-Mini is GPT-4.1 mini; Flash is Gemini 2.5 Flash; Qwen is Qwen3-VL-32B-Instruct.
-Rows are separate information/output conditions, not a pooled leaderboard.}
-\label{tab:pose}
-\end{table}
+Confirmation requires licensed assets, calibrated metrics, effective
+baselines, and frozen sources, models, inputs, and analysis.
+Specialized methods need matching task information. Sample size follows
+precision, not desired significance; the supplement specifies
+precision calculations and missing-pair bounds.
 
-Full-structure and local-pose successes both total 8/16; shortening the
-output alone is not supported as a general remedy here. Candidate success
-is 10/16 with images, 8/16 after permutation, and 5/16 without images.
-Only 6/16 paired selections preserve the same actual pose after
-permutation, despite unchanged candidate content. Local-pose outputs all
-pass format checks; $X$ and yaw are correct in 16/16, while $Y$ and $Z$
-are correct in 12/16 and 11/16. Symbolic poses succeed in 16/16.
-These are descriptive results on four object clusters, not significance
-tests. Candidate information, known part identities, recoloring and simple
-geometry restrict the claims. All trials remain adaptive development
-evidence; independent data, human metric calibration and broader
-replication are still required.
+\section{Limitations and Conclusion}
+\paragraph{Scope and remaining validation.}
+All current source assemblies are procedural, share a root plate, and
+use only 19 assembled types. Recognition covers known parts only.
+Support is nominal, not physical stability; vertical planning admits
+a simple complete order. The surface criterion omits some rendered
+boundary information and does not determine hidden relations.
+New image-conditioned relation tasks require an ambiguity-aware contract,
+not automatic inheritance of hidden reference labels.
+No licensed human-designed structure layer has been integrated.
 
-\paragraph{Reordering versus resampling.}
-The four-scene probe lacks a same-order repeat, so it cannot distinguish
-ordering effects from sampling instability. A follow-up freezes 12 new
-validation sources (two per seen policy), distinct normalized two-piece
-geometries, and four conditions: original, identical repeat, permutation,
-and no-image choice. Repeat/permutation timing is counterbalanced.
-All 192 calls complete. Within each source/model, let $d_r$ and $d_p$
-indicate changes in the actual selected pose relative to the first reply
-under repetition and permutation, respectively. We summarize $d_p-d_r$
-with 1,000 fixed-seed source-bootstrap resamples (Table~\ref{tab:order}).
+The review interface contains 96 candidates from eight source objects,
+but no completed human labels or adjudications. Independent reviewers
+must measure false acceptance/rejection, disagreements, and unresolved
+cases against a frozen scoring version. Same-machine, runtime-free
+replay is not independent second-environment reproduction. The current
+model studies are small, adaptive, and confound some geometric factors.
+Training losses and engineering test counts do not establish construct
+validity, positive transfer, or broad ranking reliability.
 
-\begin{table}[t]
-\centering\small
-\begin{tabular}{lrrl}
-\toprule
-Model & Repeat & Permute & Excess [95\% interval]\\
-\midrule
-\tableinput{tables/study-order.tex}
-\bottomrule
-\end{tabular}
-\caption{Selection mismatches relative to the original answer, not
-errors relative to ground truth. Labels follow Table~\ref{tab:pose}.
-Intervals summarize 12 selected source groups, not broad population coverage.}
-\label{tab:order}
-\end{table}
+\paragraph{Release and research practice.}
+Procedural records declare CC0 provenance; other assets retain their
+own licenses. Credentials and human-review identities are not published.
+The new census and figures make no API calls; historical resource
+accounting is in the supplement. This development paper uses the official
+template, not fabricated submission metadata or an acceptance claim.
 
-Reordering produces more mismatches than identical repetition for all
-four models in this sample. This supports order sensitivity beyond the
-observed repeat baseline, while provider, time and candidate construction
-remain limitations. The study is adaptive development replication, not
-an independently sourced confirmatory test or evidence of a universal
-model ranking.
+BrickAtlas separates visual compatibility, structural recovery, local
+change, and executable order on shared objects. Its audits expose
+misleading global similarity, while model diagnostics motivate
+controlled follow-up. Independent confirmation, human calibration,
+and external-domain evidence remain necessary for stronger claims.
 
-\paragraph{Renderer-aware control.}
-A post-hoc analysis-by-synthesis baseline enumerates legal two-piece
-scenes from public BOM and candidates, then matches blue-piece masks
-in three orthographic views using the known renderer. It solves all
-16 original-source choices and preserves the selected pose under all
-16 permutations. This establishes exploitable image signal in this
-narrow simulator domain, not general visual ability or human
-observability. It uses simulator access and extra compute; details and
-no-image/replaced-image controls are in the supplement.
-
-\subsection{Earlier Neural Pilots: Separate Evidence}
-\label{sec:pilots}
-The supplement preserves the preceding 112-call composition pilot,
-24-call fixed feedback comparison, and five Grid-v1 Qwen base/LoRA
-runs. They use different datasets and scoring contracts and are not
-pooled with v2. Their negative visual and transfer results remain
-available, alongside all original predictions, adapters and training
-records; they are historical development evidence rather than a
-second evaluation of the present claims.
-
-\subsection{Verification and Resource Accounting}
-All 117,910 oracle answers pass and empty answers fail. Source manifests,
-independent metric comparisons, render recipes and baseline state chains
-are checked case by case. The supplement details training assets,
-browser coverage and engineering verification. A runtime-free, key-free
-copied environment reproduces scores using shared pinned dependencies;
-this is not independent second-person reproduction. Paid requests retain
-receipts and per-run costs, with a persistent \$4.50 campaign cap.
-New diagnostics have offline evidence and are not retroactively included
-in older browser-audit counts.
-
-\section{Limitations and Research Readiness}
-\paragraph{Data and domain.}
-The casebank contains procedural, not human-authored, structures and
-shares a common root plate. More task conditions do not create more
-independent objects. Eight policies do not imply broad semantic coverage.
-The known-part recognition set is not a novel-part generalization test.
-Policy-held-out bridge and shell data share primitives with training.
-Near-duplicate checking is exhaustive only for its declared token representation.
-
-\paragraph{Validity of ground truth.}
-Two geometry implementations reduce some coding risks but share the same
-nominal assumptions. No force, clutch, deformation, load-bearing
-stability, or arbitrary CAD collision model is validated. Public BrickNet
-connector annotations were imported in an earlier audit, but only the
-25-type grid domain was cross-checked; the gated human-model dataset was
-not obtained. Real independent human review is still absent. The
-200-object review interface does not constitute 200 completed reviews.
-
-\paragraph{Metric validity.}
-The surface criterion reduces hidden-layout unfairness but is not a
-complete model of image observability. It ignores some rendered seam
-information and can differ from perspective visibility. Exact metrics
-can be unforgiving to near-correct answers; partial metrics are included
-to make that distinction visible. Additional calibration using
-independent human judgments and adversarial alternatives is needed.
-
-\paragraph{Empirical scope.}
-The new v2 neural study covers only 24 shared structural objects and
-two API models, plus a small local VLM training protocol. Earlier studies
-use different data and remain separate. Exploratory correlations and
-eight-object controls cannot establish general representation advantages
-or causal multi-task transfer. Broader model families, specialized
-baselines, semantic diversity, and confirmatory sample designs remain
-necessary before strong comparative claims.
-
-\paragraph{Release and research ethics.}
-Procedural model records declare CC0 provenance. Imported BrickNet
-annotations retain MIT attribution, and the Qwen base checkpoint and
-adapter documentation retain the Apache-2.0 context. Raw API receipts
-and outputs are preserved without storing credentials or machine
-identity. A future human study needs actual independent participants,
-appropriate consent, and a documented disagreement process.
-This manuscript uses the official CVPR 2026 template for exposition;
-it is not a claim of submission, acceptance, or compliance with a
-future conference year's rules.
-
-\section{Conclusion}
-BrickAtlas v2 turns a small multi-task prototype into a materialized,
-versioned casebank with per-case ground truth, explicit information
-conditions, complete metric denominators, and auditable replay.
-Its full algorithmic audit reveals both greedy failure and a simple
-complete height-sorted planner, preventing an overstated search claim.
-The v2 model study exposes failures in visual reconstruction alongside
-stronger symbolic editing, while preserving original outputs and costs.
-Procedural diversity, nominal geometry, and small-sample model evidence
-remain no substitutes for independent data review and broad evaluation.
-
+\clearpage
 {\small
 \bibliographystyle{ieeenat_fullname}
 \bibliography{references}

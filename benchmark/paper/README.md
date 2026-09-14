@@ -8,16 +8,27 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 
 ## Contents
 
-- `main.tex`: abstract, motivation, related work, data, ground truth, metrics,
-  auditable replay, v2 algorithmic audits and neural study, protocol diagnostics, limitations.
-- `main.pdf`: nine pages; references begin on page eight.
-- `supplement.tex`, `supplement.pdf`: three pages of historical pilots, implementation details and the renderer-aware baseline.
-- `references.bib`: verified core references; not an exhaustive related-work survey.
+- `main.tex`: three research questions, closest-work comparison, eight-task contract,
+  source coverage, information conditions, accepted-answer semantics, full-casebank
+  copy controls, measured model diagnostics, and explicit research limits.
+- `main.pdf`: eight main-content pages plus a separate reference page.
+- `supplement.tex`, `supplement.pdf`: nine pages of detailed task schemas, catalog
+  counts, policy gallery, historical experiments, implementation and future designs.
+- `REVIEW.zh-CN.md`: reviewer-oriented gap analysis and remaining evidence gates.
+- `references.bib`: brick generation, manual parsing, interactive assembly,
+  visual programs, diagnostic VQA, BLINK, selection bias, and baseline references.
 - `tables/*.tex`: tables generated from actual artifacts, not manually invented values.
-- `figures/*.png`: actual benchmark renders from the largest-case-per-policy audit.
+- `figures/`: five generated information figures (vector PDF and PNG), plus actual
+  benchmark renders from the largest-case-per-policy audit.
 - `evidence.json`: source paths/hashes for numerical evidence and upstream template.
 - `generate-tables.mjs`: table generation and evidence assertions.
 - `generate-study.mjs`, `study-evidence.json`: new study tables and source hashes.
+- `generate-audit.mjs`, `audit-evidence.json`: full-population census/copy tables.
+- `generate-figures.py`, `figure-evidence.json`: source-bound overview, distributions,
+  hidden-layout witness, score diagnostics, and paired-order plots.
+- `experiments.json`: seven prospective experiment tables, 254 null result cells.
+  No future result is treated as zero or filled from a pilot.
+- `verify-artifacts.mjs`: figure/source hashes, blank-table and PDF-check consistency.
 
 ## Compile
 
@@ -26,6 +37,26 @@ From the repository root, regenerate tables:
 ```bash
 node benchmark/paper/generate-tables.mjs
 node benchmark/paper/generate-study.mjs
+node benchmark/paper/generate-audit.mjs
+```
+
+Regenerate or independently rescore the new full-casebank audit:
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/paper-audit.ts
+node node_modules/tsx/dist/cli.mjs benchmark/suite/study/paper-audit.ts --verify
+```
+
+The second command is read-only and compares all 35,840 case records and the
+source inventory to the stored artifacts. Neither command calls model APIs.
+The predictor only copies public `current`; evaluation uses the frozen scorer.
+
+Figures and PDF checks use Python 3.11. Install the pinned dependencies in a
+virtual environment, then generate figures before compiling:
+
+```bash
+python -m pip install -r benchmark/paper/requirements.txt
+python benchmark/paper/generate-figures.py
 ```
 
 From `benchmark/paper/`, with a normal TeX Live installation:
@@ -53,8 +84,20 @@ python check_pdf.py
 python check_pdf.py --paper=supplement
 ```
 
-It checks US Letter dimensions, text bounds, unresolved references and overfull
-boxes, and renders pages into `.runtime/paper-inspection/` for visual inspection.
+It checks US Letter dimensions, text bounds, unresolved references, overfull
+boxes, five main figures, and an actual eight-page content bound (not merely
+where references start). It renders pages into `.runtime/paper-inspection/`.
+
+After PDF checks, from the repository root:
+
+```bash
+node benchmark/paper/verify-artifacts.mjs
+node benchmark/paper/package.mjs
+```
+
+The source ZIP includes generated figures/tables and compiles without the full
+benchmark checkout. Recomputing figures, audits, or provenance checks needs the
+full repository and its archived evidence; the ZIP is not a standalone dataset.
 
 ## Official Template Provenance
 
@@ -108,6 +151,13 @@ independent human validity check or new confirmation dataset.
 
 Independent human review, rich human-designed data, broader model baselines,
 and confirmatory experiments remain outstanding.
+The 2026-09-14 audit adds no API calls or new source objects. It measures 19/25
+catalog types in assembled sources and 35,840 copy-current controls across seven
+endpoints. Copying yields 87.1% part F1 on completion and 97.4% on removal, both
+with zero task success. Normal no-fault repair correctly succeeds unchanged.
+Per-case records are in `../suite/artifacts/study/paper-audit/`.
+All prospective result tables appear together in the supplement, with per-table
+input conditions, baselines, denominators, statistical endpoints and dependencies.
 Both local research plans remain excluded from publication. The public
 `../suite/artifacts/study/governance/SUMMARY.zh-CN.md` tracks evidence gates.
 

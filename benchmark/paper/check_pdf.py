@@ -24,11 +24,14 @@ pages = []
 out_of_bounds = []
 text = ""
 references_start = None
+main_content_last_page = None
 for index, page in enumerate(document):
     assert abs(page.rect.width - 612) < 1 and abs(page.rect.height - 792) < 1
     page_text = page.get_text()
     if references_start is None and re.search(r"(?m)^References$", page_text):
         references_start = index + 1
+        before_references = page_text.split("References", 1)[0].strip()
+        main_content_last_page = index + 1 if before_references else index
     assert len(page_text.strip()) > 100
     text += page_text
     for word in page.get_text("words"):
@@ -48,6 +51,8 @@ assert not out_of_bounds, out_of_bounds
 if args.paper == "main":
     assert "117,910" in text and "5,120" in text
     assert references_start is not None
+    assert main_content_last_page <= 8, f"Main content exceeds 8 pages: {main_content_last_page}"
+    assert len(set(re.findall(r"Figure (\d+)\.", text))) >= 5, "Missing information figures"
 assert not re.search(r"\[\?\]", text)
 contact = Image.new("RGB", (420*3, 570*((len(pages)+2)//3)), "#dddddd")
 for i, image in enumerate(pages):
@@ -59,7 +64,7 @@ result = {
     "textOutsidePage": out_of_bounds,
     "pdfSha256": hashlib.sha256((ROOT / (args.paper + ".pdf")).read_bytes()).hexdigest(),
     "referencesStartPage": references_start,
-    "mainContentPageUpperBound": references_start if references_start else len(document),
+    "mainContentPageUpperBound": main_content_last_page if main_content_last_page is not None else len(document),
     "scope": "Compile, page-boundary and textual checks; visual page inspection performed separately.",
 }
 (ROOT / ("pdf-verification.json" if args.paper == "main" else "supplement-verification.json")).write_text(json.dumps(result, indent=2) + "\n")

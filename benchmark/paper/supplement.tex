@@ -3,14 +3,232 @@
 \usepackage[T1]{fontenc}
 \usepackage[pagenumbers]{cvpr}
 \usepackage{microtype}
+\usepackage{tabularx}
+\usepackage{float}
 \usepackage{hyperref}
 \makeatletter
 \newcommand{\tableinput}[1]{\@@input #1 }
 \makeatother
+\newcommand{\unmeasured}{\phantom{00.0}}
 \title{BrickAtlas: Supplementary Evidence}
 \author{Development Manuscript\\Author metadata intentionally omitted}
 \begin{document}
 \maketitle
+
+\section{Benchmark Reference}
+This supplement separates three types of evidence: measured full-casebank
+audits, measured adaptive model studies, and explicitly unmeasured
+future experiments. The latter have blank result cells and must not be
+interpreted as zero accuracy. All new figures are generated from archived
+renders or machine-readable evidence, not illustrative model outputs.
+
+\subsection{Source Policies and Catalog}
+Figure~\ref{fig:policies} shows all eight construction procedures.
+Table~\ref{tab:policy} gives their measured means; height uses plate
+units, and multi-supported counts pieces with at least two distinct
+lower supporting parts. Each row contains 640 source objects.
+These differences are useful geometric controls but not eight independently
+collected semantic categories. The shared root plate makes retrieval
+and prior-shape controls especially important.
+
+\begin{figure*}[t]
+\centering
+\begin{tabular}{@{}cccc@{}}
+\includegraphics[width=.23\textwidth]{figures/tip-walk.png}&
+\includegraphics[width=.23\textwidth]{figures/low-fan.png}&
+\includegraphics[width=.23\textwidth]{figures/shallow-terrace.png}&
+\includegraphics[width=.23\textwidth]{figures/plate-network.png}\\
+\small Tip walk & \small Low fan & \small Shallow terrace & \small Plate network\\
+\includegraphics[width=.23\textwidth]{figures/column-field.png}&
+\includegraphics[width=.23\textwidth]{figures/alternating-beams.png}&
+\includegraphics[width=.23\textwidth]{figures/two-support-bridge.png}&
+\includegraphics[width=.23\textwidth]{figures/enclosed-shell.png}\\
+\small Column field & \small Alternating beams & \small Two-support bridge & \small Enclosed shell
+\end{tabular}
+\caption{Actual largest-case-per-policy render-audit examples.
+Bridge and shell are policy-held-out. Selection stresses rendering
+complexity rather than providing a random visual summary.}
+\label{fig:policies}
+\end{figure*}
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrrr}
+\toprule
+Policy & $N$ & Parts & Height & Multi-sup.\\
+\midrule
+\tableinput{tables/policy.tex}
+\bottomrule
+\end{tabular}
+\caption{Full-release geometric means. Multi-sup.\ counts multiply
+supported parts per object, not a physical-stability score.}
+\label{tab:policy}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{llrr}
+\toprule
+ID & Catalog type & Instances & Objects\\
+\midrule
+\tableinput{tables/catalog-coverage.tex}
+\bottomrule
+\end{tabular}
+\caption{Exact catalog coverage in the 5,120 source assemblies.
+Instances count placements; objects count sources containing a type.
+Zero-frequency types remain in the 25-type recognition catalog.}
+\label{tab:catalog}
+\end{table}
+
+\subsection{Construction and Expansion}
+For each policy, candidate seeds are deterministic. The pipeline is:
+\begin{enumerate}
+\item Generate a valid insertion sequence from the common root plate
+under the policy-specific attachment rule.
+\item Normalize horizontal origin; reject invalid sizes and exact
+colorless translation/yaw-equivalent duplicates, including old releases.
+\item Run the independent integer-cell geometry check. Accept until
+640 unique geometries are available per policy.
+\item Assign the source split from the geometry hash, except for the
+two entirely held-out policies.
+\item Derive task variants and reference conditions; attach the source
+group to every derivative; build the public input and evaluator record
+separately.
+\item Validate oracle success, empty-output failure, metric applicability,
+render recipes, and hashes before materializing compressed shards.
+\end{enumerate}
+The release contains 14 shards and 476,760 serialized rows across
+source, input, ground-truth, render, and case-index records. Those
+storage rows are not extra samples.
+
+\subsection{Input and Answer Schemas}
+The public exporter emits \texttt{caseId}, a fixed \texttt{system}
+prompt, the public \texttt{input} task, and relative \texttt{images}
+paths. The task contains a question, public structure/constraints where
+applicable, and a response schema. The full evaluator index is public
+for reproducibility; ordinary-input isolation is a benchmark protocol,
+not a security guarantee against consulting the answers.
+
+The following is a minimal \emph{schema example}, not a model result:
+\begin{verbatim}
+{"version":1,"parts":[
+ {"id":"p0","partId":"3005",
+  "color":"blue","x":0,"y":0,
+  "z":0,"turn":0}
+]}
+\end{verbatim}
+Recognition returns \texttt{partId}, \texttt{color}, \texttt{studs}.
+Relations return \texttt{connected}, \texttt{above},
+\texttt{contactStuds}, \texttt{shortestPath}.
+Plans return \texttt{order}, an array of all target IDs exactly once.
+Repair wraps a full program as \texttt{structure} and adds
+\texttt{faultIds}; no-fault answers use an empty array. Normal
+reconstruction, generation, completion, and editing return a structure.
+
+Relative nodes may instead specify an earlier \texttt{parent},
+an \texttt{offset} in global grid axes, and absolute \texttt{turn}.
+This encoding is reversible but does not assert a stud connection;
+it is not BrickNet's typed connector language.
+Square footprints admit all quarter-turns, while other rectangular
+footprints admit half-turn symmetry. Scoring ignores instance IDs for
+multiset recovery but does not globally align translations or rotations
+unless the task explicitly requests a transformation.
+
+\subsection{Render and Coordinate Contract}
+The released views are 640-by-480 PNGs. $X,Z$ are stud coordinates;
+$Y$ is bottom plate height. The front camera looks from positive
+$Z$, with image-right $+X$ and image-up $+Y$. The side camera looks
+from positive $X$, with image-right $-Z$ and image-up $+Y$.
+Top looks from positive $Y$ with a small positive-$Z$ offset,
+image-right $+X$ and image-down $+Z$. Cameras fit each structure;
+apparent pixel scale is not a fixed metric calibration.
+Layer views remove every part not starting at the selected bottom $Y$.
+They are additional observations, not ordinary views through an opaque object.
+
+\subsection{Full No-Operation Audit}
+\texttt{study/paper-audit.ts} first verifies frozen casebank source
+hashes and the compressed structure shard digest, computes a per-source
+inventory, and evaluates the copy predictor on 35,840 selected cases.
+The predictor receives only the public task and copies \texttt{current};
+repair adds an empty fault list. Prediction production does not inspect
+the evaluator target, changed IDs, or oracle. Its fixed output is then
+scored with the versioned strict evaluator.
+
+Seven endpoints each contain one case per source: ordinary suffix
+completion, three default symbolic edits, and ordinary no-fault/color/shift
+repair. Raw case-level scores, IDs, policies, and splits are retained
+in \texttt{copy-controls.jsonl.gz}; selection and artifact hashes are
+recorded in \texttt{audit.json}. Summary code rejects duplicate cases
+or repeated sources within an endpoint and records metric-specific
+denominators. These are descriptive census values on the public release,
+not sampling intervals or held-out model performance.
+
+\section{Additional Measured V2 Results}
+\begin{table}[t]
+\centering\small
+\begin{tabular}{llrrr}
+\toprule
+Direction & Split & Cases & Successes & \%\\
+\midrule
+\tableinput{tables/planning.tex}
+\bottomrule
+\end{tabular}
+\caption{Public-input greedy planning, original submitted order.
+Height sorting separately solves all 10,240 directional cases.
+Neither algorithm is a learned model.}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrr}
+\toprule
+Gemini control & Original & Control\\
+\midrule
+\tableinput{tables/study-controls.tex}
+\bottomrule
+\end{tabular}
+\caption{Eight-source paired controls. Relative is assembly
+representation; the remaining arms are reconstruction.
+The symbolic arm adds privileged geometry.}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrrr}
+\toprule
+Condition & Seed & Steps & Answer tokens & Success\\
+\midrule
+\tableinput{tables/study-training.tex}
+\bottomrule
+\end{tabular}
+\caption{All ten measured local v2 VLM jobs, 337 cases each.
+The nine trained runs match supervised answer tokens, not total
+image/input tokens, compute, or elapsed time.}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrrr}
+\toprule
+Condition & Mini & GPT-4.1 & Flash & Qwen\\
+\midrule
+\tableinput{tables/study-pose.tex}
+\bottomrule
+\end{tabular}
+\caption{Measured four-source adaptive probes. Candidate lists,
+local-pose outputs, and symbolic references are different protocols,
+not interchangeable scores.}
+\end{table}
+
+\subsection{Coordinate-Origin Revision}
+The original 24-call nested 2/4/8-piece ladder retained minimum $Z=1$
+for two prefixes despite inherited minimum-corner wording. One failed
+response matched up to translation. Original outputs and scores are
+preserved. A separate zero-anchored, re-rendered 24-call revision has
+RGB+BOM success 1/12 and symbolic success 11/12. Both ladders derive
+from one source, not six independent scenes. Origin, wording, image
+rendering, and re-sampling change together, so the difference cannot
+be assigned solely to origin normalization.
 
 \section{Earlier Neural Pilots}
 Two preceding releases provide neural pipeline evidence but not a v2
@@ -93,6 +311,17 @@ or connector annotation is publicly accessible. Permission, assets and
 redistribution rights are separate gates.
 
 \section{V2 Training And Verification}
+All 117,910 strict-decoder oracle answers pass, 5,120 malformed
+primitive-type examples are rejected, and scores on 118,640 existing
+baseline/API records agree with their historical values.
+Independent implementations agree on 138,240 structural metric
+comparisons, all 10,240 relation queries, and connector counts on
+5,120 structures. An additional 107,520 mutation/invariance checks
+cover missing, duplicate, unknown, and reversed plan actions, no-op
+edits, faulty localization, IDs, and yaw symmetry. Finite tests are
+not a proof over arbitrary malformed submissions, and shared catalog
+assumptions limit algorithmic independence.
+
 The local pilot uses SmolVLM-256M-Instruct revision \texttt{7e3e67ed},
 unquantized. Ninety-six training and 24 disjoint validation objects
 provide seven task families (672/168 examples) and actual PNG views.
@@ -202,4 +431,215 @@ add 228 calls and \$0.695073176; pose probes add 96 calls and
 The full campaign totals 1,609 settled calls and \$3.097410574 under
 the original \$4.50 cap. No ledger is reset between studies.
 Local training and inference consume compute but do not incur API charges.
+
+\clearpage
+\onecolumn
+\section{Prospective Experiments: No Results Yet}
+\label{sec:prospective}
+This section is a work plan. Every result cell below is deliberately
+blank, and its machine-readable value in \texttt{experiments.json} is
+null. Tables are generated with an assertion that no prospective cell
+contains a measured number. They are not an extension of the completed
+pilots, a preregistration, or evidence of dataset acquisition.
+Tasks and models need final revision hashes and source manifests before
+execution. A model name here indicates an intended comparison, not
+confirmation that a future provider will serve an identical checkpoint.
+
+\subsection{Independent Main Evaluation}
+Table~\ref{tab:future-main} gives the independent-confirmation layout.
+All methods must share source groups for paired comparison. Report
+ordinary RGB+BOM reconstruction/completion/repair separately from
+symbolic relations/editing/planning and constraint generation.
+Catalog recognition uses a separate type-cluster denominator.
+Each eventual score requires actual sources, failures, estimate, and
+95\% source-level interval. No pooled eight-task rank is prespecified.
+Sample size follows a predeclared precision target. For illustration,
+Hoeffding's bound with a union bound over four means of
+$D_g\in[-1,1]$ gives
+$n\geq\lceil2\log(8/\alpha)/\epsilon^2\rceil$ independent sources
+for simultaneous absolute error at most $\epsilon$ with probability
+at least $1-\alpha$. At $\alpha=.05,\epsilon=.10$, this is 1,016
+sources and 16,256 calls for four models with four arms each.
+This is a conservative planning bound, not an acquired dataset,
+a guaranteed future effect, or a universal required sample size.
+Stratified/variance-based designs require their own frozen assumptions.
+
+\begin{table}[H]
+\centering\small
+\input{tables/planned-confirmation.tex}
+\caption{\textbf{Unmeasured.} Independent eight-task confirmation.
+Blank cells are unrun results, not zero scores. $N$ is the actual source
+denominator, with recognition reported separately by catalog type.
+Each cell requires an estimate and source-level interval; task variants
+and input conditions must also be broken out in the result artifacts.}
+\label{tab:future-main}
+\end{table}
+
+\subsection{Information and Representation}
+Table~\ref{tab:future-ablation} is repeated per model on the same sources.
+Report the ordinary surface criterion for all arms, but full hidden
+reference success only with its information condition explicitly stated.
+Local pose narrows the requested output; candidates additionally
+restrict the answer space. They cannot isolate output length without
+that confound. For feedback versus reflection, reuse the same first
+response and charge the additional request once. Feedback remains
+target-blind; matching call counts alone does not match compute.
+
+\begin{table}[H]
+\centering\small
+\input{tables/planned-ablations.tex}
+\caption{\textbf{Unmeasured.} Paired information/representation ablations,
+separately per model. Cells need measured values and applicable
+denominators; blank is not zero.}
+\label{tab:future-ablation}
+\end{table}
+
+\subsection{Candidate Robustness and Debiasing}
+Table~\ref{tab:future-order} compares original, repeated, and permuted
+actual pose selections on independent sources. Correct label balance
+and request ordering must be frozen. Missing responses reduce paired
+coverage, not the denominator of service availability. Report
+complete-pair effects alongside worst-case bounds: with $N$ frozen
+sources, $n$ complete pairs, and observed effect sum $s$, the
+all-source effect lies in $[(s-(N-n))/N,(s+(N-n))/N]$.
+This is a missing-outcome bound, not a confidence interval.
+For uniform independent random $K$-way choice, accuracy is $1/K$;
+repeat and permutation mismatch expectations are both $1-1/K$,
+so expected excess mismatch is zero. These are analytic controls,
+not empirical model results.
+
+An option-debiasing baseline is motivated by existing selection-bias
+work and must be fitted on development data only. API conditions that
+do not expose token probabilities require a declared compatible
+alternative; one must not silently substitute a different method.
+Simulator-aware matching receives renderer access and should be
+reported with that additional resource.
+
+\begin{table}[H]
+\centering\small
+\input{tables/planned-robustness.tex}
+\caption{\textbf{Unmeasured.} Independent candidate robustness.
+Repeat and Permute are pose-mismatch rates relative to the original,
+not error rates against ground truth; $D$ is their paired difference.}
+\label{tab:future-order}
+\end{table}
+
+\subsection{Difficulty and Nuisance Factors}
+Table~\ref{tab:future-difficulty} must be instantiated per task/model.
+Cross piece count with policy, visibility, and graph complexity;
+do not call a marginal size trend causal. Nested prefixes stay in
+one source cluster. Render perturbations preserve geometry and receive
+new render/version hashes. Occlusion must be operationalized before
+selection (for example, visible cells or human-rated visibility), not
+assigned after observing model errors. Domain-specific local metrics
+include added-part F1, faulty-ID F1, or per-axis pose accuracy.
+
+\begin{table}[H]
+\centering\small
+\input{tables/planned-difficulty.tex}
+\caption{\textbf{Unmeasured.} Difficulty and camera/palette controls.
+Missing policy-size strata remain missing; they are not generated
+after seeing a desirable model ranking.}
+\label{tab:future-difficulty}
+\end{table}
+
+\subsection{External Sources and Specialized Methods}
+Table~\ref{tab:future-external} is contingent on actual licensed assets.
+Record source revision, file hashes, family IDs, permitted uses,
+unsupported part rejection, coordinate and connector mapping, and
+redistribution scope. A code license or a public paper does not grant
+rights to a separate structure collection. Do not flatten unsupported
+parts into cuboids and claim full-domain coverage.
+
+MEPNet requires stepwise manual and component inputs, BrickGPT a
+compatible text-generation target, and BrickNet connector programs.
+Scores are meaningful only after task and input adaptation is audited.
+Native metrics and BrickAtlas metrics must be separately named.
+Unsupported cells should eventually be marked not applicable, not
+zero. No published score from another dataset may populate this table.
+
+\begin{table}[H]
+\centering\small
+\input{tables/planned-external.tex}
+\caption{\textbf{Unmeasured.} External-domain and specialized methods.
+Import rej.\ is the rejected-source proportion with explicit reasons.
+No external structure collection or adapter run is claimed complete.}
+\label{tab:future-external}
+\end{table}
+
+\subsection{Human Metric Calibration}
+Table~\ref{tab:future-human} requires at least two real independent,
+blinded reviewers and documented third-person adjudication when needed.
+Reviewers inspect public observations, candidate output, and the
+reference without automatic scores. An alternative answer may be
+correct despite differing from the reference. Preserve uncertain
+judgments and all original disagreements.
+
+False acceptance uses human-rejected outputs as denominator; false
+rejection uses human-accepted outputs. Report both counts, source-cluster
+intervals, agreement before adjudication, unresolved coverage, and
+task strata. Missing denominators remain unestimable, not zero.
+Software verifies packet/version hashes, not real reviewer identity or
+independence. Current review packets cover 96 candidates from 48 cases
+and eight sources, with zero submitted labels; extending the packet
+is not equivalent to conducting the review.
+
+\begin{table}[H]
+\centering\small
+\input{tables/planned-human.tex}
+\caption{\textbf{Unmeasured.} Human calibration categories.
+Outputs and independent sources are different denominators.
+No simulated or model-authored labels count as human evidence.}
+\label{tab:future-human}
+\end{table}
+
+\subsection{Effective Training and Replication}
+Table~\ref{tab:future-transfer} describes a new study, not missing
+measurements from the ten completed jobs. First establish that the
+chosen checkpoint can use the interface and achieve nontrivial task
+performance. Freeze source-disjoint training/validation/test sets,
+model revision, supervised answer tokens, optimizer steps, and seeds.
+Also report image/input tokens, memory, and elapsed compute.
+Leave-task-out transfer needs an actual held-out-task improvement;
+lower validation loss alone is insufficient.
+
+Independent reproduction uses a second executor and separately installed
+dependencies. Record commit, OS/architecture, versions, commands, exit
+codes, output hashes, and discrepancies. Separate offline rescoring,
+re-rendering, retraining, and new API replication: none certifies the
+others. Existing cumulative paid-call budgets remain in force.
+
+\begin{table}[H]
+\centering\small
+\input{tables/planned-transfer.tex}
+\caption{\textbf{Unmeasured.} Effective training and independent
+replication. Held-task gain must identify its reference condition
+and paired source population.}
+\label{tab:future-transfer}
+\end{table}
+
+\section{Artifact and Figure Reproduction}
+From the repository root, run the following with Node 22 and the
+documented Python figure dependencies:
+\begin{verbatim}
+node node_modules/tsx/dist/cli.mjs \
+  benchmark/suite/study/paper-audit.ts
+node benchmark/paper/generate-tables.mjs
+node benchmark/paper/generate-study.mjs
+node benchmark/paper/generate-audit.mjs
+python benchmark/paper/generate-figures.py
+\end{verbatim}
+Then compile both TeX documents using the instructions in
+\texttt{paper/README.md}. \texttt{audit-evidence.json} binds new tables
+to the census and prospective plan; \texttt{figure-evidence.json}
+binds plots to source files and output PDFs. The copy-control
+case-level file supports split/policy rescoring. The figure generator
+uses real archived PNGs, vector plots of observed data, and an explicitly
+disclosed cross-section of a verified witness.
+
+The new audit does not modify frozen dataset generation, task labels,
+old responses, or legacy scorer behavior. It adds measurement coverage,
+not additional independent sources. Successful compilation, hash
+checks, and source-bound figures are technical release checks; they
+do not clear the independent scientific-validation gates.
 \end{document}
