@@ -49,11 +49,11 @@ for index, page in enumerate(document):
     pages.append(frame)
 assert not out_of_bounds, out_of_bounds
 if args.paper == "main":
-    assert "Mechanism-1" in text and "542" in text and "48" in text
+    assert "Hierarchy-2" in text and "1,400" in text and "5,070" in text
     assert "OMR/LDraw" in text and "not benchmark cases" in text
     assert references_start is not None
     assert main_content_last_page <= 8, f"Main content exceeds 8 pages: {main_content_last_page}"
-    assert len(set(re.findall(r"Figure (\d+)\.", text))) >= 2, "Missing mechanism overview/task figures"
+    assert len(set(re.findall(r"Figure (\d+)\.", text))) >= 2, "Missing hierarchy matrix/pilot figures"
 assert not re.search(r"\[\?\]", text)
 contact = Image.new("RGB", (420*3, 570*((len(pages)+2)//3)), "#dddddd")
 for i, image in enumerate(pages):

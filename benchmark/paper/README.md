@@ -1,5 +1,15 @@
 # BrickAtlas English Manuscript
 
+Current manuscript: **Hierarchy-2**, 40 layouts and 1,400 crossed questions,
+six main PDF pages (five content plus references) and a 43-page supplement
+indexing all objects and task instances. Reproduce with
+[`../hierarchy-v2/README.md`](../hierarchy-v2/README.md).
+The original application's `/benchmark` routes render all objects and replay
+submitted programs. `hierarchy2-evidence.json` binds current paper counts;
+`verify-hierarchy2.mjs` verifies dataset, pilot, UI evidence and website copies.
+The remaining historical generators listed below are retained for earlier
+versions and are not additional Hierarchy-2 experiments.
+
 `main.tex` is an English current-state research manuscript, not a submitted or
 accepted paper. It uses the official CVPR 2026 author kit in **pagenumbers**
 technical-report mode. Author/institution metadata is intentionally omitted.

@@ -32,6 +32,10 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
 
 ## Features
 
+- Explore the [Hierarchy-2 benchmark](benchmark/hierarchy-v2/README.md): 40 original
+  layouts, 1,400 crossed questions, and interactive 3D action replay in the
+  original website at `/benchmark`. [Paper](benchmark/paper/main.pdf) and
+  [complete appendix](benchmark/paper/supplement.pdf) are synchronized with the release.
 - Browse 15 traceable models with high-resolution, physically based 3D rendering.
 - Rotate, zoom, pan, switch views, auto-rotate, and inspect exploded assemblies.
 - Select any brick to view its part number, color, dimensions, subassembly, and 3D shape.

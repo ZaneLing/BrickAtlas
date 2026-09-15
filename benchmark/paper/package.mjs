@@ -18,6 +18,7 @@ execFileSync('zip', ['-q', '-r', temporary, 'main.tex', 'main.zh-CN.md', 'supple
   'frontier-manual.tex', 'frontier-evidence.json', 'verify-frontier.mjs',
   'diagnostic-manual.tex', 'verify-diagnostic.mjs', 'constructibility-manual.tex',
   'constructibility-evidence.json', 'generate-constructibility.mjs',
-  'mechanism-manual.tex', 'mechanism-evidence.json', 'generate-mechanism.mjs'], { cwd: here });
+  'mechanism-manual.tex', 'mechanism-evidence.json', 'generate-mechanism.mjs',
+  'hierarchy2-cases.tex', 'hierarchy2-evidence.json', 'verify-hierarchy2.mjs'], { cwd: here });
 renameSync(temporary, output);
 console.log(output);

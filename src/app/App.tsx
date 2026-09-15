@@ -27,6 +27,8 @@ const ComposeStudio = lazy(() => import('../composer/ComposeStudio').then(module
 const DiyStudio = lazy(() => import('../diy/DiyStudio').then(module => ({ default: module.DiyStudio })));
 const AssemblyGame = lazy(() => import('../assembly/AssemblyGame').then(module => ({ default: module.AssemblyGame })));
 const AssemblyGameHub = lazy(() => import('../assembly/AssemblyGame').then(module => ({ default: module.AssemblyGameHub })));
+const BenchmarkPage = lazy(() => import('../benchmark/BenchmarkPage').then(module => ({ default: module.BenchmarkPage })));
+const BenchmarkLibrary = lazy(() => import('../benchmark/BenchmarkPage').then(module => ({ default: module.BenchmarkLibrary })));
 
 declare global { interface Window { __atlas?: () => ReturnType<AtlasScene['snapshot']> } }
 const viewNames = (tr: Translator) => ({
@@ -701,11 +703,12 @@ function CatalogPage({ locale, tr, toggleLocale }: { locale: Locale; tr: Transla
     <FloatingBrickBackdrop />
     <header className="topbar landing-nav">
       <a href={import.meta.env.BASE_URL} className="brand"><span className="brand-mark"><BrickAtlasMark /></span><strong>BRICK<span>ATLAS</span></strong></a>
-      <nav className="landing-links"><a href="#models">{tr('模型库', 'Models')}</a><a href={`${import.meta.env.BASE_URL}assemble`}>{tr('线上拼装', 'Assembly game')}</a><a href={`${import.meta.env.BASE_URL}diy`}>{tr('自由 DIY', 'Free DIY')}</a><a href={`${import.meta.env.BASE_URL}compose`}>{tr('组建', 'Compose')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
+      <nav className="landing-links"><a href="#models">{tr('模型库', 'Models')}</a><a href={`${import.meta.env.BASE_URL}benchmark`}>{tr('分层基准', 'Benchmark')}</a><a href={`${import.meta.env.BASE_URL}assemble`}>{tr('线上拼装', 'Assembly game')}</a><a href={`${import.meta.env.BASE_URL}diy`}>{tr('自由 DIY', 'Free DIY')}</a><a href={`${import.meta.env.BASE_URL}compose`}>{tr('组建', 'Compose')}</a><a href={`${import.meta.env.BASE_URL}create`}>{tr('图片创作', 'Create')}</a></nav>
       <LanguageButton locale={locale} onToggle={toggleLocale} tr={tr} />
     </header>
     <main>
       <LandingShowcase locale={locale} tr={tr} />
+      <BenchmarkLibrary compact />
       <section className="play-lobby">
         <div className="play-lobby-heading"><div><span className="eyebrow">{tr('积木空间', 'BRICK SPACES')}</span><h1>Brick Atlas</h1></div><span>{completedModels.size} / {modelCatalog.length} {tr('已完成', 'completed')}</span></div>
         <nav className="play-spaces" aria-label={tr('选择积木空间', 'Choose a brick space')}>
@@ -801,6 +804,8 @@ function AppRoutes() {
   const { locale, tr, toggleLocale } = useLocale();
   useEffect(() => { document.title = tr('Brick Atlas｜积木世界', 'Brick Atlas | Build the world'); }, [tr]);
   const relative = location.pathname.slice(import.meta.env.BASE_URL.replace(/\/$/, '').length) || '/';
+  const benchMatch = /^\/benchmark(?:\/([^/]+))?\/?$/.exec(relative);
+  if (benchMatch) return <BenchmarkPage modelId={benchMatch[1]} />;
   if (relative === '/' || relative === '') return <CatalogPage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   if (relative === '/create' || relative === '/create/') return <CreatorPage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
   if (relative === '/compose' || relative === '/compose/') return <ComposePage locale={locale} tr={tr} toggleLocale={toggleLocale} />;
