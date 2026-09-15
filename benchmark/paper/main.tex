@@ -22,15 +22,13 @@ Constructible and Recoverable Processes}
 \renewcommand\twocolumn[1][]{#1}
 \maketitle
 \centering
-\includegraphics[width=.84\textwidth]{figures/frontier-models.pdf}
-\captionof{figure}{\textbf{All six new Frontier structures.}
-Original 158--408-part models add deep courtyards, service galleries,
-hollow towers and stacked floors. Eight contracts per object connect
-maintenance, access certificates, resource constraints and uncertainty.
-Diagnostic-2 uses these sources for matched-context maintenance,
-layer-reference perception and geometric inspection. Constructibility-1
-adds prefix, tool-clearance, recovery, stockout and clarification contracts.
-New learned-model results remain unmeasured.}
+\includegraphics[width=.96\textwidth]{figures/omr-whole-models.pdf}
+\captionof{figure}{\textbf{Eight of 15 primary OMR/LDraw objects.}
+The licensed whole-model registry spans 36--4,281 placed instances,
+624 part numbers and 42 colors. Thirty-nine source-named semantic
+subassemblies provide coherent components such as train cars, aircraft,
+bridge towers, decks, roofs and cables. Random-growth structures are
+retained only for historical mechanism regression.}
 \label{fig:teaser}
 }]
 
@@ -39,9 +37,11 @@ A valid final brick structure does not certify a constructible process:
 an intermediate state may be unsupported, a placement may leave no tool
 clearance, a local error may require rollback, or missing evidence may
 require clarification rather than a guess. BrickAtlas separates these
-failures with explicit information and action contracts. Its historical
-audit contains 5,120 procedural sources and 117,910 conditions; six
-original 158--408-part objects support deeper development protocols.
+failures with explicit information and action contracts. Its primary
+object registry contains 15 licensed OMR/LDraw whole models and 39
+source-named semantic subassemblies, totaling 9,935 placements across
+13 set families. Six original 158--408-part objects support controlled
+process protocols.
 The new Constructibility-1 release provides 78 sequence-audit, blocked-recovery,
 stockout-replanning, and calibrated-clarification conditions. A body-only
 insertion rule misses all six designed clearance dead ends. Public-information
@@ -91,14 +91,13 @@ Diagnostic-2 separately tests diagnosis--access--repair coherence.
 Historical studies examine global versus changed-region similarity,
 hidden-relation identifiability, and candidate-order sensitivity.
 
-The release contributes (1) a process-aware constructibility contract
-joining prefix validity, explicit tool clearance, minimum recovery,
-finite-stock replanning and calibrated inspection; (2) a source-grouped
-visual/structural evaluation with exhaustive finite-world answer sets;
-and (3) full-population shortcut audits, paired controls, raw-output
-replay and an eight-model descriptive development matrix. We separate
-implemented capability, measured development evidence, and unrun
-experiments throughout.
+The release contributes (1) a licensed whole-model and semantic-subassembly
+registry instead of random-growth publication examples; (2) a process-aware
+constructibility contract joining prefix validity, tool clearance, minimum
+recovery, finite-stock replanning and calibrated inspection; and (3)
+source-grouped shortcut audits, paired controls and raw-output replay.
+We separate primary objects, controlled mechanism probes, historical
+diagnostics and unrun experiments throughout.
 
 \section{Related Work and Position}
 \paragraph{Generation and assembly.}
@@ -166,43 +165,42 @@ model mechanisms from external API replies.
 
 \section{Benchmark Construction and Tasks}
 \subsection{Geometry, Sources, and Splits}
-A part is $(i,t,c,x,y,z,r)$: instance ID, type, color, minimum body
-corner, and quarter-turn yaw. \textbf{$Y$ is vertical}; $X,Z$ use
-8\,mm studs and $Y$ uses 3.2\,mm plate heights. Origins are integer
-coordinates in $[0,24]^3$, bodies must fit in $[0,32]^3$, and submissions
-contain at most 64 parts. Odd yaw swaps width and depth. Geometry is
-nominally valid if bodies do not overlap and every elevated part has
-at least one directly supporting stud. Force balance, clutch, arbitrary
-CAD geometry, and robotic grasping are outside this contract.
+The primary source layer contains 15 complete OMR/LDraw files already
+used by the BrickAtlas application. They preserve source hierarchy,
+part identities, colors, arbitrary LDraw transforms, author, license,
+URL and source hash. Complete models contain 36--4,281 instances.
+We select 39 source-named semantic descendant closures and exclude
+random crops, step fragments, minifig-only cases, lamps and cones.
+All cases from a model retain one source group; alternate builds from
+the same set retain one set family.
 
-Eight seeded policies accept 640 unique sources each, all starting
-from a 4-by-8 plate. Canonicalization removes color and translation
-and considers four yaw rotations, but not mirrors; within-release
-and earlier-release exact duplicates are rejected.
-
-Six policies use a deterministic geometry-hash split, while bridge
-and shell are policy-held-out (Table~\ref{tab:splits}).
-All task variants and prefixes retain the source group.
-This is a procedural-policy holdout, not absence of shared primitives
-or a semantic generalization guarantee. An exhaustive 8,305,836-pair
-cross-split audit finds no canonical-token Jaccard similarity at least
-0.8; it does not test best-aligned subassemblies or pretraining contamination.
+Controlled process tasks use a separate nominal grid. There a part is
+$(i,t,c,x,y,z,r)$: instance ID, type, color, integer minimum corner and
+quarter-turn yaw. Geometry requires no overlap and at least one directly
+supporting stud for elevated parts. Force balance, clutch, arbitrary
+CAD contact and robotic grasping remain outside that contract.
 
 \begin{table}[t]
 \centering\small
 \begin{tabular}{lrr}
-\toprule Split & Sources & Task conditions\\ \midrule
-\tableinput{tables/splits.tex}
-\midrule Total & 5,120 & 117,910\\ \bottomrule
+\toprule Layer & Groups & Records\\ \midrule
+OMR whole/semantic & 15 & 54\\
+Frontier process & 6 & 264\\
+Finite ambiguity & 9 & 600\\
+Procedural v2 (retired) & 5,120 & 117,910\\
+\bottomrule
 \end{tabular}
-\caption{Source-group split. ID cases additionally include 150
-isolated recognition questions, not 150 new assembly objects.}
-\label{tab:splits}
+\caption{Dataset layers are not pooled. OMR has 13 set families;
+Frontier's 264 records combine 48 Frontier-1, 138 Diagnostic-2 and
+78 Constructibility-1 conditions on the same six sources.}
+\label{tab:sources}
 \end{table}
 
-Historical sources contain 9--47 parts and 19 assembled types from the
-25-type catalog. Policy and size are confounded; the supplement gives
-the full census. More views do not create independent objects.
+The earlier 5,120 random-growth structures and their 117,910 derived
+conditions are excluded from current object scale and publication-facing
+galleries. They remain only to reproduce historical model runs, scorer
+regressions and shortcut censuses. More views, tasks and subassemblies
+never create additional independent objects.
 
 \paragraph{Curated and challenge layers.}
 The twelve 8--28-part curated objects and six 49--63-part Challenge-2
@@ -440,19 +438,20 @@ Frozen selection manifests reject unknown/duplicate predictions;
 missing/malformed submissions remain in applicable denominators.
 Null means inapplicable, not a removed failure. A versioned strict
 decoder closes legacy primitive-type coercion without altering recorded
-scores. All 117,910 oracle answers pass; independent metrics and
-mutation checks are detailed in the supplement. Replay labels model,
+scores. All 117,910 retired-regression oracle answers pass; independent
+metrics and mutation checks are detailed in the supplement. Replay labels model,
 harness, environment, and evaluator operations separately. Visual
 unfolding of an unordered structure is never called a model plan.
 
 \section{Models, Baselines, and Experiments}
-\subsection{Eight-Model Development Matrix}
-We evaluate the same 39 default/ordinary task cases from three
-already-exposed development objects (12/20/29 parts) with eight
+\subsection{Historical Eight-Model Diagnostic}
+For reproducibility only, we retain the same 39 task cases from three
+retired procedural objects (12/20/29 parts) with eight
 models~\cite{openai2025gpt41,googlemodels,qwen3vl,anthropic2025haiku,meta2025llama4}.
 Four models retain their original verified responses; four
 new models receive identical prompts, image bytes, and the 2,200-token
-JSON output cap. Temperature is zero, model order rotates by case,
+JSON output cap. These scores are not results on the primary OMR registry.
+Temperature is zero, model order rotates by case,
 automatic retries and provider fallback are disabled, and provider,
 tokens, truncation, latency, and settled OpenRouter charges~\cite{openrouterapi} are retained.
 Gemini reasoning is disabled; other models have no requested reasoning

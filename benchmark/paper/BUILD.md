@@ -16,27 +16,32 @@
 - All-page contact sheet and detailed formula/result pages inspected visually:
   two-column text, actual rendered structures, tables and equations remain legible
   and do not overlap.
-- The first-page teaser shows all six new Frontier models. The task/ground-truth
-  and execution figures retain explicitly authored curated models.
+- The first-page teaser and supplementary Figure 5 show complete licensed
+  OMR/LDraw objects rather than random-growth structures. The primary registry
+  contains 15 whole models, 39 semantic subassemblies, 9,935 placements,
+  624 part numbers and 42 colors across 13 set families.
+  The task/ground-truth and execution figures retain explicitly authored curated models.
   The review directory contains 264 generated per-case files plus contact sheets.
 - The hidden-layout plate remains a separate 60-layout finite-grammar audit.
 - Challenge layer: six connected 49--63-part structures, 329 placed instances,
   and twelve advanced task contracts. Oracle and near-miss tests pass; measured
   model results remain zero because the new evaluation has not been run.
-- New full-casebank audit: 35,840 copy controls on 5,120 sources reproduced
-  exactly with `paper-audit.ts --verify`; assembled catalog coverage is 19/25.
+- Historical full-casebank audit: 35,840 copy controls on 5,120 retired
+  procedural sources reproduce exactly with `paper-audit.ts --verify`.
+  These sources are no longer counted as current benchmark objects.
 - Eight-model matrix: 312 responses on the same three sources; four new models
   add 156 settled calls at $0.523093880. Cumulative spend is $3.620504454.
 - Ambiguity extension: 600 paired conditions, nine finite-grammar families,
   60 admissible layouts, and 240 renderer checks with pixel-identical exteriors.
 - Runtime-free, key-free copied-environment replay passes 23 commands, including
   the expanded model receipts and ambiguity ground-truth verifier.
-- Benchmark regression: 186 tests pass; TypeScript check passes.
+- Benchmark regression: 191 tests pass; TypeScript check passes.
 - Challenge revision 2 has new IDs, complete candidate poses, strict field types,
   yaw-equivalent pose scoring, layer disclosures, and a query-return episode API.
   Revision 1 artifacts are retained and deprecated, not overwritten.
-- Review gallery: all 5,120 frozen sources, 10,240 real task links, 18 authored
-  models with 36 scored positive/negative control pairs. No new model inferences.
+- Historical review gallery: all 5,120 frozen procedural sources and 10,240
+  task links remain reproducible; 18 authored calibration models retain
+  36 scored positive/negative control pairs. No new model inferences.
 - Frontier: six 158--408-part objects, 1,509 placed parts, 48 tasks, 205 rendered
   frames, 48 scored positive/negative controls, 48 public-input solver successes.
   Two implementations check nominal support and collisions; learned-model calls

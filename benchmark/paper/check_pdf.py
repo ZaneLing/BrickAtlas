@@ -49,7 +49,8 @@ for index, page in enumerate(document):
     pages.append(frame)
 assert not out_of_bounds, out_of_bounds
 if args.paper == "main":
-    assert "117,910" in text and "5,120" in text
+    assert "9,935" in text and "OMR/LDraw" in text
+    assert "117,910" in text and "retired" in text
     assert references_start is not None
     assert main_content_last_page <= 8, f"Main content exceeds 8 pages: {main_content_last_page}"
     assert len(set(re.findall(r"Figure (\d+)\.", text))) >= 5, "Missing information figures"

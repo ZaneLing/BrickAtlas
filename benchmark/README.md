@@ -1,5 +1,10 @@
 # Brick Atlas 模型测试场
 
+当前对象口径：[题目类别、数据规模与全部 Case 清单](BENCHMARK_INVENTORY.zh-CN.md) ·
+[OMR/LDraw 完整模型注册表](omr-cases-v1/README.md)。正式对象源为网页已有的
+15 个许可模型及 39 个源命名语义子装配；5,120 个随机程序结构已退役为历史回归，
+不再计入当前 benchmark 对象规模或论文主图。
+
 最新过程评测：[Constructibility-1 计划与实施报告](CONSTRUCTIBILITY_UPGRADE.zh-CN.md) ·
 [78 条过程可搭性条件](constructibility-v1/README.md)。该版本把前缀支撑、
 工具净空、最小恢复、施工中缺货和校准式主动检查连成一个可执行协议；
@@ -13,17 +18,17 @@
 [六个大结构与48题图集](frontier-cases/index.html)。
 旧117,910题保留作历史审计，不计入新层规模。
 
-上一轮：[九维度审稿与修订报告](REVIEW_REPORT.zh-CN.md) ·
+历史：[九维度审稿与修订报告](REVIEW_REPORT.zh-CN.md) ·
 [18 个模型逐例报告](review-gallery/REPORT.zh-CN.md) ·
-[全部 5,120 个程序模型](review-gallery/procedural-001.html)。
+[退役程序回归集](review-gallery/procedural-001.html)。
 Challenge v1 保留作历史记录，新输入与评分使用 `challenge-cases-v2/`。
 
-## 多任务套件（新）
+## 历史多任务套件
 
-覆盖八类能力的新套件位于 [suite/](suite/README.md)，入口默认 http://127.0.0.1:5175。
+旧八类程序化套件位于 [suite/](suite/README.md)，入口默认 http://127.0.0.1:5175。
 启动命令 `npm run suite:start`，数据准备 `npm run suite:prepare`。
 先读 [Case、Ground Truth 与模型测试中文说明](CASE_GUIDE.zh-CN.md)，其中区分
-5,120 个源结构、117,910 个任务条件、curated 案例和交互式操作回放。
+已退役的5,120个程序结构、117,910个任务条件、curated案例和交互式操作回放。
 难度升级、相关工作对比和 49--63 件 challenge 层见
 [Challenge Casebank 中文报告](CHALLENGE_REPORT.zh-CN.md)。
 查看 [详细计划](PLAN-multitask.md)、[数据卡](suite/DATASET_CARD.md)、[指标](suite/METRICS.md) 和 [多任务实测报告](suite/REPORT.md)。
