@@ -1,0 +1,3724 @@
+{
+  "id": "2026-09-15T12-28-48-667Z-hierarchy",
+  "version": "brickatlas-hierarchy-1",
+  "status": "complete",
+  "error": null,
+  "models": [
+    "openai/gpt-4.1-mini"
+  ],
+  "cases": [
+    "h1-signal-switch-stand-atomic-anchor",
+    "h1-maintenance-trolley-meta",
+    "h1-hinged-safety-hatch-procedural",
+    "h1-valve-control-stand-integrative",
+    "h1-warehouse-sorter-atomic-coverage",
+    "h1-canal-inspection-skiff-meta",
+    "h1-solar-tracker-array-procedural",
+    "h1-warehouse-sorter-integrative",
+    "h1-harbor-container-crane-atomic-anchor",
+    "h1-adaptive-radio-observatory-meta",
+    "h1-wildfire-tiltrotor-procedural",
+    "h1-polar-research-station-integrative",
+    "h1-flood-response-lock-atomic-coverage",
+    "h1-orbital-docking-yard-meta",
+    "h1-flood-response-lock-procedural",
+    "h1-automated-cargo-terminal-integrative"
+  ],
+  "settings": {
+    "temperature": 0,
+    "maxTokens": 2200,
+    "retries": 0,
+    "sample": "one fixed task per difficulty × task-layer cell",
+    "requests": 16,
+    "maximumNewSpend": 0.12,
+    "protocolSha256": "10e0974504dae2a786986f58f2d75759daa088576086d2fdcc85ffad2a2b4b7b",
+    "publicSha256": "895aad9e2942432458628cd6adab449b7a22baf7d991c3333adf21c5cc9603d3",
+    "renderAuditSha256": "516af8d52770a469954b18f577aef9567647d55227e10824f74f6d058fa1828b"
+  },
+  "pricing": [
+    {
+      "id": "openai/gpt-4.1-mini",
+      "pricing": {
+        "prompt": "0.0000004",
+        "completion": "0.0000016",
+        "web_search": "0.01",
+        "input_cache_read": "0.0000001"
+      },
+      "maxPromptPerMillion": 0.5,
+      "maxCompletionPerMillion": 2
+    },
+    {
+      "id": "google/gemini-2.5-flash",
+      "pricing": {
+        "prompt": "0.0000003",
+        "completion": "0.0000025",
+        "image": "0.0000003",
+        "audio": "0.000001",
+        "input_audio_cache": "0.0000001",
+        "web_search": "0.014",
+        "internal_reasoning": "0.0000025",
+        "input_cache_read": "0.00000003",
+        "input_cache_write": "0.0000000833333333333333"
+      },
+      "maxPromptPerMillion": 0.4,
+      "maxCompletionPerMillion": 3
+    }
+  ],
+  "campaignBefore": 3.7729783539999886,
+  "campaignAfter": 3.779531553999989,
+  "results": [
+    {
+      "taskId": "h1-signal-switch-stand-atomic-anchor",
+      "sourceGroup": "signal-switch-stand",
+      "difficulty": "D1",
+      "layer": "atomic",
+      "format": "single-choice",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-signal-switch-stand-atomic-anchor",
+        "difficulty": "D1",
+        "layer": "atomic",
+        "format": "single-choice",
+        "capability": [
+          "part and module recognition",
+          "visual grounding"
+        ],
+        "question": "Which named module is highlighted?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Inspection lamp"
+          },
+          {
+            "id": "B",
+            "label": "Weighted signal base"
+          },
+          {
+            "id": "C",
+            "label": "Signal mast"
+          },
+          {
+            "id": "D",
+            "label": "Pivoting signal arm"
+          }
+        ],
+        "input": {
+          "model": {
+            "id": "signal-switch-stand",
+            "name": "Signal Switch Stand",
+            "difficulty": "D1",
+            "family": "single-interface actuator",
+            "description": "A weighted mast with one pivoting signal arm and removable inspection lamp.",
+            "complexity": {
+              "visibleParts": 22,
+              "modules": 4,
+              "joints": 3,
+              "movingJoints": 1,
+              "dependencyDepth": 3,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 1,
+              "operationHorizon": 4,
+              "complexityIndex": 116
+            },
+            "modules": [
+              {
+                "id": "base",
+                "name": "Weighted signal base",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 9
+              },
+              {
+                "id": "post",
+                "name": "Signal mast",
+                "role": "support",
+                "anchored": false,
+                "visibleParts": 6
+              },
+              {
+                "id": "signal-arm",
+                "name": "Pivoting signal arm",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 5
+              },
+              {
+                "id": "lamp",
+                "name": "Inspection lamp",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 2
+              }
+            ],
+            "joints": [
+              {
+                "id": "post-foot",
+                "type": "fixed",
+                "parent": "base",
+                "child": "post",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "arm-pivot",
+                "type": "revolute",
+                "parent": "post",
+                "child": "signal-arm",
+                "axis": [
+                  0,
+                  0,
+                  1
+                ],
+                "limits": [
+                  -0.8,
+                  0.8
+                ]
+              },
+              {
+                "id": "lamp-lock",
+                "type": "fixed",
+                "parent": "signal-arm",
+                "child": "lamp",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          "highlightedInterface": "service-module",
+          "instruction": "Use only the rendered highlight and the supplied structured evidence."
+        },
+        "responseSchema": {
+          "choiceId": "A | B | C | D"
+        }
+      },
+      "image": "images/tasks/signal-switch-stand-atomic-anchor.png",
+      "answer": {
+        "choiceId": "A"
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "choice": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475329-PakPzmm8wgO3rJJQCw8X",
+        "provider": "Azure",
+        "content": "{\"choiceId\":\"A\"}",
+        "cost": 0.0002064,
+        "promptTokens": 1736,
+        "completionTokens": 7,
+        "reasoningTokens": 0,
+        "latencyMs": 2170,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-maintenance-trolley-meta",
+      "sourceGroup": "maintenance-trolley",
+      "difficulty": "D1",
+      "layer": "metacognitive",
+      "format": "multiple-choice",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-maintenance-trolley-meta",
+        "difficulty": "D1",
+        "layer": "metacognitive",
+        "format": "multiple-choice",
+        "capability": [
+          "assembly accessibility",
+          "continuous collision reasoning",
+          "set-valued decisions"
+        ],
+        "question": "Select every service path whose minimum swept-volume clearance is strictly positive.",
+        "options": [
+          {
+            "id": "A",
+            "label": "Blocked approach through the structural core"
+          },
+          {
+            "id": "B",
+            "label": "Vertical service approach"
+          },
+          {
+            "id": "C",
+            "label": "Alternative service path 4"
+          },
+          {
+            "id": "D",
+            "label": "Direct front service approach"
+          }
+        ],
+        "input": {
+          "model": {
+            "id": "maintenance-trolley",
+            "name": "Maintenance Trolley",
+            "difficulty": "D1",
+            "family": "small mobile assembly",
+            "description": "A compact four-wheel trolley with a removable tray and folding handle.",
+            "complexity": {
+              "visibleParts": 21,
+              "modules": 5,
+              "joints": 4,
+              "movingJoints": 3,
+              "dependencyDepth": 1,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 1,
+              "operationHorizon": 4,
+              "complexityIndex": 136
+            },
+            "modules": [
+              {
+                "id": "chassis",
+                "name": "Maintenance trolley chassis",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 9
+              },
+              {
+                "id": "front-axle",
+                "name": "Front wheel axle",
+                "role": "wheel-pair",
+                "anchored": false,
+                "visibleParts": 3
+              },
+              {
+                "id": "rear-axle",
+                "name": "Rear wheel axle",
+                "role": "wheel-pair",
+                "anchored": false,
+                "visibleParts": 3
+              },
+              {
+                "id": "tool-tray",
+                "name": "Removable tool tray",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 4
+              },
+              {
+                "id": "handle",
+                "name": "Foldable pull handle",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 2
+              }
+            ],
+            "joints": [
+              {
+                "id": "front-axle-pin",
+                "type": "revolute",
+                "parent": "chassis",
+                "child": "front-axle",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ]
+              },
+              {
+                "id": "rear-axle-pin",
+                "type": "revolute",
+                "parent": "chassis",
+                "child": "rear-axle",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ]
+              },
+              {
+                "id": "tray-clips",
+                "type": "fixed",
+                "parent": "chassis",
+                "child": "tool-tray",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "handle-pivot",
+                "type": "revolute",
+                "parent": "chassis",
+                "child": "handle",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  0,
+                  1.2
+                ]
+              }
+            ]
+          },
+          "pathEvidence": [
+            {
+              "label": "Direct front service approach",
+              "minClearance": 0.6
+            },
+            {
+              "label": "Vertical service approach",
+              "minClearance": -0.25
+            },
+            {
+              "label": "Blocked approach through the structural core",
+              "minClearance": 0.18
+            },
+            {
+              "label": "Alternative service path 4",
+              "minClearance": -0.1
+            }
+          ],
+          "convention": "positive is collision-free; zero or negative collides"
+        },
+        "responseSchema": {
+          "choiceIds": [
+            "one or more of A | B | C | D"
+          ]
+        }
+      },
+      "image": "images/tasks/maintenance-trolley-meta.png",
+      "answer": {
+        "choiceIds": [
+          "A",
+          "D"
+        ]
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "choices": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475332-1yAJ2tyBerYFkOYFtQ75",
+        "provider": "Azure",
+        "content": "{\"choiceIds\":[\"A\",\"D\"]}",
+        "cost": 0.000354,
+        "promptTokens": 1901,
+        "completionTokens": 10,
+        "reasoningTokens": 0,
+        "latencyMs": 1557,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-hinged-safety-hatch-procedural",
+      "sourceGroup": "hinged-safety-hatch",
+      "difficulty": "D1",
+      "layer": "procedural",
+      "format": "ordered-actions",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-hinged-safety-hatch-procedural",
+        "difficulty": "D1",
+        "layer": "procedural",
+        "format": "ordered-actions",
+        "capability": [
+          "instruction execution",
+          "local editing",
+          "postcondition verification"
+        ],
+        "question": "Return the minimum ordered actions for a local recolor followed by state verification.",
+        "input": {
+          "model": {
+            "id": "hinged-safety-hatch",
+            "name": "Hinged Safety Hatch",
+            "difficulty": "D1",
+            "family": "two-stage closure",
+            "description": "A framed service hatch with a hinged lid and sliding lock cartridge.",
+            "complexity": {
+              "visibleParts": 28,
+              "modules": 3,
+              "joints": 2,
+              "movingJoints": 2,
+              "dependencyDepth": 2,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 1,
+              "operationHorizon": 4,
+              "complexityIndex": 107
+            },
+            "modules": [
+              {
+                "id": "frame",
+                "name": "Safety hatch frame",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 14
+              },
+              {
+                "id": "lid",
+                "name": "Hinged safety lid",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 12
+              },
+              {
+                "id": "latch",
+                "name": "Sliding latch cartridge",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 2
+              }
+            ],
+            "joints": [
+              {
+                "id": "lid-hinge",
+                "type": "revolute",
+                "parent": "frame",
+                "child": "lid",
+                "axis": [
+                  0,
+                  0,
+                  1
+                ],
+                "limits": [
+                  0,
+                  1.35
+                ]
+              },
+              {
+                "id": "latch-slide",
+                "type": "prismatic",
+                "parent": "lid",
+                "child": "latch",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -0.6,
+                  0.6
+                ]
+              }
+            ]
+          },
+          "targetModule": "latch",
+          "requestedColor": "safety-orange",
+          "constraints": [
+            "preserve all other modules",
+            "verify structure and function"
+          ],
+          "actionCatalog": [
+            "isolate:latch",
+            "recolor:latch:safety-orange",
+            "restore:latch",
+            "verify:no-collateral-change",
+            "restart:empty",
+            "skip:verification",
+            "modify:unrelated-module"
+          ]
+        },
+        "responseSchema": {
+          "actionIds": [
+            "string in exact execution order"
+          ]
+        }
+      },
+      "image": "images/tasks/hinged-safety-hatch-procedural.png",
+      "answer": {
+        "actionIds": [
+          "isolate:latch",
+          "recolor:latch:safety-orange",
+          "restore:latch",
+          "verify:no-collateral-change"
+        ]
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "actionOrder": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475335-U9YcrfsgEwitvmJGIVNl",
+        "provider": "Azure",
+        "content": "{\"actionIds\":[\"isolate:latch\",\"recolor:latch:safety-orange\",\"restore:latch\",\"verify:no-collateral-change\"]}",
+        "cost": 0.0003896,
+        "promptTokens": 1718,
+        "completionTokens": 30,
+        "reasoningTokens": 0,
+        "latencyMs": 1945,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-valve-control-stand-integrative",
+      "sourceGroup": "valve-control-stand",
+      "difficulty": "D1",
+      "layer": "integrative",
+      "format": "structured-plan",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-valve-control-stand-integrative",
+        "difficulty": "D1",
+        "layer": "integrative",
+        "format": "structured-plan",
+        "capability": [
+          "cross-capability integration",
+          "resource-aware planning",
+          "risk control",
+          "verification"
+        ],
+        "question": "Select the only plan satisfying every hard safety, information, resource, access, and verification constraint.",
+        "input": {
+          "model": {
+            "id": "valve-control-stand",
+            "name": "Valve Control Stand",
+            "difficulty": "D1",
+            "family": "rotary control",
+            "description": "A pedestal valve with a rotary handwheel and coupled position indicator.",
+            "complexity": {
+              "visibleParts": 25,
+              "modules": 3,
+              "joints": 2,
+              "movingJoints": 1,
+              "dependencyDepth": 2,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 1,
+              "operationHorizon": 4,
+              "complexityIndex": 96
+            },
+            "modules": [
+              {
+                "id": "pipe-base",
+                "name": "Pipe and pedestal",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 14
+              },
+              {
+                "id": "valve-wheel",
+                "name": "Rotary valve wheel",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 9
+              },
+              {
+                "id": "indicator",
+                "name": "Position indicator",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 2
+              }
+            ],
+            "joints": [
+              {
+                "id": "wheel-shaft",
+                "type": "revolute",
+                "parent": "pipe-base",
+                "child": "valve-wheel",
+                "axis": [
+                  0,
+                  0,
+                  1
+                ],
+                "limits": [
+                  -3.141592653589793,
+                  3.141592653589793
+                ]
+              },
+              {
+                "id": "indicator-coupler",
+                "type": "fixed",
+                "parent": "valve-wheel",
+                "child": "indicator",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          "scenario": "multiobjective-maintenance",
+          "constraints": [
+            "use the highest information-gain-per-cost inspection",
+            "replacement cost <= 5",
+            "replacement stiffness >= 10",
+            "isolate the load before intervention",
+            "preserve a service access path",
+            "residual risk <= 0.1",
+            "finish with load and function proof"
+          ],
+          "candidatePlans": [
+            {
+              "id": "P1",
+              "inspection": "none",
+              "substitute": "paired-truss",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.45,
+              "steps": 5,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P2",
+              "inspection": "valve-control-stand-marker",
+              "substitute": "fairing",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.7,
+              "steps": 5,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P3",
+              "inspection": "valve-control-stand-marker",
+              "substitute": "paired-truss",
+              "isolatesLoad": true,
+              "preservesAccess": false,
+              "residualRisk": 0.08,
+              "steps": 2,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P4",
+              "inspection": "valve-control-stand-marker",
+              "substitute": "paired-truss",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.08,
+              "steps": 5,
+              "verification": "load-and-function-proof"
+            }
+          ]
+        },
+        "responseSchema": {
+          "planId": "P1 | P2 | P3 | P4",
+          "verificationId": "string"
+        }
+      },
+      "image": "images/tasks/valve-control-stand-integrative.png",
+      "answer": {
+        "planId": "P4",
+        "verificationId": "load-and-function-proof"
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "plan": 1,
+          "verification": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475338-SzTVbYUQXkxkjkK255EL",
+        "provider": "Azure",
+        "content": "{\"planId\":\"P4\",\"verificationId\":\"load-and-function-proof\"}",
+        "cost": 0.0003772,
+        "promptTokens": 1935,
+        "completionTokens": 16,
+        "reasoningTokens": 0,
+        "latencyMs": 2713,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-warehouse-sorter-atomic-coverage",
+      "sourceGroup": "warehouse-sorter",
+      "difficulty": "D2",
+      "layer": "atomic",
+      "format": "single-choice",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-warehouse-sorter-atomic-coverage",
+        "difficulty": "D2",
+        "layer": "atomic",
+        "format": "single-choice",
+        "capability": [
+          "joint recognition",
+          "kinematic semantics"
+        ],
+        "question": "Which motion primitive is assigned to the designated joint?",
+        "options": [
+          {
+            "id": "A",
+            "label": "fixed"
+          },
+          {
+            "id": "B",
+            "label": "revolute"
+          },
+          {
+            "id": "C",
+            "label": "prismatic"
+          },
+          {
+            "id": "D",
+            "label": "spring"
+          }
+        ],
+        "input": {
+          "model": {
+            "id": "warehouse-sorter",
+            "name": "Warehouse Sorter",
+            "difficulty": "D2",
+            "family": "sensor-actuator assembly",
+            "description": "A scanned conveyor with a pivoting diverter and two destination bins.",
+            "complexity": {
+              "visibleParts": 60,
+              "modules": 6,
+              "joints": 5,
+              "movingJoints": 2,
+              "dependencyDepth": 2,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 3,
+              "operationHorizon": 8,
+              "complexityIndex": 210
+            },
+            "modules": [
+              {
+                "id": "floor",
+                "name": "Sorter foundation",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 24
+              },
+              {
+                "id": "belt",
+                "name": "Transfer conveyor",
+                "role": "transport",
+                "anchored": false,
+                "visibleParts": 12
+              },
+              {
+                "id": "diverter-gate",
+                "name": "Pivoting diverter",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 6
+              },
+              {
+                "id": "scanner",
+                "name": "Overhead scanner",
+                "role": "sensor",
+                "anchored": false,
+                "visibleParts": 10
+              },
+              {
+                "id": "left-bin",
+                "name": "Left destination bin",
+                "role": "payload-zone",
+                "anchored": false,
+                "visibleParts": 4
+              },
+              {
+                "id": "right-bin",
+                "name": "Right destination bin",
+                "role": "payload-zone",
+                "anchored": false,
+                "visibleParts": 4
+              }
+            ],
+            "joints": [
+              {
+                "id": "belt-drive",
+                "type": "prismatic",
+                "parent": "floor",
+                "child": "belt",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -0.5,
+                  0.5
+                ]
+              },
+              {
+                "id": "gate-pivot",
+                "type": "revolute",
+                "parent": "belt",
+                "child": "diverter-gate",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -0.7,
+                  0.7
+                ]
+              },
+              {
+                "id": "scanner-frame",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "scanner",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "left-bin-lock",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "left-bin",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "right-bin-lock",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "right-bin",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          "highlightedInterface": "actuator",
+          "instruction": "Use only the rendered highlight and the supplied structured evidence.",
+          "joint": {
+            "id": "gate-pivot",
+            "axis": [
+              0,
+              1,
+              0
+            ],
+            "limits": [
+              -0.7,
+              0.7
+            ]
+          }
+        },
+        "responseSchema": {
+          "choiceId": "A | B | C | D"
+        }
+      },
+      "image": "images/tasks/warehouse-sorter-atomic-coverage.png",
+      "answer": {
+        "choiceId": "B"
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "choice": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475342-flwOCkUfkTLogeeggR8r",
+        "provider": "Azure",
+        "content": "{\"choiceId\":\"B\"}",
+        "cost": 0.000382,
+        "promptTokens": 1887,
+        "completionTokens": 7,
+        "reasoningTokens": 0,
+        "latencyMs": 2003,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-canal-inspection-skiff-meta",
+      "sourceGroup": "canal-inspection-skiff",
+      "difficulty": "D2",
+      "layer": "metacognitive",
+      "format": "single-choice",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-canal-inspection-skiff-meta",
+        "difficulty": "D2",
+        "layer": "metacognitive",
+        "format": "single-choice",
+        "capability": [
+          "active inspection",
+          "information gain",
+          "cost-aware metacognition"
+        ],
+        "question": "Which next inspection maximizes expected information gain per unit cost?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Inspect concealed brace interface"
+          },
+          {
+            "id": "B",
+            "label": "Apply low-force motion probe"
+          },
+          {
+            "id": "C",
+            "label": "Inspect orientation marker"
+          },
+          {
+            "id": "D",
+            "label": "Unsupported alternative 3"
+          }
+        ],
+        "input": {
+          "model": {
+            "id": "canal-inspection-skiff",
+            "name": "Canal Inspection Skiff",
+            "difficulty": "D2",
+            "family": "compact mobile mechanism",
+            "description": "A twin-hull survey craft with steering rudder, propeller, cabin, and sensor mast.",
+            "complexity": {
+              "visibleParts": 45,
+              "modules": 5,
+              "joints": 4,
+              "movingJoints": 3,
+              "dependencyDepth": 2,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 3,
+              "operationHorizon": 7,
+              "complexityIndex": 186
+            },
+            "modules": [
+              {
+                "id": "hull",
+                "name": "Catamaran inspection hull",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 24
+              },
+              {
+                "id": "cabin",
+                "name": "Inspection cabin",
+                "role": "control",
+                "anchored": false,
+                "visibleParts": 9
+              },
+              {
+                "id": "rudder",
+                "name": "Steering rudder",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 1
+              },
+              {
+                "id": "propeller",
+                "name": "Inspection propeller",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 6
+              },
+              {
+                "id": "sensor-mast",
+                "name": "Survey mast",
+                "role": "sensor",
+                "anchored": false,
+                "visibleParts": 5
+              }
+            ],
+            "joints": [
+              {
+                "id": "cabin-mount",
+                "type": "fixed",
+                "parent": "hull",
+                "child": "cabin",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "rudder-pivot",
+                "type": "revolute",
+                "parent": "hull",
+                "child": "rudder",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -0.6,
+                  0.6
+                ]
+              },
+              {
+                "id": "propeller-shaft",
+                "type": "revolute",
+                "parent": "hull",
+                "child": "propeller",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -3.141592653589793,
+                  3.141592653589793
+                ]
+              },
+              {
+                "id": "mast-turntable",
+                "type": "revolute",
+                "parent": "cabin",
+                "child": "sensor-mast",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -3.141592653589793,
+                  3.141592653589793
+                ]
+              }
+            ]
+          },
+          "prior": "uniform",
+          "worlds": [
+            "nominal",
+            "reversed",
+            "missing-brace",
+            "jammed"
+          ],
+          "queries": [
+            {
+              "id": "canal-inspection-skiff-marker",
+              "label": "Inspect orientation marker",
+              "cost": 1,
+              "returns": {
+                "nominal": "forward",
+                "reversed": "reverse",
+                "missing-brace": "forward",
+                "jammed": "forward"
+              }
+            },
+            {
+              "id": "canal-inspection-skiff-brace",
+              "label": "Inspect concealed brace interface",
+              "cost": 2,
+              "returns": {
+                "nominal": "present",
+                "reversed": "present",
+                "missing-brace": "absent",
+                "jammed": "present"
+              }
+            },
+            {
+              "id": "canal-inspection-skiff-probe",
+              "label": "Apply low-force motion probe",
+              "cost": 3,
+              "returns": {
+                "nominal": "positive",
+                "reversed": "negative",
+                "missing-brace": "positive",
+                "jammed": "none"
+              }
+            }
+          ]
+        },
+        "responseSchema": {
+          "choiceId": "A | B | C | D"
+        }
+      },
+      "image": "images/tasks/canal-inspection-skiff-meta.png",
+      "answer": {
+        "choiceId": "A"
+      },
+      "verdict": {
+        "success": 0,
+        "format": 1,
+        "fields": {
+          "choice": 0
+        }
+      },
+      "call": {
+        "id": "gen-1789475345-iX1ZsMFYaCHUzurWXbDr",
+        "provider": "Azure",
+        "content": "{\"choiceId\":\"A\"}",
+        "cost": 0.0003952,
+        "promptTokens": 2016,
+        "completionTokens": 7,
+        "reasoningTokens": 0,
+        "latencyMs": 1689,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-solar-tracker-array-procedural",
+      "sourceGroup": "solar-tracker-array",
+      "difficulty": "D2",
+      "layer": "procedural",
+      "format": "ordered-actions",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-solar-tracker-array-procedural",
+        "difficulty": "D2",
+        "layer": "procedural",
+        "format": "ordered-actions",
+        "capability": [
+          "disassembly planning",
+          "dependency reversal",
+          "safe removal"
+        ],
+        "question": "Return a complete safe removal sequence; independent modules may be ordered either way.",
+        "input": {
+          "model": {
+            "id": "solar-tracker-array",
+            "name": "Solar Tracker Array",
+            "difficulty": "D2",
+            "family": "coupled orientation assembly",
+            "description": "A dual-axis tracker with two panel wings, azimuth mast, tilt yoke, and battery pack.",
+            "complexity": {
+              "visibleParts": 66,
+              "modules": 6,
+              "joints": 5,
+              "movingJoints": 4,
+              "dependencyDepth": 3,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 3,
+              "operationHorizon": 8,
+              "complexityIndex": 238
+            },
+            "modules": [
+              {
+                "id": "foundation",
+                "name": "Tracker foundation",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 16
+              },
+              {
+                "id": "mast",
+                "name": "Rotating support mast",
+                "role": "support",
+                "anchored": false,
+                "visibleParts": 12
+              },
+              {
+                "id": "yoke",
+                "name": "Azimuth yoke",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 2
+              },
+              {
+                "id": "panel-left",
+                "name": "Left solar wing",
+                "role": "energy-surface",
+                "anchored": false,
+                "visibleParts": 16
+              },
+              {
+                "id": "panel-right",
+                "name": "Right solar wing",
+                "role": "energy-surface",
+                "anchored": false,
+                "visibleParts": 16
+              },
+              {
+                "id": "battery",
+                "name": "Tracker battery pack",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 4
+              }
+            ],
+            "joints": [
+              {
+                "id": "mast-base",
+                "type": "revolute",
+                "parent": "foundation",
+                "child": "mast",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -3.141592653589793,
+                  3.141592653589793
+                ]
+              },
+              {
+                "id": "yoke-tilt",
+                "type": "revolute",
+                "parent": "mast",
+                "child": "yoke",
+                "axis": [
+                  0,
+                  0,
+                  1
+                ],
+                "limits": [
+                  -0.8,
+                  0.8
+                ]
+              },
+              {
+                "id": "left-panel-hinge",
+                "type": "revolute",
+                "parent": "yoke",
+                "child": "panel-left",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -0.3,
+                  0.3
+                ]
+              },
+              {
+                "id": "right-panel-hinge",
+                "type": "revolute",
+                "parent": "yoke",
+                "child": "panel-right",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -0.3,
+                  0.3
+                ]
+              },
+              {
+                "id": "battery-lock",
+                "type": "fixed",
+                "parent": "foundation",
+                "child": "battery",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          "requestedRemovalCount": 6,
+          "dependencyEdges": [
+            [
+              "foundation",
+              "mast"
+            ],
+            [
+              "mast",
+              "yoke"
+            ],
+            [
+              "yoke",
+              "panel-left"
+            ],
+            [
+              "yoke",
+              "panel-right"
+            ],
+            [
+              "foundation",
+              "battery"
+            ]
+          ],
+          "rule": "children before parents",
+          "actionCatalog": [
+            "remove:battery",
+            "remove:panel-right",
+            "remove:panel-left",
+            "remove:yoke",
+            "remove:mast",
+            "remove:foundation",
+            "restart:empty",
+            "skip:verification",
+            "modify:unrelated-module"
+          ]
+        },
+        "responseSchema": {
+          "actionIds": [
+            "string in exact execution order"
+          ]
+        }
+      },
+      "image": "images/tasks/solar-tracker-array-procedural.png",
+      "answer": {
+        "actionIds": [
+          "remove:panel-left",
+          "remove:panel-right",
+          "remove:yoke",
+          "remove:mast",
+          "remove:battery",
+          "remove:foundation"
+        ]
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "actionSet": 1,
+          "dependencies": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475348-xn3Rc00rWZdE8bhybibj",
+        "provider": "Azure",
+        "content": "{\"actionIds\":[\"remove:panel-left\",\"remove:panel-right\",\"remove:yoke\",\"remove:mast\",\"remove:battery\",\"remove:foundation\"]}",
+        "cost": 0.0008288,
+        "promptTokens": 1944,
+        "completionTokens": 32,
+        "reasoningTokens": 0,
+        "latencyMs": 1957,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-warehouse-sorter-integrative",
+      "sourceGroup": "warehouse-sorter",
+      "difficulty": "D2",
+      "layer": "integrative",
+      "format": "structured-plan",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-warehouse-sorter-integrative",
+        "difficulty": "D2",
+        "layer": "integrative",
+        "format": "structured-plan",
+        "capability": [
+          "cross-capability integration",
+          "resource-aware planning",
+          "risk control",
+          "verification"
+        ],
+        "question": "Select the only plan satisfying every hard safety, information, resource, access, and verification constraint.",
+        "input": {
+          "model": {
+            "id": "warehouse-sorter",
+            "name": "Warehouse Sorter",
+            "difficulty": "D2",
+            "family": "sensor-actuator assembly",
+            "description": "A scanned conveyor with a pivoting diverter and two destination bins.",
+            "complexity": {
+              "visibleParts": 60,
+              "modules": 6,
+              "joints": 5,
+              "movingJoints": 2,
+              "dependencyDepth": 2,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 3,
+              "operationHorizon": 8,
+              "complexityIndex": 210
+            },
+            "modules": [
+              {
+                "id": "floor",
+                "name": "Sorter foundation",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 24
+              },
+              {
+                "id": "belt",
+                "name": "Transfer conveyor",
+                "role": "transport",
+                "anchored": false,
+                "visibleParts": 12
+              },
+              {
+                "id": "diverter-gate",
+                "name": "Pivoting diverter",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 6
+              },
+              {
+                "id": "scanner",
+                "name": "Overhead scanner",
+                "role": "sensor",
+                "anchored": false,
+                "visibleParts": 10
+              },
+              {
+                "id": "left-bin",
+                "name": "Left destination bin",
+                "role": "payload-zone",
+                "anchored": false,
+                "visibleParts": 4
+              },
+              {
+                "id": "right-bin",
+                "name": "Right destination bin",
+                "role": "payload-zone",
+                "anchored": false,
+                "visibleParts": 4
+              }
+            ],
+            "joints": [
+              {
+                "id": "belt-drive",
+                "type": "prismatic",
+                "parent": "floor",
+                "child": "belt",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -0.5,
+                  0.5
+                ]
+              },
+              {
+                "id": "gate-pivot",
+                "type": "revolute",
+                "parent": "belt",
+                "child": "diverter-gate",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -0.7,
+                  0.7
+                ]
+              },
+              {
+                "id": "scanner-frame",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "scanner",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "left-bin-lock",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "left-bin",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "right-bin-lock",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "right-bin",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          "scenario": "compound-edit-verification",
+          "constraints": [
+            "use the highest information-gain-per-cost inspection",
+            "replacement cost <= 6",
+            "replacement stiffness >= 8",
+            "isolate the load before intervention",
+            "preserve a service access path",
+            "residual risk <= 0.05",
+            "finish with load and function proof"
+          ],
+          "candidatePlans": [
+            {
+              "id": "P1",
+              "inspection": "warehouse-sorter-probe",
+              "substitute": "long-beam",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.04,
+              "steps": 7,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P2",
+              "inspection": "none",
+              "substitute": "long-beam",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.45,
+              "steps": 7,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P3",
+              "inspection": "warehouse-sorter-probe",
+              "substitute": "fairing",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.7,
+              "steps": 7,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P4",
+              "inspection": "warehouse-sorter-probe",
+              "substitute": "long-beam",
+              "isolatesLoad": true,
+              "preservesAccess": false,
+              "residualRisk": 0.04,
+              "steps": 2,
+              "verification": "load-and-function-proof"
+            }
+          ]
+        },
+        "responseSchema": {
+          "planId": "P1 | P2 | P3 | P4",
+          "verificationId": "string"
+        }
+      },
+      "image": "images/tasks/warehouse-sorter-integrative.png",
+      "answer": {
+        "planId": "P1",
+        "verificationId": "load-and-function-proof"
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "plan": 1,
+          "verification": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475352-GvrM1Iqj8LDKbCU03kyj",
+        "provider": "Azure",
+        "content": "{\"planId\":\"P1\",\"verificationId\":\"load-and-function-proof\"}",
+        "cost": 0.0002468,
+        "promptTokens": 2089,
+        "completionTokens": 16,
+        "reasoningTokens": 0,
+        "latencyMs": 1900,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-harbor-container-crane-atomic-anchor",
+      "sourceGroup": "harbor-container-crane",
+      "difficulty": "D3",
+      "layer": "atomic",
+      "format": "single-choice",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-harbor-container-crane-atomic-anchor",
+        "difficulty": "D3",
+        "layer": "atomic",
+        "format": "single-choice",
+        "capability": [
+          "3D spatial relation",
+          "multi-view correspondence"
+        ],
+        "question": "Which candidate module has the highest geometric centroid?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Harbor rail foundation"
+          },
+          {
+            "id": "B",
+            "label": "Traversing trolley"
+          },
+          {
+            "id": "C",
+            "label": "Twin-tower crane gantry"
+          },
+          {
+            "id": "D",
+            "label": "Hoist and hook block"
+          }
+        ],
+        "input": {
+          "model": {
+            "id": "harbor-container-crane",
+            "name": "Harbor Container Crane",
+            "difficulty": "D3",
+            "family": "load-handling mechanism",
+            "description": "A twin-tower rail crane with traversing trolley, vertical hoist, control cabin and container payload.",
+            "complexity": {
+              "visibleParts": 126,
+              "modules": 5,
+              "joints": 5,
+              "movingJoints": 2,
+              "dependencyDepth": 4,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 6,
+              "operationHorizon": 7,
+              "complexityIndex": 311
+            },
+            "modules": [
+              {
+                "id": "dock-base",
+                "name": "Harbor rail foundation",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 54
+              },
+              {
+                "id": "gantry",
+                "name": "Twin-tower crane gantry",
+                "role": "load-frame",
+                "anchored": false,
+                "visibleParts": 55
+              },
+              {
+                "id": "trolley",
+                "name": "Traversing trolley",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 5
+              },
+              {
+                "id": "hoist",
+                "name": "Hoist and hook block",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 3
+              },
+              {
+                "id": "container",
+                "name": "Intermodal container",
+                "role": "payload",
+                "anchored": false,
+                "visibleParts": 9
+              }
+            ],
+            "joints": [
+              {
+                "id": "gantry-foot-a",
+                "type": "fixed",
+                "parent": "dock-base",
+                "child": "gantry"
+              },
+              {
+                "id": "gantry-foot-b",
+                "type": "fixed",
+                "parent": "dock-base",
+                "child": "gantry"
+              },
+              {
+                "id": "trolley-rail",
+                "type": "prismatic",
+                "parent": "gantry",
+                "child": "trolley",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -3.8,
+                  3.8
+                ]
+              },
+              {
+                "id": "hoist-slide",
+                "type": "prismatic",
+                "parent": "trolley",
+                "child": "hoist",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -4.2,
+                  0
+                ]
+              },
+              {
+                "id": "hook-latch",
+                "type": "fixed",
+                "parent": "hoist",
+                "child": "container"
+              }
+            ]
+          },
+          "highlightedInterface": "actuator",
+          "instruction": "Use only the rendered highlight and the supplied structured evidence.",
+          "relation": "highest centroid in world Y",
+          "candidateModules": [
+            "Harbor rail foundation",
+            "Twin-tower crane gantry",
+            "Traversing trolley",
+            "Hoist and hook block",
+            "Intermodal container"
+          ]
+        },
+        "responseSchema": {
+          "choiceId": "A | B | C | D"
+        }
+      },
+      "image": "images/tasks/harbor-container-crane-atomic-anchor.png",
+      "answer": {
+        "choiceId": "B"
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "choice": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475355-szPUG00MfOd0xSsEs8Lm",
+        "provider": "Azure",
+        "content": "{\"choiceId\":\"B\"}",
+        "cost": 0.0002252,
+        "promptTokens": 1879,
+        "completionTokens": 7,
+        "reasoningTokens": 0,
+        "latencyMs": 1608,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-adaptive-radio-observatory-meta",
+      "sourceGroup": "adaptive-radio-observatory",
+      "difficulty": "D3",
+      "layer": "metacognitive",
+      "format": "multiple-choice",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-adaptive-radio-observatory-meta",
+        "difficulty": "D3",
+        "layer": "metacognitive",
+        "format": "multiple-choice",
+        "capability": [
+          "counterfactual support",
+          "dependency closure",
+          "set-valued prediction"
+        ],
+        "question": "If the declared support interface is removed, which listed modules lose their certified support path?",
+        "options": [
+          {
+            "id": "A",
+            "label": "foundation"
+          },
+          {
+            "id": "B",
+            "label": "dome"
+          },
+          {
+            "id": "C",
+            "label": "telescope"
+          },
+          {
+            "id": "D",
+            "label": "camera-pack"
+          }
+        ],
+        "input": {
+          "model": {
+            "id": "adaptive-radio-observatory",
+            "name": "Adaptive Radio Observatory",
+            "difficulty": "D3",
+            "family": "scientific instrument",
+            "description": "A terraced observatory with rotating segmented dome, elevation telescope and removable cryogenic camera.",
+            "complexity": {
+              "visibleParts": 92,
+              "modules": 4,
+              "joints": 3,
+              "movingJoints": 2,
+              "dependencyDepth": 3,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 6,
+              "operationHorizon": 6,
+              "complexityIndex": 244
+            },
+            "modules": [
+              {
+                "id": "foundation",
+                "name": "Terraced observatory foundation",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 65
+              },
+              {
+                "id": "dome",
+                "name": "Rotating segmented dome",
+                "role": "rotating-enclosure",
+                "anchored": false,
+                "visibleParts": 21
+              },
+              {
+                "id": "telescope",
+                "name": "Elevation telescope",
+                "role": "instrument",
+                "anchored": false,
+                "visibleParts": 4
+              },
+              {
+                "id": "camera-pack",
+                "name": "Cryogenic camera pack",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 2
+              }
+            ],
+            "joints": [
+              {
+                "id": "dome-ring",
+                "type": "revolute",
+                "parent": "foundation",
+                "child": "dome",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -3.141592653589793,
+                  3.141592653589793
+                ]
+              },
+              {
+                "id": "elevation-axis",
+                "type": "revolute",
+                "parent": "dome",
+                "child": "telescope",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -0.15,
+                  1.25
+                ]
+              },
+              {
+                "id": "camera-bayonet",
+                "type": "fixed",
+                "parent": "telescope",
+                "child": "camera-pack"
+              }
+            ]
+          },
+          "removedModule": "dome",
+          "supportEdges": [
+            [
+              "foundation",
+              "dome"
+            ],
+            [
+              "dome",
+              "telescope"
+            ],
+            [
+              "telescope",
+              "camera-pack"
+            ]
+          ]
+        },
+        "responseSchema": {
+          "choiceIds": [
+            "one or more of A | B | C | D"
+          ]
+        }
+      },
+      "image": "images/tasks/adaptive-radio-observatory-meta.png",
+      "answer": {
+        "choiceIds": [
+          "C",
+          "D"
+        ]
+      },
+      "verdict": {
+        "success": 0,
+        "format": 1,
+        "fields": {
+          "choices": 0
+        }
+      },
+      "call": {
+        "id": "gen-1789475358-uRZeB5YNi0QHz1IHzHzn",
+        "provider": "Azure",
+        "content": "{\"choiceIds\":[\"C\",\"D\"]}",
+        "cost": 0.0003504,
+        "promptTokens": 1796,
+        "completionTokens": 10,
+        "reasoningTokens": 0,
+        "latencyMs": 1625,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-wildfire-tiltrotor-procedural",
+      "sourceGroup": "wildfire-tiltrotor",
+      "difficulty": "D3",
+      "layer": "procedural",
+      "format": "ordered-actions",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-wildfire-tiltrotor-procedural",
+        "difficulty": "D3",
+        "layer": "procedural",
+        "format": "ordered-actions",
+        "capability": [
+          "assembly planning",
+          "ordering",
+          "prefix validity"
+        ],
+        "question": "Return a complete placement sequence that satisfies every declared dependency in the requested build prefix.",
+        "input": {
+          "model": {
+            "id": "wildfire-tiltrotor",
+            "name": "Wildfire Tiltrotor",
+            "difficulty": "D3",
+            "family": "aerial rescue vehicle",
+            "description": "A twin-rotor firefighting aircraft with tilting nacelles, removable water tank and serviceable drivetrain.",
+            "complexity": {
+              "visibleParts": 43,
+              "modules": 6,
+              "joints": 5,
+              "movingJoints": 4,
+              "dependencyDepth": 2,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 6,
+              "operationHorizon": 8,
+              "complexityIndex": 239
+            },
+            "modules": [
+              {
+                "id": "fuselage",
+                "name": "Firefighting tiltrotor fuselage",
+                "role": "airframe",
+                "anchored": true,
+                "visibleParts": 26
+              },
+              {
+                "id": "nacelle-left",
+                "name": "Left tilting nacelle",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 2
+              },
+              {
+                "id": "rotor-left",
+                "name": "Left rotor",
+                "role": "rotor",
+                "anchored": false,
+                "visibleParts": 4
+              },
+              {
+                "id": "nacelle-right",
+                "name": "Right tilting nacelle",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 2
+              },
+              {
+                "id": "rotor-right",
+                "name": "Right rotor",
+                "role": "rotor",
+                "anchored": false,
+                "visibleParts": 4
+              },
+              {
+                "id": "water-tank",
+                "name": "Removable water tank",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 5
+              }
+            ],
+            "joints": [
+              {
+                "id": "nacelle-left-tilt",
+                "type": "revolute",
+                "parent": "fuselage",
+                "child": "nacelle-left",
+                "axis": [
+                  0,
+                  0,
+                  1
+                ],
+                "limits": [
+                  0,
+                  1.5707963267948966
+                ]
+              },
+              {
+                "id": "rotor-left-shaft",
+                "type": "revolute",
+                "parent": "nacelle-left",
+                "child": "rotor-left",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "nacelle-right-tilt",
+                "type": "revolute",
+                "parent": "fuselage",
+                "child": "nacelle-right",
+                "axis": [
+                  0,
+                  0,
+                  1
+                ],
+                "limits": [
+                  0,
+                  1.5707963267948966
+                ]
+              },
+              {
+                "id": "rotor-right-shaft",
+                "type": "revolute",
+                "parent": "nacelle-right",
+                "child": "rotor-right",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "tank-latch",
+                "type": "fixed",
+                "parent": "fuselage",
+                "child": "water-tank"
+              }
+            ]
+          },
+          "requestedPrefixLength": 6,
+          "availableModules": [
+            "fuselage",
+            "water-tank",
+            "nacelle-left",
+            "nacelle-right",
+            "rotor-left",
+            "rotor-right"
+          ],
+          "dependencyEdges": [
+            [
+              "fuselage",
+              "nacelle-left"
+            ],
+            [
+              "nacelle-left",
+              "rotor-left"
+            ],
+            [
+              "fuselage",
+              "nacelle-right"
+            ],
+            [
+              "nacelle-right",
+              "rotor-right"
+            ],
+            [
+              "fuselage",
+              "water-tank"
+            ]
+          ],
+          "actionCatalog": [
+            "place:fuselage",
+            "place:water-tank",
+            "place:nacelle-left",
+            "place:nacelle-right",
+            "place:rotor-left",
+            "place:rotor-right",
+            "restart:empty",
+            "skip:verification",
+            "modify:unrelated-module"
+          ]
+        },
+        "responseSchema": {
+          "actionIds": [
+            "string in exact execution order"
+          ]
+        }
+      },
+      "image": "images/tasks/wildfire-tiltrotor-procedural.png",
+      "answer": {
+        "actionIds": [
+          "place:fuselage",
+          "place:nacelle-left",
+          "place:rotor-left",
+          "place:nacelle-right",
+          "place:rotor-right",
+          "place:water-tank"
+        ]
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "actionSet": 1,
+          "dependencies": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475360-BXf6A3ruW4Fp0Mb6ijL3",
+        "provider": "Azure",
+        "content": "{\"actionIds\":[\"place:fuselage\",\"place:nacelle-left\",\"place:rotor-left\",\"place:nacelle-right\",\"place:rotor-right\",\"place:water-tank\"]}",
+        "cost": 0.0008724,
+        "promptTokens": 2017,
+        "completionTokens": 41,
+        "reasoningTokens": 0,
+        "latencyMs": 2110,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-polar-research-station-integrative",
+      "sourceGroup": "polar-research-station",
+      "difficulty": "D3",
+      "layer": "integrative",
+      "format": "structured-plan",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-polar-research-station-integrative",
+        "difficulty": "D3",
+        "layer": "integrative",
+        "format": "structured-plan",
+        "capability": [
+          "cross-capability integration",
+          "resource-aware planning",
+          "risk control",
+          "verification",
+          "long-horizon coordination",
+          "hidden-state management"
+        ],
+        "question": "Select the only plan satisfying every hard safety, information, resource, access, and verification constraint.",
+        "input": {
+          "model": {
+            "id": "polar-research-station",
+            "name": "Polar Research Station",
+            "difficulty": "D3",
+            "family": "modular research habitat",
+            "description": "An elevated insulated station with pressure airlock, sliding solar array and serviceable wind turbine.",
+            "complexity": {
+              "visibleParts": 66,
+              "modules": 5,
+              "joints": 4,
+              "movingJoints": 3,
+              "dependencyDepth": 2,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 6,
+              "operationHorizon": 7,
+              "complexityIndex": 237
+            },
+            "modules": [
+              {
+                "id": "station-base",
+                "name": "Elevated polar station base",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 48
+              },
+              {
+                "id": "airlock-door",
+                "name": "Pressure airlock door",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 2
+              },
+              {
+                "id": "wind-mast",
+                "name": "Wind turbine mast",
+                "role": "energy-system",
+                "anchored": false,
+                "visibleParts": 8
+              },
+              {
+                "id": "wind-rotor",
+                "name": "Three-blade wind rotor",
+                "role": "rotor",
+                "anchored": false,
+                "visibleParts": 4
+              },
+              {
+                "id": "solar-carriage",
+                "name": "Sliding solar service carriage",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 4
+              }
+            ],
+            "joints": [
+              {
+                "id": "airlock-hinge",
+                "type": "revolute",
+                "parent": "station-base",
+                "child": "airlock-door",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  0,
+                  1.7
+                ]
+              },
+              {
+                "id": "mast-foot",
+                "type": "fixed",
+                "parent": "station-base",
+                "child": "wind-mast"
+              },
+              {
+                "id": "rotor-shaft",
+                "type": "revolute",
+                "parent": "wind-mast",
+                "child": "wind-rotor",
+                "axis": [
+                  0,
+                  0,
+                  1
+                ]
+              },
+              {
+                "id": "solar-rail",
+                "type": "prismatic",
+                "parent": "station-base",
+                "child": "solar-carriage",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -2,
+                  2
+                ]
+              }
+            ]
+          },
+          "scenario": "inventory-robustness",
+          "constraints": [
+            "use the highest information-gain-per-cost inspection",
+            "replacement cost <= 3",
+            "replacement stiffness >= 11",
+            "isolate the load before intervention",
+            "preserve a service access path",
+            "residual risk <= 0.033",
+            "finish with load and function proof"
+          ],
+          "candidatePlans": [
+            {
+              "id": "P1",
+              "inspection": "station-brace",
+              "substitute": "tension-cable",
+              "isolatesLoad": true,
+              "preservesAccess": false,
+              "residualRisk": 0.027,
+              "steps": 2,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P2",
+              "inspection": "station-brace",
+              "substitute": "tension-cable",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.027,
+              "steps": 9,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P3",
+              "inspection": "none",
+              "substitute": "tension-cable",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.45,
+              "steps": 9,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P4",
+              "inspection": "station-brace",
+              "substitute": "fairing",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.7,
+              "steps": 9,
+              "verification": "load-and-function-proof"
+            }
+          ]
+        },
+        "responseSchema": {
+          "planId": "P1 | P2 | P3 | P4",
+          "verificationId": "string"
+        }
+      },
+      "image": "images/tasks/polar-research-station-integrative.png",
+      "answer": {
+        "planId": "P2",
+        "verificationId": "load-and-function-proof"
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "plan": 1,
+          "verification": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475364-0Q5aEFhbYh2t9fSxIcvO",
+        "provider": "Azure",
+        "content": "{\"planId\":\"P2\",\"verificationId\":\"load-and-function-proof\"}",
+        "cost": 0.0003896,
+        "promptTokens": 2062,
+        "completionTokens": 16,
+        "reasoningTokens": 0,
+        "latencyMs": 1697,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-flood-response-lock-atomic-coverage",
+      "sourceGroup": "flood-response-lock",
+      "difficulty": "D4",
+      "layer": "atomic",
+      "format": "single-choice",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-flood-response-lock-atomic-coverage",
+        "difficulty": "D4",
+        "layer": "atomic",
+        "format": "single-choice",
+        "capability": [
+          "inventory checking",
+          "resource constraints"
+        ],
+        "question": "Which stock item is currently usable under all declared hard constraints?",
+        "options": [
+          {
+            "id": "A",
+            "label": "paired-truss"
+          },
+          {
+            "id": "B",
+            "label": "long-beam"
+          },
+          {
+            "id": "C",
+            "label": "cable-stay"
+          },
+          {
+            "id": "D",
+            "label": "fairing"
+          }
+        ],
+        "input": {
+          "model": {
+            "id": "flood-response-lock",
+            "name": "Flood Response Lock",
+            "difficulty": "D4",
+            "family": "redundant civil system",
+            "description": "A twin-gate lock with redundant pumps, level sensors, service gantry, control tower, and emergency barge.",
+            "complexity": {
+              "visibleParts": 214,
+              "modules": 11,
+              "joints": 10,
+              "movingJoints": 3,
+              "dependencyDepth": 2,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 10,
+              "operationHorizon": 20,
+              "complexityIndex": 527
+            },
+            "modules": [
+              {
+                "id": "basin",
+                "name": "Flood lock basin",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 84
+              },
+              {
+                "id": "gate-north",
+                "name": "North sector gate",
+                "role": "barrier",
+                "anchored": false,
+                "visibleParts": 18
+              },
+              {
+                "id": "gate-south",
+                "name": "South sector gate",
+                "role": "barrier",
+                "anchored": false,
+                "visibleParts": 18
+              },
+              {
+                "id": "control-tower",
+                "name": "Flood control tower",
+                "role": "control",
+                "anchored": false,
+                "visibleParts": 21
+              },
+              {
+                "id": "pump-a",
+                "name": "West emergency pump",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 9
+              },
+              {
+                "id": "pump-b",
+                "name": "East emergency pump",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 9
+              },
+              {
+                "id": "gantry",
+                "name": "Emergency service gantry",
+                "role": "support",
+                "anchored": false,
+                "visibleParts": 26
+              },
+              {
+                "id": "gantry-trolley",
+                "name": "Gantry maintenance trolley",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 6
+              },
+              {
+                "id": "sensor-north",
+                "name": "North level sensor",
+                "role": "sensor",
+                "anchored": false,
+                "visibleParts": 4
+              },
+              {
+                "id": "sensor-south",
+                "name": "South level sensor",
+                "role": "sensor",
+                "anchored": false,
+                "visibleParts": 4
+              },
+              {
+                "id": "service-barge",
+                "name": "Emergency service barge",
+                "role": "payload",
+                "anchored": false,
+                "visibleParts": 15
+              }
+            ],
+            "joints": [
+              {
+                "id": "north-gate-hinge",
+                "type": "revolute",
+                "parent": "basin",
+                "child": "gate-north",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  0,
+                  1.2
+                ]
+              },
+              {
+                "id": "south-gate-hinge",
+                "type": "revolute",
+                "parent": "basin",
+                "child": "gate-south",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -1.2,
+                  0
+                ]
+              },
+              {
+                "id": "tower-foundation",
+                "type": "fixed",
+                "parent": "basin",
+                "child": "control-tower",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "pump-a-lock",
+                "type": "fixed",
+                "parent": "basin",
+                "child": "pump-a",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "pump-b-lock",
+                "type": "fixed",
+                "parent": "basin",
+                "child": "pump-b",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "gantry-feet",
+                "type": "fixed",
+                "parent": "basin",
+                "child": "gantry",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "gantry-slide",
+                "type": "prismatic",
+                "parent": "gantry",
+                "child": "gantry-trolley",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -4,
+                  4
+                ]
+              },
+              {
+                "id": "north-sensor-link",
+                "type": "fixed",
+                "parent": "control-tower",
+                "child": "sensor-north",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "south-sensor-link",
+                "type": "fixed",
+                "parent": "control-tower",
+                "child": "sensor-south",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "barge-mooring",
+                "type": "spring",
+                "parent": "basin",
+                "child": "service-barge",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          "highlightedInterface": "service-module",
+          "instruction": "Use only the rendered highlight and the supplied structured evidence.",
+          "stockCandidates": [
+            {
+              "id": "long-beam",
+              "label": "One rigid long beam",
+              "pieces": 1,
+              "cost": 6,
+              "mass": 1.8,
+              "stiffness": 9,
+              "jointMode": "fixed"
+            },
+            {
+              "id": "paired-truss",
+              "label": "Two interlocked short trusses",
+              "pieces": 2,
+              "cost": 5,
+              "mass": 2.2,
+              "stiffness": 11,
+              "jointMode": "fixed"
+            },
+            {
+              "id": "cable-stay",
+              "label": "One light tension stay",
+              "pieces": 1,
+              "cost": 3,
+              "mass": 0.6,
+              "stiffness": 7,
+              "jointMode": "spring"
+            },
+            {
+              "id": "fairing",
+              "label": "One cosmetic fairing",
+              "pieces": 1,
+              "cost": 2,
+              "mass": 0.8,
+              "stiffness": 1,
+              "jointMode": "none"
+            }
+          ],
+          "requirements": {
+            "maxCost": 5,
+            "maxPieces": 2,
+            "minStiffness": 10
+          }
+        },
+        "responseSchema": {
+          "choiceId": "A | B | C | D"
+        }
+      },
+      "image": "images/tasks/flood-response-lock-atomic-coverage.png",
+      "answer": {
+        "choiceId": "A"
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "choice": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475367-orwNDbhnyC0WCW8xrF65",
+        "provider": "Azure",
+        "content": "{\"choiceId\":\"A\"}",
+        "cost": 0.0004208,
+        "promptTokens": 2368,
+        "completionTokens": 7,
+        "reasoningTokens": 0,
+        "latencyMs": 1795,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-orbital-docking-yard-meta",
+      "sourceGroup": "orbital-docking-yard",
+      "difficulty": "D4",
+      "layer": "metacognitive",
+      "format": "single-choice",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-orbital-docking-yard-meta",
+        "difficulty": "D4",
+        "layer": "metacognitive",
+        "format": "single-choice",
+        "capability": [
+          "fault diagnosis",
+          "causal localization",
+          "mechanism topology"
+        ],
+        "question": "Which joint is the unique causal match for the observed child motion and lost constraint?",
+        "options": [
+          {
+            "id": "A",
+            "label": "hub-clamp"
+          },
+          {
+            "id": "B",
+            "label": "airlock-slide"
+          },
+          {
+            "id": "C",
+            "label": "crane-boom-hinge"
+          },
+          {
+            "id": "D",
+            "label": "west-arm-pivot"
+          }
+        ],
+        "input": {
+          "model": {
+            "id": "orbital-docking-yard",
+            "name": "Orbital Docking Yard",
+            "difficulty": "D4",
+            "family": "distributed orbital system",
+            "description": "A coupled orbital yard with docking arms, solar wings, shuttle, crane, cargo pod, and service airlock.",
+            "complexity": {
+              "visibleParts": 233,
+              "modules": 11,
+              "joints": 10,
+              "movingJoints": 7,
+              "dependencyDepth": 2,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 10,
+              "operationHorizon": 18,
+              "complexityIndex": 578
+            },
+            "modules": [
+              {
+                "id": "platform",
+                "name": "Orbital service platform",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 80
+              },
+              {
+                "id": "hub",
+                "name": "Pressurized docking hub",
+                "role": "central-control",
+                "anchored": false,
+                "visibleParts": 41
+              },
+              {
+                "id": "airlock",
+                "name": "Service airlock",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 9
+              },
+              {
+                "id": "dock-arm-west",
+                "name": "West articulated docking arm",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 11
+              },
+              {
+                "id": "dock-arm-east",
+                "name": "East articulated docking arm",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 11
+              },
+              {
+                "id": "solar-west",
+                "name": "West solar wing",
+                "role": "power",
+                "anchored": false,
+                "visibleParts": 20
+              },
+              {
+                "id": "solar-east",
+                "name": "East solar wing",
+                "role": "power",
+                "anchored": false,
+                "visibleParts": 20
+              },
+              {
+                "id": "shuttle",
+                "name": "Docked transfer shuttle",
+                "role": "payload",
+                "anchored": false,
+                "visibleParts": 14
+              },
+              {
+                "id": "crane-base",
+                "name": "Cargo crane pedestal",
+                "role": "support",
+                "anchored": false,
+                "visibleParts": 8
+              },
+              {
+                "id": "crane-boom",
+                "name": "Cargo crane boom",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 10
+              },
+              {
+                "id": "cargo-pod",
+                "name": "Transfer cargo pod",
+                "role": "payload",
+                "anchored": false,
+                "visibleParts": 9
+              }
+            ],
+            "joints": [
+              {
+                "id": "hub-clamp",
+                "type": "fixed",
+                "parent": "platform",
+                "child": "hub",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "airlock-slide",
+                "type": "prismatic",
+                "parent": "hub",
+                "child": "airlock",
+                "axis": [
+                  0,
+                  0,
+                  1
+                ],
+                "limits": [
+                  -0.4,
+                  0.8
+                ]
+              },
+              {
+                "id": "west-arm-pivot",
+                "type": "revolute",
+                "parent": "hub",
+                "child": "dock-arm-west",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -1.2,
+                  1.2
+                ]
+              },
+              {
+                "id": "east-arm-pivot",
+                "type": "revolute",
+                "parent": "hub",
+                "child": "dock-arm-east",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -1.2,
+                  1.2
+                ]
+              },
+              {
+                "id": "west-solar-hinge",
+                "type": "revolute",
+                "parent": "hub",
+                "child": "solar-west",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -0.5,
+                  0.5
+                ]
+              },
+              {
+                "id": "east-solar-hinge",
+                "type": "revolute",
+                "parent": "hub",
+                "child": "solar-east",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -0.5,
+                  0.5
+                ]
+              },
+              {
+                "id": "shuttle-dock",
+                "type": "fixed",
+                "parent": "platform",
+                "child": "shuttle",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "crane-pedestal",
+                "type": "revolute",
+                "parent": "platform",
+                "child": "crane-base",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -3.141592653589793,
+                  3.141592653589793
+                ]
+              },
+              {
+                "id": "crane-boom-hinge",
+                "type": "revolute",
+                "parent": "crane-base",
+                "child": "crane-boom",
+                "axis": [
+                  0,
+                  0,
+                  1
+                ],
+                "limits": [
+                  -0.5,
+                  1
+                ]
+              },
+              {
+                "id": "cargo-lock",
+                "type": "fixed",
+                "parent": "platform",
+                "child": "cargo-pod",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          "observation": {
+            "displacedChild": "crane-boom",
+            "lostMode": "revolute",
+            "upstreamModulesStable": true
+          },
+          "candidateJoints": [
+            "hub-clamp",
+            "airlock-slide",
+            "west-arm-pivot",
+            "east-arm-pivot",
+            "west-solar-hinge",
+            "east-solar-hinge",
+            "shuttle-dock",
+            "crane-pedestal",
+            "crane-boom-hinge",
+            "cargo-lock"
+          ]
+        },
+        "responseSchema": {
+          "choiceId": "A | B | C | D"
+        }
+      },
+      "image": "images/tasks/orbital-docking-yard-meta.png",
+      "answer": {
+        "choiceId": "C"
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "choice": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475370-f0gRUFyCLDln750GoZS5",
+        "provider": "Azure",
+        "content": "{\"choiceId\":\"C\"}",
+        "cost": 0.0004012,
+        "promptTokens": 2319,
+        "completionTokens": 7,
+        "reasoningTokens": 0,
+        "latencyMs": 2725,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-flood-response-lock-procedural",
+      "sourceGroup": "flood-response-lock",
+      "difficulty": "D4",
+      "layer": "procedural",
+      "format": "ordered-actions",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-flood-response-lock-procedural",
+        "difficulty": "D4",
+        "layer": "procedural",
+        "format": "ordered-actions",
+        "capability": [
+          "fault recovery",
+          "minimal repair",
+          "action sequencing"
+        ],
+        "question": "Return the minimum certified recovery sequence for the declared failed joint.",
+        "input": {
+          "model": {
+            "id": "flood-response-lock",
+            "name": "Flood Response Lock",
+            "difficulty": "D4",
+            "family": "redundant civil system",
+            "description": "A twin-gate lock with redundant pumps, level sensors, service gantry, control tower, and emergency barge.",
+            "complexity": {
+              "visibleParts": 214,
+              "modules": 11,
+              "joints": 10,
+              "movingJoints": 3,
+              "dependencyDepth": 2,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 10,
+              "operationHorizon": 20,
+              "complexityIndex": 527
+            },
+            "modules": [
+              {
+                "id": "basin",
+                "name": "Flood lock basin",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 84
+              },
+              {
+                "id": "gate-north",
+                "name": "North sector gate",
+                "role": "barrier",
+                "anchored": false,
+                "visibleParts": 18
+              },
+              {
+                "id": "gate-south",
+                "name": "South sector gate",
+                "role": "barrier",
+                "anchored": false,
+                "visibleParts": 18
+              },
+              {
+                "id": "control-tower",
+                "name": "Flood control tower",
+                "role": "control",
+                "anchored": false,
+                "visibleParts": 21
+              },
+              {
+                "id": "pump-a",
+                "name": "West emergency pump",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 9
+              },
+              {
+                "id": "pump-b",
+                "name": "East emergency pump",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 9
+              },
+              {
+                "id": "gantry",
+                "name": "Emergency service gantry",
+                "role": "support",
+                "anchored": false,
+                "visibleParts": 26
+              },
+              {
+                "id": "gantry-trolley",
+                "name": "Gantry maintenance trolley",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 6
+              },
+              {
+                "id": "sensor-north",
+                "name": "North level sensor",
+                "role": "sensor",
+                "anchored": false,
+                "visibleParts": 4
+              },
+              {
+                "id": "sensor-south",
+                "name": "South level sensor",
+                "role": "sensor",
+                "anchored": false,
+                "visibleParts": 4
+              },
+              {
+                "id": "service-barge",
+                "name": "Emergency service barge",
+                "role": "payload",
+                "anchored": false,
+                "visibleParts": 15
+              }
+            ],
+            "joints": [
+              {
+                "id": "north-gate-hinge",
+                "type": "revolute",
+                "parent": "basin",
+                "child": "gate-north",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  0,
+                  1.2
+                ]
+              },
+              {
+                "id": "south-gate-hinge",
+                "type": "revolute",
+                "parent": "basin",
+                "child": "gate-south",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -1.2,
+                  0
+                ]
+              },
+              {
+                "id": "tower-foundation",
+                "type": "fixed",
+                "parent": "basin",
+                "child": "control-tower",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "pump-a-lock",
+                "type": "fixed",
+                "parent": "basin",
+                "child": "pump-a",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "pump-b-lock",
+                "type": "fixed",
+                "parent": "basin",
+                "child": "pump-b",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "gantry-feet",
+                "type": "fixed",
+                "parent": "basin",
+                "child": "gantry",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "gantry-slide",
+                "type": "prismatic",
+                "parent": "gantry",
+                "child": "gantry-trolley",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -4,
+                  4
+                ]
+              },
+              {
+                "id": "north-sensor-link",
+                "type": "fixed",
+                "parent": "control-tower",
+                "child": "sensor-north",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "south-sensor-link",
+                "type": "fixed",
+                "parent": "control-tower",
+                "child": "sensor-south",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "barge-mooring",
+                "type": "spring",
+                "parent": "basin",
+                "child": "service-barge",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          "failedJoint": "north-gate-hinge",
+          "serviceModule": "pump-a",
+          "actionCatalog": [
+            "isolate-load",
+            "access-pump-a",
+            "replace-north-gate-hinge",
+            "reindex-mechanism",
+            "proof-test",
+            "restart:empty",
+            "skip:verification",
+            "modify:unrelated-module"
+          ]
+        },
+        "responseSchema": {
+          "actionIds": [
+            "string in exact execution order"
+          ]
+        }
+      },
+      "image": "images/tasks/flood-response-lock-procedural.png",
+      "answer": {
+        "actionIds": [
+          "isolate-load",
+          "access-pump-a",
+          "replace-north-gate-hinge",
+          "reindex-mechanism",
+          "proof-test",
+          "restart:empty"
+        ]
+      },
+      "verdict": {
+        "success": 0,
+        "format": 1,
+        "fields": {
+          "actionOrder": 0
+        }
+      },
+      "call": {
+        "id": "gen-1789475374-X49ZZJ5NVJlXJVYpCEbQ",
+        "provider": "Azure",
+        "content": "{\"actionIds\":[\"isolate-load\",\"access-pump-a\",\"replace-north-gate-hinge\",\"reindex-mechanism\",\"proof-test\",\"restart:empty\"]}",
+        "cost": 0.0002788,
+        "promptTokens": 2185,
+        "completionTokens": 36,
+        "reasoningTokens": 0,
+        "latencyMs": 2511,
+        "finishReason": "stop"
+      }
+    },
+    {
+      "taskId": "h1-automated-cargo-terminal-integrative",
+      "sourceGroup": "automated-cargo-terminal",
+      "difficulty": "D4",
+      "layer": "integrative",
+      "format": "structured-plan",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-automated-cargo-terminal-integrative",
+        "difficulty": "D4",
+        "layer": "integrative",
+        "format": "structured-plan",
+        "capability": [
+          "cross-capability integration",
+          "resource-aware planning",
+          "risk control",
+          "verification",
+          "long-horizon coordination",
+          "hidden-state management"
+        ],
+        "question": "Select the only plan satisfying every hard safety, information, resource, access, and verification constraint.",
+        "input": {
+          "model": {
+            "id": "automated-cargo-terminal",
+            "name": "Automated Cargo Terminal",
+            "difficulty": "D4",
+            "family": "multi-workcell logistics",
+            "description": "A dual-flow terminal with storage racks, conveyors, robots, gantry shuttle, lift, and distributed payloads.",
+            "complexity": {
+              "visibleParts": 231,
+              "modules": 13,
+              "joints": 12,
+              "movingJoints": 6,
+              "dependencyDepth": 3,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 10,
+              "operationHorizon": 22,
+              "complexityIndex": 608
+            },
+            "modules": [
+              {
+                "id": "floor",
+                "name": "Automated terminal floor",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 72
+              },
+              {
+                "id": "rack-a",
+                "name": "West storage rack",
+                "role": "storage",
+                "anchored": false,
+                "visibleParts": 18
+              },
+              {
+                "id": "rack-b",
+                "name": "East storage rack",
+                "role": "storage",
+                "anchored": false,
+                "visibleParts": 18
+              },
+              {
+                "id": "conveyor-a",
+                "name": "Inbound conveyor",
+                "role": "transport",
+                "anchored": false,
+                "visibleParts": 18
+              },
+              {
+                "id": "conveyor-b",
+                "name": "Outbound conveyor",
+                "role": "transport",
+                "anchored": false,
+                "visibleParts": 18
+              },
+              {
+                "id": "gantry",
+                "name": "Overhead transfer gantry",
+                "role": "support",
+                "anchored": false,
+                "visibleParts": 30
+              },
+              {
+                "id": "shuttle",
+                "name": "Gantry shuttle",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 6
+              },
+              {
+                "id": "lift",
+                "name": "Vertical transfer lift",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 13
+              },
+              {
+                "id": "robot-a",
+                "name": "West sorting robot",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 7
+              },
+              {
+                "id": "robot-b",
+                "name": "East sorting robot",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 7
+              },
+              {
+                "id": "container-red",
+                "name": "container red",
+                "role": "payload",
+                "anchored": false,
+                "visibleParts": 8
+              },
+              {
+                "id": "container-blue",
+                "name": "container blue",
+                "role": "payload",
+                "anchored": false,
+                "visibleParts": 8
+              },
+              {
+                "id": "container-yellow",
+                "name": "container yellow",
+                "role": "payload",
+                "anchored": false,
+                "visibleParts": 8
+              }
+            ],
+            "joints": [
+              {
+                "id": "rack-a-feet",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "rack-a",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "rack-b-feet",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "rack-b",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "inbound-drive",
+                "type": "prismatic",
+                "parent": "floor",
+                "child": "conveyor-a",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -0.4,
+                  0.4
+                ]
+              },
+              {
+                "id": "outbound-drive",
+                "type": "prismatic",
+                "parent": "floor",
+                "child": "conveyor-b",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -0.4,
+                  0.4
+                ]
+              },
+              {
+                "id": "gantry-feet",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "gantry",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "shuttle-slide",
+                "type": "prismatic",
+                "parent": "gantry",
+                "child": "shuttle",
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "limits": [
+                  -4.5,
+                  4.5
+                ]
+              },
+              {
+                "id": "lift-slide",
+                "type": "prismatic",
+                "parent": "shuttle",
+                "child": "lift",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -4,
+                  0
+                ]
+              },
+              {
+                "id": "robot-a-base",
+                "type": "revolute",
+                "parent": "floor",
+                "child": "robot-a",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -3.141592653589793,
+                  3.141592653589793
+                ]
+              },
+              {
+                "id": "robot-b-base",
+                "type": "revolute",
+                "parent": "floor",
+                "child": "robot-b",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "limits": [
+                  -3.141592653589793,
+                  3.141592653589793
+                ]
+              },
+              {
+                "id": "container-0-lock",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "container-red",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "container-1-lock",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "container-blue",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "container-2-lock",
+                "type": "fixed",
+                "parent": "floor",
+                "child": "container-yellow",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          "scenario": "compound-edit-verification",
+          "constraints": [
+            "use the highest information-gain-per-cost inspection",
+            "replacement cost <= 6",
+            "replacement stiffness >= 8",
+            "isolate the load before intervention",
+            "preserve a service access path",
+            "residual risk <= 0.025",
+            "finish with load and function proof"
+          ],
+          "candidatePlans": [
+            {
+              "id": "P1",
+              "inspection": "automated-cargo-terminal-probe",
+              "substitute": "long-beam",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.02,
+              "steps": 11,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P2",
+              "inspection": "none",
+              "substitute": "long-beam",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.45,
+              "steps": 11,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P3",
+              "inspection": "automated-cargo-terminal-probe",
+              "substitute": "fairing",
+              "isolatesLoad": true,
+              "preservesAccess": true,
+              "residualRisk": 0.7,
+              "steps": 11,
+              "verification": "load-and-function-proof"
+            },
+            {
+              "id": "P4",
+              "inspection": "automated-cargo-terminal-probe",
+              "substitute": "long-beam",
+              "isolatesLoad": true,
+              "preservesAccess": false,
+              "residualRisk": 0.02,
+              "steps": 2,
+              "verification": "load-and-function-proof"
+            }
+          ]
+        },
+        "responseSchema": {
+          "planId": "P1 | P2 | P3 | P4",
+          "verificationId": "string"
+        }
+      },
+      "image": "images/tasks/automated-cargo-terminal-integrative.png",
+      "answer": {
+        "planId": "P1",
+        "verificationId": "load-and-function-proof"
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "plan": 1,
+          "verification": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789475378-ZJ5Kdv1JcwhCaENtcu6d",
+        "provider": "Azure",
+        "content": "{\"planId\":\"P1\",\"verificationId\":\"load-and-function-proof\"}",
+        "cost": 0.0004348,
+        "promptTokens": 2559,
+        "completionTokens": 16,
+        "reasoningTokens": 0,
+        "latencyMs": 1983,
+        "finishReason": "stop"
+      }
+    }
+  ],
+  "startedAt": "2026-09-15T12:28:48.890Z",
+  "completedAt": "2026-09-15T12:29:39.926Z"
+}

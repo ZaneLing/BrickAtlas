@@ -1,0 +1,228 @@
+{
+  "id": "2026-09-15T12-22-28-577Z-hierarchy",
+  "version": "brickatlas-hierarchy-1",
+  "status": "error",
+  "error": "OpenRouter HTTP 429; no automatic retry",
+  "models": [
+    "openai/gpt-4.1-mini",
+    "google/gemini-2.5-flash"
+  ],
+  "cases": [
+    "h1-signal-switch-stand-atomic-anchor",
+    "h1-maintenance-trolley-meta",
+    "h1-hinged-safety-hatch-procedural",
+    "h1-valve-control-stand-integrative",
+    "h1-warehouse-sorter-atomic-coverage",
+    "h1-canal-inspection-skiff-meta",
+    "h1-solar-tracker-array-procedural",
+    "h1-warehouse-sorter-integrative",
+    "h1-harbor-container-crane-atomic-anchor",
+    "h1-adaptive-radio-observatory-meta",
+    "h1-wildfire-tiltrotor-procedural",
+    "h1-polar-research-station-integrative",
+    "h1-flood-response-lock-atomic-coverage",
+    "h1-orbital-docking-yard-meta",
+    "h1-flood-response-lock-procedural",
+    "h1-automated-cargo-terminal-integrative"
+  ],
+  "settings": {
+    "temperature": 0,
+    "maxTokens": 2200,
+    "retries": 0,
+    "sample": "one fixed task per difficulty × task-layer cell",
+    "requests": 32,
+    "maximumNewSpend": 0.12,
+    "protocolSha256": "10e0974504dae2a786986f58f2d75759daa088576086d2fdcc85ffad2a2b4b7b",
+    "publicSha256": "3335507c897170dc6ed8b05b3de95924f56669b0518a9d9e2efb1538896b3a7c",
+    "renderAuditSha256": "516af8d52770a469954b18f577aef9567647d55227e10824f74f6d058fa1828b"
+  },
+  "pricing": [
+    {
+      "id": "openai/gpt-4.1-mini",
+      "pricing": {
+        "prompt": "0.0000004",
+        "completion": "0.0000016",
+        "web_search": "0.01",
+        "input_cache_read": "0.0000001"
+      },
+      "maxPromptPerMillion": 0.5,
+      "maxCompletionPerMillion": 2
+    },
+    {
+      "id": "google/gemini-2.5-flash",
+      "pricing": {
+        "prompt": "0.0000003",
+        "completion": "0.0000025",
+        "image": "0.0000003",
+        "audio": "0.000001",
+        "input_audio_cache": "0.0000001",
+        "web_search": "0.014",
+        "internal_reasoning": "0.0000025",
+        "input_cache_read": "0.00000003",
+        "input_cache_write": "0.0000000833333333333333"
+      },
+      "maxPromptPerMillion": 0.4,
+      "maxCompletionPerMillion": 3
+    }
+  ],
+  "campaignBefore": 3.7593859539999888,
+  "campaignAfter": 3.7600915539999886,
+  "results": [
+    {
+      "taskId": "h1-signal-switch-stand-atomic-anchor",
+      "sourceGroup": "signal-switch-stand",
+      "difficulty": "D1",
+      "layer": "atomic",
+      "format": "single-choice",
+      "model": "openai/gpt-4.1-mini",
+      "input": {
+        "version": "brickatlas-hierarchy-1",
+        "id": "h1-signal-switch-stand-atomic-anchor",
+        "difficulty": "D1",
+        "layer": "atomic",
+        "format": "single-choice",
+        "capability": [
+          "part and module recognition",
+          "visual grounding"
+        ],
+        "question": "Which named module is highlighted?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Inspection lamp"
+          },
+          {
+            "id": "B",
+            "label": "Weighted signal base"
+          },
+          {
+            "id": "C",
+            "label": "Signal mast"
+          },
+          {
+            "id": "D",
+            "label": "Pivoting signal arm"
+          }
+        ],
+        "input": {
+          "model": {
+            "id": "signal-switch-stand",
+            "name": "Signal Switch Stand",
+            "difficulty": "D1",
+            "family": "single-interface actuator",
+            "description": "A weighted mast with one pivoting signal arm and removable inspection lamp.",
+            "complexity": {
+              "visibleParts": 22,
+              "modules": 4,
+              "joints": 3,
+              "movingJoints": 1,
+              "dependencyDepth": 3,
+              "hiddenInterfaces": 4,
+              "coupledConstraints": 1,
+              "operationHorizon": 4,
+              "complexityIndex": 116
+            },
+            "modules": [
+              {
+                "id": "base",
+                "name": "Weighted signal base",
+                "role": "foundation",
+                "anchored": true,
+                "visibleParts": 9
+              },
+              {
+                "id": "post",
+                "name": "Signal mast",
+                "role": "support",
+                "anchored": false,
+                "visibleParts": 6
+              },
+              {
+                "id": "signal-arm",
+                "name": "Pivoting signal arm",
+                "role": "actuator",
+                "anchored": false,
+                "visibleParts": 5
+              },
+              {
+                "id": "lamp",
+                "name": "Inspection lamp",
+                "role": "service-module",
+                "anchored": false,
+                "visibleParts": 2
+              }
+            ],
+            "joints": [
+              {
+                "id": "post-foot",
+                "type": "fixed",
+                "parent": "base",
+                "child": "post",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "id": "arm-pivot",
+                "type": "revolute",
+                "parent": "post",
+                "child": "signal-arm",
+                "axis": [
+                  0,
+                  0,
+                  1
+                ],
+                "limits": [
+                  -0.8,
+                  0.8
+                ]
+              },
+              {
+                "id": "lamp-lock",
+                "type": "fixed",
+                "parent": "signal-arm",
+                "child": "lamp",
+                "axis": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          "highlightedInterface": "service-module",
+          "instruction": "Use only the rendered highlight and the supplied structured evidence."
+        },
+        "responseSchema": {
+          "choiceId": "A | B | C | D"
+        }
+      },
+      "image": "images/tasks/signal-switch-stand-atomic-anchor.png",
+      "answer": {
+        "choiceId": "A"
+      },
+      "verdict": {
+        "success": 1,
+        "format": 1,
+        "fields": {
+          "choice": 1
+        }
+      },
+      "call": {
+        "id": "gen-1789474949-dkNOD6lJ2a24zBVHGYmt",
+        "provider": "Azure",
+        "content": "{\"choiceId\":\"A\"}",
+        "cost": 0.0007056,
+        "promptTokens": 1736,
+        "completionTokens": 7,
+        "reasoningTokens": 0,
+        "latencyMs": 2317,
+        "finishReason": "stop"
+      }
+    }
+  ],
+  "startedAt": "2026-09-15T12:22:28.811Z",
+  "completedAt": "2026-09-15T12:24:07.473Z"
+}

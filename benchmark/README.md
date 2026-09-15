@@ -1,6 +1,14 @@
 # Brick Atlas 模型测试场
 
-当前对象口径：[题目类别、数据规模与全部 Case 清单](BENCHMARK_INVENTORY.zh-CN.md) ·
+当前主版本：[Hierarchy-1 四级积木库与 90 道核心题](hierarchy-v1/index.html) ·
+[分层基准中文报告](hierarchy-v1/HIERARCHY_REPORT.zh-CN.md) ·
+[完整问答库](hierarchy-v1/QUESTION_BANK.zh-CN.md)。
+Hierarchy-1 包含 18 个原创对象、1,773 个可视零件和 D1–D4 四级难度；
+每个对象覆盖原子、元认知/物理、可执行操作和综合约束四层任务。
+低成本 OpenRouter 固定 16 题流程试跑中，GPT-4.1 mini 得分 13/16，
+本轮费用为 $0.006553。
+
+上一版对象口径：[题目类别、数据规模与全部 Case 清单](BENCHMARK_INVENTORY.zh-CN.md) ·
 [Mechanism-1 全部 48 道题](mechanism-v1/index.html) ·
 [中文论文](paper/main.zh-CN.md)。正式主线为6个原创整体机构、48道任务和Rapier
 物理/碰撞验证。OMR/LDraw仅保留为设计参考；5,120个随机结构仅作历史回归。

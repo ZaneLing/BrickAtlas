@@ -4,18 +4,29 @@
 
 ## 1. 当前结论
 
-当前正式主线是 **Mechanism-1**，不是 OMR，也不是旧程序化随机结构。
+当前正式开发主线是 **Hierarchy-1**。Mechanism-1 被完整保留，并定位为
+Hierarchy-1 的 D3 机构级库和 48 道高级物理扩展题。
 
 - OMR/LDraw：仅用于观察成熟模型的整体性、复杂度和子装配粒度；
-- Mechanism-1：6 个原创整体机构、48 道正式开发题；
+- Hierarchy-1：18 个原创对象、1,773 个可视零件、90 道分层核心题；
+- Mechanism-1：其中 6 个 D3 原创整体机构，另有 48 道高级扩展题；
 - Frontier/Diagnostic/Constructibility：保留为上一代受控过程协议；
 - Challenge/Curated：保留为评分器和难度校准；
 - 5,120 个程序化结构：退役，只保留历史结果和回归测试。
+
+四个难度层分别是 D1 部件级、D2 装配体级、D3 机构级和 D4 系统级。
+每个对象都覆盖原子单选、元认知/物理、可执行操作和综合约束任务。
 
 ## 2. 现在可视化看什么
 
 ### 完整入口
 
+- [Hierarchy-1 四级积木库与全部 90 道核心题](hierarchy-v1/index.html)
+- [Hierarchy-1 中文报告](hierarchy-v1/HIERARCHY_REPORT.zh-CN.md)
+- [Hierarchy-1 完整问答库](hierarchy-v1/QUESTION_BANK.zh-CN.md)
+- [四级积木库总览](hierarchy-v1/LIBRARY_OVERVIEW.png)
+- [难度 × 任务能力矩阵](hierarchy-v1/TASK_ABILITY_MATRIX.png)
+- [低成本模型准确率热力图](hierarchy-v1/PILOT_HEATMAP.png)
 - [全部 48 道题浏览器](mechanism-v1/index.html)
 - [中文逐题 Casebook](mechanism-v1/CASEBOOK.zh-CN.md)
 - [6 个原创整体模型](mechanism-v1/ALL_MODELS.png)
@@ -23,18 +34,40 @@
 - [模型实测报告](mechanism-v1/MODEL_REPORT.zh-CN.md)
 - [中文论文](paper/main.zh-CN.md)
 
-浏览器逐题显示：
+Hierarchy-1 浏览器逐题显示：
 
 1. 完整对象；
-2. 本题关注模块；
-3. 问题文本；
-4. 对应能力；
-5. 模型实际输入；
-6. 确定性 Oracle；
-7. 使用的物理/约束验证器；
-8. Qwen、GPT 和 Gemini 的真实回答及得分。
+2. D1–D4 难度及复杂度指标；
+3. 原子、元认知/物理、操作和综合题层；
+4. 本题关注模块、问题、选项和能力；
+5. 模型实际输入、确定性 Oracle 和验证方法；
+6. 低成本模型的真实回答及得分。
 
-## 3. Mechanism-1 数据规模
+## 3. Hierarchy-1 数据规模
+
+| 项目 | 数量 |
+|---|---:|
+| 原创对象 | 18 |
+| 可视零件 | 1,773 |
+| 刚体模块 | 121 |
+| 声明关节 | 106 |
+| 难度层 | 4 |
+| 核心题 | 90 |
+| D3 高级扩展题 | 48 |
+| 合计唯一问题 | 138 |
+| 模型/题目渲染 | 162 |
+| OpenRouter 正式流程试跑 | 16 |
+
+核心题包括 36 道原子单选、18 道元认知/物理题、18 道操作题和
+18 道综合复杂题。18 种原子操作和 9 种元认知/物理题族均已覆盖。
+
+固定 4×4 单元格流程试跑使用 GPT-4.1 mini，得分 13/16，费用
+0.006553 美元。D1 为 4/4；D2 元认知、D3 元认知和 D4 操作题失败。
+每个单元格只有 1 题，因此该结果只验证管线，不用于模型排名。
+Gemini 两次请求均在生成前返回 HTTP 429，没有 generation ID，按协议以
+0 美元对账并停止，不纳入正式分数。
+
+## 4. Mechanism-1 数据规模
 
 | 项目 | 数量 |
 |---|---:|
@@ -53,9 +86,9 @@ panel、slope、arch、window、wheel、axle、gear、cylinder 和 sphere。
 
 物理引擎：`@dimforge/rapier3d-compat 0.20.0`，Apache-2.0。
 
-## 4. 六个原创整体 Case
+## 5. 六个原创整体 Case
 
-### 4.1 轨道检修车
+### 5.1 轨道检修车
 
 - 73 个可视零件；
 - 10 个刚体模块；
@@ -63,7 +96,7 @@ panel、slope、arch、window、wheel、axle、gear、cylinder 和 sphere。
 - 六轮底盘、压力舱、电池盒、传感器桅杆、采样机械臂；
 - 重点能力：车轮/轴、机械臂、维修舱、狭窄路径。
 
-### 4.2 港口集装箱起重机
+### 5.2 港口集装箱起重机
 
 - 126 个可视零件；
 - 5 个刚体模块；
@@ -71,7 +104,7 @@ panel、slope、arch、window、wheel、axle、gear、cylinder 和 sphere。
 - 双塔门架、轨道、滑动小车、吊具、集装箱；
 - 重点能力：滑轨、载荷、挂钩故障、高空维修。
 
-### 4.3 双叶运河开启桥
+### 5.3 双叶运河开启桥
 
 - 142 个可视零件；
 - 6 个刚体模块；
@@ -79,7 +112,7 @@ panel、slope、arch、window、wheel、axle、gear、cylinder 和 sphere。
 - 双塔、两片开启桥面、驱动齿轮和维修廊；
 - 重点能力：铰链、桥面冲击、驱动盒维护、功能开合。
 
-### 4.4 自适应射电观测站
+### 5.4 自适应射电观测站
 
 - 92 个可视零件；
 - 4 个刚体模块；
@@ -87,7 +120,7 @@ panel、slope、arch、window、wheel、axle、gear、cylinder 和 sphere。
 - 阶梯基础、旋转穹顶、俯仰望远镜、低温相机；
 - 重点能力：双轴运动、光轴可达、载荷与干涉。
 
-### 4.5 山火救援倾转旋翼机
+### 5.5 山火救援倾转旋翼机
 
 - 43 个可视零件；
 - 6 个刚体模块；
@@ -95,7 +128,7 @@ panel、slope、arch、window、wheel、axle、gear、cylinder 和 sphere。
 - 双倾转发动机舱、旋翼、机翼、机身、可拆水箱；
 - 重点能力：旋翼/轴、倾转功能、水箱维修、动态冲击。
 
-### 4.6 极地科研站
+### 5.6 极地科研站
 
 - 66 个可视零件；
 - 5 个刚体模块；
@@ -103,7 +136,7 @@ panel、slope、arch、window、wheel、axle、gear、cylinder 和 sphere。
 - 架空站体、压力气闸、滑动太阳能板、风机；
 - 重点能力：门铰链、滑轨、风机冲击、受限维修。
 
-## 5. 八类正式任务
+## 6. 八类正式任务
 
 每个对象都有全部八类题，因此每类 6 题。
 
@@ -118,7 +151,7 @@ panel、slope、arch、window、wheel、axle、gear、cylinder 和 sphere。
 | 主动检查与澄清 | 6 | 下一次检查如何获得最高单位成本信息增益 | 有限世界信息增益 |
 | 多目标工程权衡 | 6 | 成本、质量、刚度下完整 Pareto 集是什么 | 非支配集合枚举 |
 
-## 6. 为什么这些题比旧题有用
+## 7. 为什么这些题比旧题有用
 
 ### 旧问题
 
@@ -141,7 +174,7 @@ panel、slope、arch、window、wheel、axle、gear、cylinder 和 sphere。
 - 主动检查的最优问题随对象和成本改变；
 - 多目标题要求全部非支配解，不能只猜一个。
 
-## 7. 模型做得怎么样
+## 8. 模型做得怎么样
 
 | 模型 | Prefix | Access | Repair | Stock | Dynamics | Function | Inspect | Pareto | 总计 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -165,7 +198,7 @@ panel、slope、arch、window、wheel、axle、gear、cylinder 和 sphere。
 - 动态阈值；
 - 完整 Pareto 集合。
 
-## 8. OMR/LDraw 的正确定位
+## 9. OMR/LDraw 的正确定位
 
 上一版把网页 OMR 模型直接登记为 benchmark case，这是错误的。
 
@@ -189,7 +222,7 @@ OMR 几何不进入：
 - benchmark 分数；
 - 正式数据规模。
 
-## 9. 其他历史/校准层
+## 10. 其他历史/校准层
 
 ### Frontier-1
 
@@ -225,7 +258,7 @@ OMR 几何不进入：
 - 格式/复制捷径审计；
 - 旧论文数字复现。
 
-## 10. 当前边界
+## 11. 当前边界
 
 Mechanism-1 已经从静态方块规则升级到外部刚体引擎和运动关节，但仍然不能声称：
 
