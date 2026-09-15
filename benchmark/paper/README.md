@@ -8,6 +8,12 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 
 ## Contents
 
+- `diagnostic-manual.tex`: Diagnostic-2 revision addressing fixed-answer shortcuts,
+  paired visual disclosure, deadline schedules and independent-stage coherence.
+- `../diagnostic-v2/index.html`: 138 new conditions on six existing sources,
+  with 216 alternative independent-stage request views.
+- `../DIAGNOSTIC_UPGRADE.zh-CN.md`: current Chinese change report and remaining gates.
+
 - `frontier-manual.tex`: literature overlap audit and eight new large-structure
   maintenance, resource and finite-observation contracts.
 - `tables/frontier-cases.tex`: six 158--408-part objects, all 48 scored control

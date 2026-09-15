@@ -1,6 +1,10 @@
 # Brick Atlas 模型测试场
 
-最新：[相关工作核查与158–408件Frontier升级](FRONTIER_REPORT.zh-CN.md) ·
+最新：[Diagnostic-2审稿机制修订](DIAGNOSTIC_UPGRADE.zh-CN.md) ·
+[配对视觉与维修案例](diagnostic-v2/index.html)。新版138条条件共用6个设计源，
+旧Frontier固定模板问题已公开记录，不把新旧成绩混合。
+
+上一轮：[相关工作核查与158–408件Frontier升级](FRONTIER_REPORT.zh-CN.md) ·
 [六个大结构与48题图集](frontier-cases/index.html)。
 旧117,910题保留作历史审计，不计入新层规模。
 

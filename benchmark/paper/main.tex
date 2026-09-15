@@ -27,8 +27,9 @@ Reasoning on Shared Brick Assemblies}
 Original 158--408-part models add deep courtyards, service galleries,
 hollow towers and stacked floors. Eight contracts per object connect
 maintenance, access certificates, resource constraints and uncertainty.
-These 48 public-development tasks are separate from the historical
-5,120-source population and have no learned-model results.}
+Diagnostic-2 uses these sources for matched-context maintenance,
+layer-reference perception and geometric inspection. New learned-model
+results remain unmeasured; the historical population is separate.}
 \label{fig:teaser}
 }]
 
@@ -38,10 +39,12 @@ hidden structure, requested changes, and executable construction.
 BrickAtlas separates appearance, structural change and executable
 success with explicit input privileges. Its historical audit contains
 5,120 procedural sources and 117,910 conditions. A new Frontier release
-adds six original 158--408-part objects and 48 maintenance, resource,
-certificate and uncertainty tasks, with public-input algorithmic controls
-but no learned-model results. A finite-grammar ambiguity track provides
-600 paired conditions have exhaustively checked answer sets, and
+adds six original 158--408-part objects. Diagnostic-2 supplies 138 paired
+conditions and independently elicitable diagnosis, access and repair stages.
+Constant-answer audits uncover and replace two legacy task shortcuts;
+matched contexts preserve exactly the same answer. New learned-model
+results remain unmeasured. A finite-grammar ambiguity track supplies
+600 paired conditions with exhaustively checked answer sets, and
 90 exterior-only queries are genuinely undetermined within the declared
 grammar. A separate renderer audit verifies identical exterior pixels
 across admissible layouts. An eight-model development matrix and
@@ -79,15 +82,14 @@ is \emph{measurement validity across shared objects}: when does a
 plausible appearance, a high similarity score, or one valid reference
 justify a downstream structural conclusion?
 
-We investigate three questions.
-\textbf{RQ1:} Does global structure similarity indicate that a requested
-change was actually performed?
-\textbf{RQ2:} Can an observer determine a hidden relation from the
-provided evidence, and how should an evaluator score genuine ambiguity?
-\textbf{RQ3:} Is candidate selection stable to reordering beyond
-instability under identical repetition?
-Negative answers are informative benchmark findings, not failures to
-produce a preferred model ranking.
+Our central question is whether individually plausible answers encode
+structural knowledge consistent with downstream execution.
+Diagnostic-2 operationalizes diagnosis--access--repair coherence separately
+from correctness, with matched local/full contexts and symbolic/layer
+references. This new model experiment is unrun.
+Historical studies examine three supporting questions: global similarity
+versus requested changes, hidden-relation identifiability, and candidate
+reordering beyond identical-repeat instability.
 
 The release contributes (1) a source-grouped eight-family evaluation
 contract with visual, structural, and executable endpoints; (2) a
@@ -154,7 +156,9 @@ including multi-view and spatial reasoning.
 CSGNet~\cite{sharma2018csgnet} predicts executable shape programs.
 SpatialBabel~\cite{liu2026spatialbabel} examines reconstruction across
 scene-code languages. Output-protocol effects are therefore not new
-in themselves. Similarly, MCQ position bias is established~\cite{zheng2024selectors};
+in themselves. Answer consistency also has prior work~\cite{hudson2019gqa,jing2022consistency};
+our distinction concerns executable maintenance constraints.
+Similarly, MCQ position bias is established~\cite{zheng2024selectors};
 our candidate experiment specifically compares actual pose changes
 against an identical-repeat baseline, without inferring internal
 model mechanisms from external API replies.
@@ -170,14 +174,10 @@ nominally valid if bodies do not overlap and every elevated part has
 at least one directly supporting stud. Force balance, clutch, arbitrary
 CAD geometry, and robotic grasping are outside this contract.
 
-Eight seeded policies accept 640 geometrically unique sources each.
-They vary attachment height, branching, thin
-parts, columns, alternating beams, explicit paired supports, and
-enclosed interiors. Every source starts from a 4-by-8 plate, a deliberate
-control and a diversity limitation.
-Canonicalization removes color and translation and considers four
-global yaw rotations; exact duplicates within this release and against
-two earlier releases are rejected. Mirrors are not equivalent.
+Eight seeded policies accept 640 unique sources each, all starting
+from a 4-by-8 plate. Canonicalization removes color and translation
+and considers four yaw rotations, but not mirrors; within-release
+and earlier-release exact duplicates are rejected.
 
 Six policies use a deterministic geometry-hash split, while bridge
 and shell are policy-held-out (Table~\ref{tab:splits}).
@@ -211,17 +211,21 @@ and dependency chains up to 19. Its separate 512-part, 96-cell envelope
 does not change historical limits. Eight tasks per object cover
 minimum-action service, access certificates, parallel scheduling,
 minimum support intervention, inventory replacement, hidden seam sets,
-contingent inspection and mixed-fault repair. Public-input solvers pass
-all 48 tasks; learned-model cells remain empty. Maintenance witnesses
-take 10--50 actions. These are symbolic/finite-observation contracts,
-not image-only or physically validated robot tasks.
+contingent inspection and mixed-fault repair. An audit found identical
+answers across all six legacy ambiguity and inspection cases.
+Diagnostic-2 replaces these templates and adds 72 paired maintenance
+conditions, 36 geometry-observation conditions, 18 deadline schedules
+and 12 mixed-pose conditions. Full references are withheld from the
+layer-image track. The supplement defines all new contracts.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/dataset-distribution.pdf}
-\caption{Full source census: size distributions, policy-by-size
-coverage, and actual part instances. Zero strata and unused catalog
-types remain visible rather than being hidden by derived task counts.}
+\includegraphics[width=\textwidth]{figures/diagnostic-v2.pdf}
+\caption{Diagnostic-2 design audits, not learned-model performance.
+Fixed-answer transfer uses shared candidate IDs; the best released set
+and tree transfer to 2/18 and 3/18 cases. Matched contexts have identical
+answers despite different total sizes. Fault count and selected depth
+remain correlated; these are not fully orthogonal difficulty strata.}
 \label{fig:distribution}
 \end{figure*}
 
@@ -525,15 +529,10 @@ These are a different cohort from Table~\ref{tab:main}.}
 \label{tab:controls}
 \end{table}
 
-The local SmolVLM-256M~\cite{marafioti2025smolvlm} pilot includes
-base and three seeds each of single-task, multi-task, and leave-edit
-LoRA~\cite{hu2022lora}. All ten jobs evaluate the same 337 cases.
-Supervised answer-token budgets are matched, not total compute.
-No positive edit transfer is observed, and all base outputs fail
-JSON parsing or schema checks. Original predictions and earlier
-Qwen3~\cite{qwen3model} pilots remain in the supplement.
-These negative results motivate an effective baseline before a larger
-transfer study; adapters existing on disk do not establish learning.
+Ten SmolVLM-256M~\cite{marafioti2025smolvlm} base/LoRA~\cite{hu2022lora}
+pilot jobs share 337 cases and matched supervision, not compute.
+No positive edit transfer is observed; base outputs all fail formatting.
+These and earlier Qwen3~\cite{qwen3model} pilots are detailed in the supplement.
 
 \subsection{Candidate Consistency and a Visual Control}
 Coordinate-normalized two-piece probes compare full reconstruction,
@@ -550,21 +549,20 @@ requests retained. Source-bootstrap intervals~\cite{efron1979bootstrap} and per-
 are in the supplement. Mismatch is inconsistency, not incorrectness,
 and the same 12 sources do not become 48 independent objects.
 
-A known-renderer analysis-by-synthesis control solves all 16 original
-two-piece sources across two development studies and preserves
-their selected pose under permutation. It uses public BOM, candidate
-poses, and rendered mask matching, not hidden target geometry.
-Repeated conditions yield 44/44 image-conditioned successes; all
-16 no-image cases abstain. Exact renderer access, canonical colors,
-and candidate enumeration favor this method, so it is a signal
-control, not a general learned reconstruction baseline.
+A known-renderer mask-matching control uses public BOM and candidates,
+not target geometry. It solves 16 two-piece sources, preserves selections
+under permutation, and yields 44/44 image-conditioned successes versus
+16 no-image abstentions. This is a signal control, not a general reconstructor.
 
 \section{Experimental Coverage and Remaining Work}
-The supplement preserves twelve unmeasured experimental tables and
-adds Frontier contracts, algorithmic controls and all 48 case pairs.
-Priorities remain licensed external objects, independent review,
-matched-budget models and audited specialized adapters. Public
-development cases cannot be relabeled as independent confirmation.
+Diagnostic-2's public symbolic control passes 36 maintenance cases;
+a known-renderer color control passes their 36 layer-image counterparts.
+It reads only public pixels/current geometry, not target JSON, and is
+not a general pose estimator. The old constant set passes 0/18 new
+observation cases. Deadlines reject serial schedules in all 18 cases.
+These checks establish executable signals, not model discrimination.
+The supplement preserves unmeasured model tables. Independent objects,
+human review and matched-budget new-model experiments remain necessary.
 
 \section{Limitations and Conclusion}
 BrickAtlas is currently a controlled grid benchmark, not a comprehensive

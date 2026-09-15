@@ -1,0 +1,149 @@
+\clearpage
+\twocolumn
+\section{Diagnostic-2: Revision After Validity Audit}
+\label{sec:diagnostic2}
+\paragraph{Status and motivation.}
+This section supersedes Frontier-1's ambiguity and inspection contracts
+for future evaluation. Historical files and results remain unchanged.
+An explicit fixed-answer audit showed that all six Frontier ambiguity
+cases accept the same set, and all six inspection cases accept the
+same tree. These controls undermine claims of object-dependent reasoning.
+Diagnostic-2 changes the task mechanism rather than merely renaming IDs.
+
+Consistency evaluation is not new: GQA~\cite{hudson2019gqa} measures
+entailed-answer consistency, and Jing et al.~\cite{jing2022consistency}
+study compositional questions and subquestions. Our narrower contract
+ties fault localization to access closure, inventory-conserving actions
+and final assembly. It is a measurement proposal with executable
+controls, not an established new learned-model finding.
+
+\subsection{Population and Conditions}
+There are 138 public conditions from the same six authored sources:
+72 maintenance chains ($6\times3$ strata $\times2$ contexts $\times2$
+reference conditions), 18 admissible-set questions, 18 scan-policy
+questions, 18 deadline schedules, and 12 mixed-pose patch conditions.
+The six source objects do not become 138 independent samples.
+All variants of a source stay in one statistical group.
+
+Maintenance input is the current structure and either full reference
+JSON or calibrated top images of every bottom-$Y$ layer. Image conditions
+never include target JSON. Images have a public 20-pixel/stud calibration,
+origin $(60,100)$ pixels, positive $X$ right and positive $Z$ down.
+Reference IDs are not drawn. The current symbolic structure remains
+privileged context, so this is not pure image-only reconstruction.
+Do not give models the entire public casebank: another condition of
+the same source contains privileged reference information. Export one
+row and its authorized images into an isolated model request.
+
+Maintenance faults are color replacements, deliberately preserving
+initial geometry while varying access burden. A separate mixed-pose
+track corrupts translation, yaw and color and asks for a structural
+patch; it does not claim a valid physical trajectory from an invalid
+initial state. Equivalent rectangular yaw is accepted; addressed IDs
+must remain correct. Its learned and specialized visual results are unrun.
+
+\subsection{Matched Factors}
+Three maintenance strata select different buried targets and fault
+counts. Every configuration has a local context containing its access
+closure and recursive supporters, and a full context containing the
+whole object. Both have \emph{exactly the same oracle answer}, checked
+automatically. Local contexts contain 8--109 parts and full contexts
+158--408. This controls output content while changing irrelevant input
+context. It does not equalize tokenization or total inference cost.
+
+Fault count and selected depth vary together: the strata are not a
+factorial design. Records expose total parts, access-closure size,
+fault count, access depth and optimal action count. Actions range from
+0 for no-fault controls to 126; maximum access depth is 16. Human
+difficulty calibration remains absent. These factors support future
+controlled analyses, not a present assertion of model discrimination.
+
+\subsection{Correctness and Coherence}
+The joint response contains diagnosis $D$, access certificate $A$ and
+repair sequence $R$. Alternatively, 216 stage-specific public views
+allow three independent requests for each maintenance condition.
+The scorer merges independent answers without filling missing stages.
+Joint and independent elicitation have different call budgets and
+must not be pooled.
+
+Diagnosis returns fault IDs and their corrected parts. Access returns
+the minimum removal set and an executable order. Repair removes IDs
+into inventory and places them back, optionally supplying a replacement
+part with the same ID. It cannot create new instances, repaint in place,
+or silently change already placed parts. Every action is checked;
+unknown IDs, duplicate placements and invalid intermediate states fail.
+All original IDs and exact target geometry must be restored.
+
+Let $C(D)$ be the overhead closure of predicted fault IDs and $M(R)$
+the actual removed-ID set. Coherence checks that the declared access
+set equals $C(D)$ and $M(R)$, and that predicted replacements agree
+with the final placements. It also requires legal execution. This
+is distinct from correct diagnosis or final target correctness.
+The primary joint endpoint requires exact diagnosis, exact access,
+minimum-action successful repair, and coherence.
+
+A constructed no-operation triple can be coherent but incorrect.
+A constructed correct repair with an empty diagnosis can be executable
+and correct at the end but incoherent. Both cases are tested and
+published. They are evaluator controls, not observations of model behavior.
+Per-stage accuracy, coherence and the joint endpoint must all be shown.
+
+\subsection{Geometry-Dependent Observation}
+Two, three or four foundation slots admit alternative plate tilings.
+The grammar contains 4, 6 or 16 candidate worlds; the six-world stratum
+includes correlated assignment restrictions. All worlds are explicitly
+valid, but equal occupancy/BOM is not asserted to imply identical seam
+RGB. This track supplies geometry and symbolic section scans.
+
+A query specifies axis, bottom height, perpendicular coordinate,
+interval and integer cost. Scanning visits integer cells and reports
+ordered contiguous runs of the same brick or empty space. The return
+does not expose part IDs or assignment names. Wide scans may intersect
+several slots; their information depends on actual spatial alignment.
+No precomputed query-to-world return table is present in public input.
+Candidate and query ordering do not affect valid answers.
+
+Admissible-set tasks receive one observation and return every compatible
+world. Policy tasks receive none and must identify all worlds within
+a worst-case cost budget. A minimax enumerator computes a witness from
+public geometry; every leaf path is checked across every world.
+Repeated/unknown queries, missing branches and over-budget paths fail.
+The separate \texttt{ScanEpisode} interface returns a query observation
+before accepting a final guess; a lucky episode is not all-world success.
+
+Among the 18 released optimal answer sets and trees, the best constant
+transfer succeeds on 2/18 and 3/18 cases, respectively. The legacy
+\texttt{h0,h2,h4,h6} set succeeds on 0/18. Shared h/q labels are retained,
+so this result is not obtained simply by randomizing names.
+These are finite candidate-transfer controls, not proof against every
+possible shortcut. Geometry removal makes all scan worlds
+indistinguishable to the public geometric solver; learned ablations
+remain unmeasured.
+
+\subsection{Deadline Scheduling}
+Two, four and eight-worker conditions require all lower-overlap
+prerequisites in earlier rounds and at most the stated number of IDs
+per batch. Unlike Frontier-1, they also enforce a deadline obtained
+from a feasible list schedule. Serial ordering fails all 18 deadlines;
+the released witnesses pass all 18. This does not certify optimal
+makespan or simultaneous robot execution. Legality, coverage, makespan
+and meeting the deadline are separate outputs.
+
+\subsection{Visual Signal Control and Remaining Gates}
+A deliberately simple known-renderer control reads public layer PNG
+pixels and current geometry, recovers reference colors, and computes
+the maintenance chain. It reads no private target files and succeeds
+on all 36 image maintenance cases. This demonstrates usable image
+information under the disclosed calibration, not general perception,
+pose reconstruction or learned-model capability. Mixed-pose image
+experiments remain blank.
+
+The release freezes public-payload hashes before new learned-model
+inference. Raw versus tool-assisted answers, modalities and joint versus
+independent elicitation require separate reporting. Unknown and duplicate
+IDs are rejected; missing and malformed answers stay in applicable
+denominators. The prospective human-review table is empty. At least
+two actual independent reviewers, new external source designs and
+matched-budget learned-model experiments are still required for
+scientific validation. Public development sources cannot be relabeled
+as a hidden confirmation set.

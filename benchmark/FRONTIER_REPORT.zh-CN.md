@@ -1,5 +1,9 @@
 # BrickAtlas：相关工作核查与 Frontier 大结构升级
 
+> 历史报告。后续审稿发现本版本隐藏集合/查询策略可跨六对象复用固定答案。
+> 新评测请使用[Diagnostic-2修订报告](DIAGNOSTIC_UPGRADE.zh-CN.md)及新版本协议；
+> 这里保留原始数据与当时结论，不代表上述问题已在本版本中修复。
+
 日期：2026-09-15。新协议：`brickatlas-frontier-1`。旧 v2、curated 和 Challenge v2 不覆盖。
 
 ## 结论先行
