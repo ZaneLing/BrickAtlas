@@ -10,6 +10,7 @@ const sha = path => createHash('sha256').update(readFileSync(resolve(here, path)
 const figures = read('figure-evidence.json'), audit = read('audit-evidence.json');
 const curated = read('curated-evidence.json');
 const challenge = read('challenge-evidence.json');
+const constructibility = read('constructibility-evidence.json');
 assert.equal(sha('generate-figures.py'), figures.generatorSha256);
 assert.equal(sha('generate-audit.mjs'), audit.generatorSha256);
 assert.equal(sha('generate-curated.ts'), curated.generatorSha256);
@@ -33,6 +34,15 @@ assert.equal(challengeManifest.totals.placedPartInstances, 329);
 for (const file of challengeManifest.files) assert.equal(sha('../challenge-cases-v2/' + file.path), file.sha256, file.path);
 for (const [path, hash] of Object.entries(challenge.paperFigures)) assert.equal(sha('figures/' + path), hash, path);
 assert.equal(challenge.measuredModelResults, 0);
+assert.equal(constructibility.version, 'brickatlas-constructibility-1');
+assert.equal(constructibility.sourceGroups, 6);
+assert.equal(constructibility.records, 78);
+assert.equal(sha('generate-constructibility.mjs'), constructibility.generatorSha256);
+assert.equal(sha('../constructibility-v1/public.json'), constructibility.publicSha256);
+assert.equal(sha('../constructibility-v1/audit.json'), constructibility.auditSha256);
+assert.equal(sha('../constructibility-v1/frozen-protocol.json'), constructibility.protocolSha256);
+assert.equal(sha('../constructibility-v1/algorithm-results.json'), constructibility.algorithmResultsSha256);
+assert.equal(read('../constructibility-v1/algorithm-results.json').filter(row => row.result.success === 1).length, 78);
 assert.equal(figures.figures.length, 5);
 for (const [path, hash] of Object.entries(figures.sourcesSha256)) assert.equal(sha('../' + path), hash, path);
 for (const [path, hash] of Object.entries(figures.outputSha256)) assert.equal(sha('figures/' + path), hash, path);
@@ -77,5 +87,6 @@ console.log(JSON.stringify({ verified: true, figures: figures.figures.length + p
     + Object.keys(curated.paperFigures).length + Object.keys(challenge.paperFigures).length,
   curatedModels: curated.models, curatedTasks: curated.tasks, curatedFiles: curated.files, renders3D: structures.images.length,
   challengeModels: challenge.models, challengeTasks: challenge.tasks, challengeParts: challenge.placedPartInstances,
+  constructibilityCases: constructibility.records,
   models: expanded.models, newCalls: expanded.newCalls, ambiguityCases: expanded.ambiguityCases,
   plannedTables: plan.tables.length, unmeasuredCells: cells, mainContentPages: read('pdf-verification.json').mainContentPageUpperBound }));

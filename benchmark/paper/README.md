@@ -8,6 +8,13 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 
 ## Contents
 
+- `constructibility-manual.tex`: process-aware sequence, accessibility,
+  recovery, stockout and calibrated-clarification contracts.
+- `../constructibility-v1/`: 78 development conditions on six Frontier sources,
+  with public-input solver results and shortcut controls but no learned-model run.
+- `../CONSTRUCTIBILITY_UPGRADE.zh-CN.md`: Chinese research plan, implementation
+  status, capability mapping and CVPR evidence gates.
+
 - `diagnostic-manual.tex`: Diagnostic-2 revision addressing fixed-answer shortcuts,
   paired visual disclosure, deadline schedules and independent-stage coherence.
 - `../diagnostic-v2/index.html`: 138 new conditions on six existing sources,
@@ -31,7 +38,7 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 - `main.tex`: three research questions, closest-work comparison, eight-task contract,
   source coverage, information conditions, accepted-answer semantics, full-casebank
   copy controls, measured model diagnostics, and explicit research limits.
-- `main.pdf`: eight main-content pages plus a separate reference page.
+- `main.pdf`: eight main-content pages plus two reference pages.
 - `supplement.tex`, `supplement.pdf`: detailed task schemas, catalog counts,
   model variants, ambiguity controls, historical experiments, and future designs.
 - `REVIEW.zh-CN.md`: reviewer-oriented gap analysis and remaining evidence gates.
@@ -78,6 +85,7 @@ node benchmark/paper/generate-study.mjs
 node benchmark/paper/generate-audit.mjs
 node node_modules/tsx/dist/cli.mjs benchmark/suite/study/paper-models.ts replay
 node node_modules/tsx/dist/cli.mjs benchmark/paper/generate-expanded.ts
+node benchmark/paper/generate-constructibility.mjs
 ```
 
 Regenerate or independently rescore the new full-casebank audit:
@@ -249,6 +257,11 @@ independent human validity check or new confirmation dataset.
 
 Independent human review, rich human-designed data, broader model baselines,
 and confirmatory experiments remain outstanding.
+Constructibility-1 adds 78 process conditions across the same six public Frontier
+sources. Public-information controls pass all cases; named shortcuts pass
+6/18 sequence audits, 0/18 recoveries, 0/6 stockouts, and 5/36 clarification
+conditions. These are task-mechanism checks, not learned-model results or new
+independent sources.
 The 2026-09-14 audit adds no API calls or new source objects. It measures 19/25
 catalog types in assembled sources and 35,840 copy-current controls across seven
 endpoints. Copying yields 87.1% part F1 on completion and 97.4% on removal, both

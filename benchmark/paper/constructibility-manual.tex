@@ -1,0 +1,117 @@
+\section{Process-Aware Constructibility-1}
+
+\subsection{Scope and Central Endpoint}
+Constructibility-1 is a separately versioned development release over the
+six public Frontier sources. It contains 78 conditions, not 78 independent
+objects. Its question is whether a proposed construction remains valid at
+every prefix, exposes enough tool clearance, recovers minimally after a
+blocked action, adapts to a stockout, and expresses uncertainty before
+committing to a hidden world.
+
+We retain the diagnostic vector
+\begin{equation}
+\mathcal{C}=(G,P,A,R,U),
+\end{equation}
+where $G$ is discrete geometric validity, $P$ prefix support, $A$ declared
+tool accessibility, $R$ recovery, and $U$ finite-world uncertainty handling.
+End-to-end success is their conjunction where applicable. We do not publish
+a weighted average across task families: a compensating average would allow
+strong static geometry to hide a complete recovery failure.
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+Family & Cases & Solver & Shortcut\\
+\midrule
+\tableinput{tables/constructibility-v1.tex}
+\bottomrule
+\end{tabular}
+\caption{Constructibility-1 release audit. Solver is the number of
+public-information oracle/control successes. Shortcut is always-valid,
+no-operation, unavailable-part reuse, or always-commit-\texttt{h0},
+respectively. The six valid sequence controls explain all six passes
+of the always-valid rule.}
+\label{tab:constructibility-v1}
+\end{table}
+
+\subsection{Accessibility Contract}
+Every placement first satisfies integer-grid bounds, no body overlap,
+at least one directly supporting stud for elevated parts, and a clear
+top-down body sweep. A named west, east, north, or south approach then
+requires one empty stud strip beside the part from its base upward.
+The strip represents deterministic room for a release tool. Removal uses
+the same condition and additionally rejects any overhead body.
+
+This contract is intentionally stronger than body-only vertical insertion:
+six constructed dead ends pass the earlier body test but fail the tool strip.
+It remains a nominal proxy. It is neither a collision-checked robot trajectory
+nor a calibrated statement about hand access, clutch force, or ergonomics.
+
+For an accepted sequence of target length $T$, legal-prefix rate is
+$L/T$, where $L$ is the number of steps before the first rejection.
+For each accepted elevated part, support fraction is the number of directly
+supported footprint studs divided by footprint area. We report the mean and
+minimum over accepted prefixes. These are support-coverage diagnostics, not
+force-balance stability.
+
+\subsection{Four Task Families}
+\paragraph{Sequence audit.}
+Each source has one valid plan, one plan that begins with an unsupported
+elevated part, and one plan that delays an enclosed part until its body still
+fits but no release strip remains. The answer gives the zero-based first
+failure, its typed reason, legal-prefix length, and constructible decision.
+The candidate is never reordered by the evaluator.
+
+\paragraph{Blocked recovery.}
+Each source contributes three failed checkpoints. The answer diagnoses the
+failed ID and clearance reason, then gives explicit removal and placement
+actions. Removed instances enter inventory; only the missing failed instance
+or a removed instance can be placed. The recovered checkpoint must be exact,
+the number of recovery actions must match the certified minimum, and up to
+twelve following target parts must then be installed legally. Thus a correct
+diagnosis without repair, or a corrected checkpoint without continuation,
+does not pass.
+
+\paragraph{Stockout replanning.}
+One scheduled 4-by-8 foundation plate is unavailable. The model receives a
+finite stock of smaller plates and must cover exactly the unavailable
+three-dimensional region at the same color, use no more than the certified
+two-piece lower bound, install the replacements with declared approaches,
+and execute the following construction window. Alternative seams are accepted
+when they satisfy the complete contract.
+
+\paragraph{Clarify or commit.}
+Eighteen finite-world cases remain ambiguous after one geometric section
+scan; eighteen matched cases add observations until one world remains.
+The model returns all admissible worlds, a probability for every original
+candidate under the declared uniform prior, a decision, and a next query.
+Ambiguous cases require \texttt{abstain}; resolved cases require the unique
+world. The unresolved next query maximizes expected entropy reduction per
+unit cost, with all exact ties accepted. We report posterior $L_1$, Brier
+score, false certainty, unnecessary abstention, and query correctness.
+This is finite-grammar calibration, not open-world confidence estimation.
+
+\subsection{Integrity and Reporting}
+Public records omit all oracle answers and the selected hidden-world ID.
+Private references, algorithm results, protocol, sources, and release files
+are hash-bound. Unknown or duplicate IDs reject the submission; missing,
+malformed, and truncated answers remain in each family denominator.
+Raw-model, fixed-harness, and tool-assisted results must be stored and
+reported separately.
+
+All public-information controls pass. The shortcut controls in
+Table~\ref{tab:constructibility-v1} fail every recovery and stockout case;
+always committing to \texttt{h0} passes only 5/36 clarification cases.
+These checks establish task non-degeneracy against the named shortcuts, not
+learned-model discrimination.
+
+\subsection{Unfinished Scientific Gates}
+The six sources were used during task design and are not an independent test
+set. No learned model, new human participant, external object, force solver,
+or real robot was evaluated in this release. The next confirmation must freeze
+new licensed source groups before adaptation, add matched visual process
+observations, run representative models and specialized planners under equal
+budgets, and obtain independent human metric review. Dynamic loading,
+connection tolerances, wear, and gear/hinge function require new validated
+engines or physical experiments and must not be inferred from these scores.

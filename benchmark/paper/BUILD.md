@@ -9,7 +9,7 @@
   `291758547e923160eb4d37079b7b9f0dfce82355`.
 - Template files are unmodified; their hashes are recorded in `evidence.json`.
 - Output: eight US Letter main-content pages and two reference pages;
-  sixty-eight supplementary pages, including the versioned contract manuals and all
+  seventy-one supplementary pages, including the versioned contract manuals and all
   authored-model case studies. No margin or negative-spacing modifications.
 - TeX log: no unresolved citations/references or overfull boxes.
 - PDF inspection: text on every page, no text outside page boundaries.
@@ -31,7 +31,7 @@
   60 admissible layouts, and 240 renderer checks with pixel-identical exteriors.
 - Runtime-free, key-free copied-environment replay passes 23 commands, including
   the expanded model receipts and ambiguity ground-truth verifier.
-- Benchmark regression: 179 tests pass; TypeScript check passes.
+- Benchmark regression: 186 tests pass; TypeScript check passes.
 - Challenge revision 2 has new IDs, complete candidate poses, strict field types,
   yaw-equivalent pose scoring, layer disclosures, and a query-return episode API.
   Revision 1 artifacts are retained and deprecated, not overwritten.
@@ -46,6 +46,11 @@
   Best released constant-set/tree transfer: 2/18 and 3/18; old set: 0/18.
   Eighteen legal 3D replay frames and six desktop/mobile gallery checks pass.
   External/human/learned-model validation remains unmeasured.
+- Constructibility-1: 78 conditions on the same six public Frontier sources:
+  18 sequence audits, 18 blocked recoveries, six stockout replans and 36
+  clarification decisions. Public-input controls pass 78/78. Named shortcuts
+  pass 6/18, 0/18, 0/6 and 5/36 respectively. No learned-model, new human,
+  physical or independent-source result is claimed.
 - Bibliography: 55 used entries across main and supplement; no undefined keys.
 - Twelve prospective result tables retain 460 blank cells (JSON null).
 - `verify-artifacts.mjs` checks model/audit/figure/PDF hashes, 3D render framing,

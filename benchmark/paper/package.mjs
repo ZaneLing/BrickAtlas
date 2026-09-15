@@ -16,6 +16,7 @@ execFileSync('zip', ['-q', '-r', temporary, 'main.tex', 'supplement.tex', 'refer
   'generate-curated.ts', 'curated-evidence.json', 'generate-challenge.ts',
   'challenge-evidence.json', 'reference-manual.tex', 'verify-review.mjs', 'review-evidence.json',
   'frontier-manual.tex', 'frontier-evidence.json', 'verify-frontier.mjs',
-  'diagnostic-manual.tex', 'verify-diagnostic.mjs'], { cwd: here });
+  'diagnostic-manual.tex', 'verify-diagnostic.mjs', 'constructibility-manual.tex',
+  'constructibility-evidence.json', 'generate-constructibility.mjs'], { cwd: here });
 renameSync(temporary, output);
 console.log(output);

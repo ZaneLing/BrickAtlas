@@ -1,5 +1,10 @@
 # Brick Atlas 模型测试场
 
+最新过程评测：[Constructibility-1 计划与实施报告](CONSTRUCTIBILITY_UPGRADE.zh-CN.md) ·
+[78 条过程可搭性条件](constructibility-v1/README.md)。该版本把前缀支撑、
+工具净空、最小恢复、施工中缺货和校准式主动检查连成一个可执行协议；
+当前仍是 6 个已公开源结构上的开发集，不含新模型、人类或真实力学结果。
+
 最新：[Diagnostic-2审稿机制修订](DIAGNOSTIC_UPGRADE.zh-CN.md) ·
 [配对视觉与维修案例](diagnostic-v2/index.html)。新版138条条件共用6个设计源，
 旧Frontier固定模板问题已公开记录，不把新旧成绩混合。
