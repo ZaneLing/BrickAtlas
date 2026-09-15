@@ -1,9 +1,12 @@
 # Brick Atlas 模型测试场
 
 当前对象口径：[题目类别、数据规模与全部 Case 清单](BENCHMARK_INVENTORY.zh-CN.md) ·
-[OMR/LDraw 完整模型注册表](omr-cases-v1/README.md)。正式对象源为网页已有的
-15 个许可模型及 39 个源命名语义子装配；5,120 个随机程序结构已退役为历史回归，
-不再计入当前 benchmark 对象规模或论文主图。
+[Mechanism-1 全部 48 道题](mechanism-v1/index.html) ·
+[中文论文](paper/main.zh-CN.md)。正式主线为6个原创整体机构、48道任务和Rapier
+物理/碰撞验证。OMR/LDraw仅保留为设计参考；5,120个随机结构仅作历史回归。
+
+[Mechanism-1 模型实测](mechanism-v1/MODEL_REPORT.zh-CN.md)：GPT-4.1 mini
+28/48，Gemini 2.5 Flash 31/48，本地Qwen3-0.6B 3/48。
 
 最新过程评测：[Constructibility-1 计划与实施报告](CONSTRUCTIBILITY_UPGRADE.zh-CN.md) ·
 [78 条过程可搭性条件](constructibility-v1/README.md)。该版本把前缀支撑、

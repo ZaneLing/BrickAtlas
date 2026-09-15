@@ -6,591 +6,312 @@
 \usepackage{tabularx}
 \usepackage{colortbl}
 \definecolor{cvprblue}{rgb}{0.15,0.43,0.64}
-\definecolor{tableband}{rgb}{0.93,0.95,0.96}
 \usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
 \def\confName{CVPR}
 \def\confYear{2026}
 \makeatletter
 \newcommand{\tableinput}[1]{\@@input #1 }
 \makeatother
-\newcommand{\unmeasured}{\phantom{00.0}}
-\title{BrickAtlas: From Valid Brick Structures to\\
-Constructible and Recoverable Processes}
+\title{BrickAtlas Mechanism: Evaluating Constructible,\\
+Recoverable, and Functional Brick Systems}
 \author{Development Manuscript\\Author and affiliation metadata intentionally omitted}
 \begin{document}
 \twocolumn[{
 \renewcommand\twocolumn[1][]{#1}
 \maketitle
 \centering
-\includegraphics[width=.96\textwidth]{figures/omr-whole-models.pdf}
-\captionof{figure}{\textbf{Eight of 15 primary OMR/LDraw objects.}
-The licensed whole-model registry spans 36--4,281 placed instances,
-624 part numbers and 42 colors. Thirty-nine source-named semantic
-subassemblies provide coherent components such as train cars, aircraft,
-bridge towers, decks, roofs and cables. Random-growth structures are
-retained only for historical mechanism regression.}
+\includegraphics[width=.94\textwidth]{figures/mechanism-models.pdf}
+\captionof{figure}{\textbf{Six original articulated benchmark objects.}
+The rover, gantry crane, bascule gate, observatory, tiltrotor, and polar
+station contain 542 visible brick-system parts, 36 rigid modules, and
+33 fixed, revolute, or prismatic joints. OMR/LDraw models informed the
+target level of visual coherence but are not benchmark cases.}
 \label{fig:teaser}
 }]
 
 \begin{abstract}
-A valid final brick structure does not certify a constructible process:
-an intermediate state may be unsupported, a placement may leave no tool
-clearance, a local error may require rollback, or missing evidence may
-require clarification rather than a guess. BrickAtlas separates these
-failures with explicit information and action contracts. Its primary
-object registry contains 15 licensed OMR/LDraw whole models and 39
-source-named semantic subassemblies, totaling 9,935 placements across
-13 set families. Six original 158--408-part objects support controlled
-process protocols.
-The new Constructibility-1 release provides 78 sequence-audit, blocked-recovery,
-stockout-replanning, and calibrated-clarification conditions. A body-only
-insertion rule misses all six designed clearance dead ends. Public-information
-solvers pass all conditions, while named shortcuts pass only 6/18, 0/18,
-0/6, and 5/36 conditions respectively. Diagnostic-2 adds 138 paired
-diagnosis--access--repair conditions, and a finite grammar supplies 600
-ambiguity conditions with exhaustive answer sets. We retain raw outputs,
-source groups, costs, and replayable evaluation evidence. Constructibility-1
-uses nominal support and clearance proxies and has no new learned-model,
-human, physical, or independent-source results; those remain required
-before confirmatory claims.
+Brick-assembly evaluation has advanced in generation, spatial reasoning,
+and final-state validity, but a valid final object does not certify a
+constructible, recoverable, or functional process. We introduce
+BrickAtlas Mechanism-1, a diagnostic benchmark built around six original
+articulated objects and eight task families: prefix dynamics, continuous
+service access, causal fault recovery, finite-inventory substitution,
+dynamic impulse robustness, functional kinematics, active inspection,
+and multi-objective design. Unlike our retired random-growth layer,
+all publication-facing objects are coherent systems with wheels, axles,
+gears, hinges, sliding carriages, payloads, and service bays.
+Rapier 3D supplies deterministic rigid-body simulation, fixed/revolute/
+prismatic joints, motor actuation, and swept-volume shape casts.
+The release contains 48 paired tasks, 72 audited renders, complete
+machine-readable inputs and oracles, and a per-case browser.
+Under the same one-image minimal harness, GPT-4.1 mini solves 28/48
+cases and Gemini 2.5 Flash 31/48; a local Qwen3-0.6B text baseline solves
+3/48. Prefix and finite-stock questions are substantially easier than
+continuous access, exact repair, functional outcomes, and complete
+Pareto sets. The six public sources are development data, and simulator
+evidence is not a calibrated claim about LEGO clutch force or robot
+execution.
 \end{abstract}
 
 \section{Introduction}
-A system can recognize the bricks in an object without recovering their
-poses, match its exterior without identifying hidden connections, or
-return a nearly unchanged structure with high similarity after failing
-an edit. A correct final assembly also need not make a submitted
-construction order executable. Treating these outcomes as a single
-notion of ``structural intelligence'' obscures what a model accomplished.
+Recent brick systems generate plausible objects, infer assembly steps,
+or answer spatial questions. Yet many evaluations still terminate at
+a final structure or a single next action. Real construction requires
+more: every prefix must survive gravity, a part or tool must reach its
+target, failures must be diagnosed and repaired locally, mechanisms
+must move as intended, and an agent must ask for information when the
+state is ambiguous.
 
-BrickAtlas uses shared source assemblies to separate these endpoints.
-Figure~\ref{fig:tasks} shows actual inputs and ground truth, while
-Fig.~\ref{fig:execution} distinguishes a valid sequence from a dead end.
-Following dataset/model reporting and holistic evaluation
-principles~\cite{gebru2021datasheets,mitchell2019modelcards,liang2023helm},
-we separate information, outputs, equivalences and efficiency.
+These requirements are coupled. A visually convincing crane can have
+an inaccessible trolley; a correct drawbridge geometry can have a
+reversed hinge; a robust plan can become invalid after one missing
+brace; and a cheap replacement can violate stiffness requirements.
+Aggregating these failures into final IoU, validity, or a language-model
+judge hides what a system actually accomplished.
 
-This is not a claim to originate brick generation, reconstruction, or
-multi-model assembly evaluation. BrickGPT~\cite{pun2025brickgpt} and
-BrickNet~\cite{kulits2026bricknet} provide strong generative foundations;
-MEPNet~\cite{wang2022manual}, Neural Assembler~\cite{yan2024assembler},
-and TreeSBA~\cite{guo2024treesba} address visual assembly.
-BC-Bench~\cite{liu2026composer} evaluates selection and pose;
-PhyBlock~\cite{ma2025phyblock} covers diagnosis and planning robustness.
-Our narrower opportunity
-is \emph{measurement validity across shared objects}: when does a
-plausible appearance, a high similarity score, or one valid reference
-justify a downstream structural conclusion?
+BrickAtlas Mechanism-1 asks whether a model can reason about
+\emph{constructible processes} on shared, functional objects.
+Figure~\ref{fig:teaser} shows the complete source set and
+Fig.~\ref{fig:tasks} the eight evaluation families. We intentionally
+do not import OMR geometry as cases: those models are retained only as
+design-complexity references. The previous 5,120 random-growth objects
+are likewise retired to regression testing.
 
-Our central question is whether a system can produce a process whose
-prefixes remain geometrically legal, supported, accessible, and recoverable,
-while requesting information when evidence is insufficient. We represent
-this as the diagnostic vector $\mathcal{C}=(G,P,A,R,U)$ rather than a
-weighted score that lets static geometry compensate for failed recovery.
-Diagnostic-2 separately tests diagnosis--access--repair coherence.
-Historical studies examine global versus changed-region similarity,
-hidden-relation identifiability, and candidate-order sensitivity.
+Our contributions are:
+\begin{enumerate}
+\item six original articulated brick-system designs with explicit rigid
+modules, collision geometry, joints, service interfaces, inventories,
+and hidden-state alternatives;
+\item eight gap-driven tasks with deterministic physics, collision,
+optimization, and information-gain oracles;
+\item a fully inspectable case browser exposing every question, capability,
+input, oracle, and model answer; and
+\item a paired development study of two VLMs and one local text model,
+with raw outputs, costs, and source-grouped reporting.
+\end{enumerate}
 
-The release contributes (1) a licensed whole-model and semantic-subassembly
-registry instead of random-growth publication examples; (2) a process-aware
-constructibility contract joining prefix validity, tool clearance, minimum
-recovery, finite-stock replanning and calibrated inspection; and (3)
-source-grouped shortcut audits, paired controls and raw-output replay.
-We separate primary objects, controlled mechanism probes, historical
-diagnostics and unrun experiments throughout.
+\section{Related Work}
+\paragraph{Generation and final validity.}
+BrickGPT~\cite{pun2025brickgpt} and BrickNet~\cite{kulits2026bricknet}
+generate brick structures using physical checks or typed connection
+graphs. BrECS~\cite{ahn2024brecs} studies budget-aware sequential
+assembly. These works establish that stable generation and resource
+constraints are active research areas; our target is not another
+text-to-brick generator, but process-level diagnosis after a design
+exists.
 
-\section{Related Work and Position}
-\paragraph{Generation and assembly.}
-BrickGPT~\cite{pun2025brickgpt} generates stable and buildable objects
-from text. BrECS~\cite{ahn2024brecs} studies budget-aware generation and
-completion with efficient constraint checking. BrickNet~\cite{kulits2026bricknet}
-uses human-designed LDraw objects and typed connectors; its 320,808
-samples and 9,743 part variants far exceed our grid vocabulary.
-Nominal contact in BrickAtlas is not a substitute for their structural
-or physical scope.
-MEPNet~\cite{wang2022manual} reads stepwise manuals;
-Neural Assembler~\cite{yan2024assembler} predicts components, topology,
-poses, and sequence from multiple views; TreeSBA~\cite{guo2024treesba}
-uses a tree representation and synthetic-to-real supervision.
-Break and Make~\cite{walsman2022break} studies interactive inspection,
-disassembly, and rebuilding. Their input protocols differ from fixed
-image or symbolic submissions and require audited adapters for comparison.
+\paragraph{Visual and procedural reasoning.}
+LEGO-Puzzles~\cite{tang2025legopuzzles} and
+PhyBlock~\cite{ma2025phyblock} cover spatial, ordering, diagnostic, and
+counterfactual questions. MEPNet~\cite{wang2022manual}, Neural
+Assembler~\cite{yan2024assembler}, and TreeSBA~\cite{guo2024treesba}
+infer poses or sequences from manuals and views. Co-builder
+\cite{huang2025cobuilder} studies assembly-state detection.
+Mechanism-1 complements these benchmarks with continuous shape casts,
+dynamic thresholds, explicit joints, minimal recovery, and costed
+clarification.
 
-\paragraph{The closest multimodal benchmark.}
-BC-Bench/Brick-Composer~\cite{liu2026composer} evaluates diverse-brick
-selection and pose estimation from manual context and current state,
-including feedback and training. LEGO-Puzzles~\cite{tang2025legopuzzles}
-also includes multi-step plans; PhyBlock~\cite{ma2025phyblock} studies
-progressive planning, diagnosis and counterfactuals. Co-builder~\cite{huang2025cobuilder}
-addresses state detection, and WorkBenchMark~\cite{ma2026workbenchmark}
-includes robot/VLA assembly. These are not empty research areas.
-Our bounded distinction is a shared-object conjunction of per-prefix
-support, explicit tool clearance, costed local recovery, stockout
-continuation and observation-consistent uncertainty. It is not a claim
-of first-ever assembly reasoning or robot execution.
+\paragraph{Interactive and embodied assembly.}
+Break and Make~\cite{walsman2022break} uses interactive disassembly and
+reconstruction. WorkBenchMark~\cite{ma2026workbenchmark} includes
+robot/VLA execution, while BC-Bench~\cite{liu2026composer} evaluates
+selection and pose. We do not claim robot realism. Rapier provides
+deterministic digital rigid-body evidence; grasp, tolerance, clutch
+force, and hardware transfer remain separate questions.
 
-\begin{table*}[t]
-\centering\small
-\begin{tabularx}{\textwidth}{@{}lXXX@{}}
-\toprule
-Work & Supplied information & Main output / setting & BrickAtlas distinction\\
-\midrule
-BrickGPT; BrECS & Text or target constraints & Generation / completion & Multi-task measurement, not new generation\\
-BrickNet & LDraw parts and typed connectors & Graph-backed build programs & Smaller domain; explicit answer equivalence\\
-MEPNet; TreeSBA & Manuals or multi-view images & Poses / assembly actions & Shared task labels and changed-region metrics\\
-Break and Make & Interactive observations & Disassembly and rebuilding & Fixed-input and tool tracks kept separate\\
-BC-Bench & Manual, current state, candidate bricks & Selection and single-step pose & Hidden-layout ambiguity and typed multi-task success\\
-SpatialBabel & Images and scene-code languages & Primitive scenes / spatial QA & Nominal contacts, edits, and original-order execution\\
-\bottomrule
-\end{tabularx}
-\caption{Closest-work positioning by input and output protocol.
-This is not a capability checklist or an empirical comparison on
-matched data. Specialized-method adaptation remains unrun.}
-\label{tab:position}
-\end{table*}
-
-\paragraph{Diagnostic visual reasoning.}
-CLEVR~\cite{johnson2017clevr} establishes controlled compositional
-reasoning evaluation; BLINK~\cite{fu2024blink} tests perceptual skills,
-including multi-view and spatial reasoning.
-CSGNet~\cite{sharma2018csgnet} predicts executable shape programs.
-SpatialBabel~\cite{liu2026spatialbabel} examines reconstruction across
-scene-code languages. Output-protocol effects are therefore not new
-in themselves. Answer consistency also has prior work~\cite{hudson2019gqa,jing2022consistency};
-our distinction concerns executable maintenance constraints.
-Similarly, MCQ position bias is established~\cite{zheng2024selectors};
-our candidate experiment specifically compares actual pose changes
-against an identical-repeat baseline, without inferring internal
-model mechanisms from external API replies.
-
-\section{Benchmark Construction and Tasks}
-\subsection{Geometry, Sources, and Splits}
-The primary source layer contains 15 complete OMR/LDraw files already
-used by the BrickAtlas application. They preserve source hierarchy,
-part identities, colors, arbitrary LDraw transforms, author, license,
-URL and source hash. Complete models contain 36--4,281 instances.
-We select 39 source-named semantic descendant closures and exclude
-random crops, step fragments, minifig-only cases, lamps and cones.
-All cases from a model retain one source group; alternate builds from
-the same set retain one set family.
-
-Controlled process tasks use a separate nominal grid. There a part is
-$(i,t,c,x,y,z,r)$: instance ID, type, color, integer minimum corner and
-quarter-turn yaw. Geometry requires no overlap and at least one directly
-supporting stud for elevated parts. Force balance, clutch, arbitrary
-CAD contact and robotic grasping remain outside that contract.
+\section{Objects and Representation}
+\subsection{Original Mechanism Sources}
+The six objects span planetary maintenance, load handling, movable
+infrastructure, scientific instrumentation, aerial response, and remote
+infrastructure (Table~\ref{tab:models}). Each is authored for this
+benchmark and combines visually coherent subassemblies rather than
+randomly grown bricks.
 
 \begin{table}[t]
 \centering\small
-\begin{tabular}{lrr}
-\toprule Layer & Groups & Records\\ \midrule
-OMR whole/semantic & 15 & 54\\
-Frontier process & 6 & 264\\
-Finite ambiguity & 9 & 600\\
-Procedural v2 (retired) & 5,120 & 117,910\\
+\begin{tabular}{lrrr}
+\toprule Object & Parts & Modules & Joints\\ \midrule
+\tableinput{tables/mechanism-models.tex}
 \bottomrule
 \end{tabular}
-\caption{Dataset layers are not pooled. OMR has 13 set families;
-Frontier's 264 records combine 48 Frontier-1, 138 Diagnostic-2 and
-78 Constructibility-1 conditions on the same six sources.}
-\label{tab:sources}
+\caption{Mechanism-1 source objects. ``Parts'' are visible brick-system
+elements; physics runs on compound rigid modules.}
+\label{tab:models}
 \end{table}
 
-The earlier 5,120 random-growth structures and their 117,910 derived
-conditions are excluded from current object scale and publication-facing
-galleries. They remain only to reproduce historical model runs, scorer
-regressions and shortcut censuses. More views, tasks and subassemblies
-never create additional independent objects.
+A visible part has shape, size, local pose, material color, and module
+membership. The vocabulary includes bricks, plates, beams, panels,
+slopes, arches, windows, cylinders, wheels, axles, gears, and spheres.
+A module has a world pose, mass, role, and anchored/dynamic state.
+Joints are fixed, revolute, prismatic, or spring descriptors with local
+anchors, axes, limits, and optional actuation.
 
-\paragraph{Curated and challenge layers.}
-The twelve 8--28-part curated objects and six 49--63-part Challenge-2
-objects remain calibration layers. Frontier-1 (Fig.~\ref{fig:teaser})
-adds six 158--408-part objects, 1,509 placed parts, 14--24-stud depth,
-and dependency chains up to 19. Its separate 512-part, 96-cell envelope
-does not change historical limits. Eight tasks per object cover
-minimum-action service, access certificates, parallel scheduling,
-minimum support intervention, inventory replacement, hidden seam sets,
-contingent inspection and mixed-fault repair. An audit found identical
-answers across all six legacy ambiguity and inspection cases.
-Diagnostic-2 replaces these templates and adds 72 paired maintenance
-conditions, 36 geometry-observation conditions, 18 deadline schedules
-and 12 mixed-pose conditions. Full references are withheld from the
-layer-image track. The supplement defines all new contracts.
-Constructibility-1 adds 78 conditions over the same six public sources:
-18 immutable-sequence audits, 18 blocked recoveries, six in-process
-stockouts, and 36 ambiguous/resolved clarification decisions. These are
-derived development conditions, not independent objects or model results.
+OMR/LDraw examples are not included in the task manifest, source groups,
+scores, or model inputs. They only guided an internal design review of
+object coherence and subassembly granularity.
 
+\subsection{Physics and Collision Oracle}
+We use Rapier 3D v0.20 at 120\,Hz, 12 solver iterations, and two internal
+PGS iterations. Compound colliders approximate the visual parts; slopes
+and arches use conservative cuboid envelopes. Prefix evaluation rebuilds
+each partial assembly, enables available joints, runs one simulated
+second, and records the first module displacement above 0.35 units.
+
+Accessibility uses a continuous cuboid shape cast from start pose to
+service interface. Dynamic robustness applies an off-center impulse and
+measures
+\begin{equation}
+d_{\max}=\max_t\max(\|\mathbf{x}_t-\mathbf{x}_0\|,
+r\theta_t),
+\end{equation}
+where $r$ is the target module radius and $\theta_t$ its quaternion
+rotation from the settled pose. Functional tasks motor a named joint
+and compare measured motion with a declared fraction of the target.
+All thresholds and engine settings are public and frozen.
+
+\section{Eight Gap-Driven Tasks}
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/diagnostic-v2.pdf}
-\caption{Diagnostic-2 design audits, not learned-model performance.
-Fixed-answer transfer uses shared candidate IDs; the best released set
-and tree transfer to 2/18 and 3/18 cases. Matched contexts have identical
-answers despite different total sizes. Fault count and selected depth
-remain correlated; these are not fully orthogonal difficulty strata.}
-\label{fig:distribution}
-\end{figure*}
-
-\subsection{Task and Information Contract}
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/brick-tasks.pdf}
-\caption{\textbf{Task-specific curated input and ground truth.}
-Reconstruction maps gate views to typed poses; bridge completion restores
-rails; station editing changes only the canopy color; lighthouse repair
-restores the shifted roof. Bottom panels illustrate part recognition,
-a typed relation query, one valid generation witness, and a verified
-planning prefix. Exploded offsets are display-only, not valid poses or
-ordinary model observations.}
+\includegraphics[width=\textwidth]{figures/mechanism-tasks.pdf}
+\caption{\textbf{The complete task taxonomy.} Each family contains one
+case for every source object. Dark/red highlighting identifies the
+queried module; access views overlay green feasible and red colliding
+paths; robustness views show the impulse direction.}
 \label{fig:tasks}
 \end{figure*}
 
 \begin{table*}[t]
 \centering\small
-\begin{tabularx}{\textwidth}{@{}lXXXr@{}}
-\toprule Family (variants) & Public input & Output & Success contract & Cases\\
+\begin{tabularx}{\textwidth}{@{}lXXX@{}}
+\toprule Family & Public evidence & Output & Exact success\\
 \midrule
-\tableinput{tables/task-contract.tex}
+Prefix dynamics & two module orders, joints, masses & valid plan, first failed prefix & both fields correct\\
+Insertion access & service target, three swept paths & all accessible path IDs & exact feasible set\\
+Fault recovery & displacement/tilt, candidate joints & fault joint, ordered actions & diagnosis and sequence exact\\
+Inventory substitution & alternatives, stock/cost/stiffness limits & replacement ID & all limits satisfied\\
+Dynamic robustness & impulse ladder and displacement limits & largest safe impulse & exact threshold\\
+Functional kinematics & joint type, axis, target motion & joint ID, pass/fail & exact simulated outcome\\
+Active inspection & finite worlds, query returns/costs & next query ID & max information/cost\\
+Multi-objective design & cost, mass, stiffness alternatives & all Pareto IDs & exact non-dominated set\\
 \bottomrule
 \end{tabularx}
-\caption{Eight task families. ``Reference'' denotes the declared RGB,
-layer, or symbolic condition. Symbolic tasks are not visual scores.}
+\caption{Every family has six paired cases and a deterministic evaluator.
+No LLM judge defines correctness.}
 \label{tab:tasks}
 \end{table*}
 
-Table~\ref{tab:tasks} defines the task families.
-\textbf{Recognition} predicts a known catalog type, color, and stud
-count from isolated views.
-\textbf{Relations} uses a symbolic assembly and two IDs to ask direct
-contact, vertical ordering, mating-stud count, and shortest undirected
-contact-graph distance; a non-contact pair can still have a graph path.
-\textbf{Reconstruction} predicts a full structure from reference
-information and BOM.
-\textbf{Generation} accepts any legal structure satisfying exact
-extents, zero anchoring, a piece budget, color count, connected
-component count, and minimum maximum contact degree. It is constrained
-layout generation, not semantic text-to-shape evaluation.
+\paragraph{Prefix dynamics and access.}
+These tasks operationalize two widely noted gaps: final validity does
+not imply stable prefixes, and a target pose does not imply an executable
+insertion. The candidate order is not silently repaired. Shape casts
+return every feasible path rather than one private reference.
 
-\textbf{Completion} removes the last $\lfloor n/4\rfloor$ pieces of
-a valid insertion sequence and requires preserving the remaining
-prefix. It does not cover arbitrary holes.
-\textbf{Editing} rotates the whole structure, replaces all occurrences
-of one color, or removes one topmost piece. Rotation maps positive
-$X$ toward positive $Z$, keeps $Y$, and reanchors minimum $X,Z$.
-\textbf{Repair} has no-fault, color-fault, and one-stud-shift cases
-on exposed topmost pieces. It requires corrected geometry and faulty
-current IDs, with an empty fault list for a normal input.
-\textbf{Planning} supplies the target with IDs in lexical order and
-requests any executable permutation for vertical assembly/disassembly.
+\paragraph{Recovery and resources.}
+Fault cases remove one structural or service joint, expose the simulated
+child displacement and tilt, and require a complete minimum repair
+program. Inventory cases force selection among a costly stiff beam,
+paired trusses, a light cable, and an ineffective fairing under explicit
+piece, cost, and stiffness limits.
 
-Each source yields 13 variants and 23 information-conditioned cases.
-Reconstruction, completion, and all three repairs have three reference
-conditions. With 25 catalog types in six colors, the total is
-$5{,}120\times23+150=117{,}910$.
-\textbf{Ordinary RGB} provides isometric/top/front/side assembled views
-and BOM; interiors remain hidden. \textbf{Layer disclosure} provides
-an assembled view and top images of each bottom-$Y$ layer with other
-layers removed. \textbf{Symbolic reference} supplies complete geometry.
-The latter two add information and require full type/color/pose recovery.
-Other families use their declared symbolic or constraint inputs.
-Fault labels, changed IDs, and private render recipes are excluded
-from ordinary prompts.
+\paragraph{Dynamics and function.}
+Robustness is a threshold task over measured impulses, not a static
+``stable'' label. Functional cases deliberately include successful and
+failed actuation outcomes caused by load, joint limits, or interference.
+Thus appearance alone cannot solve the task.
 
-\section{Ground Truth and Measurement}
-\subsection{Visual Compatibility Versus Exact Structure}
-Ground-truth records bind input hashes, source groups, target/source
-geometry, protected and changed IDs, contacts, nominal stud mates,
-executable witnesses, and metric applicability.
-Multiset matching ignores arbitrary output IDs and symmetric per-part
-yaw, but does not silently align global translation or rotation.
-For $m$ matched parts in target $T$ and answer $A$,
-\begin{equation}
-P=m/|A|,\quad R=m/|T|,\quad F_1=2m/(|A|+|T|).
-\end{equation}
-BOM F1 removes pose; occupancy IoU removes part boundaries; edge F1
-requires matched endpoints and mating-stud counts.
+\paragraph{Inspection and engineering trade-offs.}
+Active inspection scores expected information gain per unit cost over
+four hidden worlds: nominal, reversed, missing-brace, and jammed.
+Query costs vary by source, preventing one fixed query from succeeding.
+The design task requires the complete Pareto set under lower cost,
+lower mass, and higher stiffness.
 
-For ordinary reconstruction, let $S^+$ be colored first-hit cells
-along positive $X,Y,Z$. We accept
-\begin{equation}
-\begin{aligned}
-V(A,T)={}&\mathbf{1}\{\mathrm{valid}(A)\}
-\mathbf{1}\{\mathrm{BOM}(A)=\mathrm{BOM}(T)\}\\
-&{}\cdot\mathbf{1}\{S^+(A)=S^+(T)\}.
-\end{aligned}
-\end{equation}
-This proxy allows alternative hidden arrangements; it is not arbitrary
-camera visibility or pixel similarity. Full-reference correctness is
-reported separately. Completion subtracts preserved source matches
-before computing \emph{addition} F1. Edits/repairs require protected
-piece preservation; repairs additionally require faulty-ID localization.
-False alarms are defined only for no-fault cases.
+\section{Evaluation Protocol}
+Each task supplies one rendered view and structured evidence under a
+fixed minimal harness. Models return one JSON object; unknown fields do
+not repair missing required values. Missing, malformed, truncated, and
+duplicate submissions remain in the denominator. Exact success is
+reported separately for all eight families, with the source object as
+the statistical cluster.
 
-\paragraph{RQ1: no-operation shortcuts.}
-Copying a prefix with $k$ missing parts from an $n$-part target gives
-\begin{equation}
-F_1^{\rm copy}=\frac{2(n-k)}{2n-k},\qquad F_{1,\rm added}^{\rm copy}=0.
-\end{equation}
-Copying before a one-piece removal similarly yields
-$2(n-1)/(2n-1)$, approaching one without performing the edit.
-A full 35,840-case no-operation census confirms this: 87.1\% completion
-and 97.4\% removal F1, both with zero task success.
-Positive repair copies reach 94.9\% F1 without correct localization.
-Normal no-fault repair correctly succeeds unchanged.
-All seven endpoints contain one case per source; per-case results
-and complete global/local metrics remain available.
+The deterministic tracks are:
+\textbf{physics oracle}, which executes Rapier dynamics or shape casts;
+\textbf{constraint oracle}, which enumerates inventory/Pareto answers;
+and \textbf{information oracle}, which computes finite-world query
+utility. Model outputs never receive oracle feedback.
 
-\subsection{An Ambiguity-Aware Extension}
-\label{sec:ambiguity}
-Matching appearance need not identify hidden relations. Instead of
-forcing one reference answer, we make the admissible set explicit.
-The new, separately versioned track uses sealed shells with a
-$2\times W$ internal layer, $W\in\{2,4,6\}$, tiled by identical
-1-by-2 bricks. Three stack heights give nine parameterized families.
-The tilings are exhaustive within this finite grammar: their counts
-are 2, 5, and 13, independently checked by the recurrence
-$c_W=c_{W-1}+c_{W-2}$, $c_0=c_1=1$.
-There are 60 valid layout states across the nine families.
+We test GPT-4.1 mini and Gemini 2.5 Flash with the same image, structured
+input, temperature zero, 2,200-token cap, no retry, and no provider
+fallback. Qwen3-0.6B is a local text-only lower baseline. All 96 paid
+calls cost \$0.069427; cumulative project spend remains below the
+pre-existing \$4.50 cap.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/brick-ambiguity.pdf}
-\caption{\textbf{Same exterior, different ground truth.}
-The two sealed structures have identical rendered exterior pixels
-under the tested cameras. Exploding their layers reveals horizontal
-versus vertical red internal bricks; side walls are omitted in the
-disclosed views. The outlined adjacent blue pair
-shares one red supporter in A but not B. The exterior-only answer is
-therefore \texttt{undetermined}; disclosing the support layer makes
-the answer definite. Exploded views are evaluator illustrations.}
-\label{fig:ambiguity}
-\end{figure*}
-
-For each pair of blue upper bricks we ask whether they share a
-directly supporting red brick. Given the observation $O$ and public
-grammar $\mathcal{G}$, let $\mathcal{A}(O,\mathcal{G})$ be all admissible
-layouts. With Boolean query $q$,
-\begin{equation}
-y(O)=
-\begin{cases}
-\mathrm{yes},&\forall A\in\mathcal{A},\ q(A)=1,\\
-\mathrm{no},&\forall A\in\mathcal{A},\ q(A)=0,\\
-\mathrm{undetermined},&\text{otherwise}.
-\end{cases}
-\end{equation}
-Exterior and support-disclosed conditions create 600 paired cases
-(Table~\ref{tab:ambiguity}). Ninety exterior questions are genuinely
-ambiguous within the declared grammar; disclosure resolves them.
-Known geometry and the grammar are supplied symbolically, so this
-extension tests observation-consistent structural inference, not
-pure visual perception. Public records omit labels and hidden
-supports; an enumeration solver consumes only these public inputs
-and solves all 600 cases.
-
-\begin{table}[t]
-\centering\small
-\begin{tabular}{lrrrrr}
-\toprule Condition & Groups & Cases & Yes & No & Undet.\\
-\midrule
-\tableinput{tables/ambiguity-counts.tex}
-\bottomrule
-\end{tabular}
-\caption{New finite-grammar task counts, separate from v2. Nine
-parameterized families are not nine independent semantic sources.}
-\label{tab:ambiguity}
-\end{table}
-
-All layouts agree in BOM, colored occupancy, and declared surfaces
-and pass two geometry implementations. A separate high-resolution
-renderer checks all 60 layouts in four views: 240 rendered frames
-match their within-family reference pixel-for-pixel. This result is
-renderer/camera-specific, not human calibration. Unweighted always-no
-accuracy is 70\% exterior and 88\% disclosed; class-balanced accuracy
-is 50\% in both. We therefore report balanced success, false certainty
-on ambiguous cases, and unnecessary abstention on determinate cases.
-Complete baseline and planned VLM tables are in the supplement.
-
-\subsection{Execution and Evaluation Integrity}
-\begin{figure*}[t]
-\centering
-\includegraphics[width=.95\textwidth]{figures/brick-execution.pdf}
-\caption{\textbf{Ground-truth construction versus a designed dead end.}
-Four snapshots follow the curated double-span bridge's verified
-height-sorted sequence. The last two panels contrast a legal prefix
-that places both decks before the inner piers with the exploded target;
-the missing inner pier can no longer descend vertically. The evaluator
-retains the submitted order and first rejection rather than repairing it.}
-\label{fig:execution}
-\end{figure*}
-
-Execution stops at the first unknown, duplicate, unsupported, colliding,
-or blocked action. We record legal-prefix fraction, coverage, duplicate
-status, and the zero-based failure step. An incomplete legal prefix
-fails success but has no illegal step.
-Height sorting solves all 10,240 plans in this vertical domain:
-supporters are lower and already present; an earlier part overlapping
-the footprint must end below the new part, or the final geometry would
-collide. Reversing the sequence gives disassembly.
-This establishes a constraint-following ceiling, not difficult search.
-
-Frozen selection manifests reject unknown/duplicate predictions;
-missing/malformed submissions remain in applicable denominators.
-Null means inapplicable, not a removed failure. A versioned strict
-decoder closes legacy primitive-type coercion without altering recorded
-scores. All 117,910 retired-regression oracle answers pass; independent
-metrics and mutation checks are detailed in the supplement. Replay labels model,
-harness, environment, and evaluator operations separately. Visual
-unfolding of an unordered structure is never called a model plan.
-
-\section{Models, Baselines, and Experiments}
-\subsection{Historical Eight-Model Diagnostic}
-For reproducibility only, we retain the same 39 task cases from three
-retired procedural objects (12/20/29 parts) with eight
-models~\cite{openai2025gpt41,googlemodels,qwen3vl,anthropic2025haiku,meta2025llama4}.
-Four models retain their original verified responses; four
-new models receive identical prompts, image bytes, and the 2,200-token
-JSON output cap. These scores are not results on the primary OMR registry.
-Temperature is zero, model order rotates by case,
-automatic retries and provider fallback are disabled, and provider,
-tokens, truncation, latency, and settled OpenRouter charges~\cite{openrouterapi} are retained.
-Gemini reasoning is disabled; other models have no requested reasoning
-budget. Cross-round time/provider differences remain potential confounds.
-
+\section{Results}
 \begin{table*}[t]
 \centering\small
-\setlength{\tabcolsep}{4pt}
-\begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}rrrrrrrrr@{}}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}rrrrrrrr@{}}
 \toprule
-& \multicolumn{1}{c}{Symbolic} & \multicolumn{1}{c}{RGB} &
-\multicolumn{1}{c}{Constraints} & \multicolumn{1}{c}{RGB} &
-\multicolumn{2}{c}{Symbolic} & \multicolumn{1}{c}{RGB} & &\\
-\cmidrule(lr){2-8}
-Model / algorithm & Relations & Recon. & Gen. & Complete & Edit & Plan & Repair & Format & USD\\
+Model & Prefix & Access & Repair & Stock & Dynamics & Function & Inspect & Pareto\\
 \midrule
-\tableinput{tables/expanded-main.tex}
+\tableinput{tables/mechanism-results.tex}
 \bottomrule
 \end{tabular*}
-\caption{\textbf{Main descriptive matrix: eight models, identical
-three-source tasks.} Entries are exact successes / cases; variants
-share sources, so denominators are not independent trials.
-$+$ denotes the four newly run models. Algorithm rows use exactly
-the same cases on supported tasks; -- means unsupported or no API
-charge field, not zero success. No pooled rank or significance claim
-is supported by three objects. Recognition is separate in the
-24-source study because this shared screen has no isolated-part cases.}
-\label{tab:main}
+\caption{Exact successes out of six source objects per family.
+Qwen is text-only; GPT and Gemini receive one task render plus identical
+structured evidence. This is a development comparison, not a stable
+leaderboard.}
+\label{tab:results}
 \end{table*}
 
-The supplement separates all 13 variants and same-source controls:
-copying, train-only retrieval, symbolic rules and height sorting.
-Unsupported pairs are not failures. Table~\ref{tab:partial} separates
-format, local changes and exact success; scores do not identify
-internal perceptual or reasoning mechanisms.
-\input{tables/expanded-findings.tex}
+GPT-4.1 mini solves 28/48 cases, Gemini 31/48, and local Qwen3-0.6B
+3/48. Both VLMs solve all finite-inventory cases, while prefix accuracy
+is 5/6 and 6/6. This does not make those families redundant: the valid order and numeric limits
+are explicitly represented, and the six-source scale is small.
 
-\begin{table*}[t]
-\centering\small
-\begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}rrrrrrr@{}}
-\toprule
-& \multicolumn{2}{c}{Reconstruction} & \multicolumn{2}{c}{Completion} & Planning & Repair &\\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-Model & Part F1 & Surface F1 & Added F1 & Preserve & Legal prefix & Fault F1 & Truncated\\
-\midrule
-\tableinput{tables/expanded-diagnostics.tex}
-\bottomrule
-\end{tabular*}
-\caption{Task-specific diagnostics on the same three sources,
-percentages except truncation counts. All returned responses remain
-in each applicable mean, including format failures.
-Fault F1 includes only the six faulty repair cases, excluding the
-three normal controls.}
-\label{tab:partial}
-\end{table*}
+The largest gaps are more diagnostic. GPT solves 3/6 access cases and
+no exact repair case; Gemini solves 3/6 access and 3/6 repair. Functional
+outcomes are 3/6 for both because some actuators fail in simulation
+despite valid-looking geometry. GPT obtains 5/6 dynamic thresholds while
+Gemini obtains 2/6. Complete Pareto sets remain difficult (2/6 and 4/6).
+These failures persist despite perfect output formatting, so they are not
+explained by JSON parsing.
 
-\subsection{Paired Tools, Representations, and Training}
-A preceding 24-source, two-model study contains 674 one-shot calls
-and 56 paired controls. It is not pooled with the three-source matrix.
-Both models fail exact ordinary reconstruction while succeeding on
-all recolor/removal cases. Eight-source Gemini controls reuse the
-same first answer for reflection and target-blind validation
-(Table~\ref{tab:controls}). Symbolic reference supplies privileged
-geometry; its gain is not a pure perception intervention. A zero
-exact-success floor under missing/mismatched images also cannot
-establish that images are ignored.
+The task families also avoid one common answer template. Feasible path
+sets vary across at least four patterns; safe impulse thresholds vary
+across at least four values; active-inspection optima cover marker,
+brace, and probe queries; and functional labels include both outcomes.
+The local model's 3/48 result further rejects a broad format-only shortcut.
 
-\begin{table}[t]
-\centering\small
-\begin{tabular}{lrr}
-\toprule Paired condition & Original & Intervention\\
-\midrule
-\tableinput{tables/study-controls.tex}
-\bottomrule
-\end{tabular}
-\caption{Measured eight-source Gemini controls. Relative denotes
-assembly representation; other rows are reconstruction.
-These are a different cohort from Table~\ref{tab:main}.}
-\label{tab:controls}
-\end{table}
+\section{Limitations}
+Mechanism-1 contains only six public authored sources. The objects were
+used during task design, so they are development data rather than an
+independent confirmation set. Visual parts are LEGO-like primitives,
+not a claim of compatibility with every commercial element.
 
-Ten SmolVLM-256M~\cite{marafioti2025smolvlm} base/LoRA~\cite{hu2022lora}
-pilot jobs share 337 cases and matched supervision, not compute.
-No positive edit transfer is observed; base outputs all fail formatting.
-These and earlier Qwen3~\cite{qwen3model} pilots are detailed in the supplement.
+Rapier validates rigid-body, joint, motor, and collision consequences
+under declared parameters. It does not calibrate ABS elasticity, stud
+clutch, manufacturing tolerance, wear, gripper contact, or human
+ergonomics. Slope and arch physics use conservative collision envelopes.
+Real-brick and robot transfer require separate experiments.
 
-\subsection{Candidate Consistency and a Visual Control}
-Coordinate-normalized two-piece probes compare full reconstruction,
-local pose, candidate selection, and privileged symbolic answers. A
-12-source, four-model follow-up separates reordering from repetition.
-For selected poses
-$a_g,a_g^r,a_g^\pi$, the paired endpoint is
-\begin{equation}
-D_g=\mathbf{1}[a_g^\pi\ne a_g]-\mathbf{1}[a_g^r\ne a_g].
-\end{equation}
-Mean excess mismatch is 0.50--0.75 across models, with all 192
-requests retained. Source-bootstrap intervals~\cite{efron1979bootstrap}
-are in the supplement. Mismatch is inconsistency, not incorrectness.
+The model comparison is descriptive: six source clusters cannot support
+fine-grained ranking or broad population claims. Human difficulty,
+independent object design, additional model families, multi-seed
+sampling, and real hardware remain outstanding. The complete browser
+and Chinese casebook expose every task and answer so these limitations
+can be audited rather than hidden behind an aggregate score.
 
-A known-renderer mask-matching control uses public BOM and candidates,
-not target geometry. It yields 44/44 image-conditioned successes and
-16/16 no-image abstentions. This is a signal control, not a general reconstructor.
-
-\section{Experimental Coverage and Remaining Work}
-Diagnostic-2's public symbolic control passes 36 maintenance cases;
-a known-renderer color control passes their 36 layer-image counterparts.
-It reads public pixels/current geometry, not target JSON, and is not
-a general pose estimator. Constructibility-1 public solvers pass all
-78 conditions. Always-valid, no-operation, unavailable-part reuse and
-always-\texttt{h0} controls pass 6/18, 0/18, 0/6 and 5/36 respectively;
-the first six are the valid sequence controls. These checks establish
-executable, nonconstant task signals, not model discrimination.
-Independent objects, human review and matched-budget model experiments
-remain necessary.
-
-\section{Limitations and Conclusion}
-BrickAtlas is currently a controlled grid benchmark, not a comprehensive
-semantic or physically validated assembly benchmark. V2 retains its
-common base, 19 assembled types, suffix-only completion, topmost repairs,
-and height-solvable planning. Frontier raises size to 408 parts, but retains
-the 25-type rectangular vocabulary and has no learned-model measurements.
-Constructibility-1 adds per-prefix support and a one-stud side-clearance
-proxy, not force balance, grasping, or continuous robot motion. Its local
-rollback and stockout tiling remain exactly solvable; size alone does not
-prove difficult reasoning or empirical discrimination.
-The ambiguity extension
-is exhaustive only within its stated grammar; nine parameter families
-are not independent external sources. Pixel equality is verified on
-one renderer, not every camera or human observer.
-Current human-review packets contain no real submitted judgments.
-Small adaptive model studies and same-machine replay do not replace
-independent confirmation and second-environment reproduction.
-
-Within this scope, the benchmark makes useful distinctions executable:
-changed-region success is not global similarity~\cite{geirhos2020shortcut}; an admissible structure
-does not determine every hidden relation; and final validity does not
-certify prefix support, tool clearance, recovery, or calibrated commitment.
-Stronger claims require independent licensed sources, matched visual
-process inputs, learned-model and human evidence, and physical validation.
+\section{Conclusion}
+BrickAtlas Mechanism shifts brick evaluation from final appearance and
+axis-aligned validity to process, intervention, and function. Original
+articulated objects, external rigid-body simulation, continuous shape
+casts, exact repair programs, active inspection, and Pareto scoring
+produce failures that earlier recoloring and height-sorting tasks could
+not reveal. The first model study confirms substantial headroom in
+accessibility, recovery, functional prediction, dynamic thresholds, and
+multi-objective reasoning, while preserving explicit boundaries between
+simulation evidence and real-world mechanics.
 
 \clearpage
 {\small

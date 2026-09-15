@@ -8,11 +8,12 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 
 ## Contents
 
-- `../omr-cases-v1/`: primary registry of 15 licensed complete OMR/LDraw
-  models and 39 source-named semantic subassemblies.
-- `generate-omr.py`, `omr-evidence.json`: whole-model figure, source table,
-  release hashes and counts. Random-growth structures are no longer used as
-  publication-facing dataset examples or current object scale.
+- `../mechanism-v1/`: six original articulated objects, 48 gap-driven tasks,
+  72 audited renders, a complete case browser, raw model runs and scores.
+- `mechanism-manual.tex`, `generate-mechanism.mjs`,
+  `mechanism-evidence.json`: physics contracts, model/task figures and results.
+- `../references/omr-design-reference/`: OMR/LDraw design reference only;
+  none of its geometry is a benchmark case or model input.
 
 - `constructibility-manual.tex`: process-aware sequence, accessibility,
   recovery, stockout and calibrated-clarification contracts.
@@ -41,10 +42,9 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 - `../review-gallery/index.html`: authored calibration sources and the retired
   5,120-source procedural regression gallery.
 
-- `main.tex`: three research questions, closest-work comparison, eight-task contract,
-  source coverage, information conditions, accepted-answer semantics, full-casebank
-  copy controls, measured model diagnostics, and explicit research limits.
-- `main.pdf`: eight main-content pages plus two reference pages.
+- `main.tex`: Mechanism-1 motivation, original objects, Rapier physics contract,
+  eight task families, measured model results, and explicit research limits.
+- `main.pdf`: five main-content pages plus one reference page.
 - `supplement.tex`, `supplement.pdf`: detailed task schemas, catalog counts,
   model variants, ambiguity controls, historical experiments, and future designs.
 - `REVIEW.zh-CN.md`: reviewer-oriented gap analysis and remaining evidence gates.
@@ -59,9 +59,8 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 - `../challenge-cases-v2/`: six connected 49--63-part structures and twelve advanced
   task contracts. Oracle checks are complete; model result cells remain blank.
   Original `../challenge-cases/` is retained but deprecated for new evaluation.
-- `figures/`: the main teaser and supplementary Figure 5 use complete OMR/LDraw
-  models; task/ground-truth and execution figures use authored calibration cases.
-  Historical procedural figures remain separately named and are not publication examples.
+- `figures/`: the main teaser and task taxonomy use original Mechanism-1
+  objects. Historical OMR and procedural assets are not benchmark figures.
 - `evidence.json`: source paths/hashes for numerical evidence and upstream template.
 - `generate-tables.mjs`: table generation and evidence assertions.
 - `generate-study.mjs`, `study-evidence.json`: new study tables and source hashes.
@@ -93,8 +92,8 @@ node benchmark/paper/generate-audit.mjs
 node node_modules/tsx/dist/cli.mjs benchmark/suite/study/paper-models.ts replay
 node node_modules/tsx/dist/cli.mjs benchmark/paper/generate-expanded.ts
 node benchmark/paper/generate-constructibility.mjs
-node node_modules/tsx/dist/cli.mjs benchmark/suite/omr/release.ts
-python benchmark/paper/generate-omr.py
+node node_modules/tsx/dist/cli.mjs benchmark/suite/mechanism/release.ts
+node benchmark/paper/generate-mechanism.mjs
 ```
 
 Regenerate or independently rescore the new full-casebank audit:
@@ -202,11 +201,15 @@ spacing to force a page count. Template provenance is not a claim of acceptance.
 
 ## Evidence Boundaries
 
-The primary object registry has 15 complete OMR/LDraw model files and 39
-source-named semantic subassemblies: 9,935 placements, 624 part numbers and
-42 colors across 13 set families. The former v2 layer has 5,120 random-growth
-structures and 117,910 task conditions; it is retained only for historical
-model/scorer reproduction and is excluded from current object scale.
+The primary Mechanism-1 layer has six original articulated objects, 542
+visible parts, 36 rigid modules, 33 joints and 48 paired tasks. OMR/LDraw
+models are design references only. The former v2 layer has 5,120
+random-growth structures and 117,910 task conditions; it is retained only
+for historical model/scorer reproduction and excluded from current scale.
+Mechanism-1 measures 96 image-conditioned cloud-model calls at $0.069454:
+GPT-4.1 mini scores 29/48 and Gemini 2.5 Flash 27/48. A local text-only
+Qwen3-0.6B baseline scores 3/48. These are six-source descriptive results,
+not a powered population ranking.
 The new v2 study contains 674 one-shot and 56 control API calls on 24 shared
 held-out objects and 25 catalog questions; it remains exploratory, not powered.
 All ten planned SmolVLM jobs are complete: 3,370 predictions, 1,080 updates and

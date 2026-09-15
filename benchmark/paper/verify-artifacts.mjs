@@ -11,7 +11,7 @@ const figures = read('figure-evidence.json'), audit = read('audit-evidence.json'
 const curated = read('curated-evidence.json');
 const challenge = read('challenge-evidence.json');
 const constructibility = read('constructibility-evidence.json');
-const omr = read('omr-evidence.json');
+const mechanism = read('mechanism-evidence.json');
 assert.equal(sha('generate-figures.py'), figures.generatorSha256);
 assert.equal(sha('generate-audit.mjs'), audit.generatorSha256);
 assert.equal(sha('generate-curated.ts'), curated.generatorSha256);
@@ -44,13 +44,18 @@ assert.equal(sha('../constructibility-v1/audit.json'), constructibility.auditSha
 assert.equal(sha('../constructibility-v1/frozen-protocol.json'), constructibility.protocolSha256);
 assert.equal(sha('../constructibility-v1/algorithm-results.json'), constructibility.algorithmResultsSha256);
 assert.equal(read('../constructibility-v1/algorithm-results.json').filter(row => row.result.success === 1).length, 78);
-assert.equal(omr.version, 'brickatlas-omr-cases-1');
-assert.equal(omr.summary.wholeModels, 15);
-assert.equal(omr.summary.semanticSubassemblies, 39);
-assert.equal(omr.summary.placedInstances, 9935);
-assert.equal(sha('generate-omr.py'), omr.generatorSha256);
-assert.equal(sha('../omr-cases-v1/manifest.json'), omr.registrySha256);
-for (const [path, hash] of Object.entries(omr.outputs)) assert.equal(sha(path), hash, path);
+assert.equal(mechanism.version, 'brickatlas-mechanism-1');
+assert.equal(mechanism.models, 6);
+assert.equal(mechanism.tasks, 48);
+assert.equal(mechanism.apiRun.requests, 96);
+assert.equal(sha('generate-mechanism.mjs'), mechanism.hashes.generator);
+assert.equal(sha('../mechanism-v1/audit.json'), mechanism.hashes.audit);
+assert.equal(sha('../mechanism-v1/models.json'), mechanism.hashes.models);
+assert.equal(sha('../mechanism-v1/public.json'), mechanism.hashes.public);
+assert.equal(sha('../mechanism-v1/results/local-qwen3-0.6b.scores.json'), mechanism.hashes.localScores);
+assert.equal(sha('../mechanism-v1/results/' + read('../mechanism-v1/results/latest.json').path), mechanism.hashes.apiRun);
+assert.equal(sha('figures/mechanism-models.pdf'), mechanism.hashes.modelFigure);
+assert.equal(sha('figures/mechanism-tasks.pdf'), mechanism.hashes.taskFigure);
 assert.equal(figures.figures.length, 5);
 for (const [path, hash] of Object.entries(figures.sourcesSha256)) assert.equal(sha('../' + path), hash, path);
 for (const [path, hash] of Object.entries(figures.outputSha256)) assert.equal(sha('figures/' + path), hash, path);
@@ -96,6 +101,6 @@ console.log(JSON.stringify({ verified: true, figures: figures.figures.length + p
   curatedModels: curated.models, curatedTasks: curated.tasks, curatedFiles: curated.files, renders3D: structures.images.length,
   challengeModels: challenge.models, challengeTasks: challenge.tasks, challengeParts: challenge.placedPartInstances,
   constructibilityCases: constructibility.records,
-  omrModels: omr.summary.wholeModels, omrSubassemblies: omr.summary.semanticSubassemblies,
+  mechanismModels: mechanism.models, mechanismTasks: mechanism.tasks,
   models: expanded.models, newCalls: expanded.newCalls, ambiguityCases: expanded.ambiguityCases,
   plannedTables: plan.tables.length, unmeasuredCells: cells, mainContentPages: read('pdf-verification.json').mainContentPageUpperBound }));

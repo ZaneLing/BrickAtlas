@@ -8,19 +8,18 @@
 - Official CVPR author-kit revision:
   `291758547e923160eb4d37079b7b9f0dfce82355`.
 - Template files are unmodified; their hashes are recorded in `evidence.json`.
-- Output: eight US Letter main-content pages and two reference pages;
-  seventy-one supplementary pages, including the versioned contract manuals and all
+- Output: five US Letter main-content pages and one reference page;
+  seventy-two supplementary pages, including the versioned contract manuals and all
   authored-model case studies. No margin or negative-spacing modifications.
 - TeX log: no unresolved citations/references or overfull boxes.
 - PDF inspection: text on every page, no text outside page boundaries.
 - All-page contact sheet and detailed formula/result pages inspected visually:
   two-column text, actual rendered structures, tables and equations remain legible
   and do not overlap.
-- The first-page teaser and supplementary Figure 5 show complete licensed
-  OMR/LDraw objects rather than random-growth structures. The primary registry
-  contains 15 whole models, 39 semantic subassemblies, 9,935 placements,
-  624 part numbers and 42 colors across 13 set families.
-  The task/ground-truth and execution figures retain explicitly authored curated models.
+- The first-page teaser and task taxonomy show six original Mechanism-1
+  objects rather than imported OMR geometry or random-growth structures.
+  They contain 542 visible parts, 36 rigid modules and 33 physics joints.
+  OMR/LDraw remains a design reference only.
   The review directory contains 264 generated per-case files plus contact sheets.
 - The hidden-layout plate remains a separate 60-layout finite-grammar audit.
 - Challenge layer: six connected 49--63-part structures, 329 placed instances,
@@ -29,13 +28,13 @@
 - Historical full-casebank audit: 35,840 copy controls on 5,120 retired
   procedural sources reproduce exactly with `paper-audit.ts --verify`.
   These sources are no longer counted as current benchmark objects.
-- Eight-model matrix: 312 responses on the same three sources; four new models
+- Historical eight-model matrix: 312 responses on the same three retired sources; four new models
   add 156 settled calls at $0.523093880. Cumulative spend is $3.620504454.
 - Ambiguity extension: 600 paired conditions, nine finite-grammar families,
   60 admissible layouts, and 240 renderer checks with pixel-identical exteriors.
 - Runtime-free, key-free copied-environment replay passes 23 commands, including
   the expanded model receipts and ambiguity ground-truth verifier.
-- Benchmark regression: 191 tests pass; TypeScript check passes.
+- Benchmark regression: 192 tests pass; TypeScript check passes.
 - Challenge revision 2 has new IDs, complete candidate poses, strict field types,
   yaw-equivalent pose scoring, layer disclosures, and a query-return episode API.
   Revision 1 artifacts are retained and deprecated, not overwritten.
@@ -56,6 +55,13 @@
   clarification decisions. Public-input controls pass 78/78. Named shortcuts
   pass 6/18, 0/18, 0/6 and 5/36 respectively. No learned-model, new human,
   physical or independent-source result is claimed.
+- Mechanism-1: six original articulated objects, eight task families and
+  48 paired cases. Rapier 3D 0.20.0 validates dynamics, fixed/revolute/
+  prismatic joints, motor actuation and shape casts. Seventy-two renders
+  pass pixel audits. GPT-4.1 mini scores 28/48, Gemini 2.5 Flash 31/48,
+  and local Qwen3-0.6B 3/48. The final 96 paid calls cost $0.069427;
+  campaign cumulative spend is $3.759385954 / $4.50. A pre-stream
+  HTTP 429 was reconciled at zero cost with no generation ID.
 - Bibliography: 55 used entries across main and supplement; no undefined keys.
 - Twelve prospective result tables retain 460 blank cells (JSON null).
 - `verify-artifacts.mjs` checks model/audit/figure/PDF hashes, 3D render framing,

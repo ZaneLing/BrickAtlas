@@ -1,8 +1,8 @@
 # BrickAtlas Multitask Suite
 
 > **历史机制回归层。** 本目录中的5,120个程序化结构和117,910个派生条件
-> 不再作为当前benchmark的正式对象集或论文数据规模。新的完整对象来源见
-> [`../omr-cases-v1/`](../omr-cases-v1/)；当前题目与case总表见
+> 不再作为当前benchmark的正式对象集或论文数据规模。当前原创机构任务见
+> [`../mechanism-v1/`](../mechanism-v1/)；当前题目与case总表见
 > [`../BENCHMARK_INVENTORY.zh-CN.md`](../BENCHMARK_INVENTORY.zh-CN.md)。
 
 多任务结构数据与LLM/MLLM评测。**不包括机械手、机器人或VLA。**

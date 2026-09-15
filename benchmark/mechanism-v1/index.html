@@ -1,0 +1,2665 @@
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+  <title>BrickAtlas Mechanism-1 Case Browser</title>
+  <style>
+  *{box-sizing:border-box}body{margin:0;font:14px/1.55 Inter,Arial,sans-serif;color:#172027;background:#f5f7f8}
+  .top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #d9e0e3;padding:14px 24px}
+  .top h1{font-size:21px;margin:0 0 8px}.top p{margin:0;color:#59666f}.filters{display:flex;gap:6px;overflow:auto;margin-top:12px}
+  button{border:1px solid #cbd4d9;background:#fff;padding:7px 10px;border-radius:5px;white-space:nowrap;cursor:pointer}
+  button.active{background:#172027;color:#fff;border-color:#172027}main{max-width:1260px;margin:auto;background:#fff}
+  .notice{padding:14px 24px;background:#fff4d8;border-bottom:1px solid #ecd491}
+  .model-section{border-bottom:8px solid #eef2f4}.model-overview{display:grid;grid-template-columns:minmax(380px,55%) 1fr;gap:28px;padding:28px}
+  .model-overview>img{width:100%;aspect-ratio:4/3;object-fit:cover;border:1px solid #d7dfe3;border-radius:6px}
+  .eyebrow,.task-index{font-size:11px;text-transform:uppercase;color:#687780}.model-overview h2{font-size:26px;margin:8px 0}
+  .model-overview h2 small{display:block;font-size:14px;font-weight:400;color:#67747c}.model-overview dl{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:8px 16px}
+  dt{font-weight:700}dd{margin:0}.task-row{display:grid;grid-template-columns:minmax(340px,42%) 1fr;border-top:1px solid #dfe5e8;padding:24px 28px;gap:26px}
+  figure{margin:0}figure img{width:100%;aspect-ratio:4/3;object-fit:cover;border:1px solid #d7dfe3;border-radius:6px}
+  .task-copy h3{font-size:19px;margin:3px 0}.purpose{color:#53616a;margin:0 0 10px}.question{font-size:16px;font-weight:650}
+  .task-copy dl{display:grid;grid-template-columns:76px 1fr;gap:6px 12px;padding:10px 0;border-top:1px solid #e2e7e9}
+  details{border-top:1px solid #e2e7e9;padding:8px 0}summary{cursor:pointer;font-weight:650}pre{overflow:auto;background:#f3f5f6;padding:12px;font-size:12px}
+  .oracle summary{color:#176b49}.results-summary{padding:20px 28px;border-bottom:8px solid #eef2f4}.results-summary table,.answer-table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:7px 9px;border-bottom:1px solid #dfe5e8}.pass{color:#176b49;font-weight:700}.fail{color:#b02c25;font-weight:700}
+  code{font-size:11px;word-break:break-all}.hidden{display:none}@media(max-width:760px){.model-overview,.task-row{grid-template-columns:1fr;padding:18px}.top{padding:12px}.model-overview dl{grid-template-columns:auto 1fr}}
+  </style>
+  <header class="top"><h1>BrickAtlas Mechanism-1 · 全部 Case 可视化</h1>
+  <p>6 个原创整体机构，48 道题。OMR/LDraw 仅作为复杂度参考，不是本数据集 case。</p>
+  <nav class="filters"><button class="active" data-filter="all">全部</button><button data-filter="prefix-dynamics">全过程前缀动力学</button><button data-filter="insertion-access">连续路径可达性</button><button data-filter="fault-recovery">故障诊断与最小返工</button><button data-filter="inventory-substitution">有限库存替代</button><button data-filter="dynamic-robustness">动态扰动鲁棒性</button><button data-filter="functional-kinematics">功能与运动学正确性</button><button data-filter="active-inspection">主动检查与澄清</button><button data-filter="multiobjective-design">多目标工程权衡</button></nav></header>
+  <div class="notice"><strong>读图方式：</strong>每题同时显示对象、问题、对应能力、模型实际输入、确定性 Oracle 和验证器。红/深色高亮表示本题关注模块；路径题绿色为可行路径、红色为碰撞路径。</div>
+  <main><section class="results-summary"><h2>模型实测总览</h2>
+    <table><thead><tr><th>模型</th><th>Exact Success</th><th>说明</th></tr></thead><tbody>
+    <tr><td>Qwen3-0.6B 本地文本</td><td>3 / 48</td>
+      <td>纯文本小模型基线</td></tr><tr><td>GPT-4.1 mini</td><td>28 / 48</td>
+      <td>单图 + 结构输入，固定最小 Harness</td></tr><tr><td>Gemini 2.5 Flash</td><td>31 / 48</td>
+      <td>单图 + 结构输入，固定最小 Harness</td></tr>
+    </tbody></table></section><section class="model-section" data-model="orbital-service-rover">
+      <div class="model-overview">
+        <img src="images/models/orbital-service-rover-iso.png" alt="轨道检修车">
+        <div><span class="eyebrow">原创机构型对象 · planetary maintenance</span>
+        <h2>轨道检修车<small>Orbital Service Rover</small></h2>
+        <p>A six-wheel pressurized rover with service battery, panoramic mast and articulated sampling arm.</p>
+        <dl><dt>可视零件</dt><dd>73</dd><dt>刚体模块</dt><dd>10</dd>
+        <dt>物理关节</dt><dd>9</dd><dt>任务</dt><dd>8 类</dd></dl></div>
+      </div><article class="task-row" data-kind="prefix-dynamics">
+        <figure><img loading="lazy" src="images/tasks/orbital-service-rover-prefix-dynamics.png" alt="轨道检修车 全过程前缀动力学"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-orbital-service-rover-prefix-dynamics</span><h3>全过程前缀动力学</h3></header>
+          <p class="purpose">逐步装配时是否出现坠落、失稳或错误依赖</p>
+          <p class="question">Which candidate module order remains dynamically supported at every prefix, and where does the other first fail?</p>
+          <dl><dt>对应能力</dt><dd>长程规划 · 前缀动力学 · 因果支撑</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidates&quot;: [
+    {
+      &quot;id&quot;: &quot;plan-a&quot;,
+      &quot;order&quot;: [
+        &quot;chassis&quot;,
+        &quot;battery&quot;,
+        &quot;wheel-lf&quot;,
+        &quot;wheel-lm&quot;,
+        &quot;wheel-lr&quot;,
+        &quot;wheel-rf&quot;,
+        &quot;wheel-rm&quot;,
+        &quot;wheel-rr&quot;,
+        &quot;sensor-mast&quot;,
+        &quot;sample-arm&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;plan-b&quot;,
+      &quot;order&quot;: [
+        &quot;sensor-mast&quot;,
+        &quot;chassis&quot;,
+        &quot;battery&quot;,
+        &quot;wheel-lf&quot;,
+        &quot;wheel-lm&quot;,
+        &quot;wheel-lr&quot;,
+        &quot;wheel-rf&quot;,
+        &quot;wheel-rm&quot;,
+        &quot;wheel-rr&quot;,
+        &quot;sample-arm&quot;
+      ]
+    }
+  ],
+  &quot;protocol&quot;: {
+    &quot;gravity&quot;: 9.81,
+    &quot;horizonSecondsPerPrefix&quot;: 1,
+    &quot;unstableDisplacement&quot;: 0.35
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;validPlanId&quot;: &quot;plan-a&quot;,
+  &quot;invalidPlanFirstFailure&quot;: 0
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="insertion-access">
+        <figure><img loading="lazy" src="images/tasks/orbital-service-rover-insertion-access.png" alt="轨道检修车 连续路径可达性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-orbital-service-rover-insertion-access</span><h3>连续路径可达性</h3></header>
+          <p class="purpose">工具或零件的扫掠体能否无碰撞到达维修界面</p>
+          <p class="question">Which proposed swept-volume paths let the declared service tool reach the target interface without collision?</p>
+          <dl><dt>对应能力</dt><dd>连续碰撞检测 · 装配可达性 · 维修规划</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;serviceModule&quot;: &quot;battery&quot;,
+  &quot;paths&quot;: [
+    {
+      &quot;id&quot;: &quot;rear-slide&quot;,
+      &quot;label&quot;: &quot;Reach the battery latch through the rear service hatch&quot;,
+      &quot;start&quot;: [
+        0,
+        1.5,
+        8
+      ],
+      &quot;end&quot;: [
+        0,
+        1.5,
+        4.5
+      ],
+      &quot;halfExtents&quot;: [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;roof-drop&quot;,
+      &quot;label&quot;: &quot;Reach the latch vertically through the cabin roof&quot;,
+      &quot;start&quot;: [
+        0,
+        8,
+        3.5
+      ],
+      &quot;end&quot;: [
+        0,
+        2.2,
+        3.5
+      ],
+      &quot;halfExtents&quot;: [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;side-insert&quot;,
+      &quot;label&quot;: &quot;Reach the latch through the left wheel bay&quot;,
+      &quot;start&quot;: [
+        -7,
+        1.5,
+        3.5
+      ],
+      &quot;end&quot;: [
+        -1.9,
+        1.5,
+        3.5
+      ],
+      &quot;halfExtents&quot;: [
+        0.35,
+        0.35,
+        0.35
+      ]
+    }
+  ],
+  &quot;protocol&quot;: &quot;Rapier 3D cuboid shape cast; serviced module excluded so the query measures tool access to its interface.&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;accessiblePathIds&quot;: [
+    &quot;rear-slide&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;rear-slide&quot;,&quot;roof-drop&quot;,&quot;side-insert&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;rear-slide&quot;,&quot;roof-drop&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;rear-slide&quot;,&quot;roof-drop&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="fault-recovery">
+        <figure><img loading="lazy" src="images/tasks/orbital-service-rover-fault-recovery.png" alt="轨道检修车 故障诊断与最小返工"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-orbital-service-rover-fault-recovery</span><h3>故障诊断与最小返工</h3></header>
+          <p class="purpose">从动力学后果定位故障关节并给出最小维修</p>
+          <p class="question">Identify the failed joint from the measured displacement and return the minimum certified recovery action sequence.</p>
+          <dl><dt>对应能力</dt><dd>故障定位 · 因果诊断 · 最小返工</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidateJointIds&quot;: [
+    &quot;arm-shoulder&quot;,
+    &quot;battery-lock&quot;,
+    &quot;wheel-lf-axle&quot;
+  ],
+  &quot;observation&quot;: {
+    &quot;childModule&quot;: &quot;sample-arm&quot;,
+    &quot;displacement&quot;: 0.7316626493275593,
+    &quot;tilt&quot;: 1.1868378390484584
+  },
+  &quot;actionCatalog&quot;: [
+    &quot;stow-arm&quot;,
+    &quot;support-boom&quot;,
+    &quot;replace-shoulder-pin&quot;,
+    &quot;reindex-arm&quot;,
+    &quot;release-boom&quot;,
+    &quot;replace-unrelated-panel&quot;,
+    &quot;restart-from-empty&quot;
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;faultJointId&quot;: &quot;arm-shoulder&quot;,
+  &quot;actions&quot;: [
+    &quot;stow-arm&quot;,
+    &quot;support-boom&quot;,
+    &quot;replace-shoulder-pin&quot;,
+    &quot;reindex-arm&quot;,
+    &quot;release-boom&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;arm-shoulder&quot;,&quot;actions&quot;:[&quot;stow-arm&quot;,&quot;support-boom&quot;,&quot;replace-unrelated-panel&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;arm-shoulder&quot;,&quot;actions&quot;:[&quot;stow-arm&quot;,&quot;replace-shoulder-pin&quot;,&quot;reindex-arm&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;arm-shoulder&quot;,&quot;actions&quot;:[&quot;stow-arm&quot;,&quot;support-boom&quot;,&quot;replace-shoulder-pin&quot;,&quot;reindex-arm&quot;,&quot;release-boom&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="inventory-substitution">
+        <figure><img loading="lazy" src="images/tasks/orbital-service-rover-inventory-substitution.png" alt="轨道检修车 有限库存替代"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-orbital-service-rover-inventory-substitution</span><h3>有限库存替代</h3></header>
+          <p class="purpose">缺件时满足成本、数量和刚度约束的替代</p>
+          <p class="question">A required brace is unavailable. Which listed replacement satisfies cost, piece-count and minimum-stiffness constraints?</p>
+          <dl><dt>对应能力</dt><dd>有限库存 · 结构替代 · 约束满足</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 7,
+      &quot;mass&quot;: 1.8,
+      &quot;stiffness&quot;: 9,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 6,
+      &quot;mass&quot;: 2.2,
+      &quot;stiffness&quot;: 11,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 5,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ],
+  &quot;requirements&quot;: {
+    &quot;maxCost&quot;: 6,
+    &quot;maxPieces&quot;: 2,
+    &quot;minStiffness&quot;: 8
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;alternativeId&quot;: &quot;twin-truss&quot;
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;id&quot;:&quot;twin-truss&quot;,&quot;label&quot;:&quot;Two interlocked short trusses&quot;,&quot;pieces&quot;:2,&quot;cost&quot;:6,&quot;mass&quot;:2.2,&quot;stiffness&quot;:11,&quot;jointMode&quot;:&quot;fixed&quot;}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;twin-truss&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;twin-truss&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="dynamic-robustness">
+        <figure><img loading="lazy" src="images/tasks/orbital-service-rover-dynamic-robustness.png" alt="轨道检修车 动态扰动鲁棒性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-orbital-service-rover-dynamic-robustness</span><h3>动态扰动鲁棒性</h3></header>
+          <p class="purpose">冲击下的最大瞬态位移和残余位移</p>
+          <p class="question">What is the largest tested impulse that stays within the declared transient and residual displacement limits?</p>
+          <dl><dt>对应能力</dt><dd>动态物理推理 · 冲击鲁棒性 · 失效阈值估计</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;targetModule&quot;: &quot;sample-arm&quot;,
+  &quot;impulseCandidates&quot;: [
+    5,
+    20,
+    60,
+    120
+  ],
+  &quot;limits&quot;: {
+    &quot;maxTransientDisplacement&quot;: 1.2,
+    &quot;maxResidualDisplacement&quot;: 0.45
+  },
+  &quot;simulator&quot;: &quot;Rapier 3D, 120 Hz, 12 solver iterations, 2 internal PGS iterations&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;maxSafeImpulse&quot;: 20
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:60}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:20}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:20}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="functional-kinematics">
+        <figure><img loading="lazy" src="images/tasks/orbital-service-rover-functional-kinematics.png" alt="轨道检修车 功能与运动学正确性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-orbital-service-rover-functional-kinematics</span><h3>功能与运动学正确性</h3></header>
+          <p class="purpose">铰链、滑轨、转台或旋翼能否完成目标运动</p>
+          <p class="question">Under motor actuation, does the designated revolute or prismatic mechanism achieve the required motion?</p>
+          <dl><dt>对应能力</dt><dd>关节语义 · 功能预测 · 运动学推理</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;jointId&quot;: &quot;arm-shoulder&quot;,
+  &quot;jointType&quot;: &quot;revolute&quot;,
+  &quot;targetMotion&quot;: 0.85,
+  &quot;passFraction&quot;: 0.55
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;jointId&quot;: &quot;arm-shoulder&quot;,
+  &quot;reachesTarget&quot;: true
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;id&quot;:&quot;m1-orbital-service-rover-functional-kinematics&quot;,&quot;kind&quot;:&quot;functional-kinematics&quot;,&quot;capability&quot;:[&quot;joint semantics&quot;,&quot;functional prediction&quot;,&quot;kinematic reasoning&quot;],&quot;question&quot;:&quot;Under motor actuation, does the designated revolute or prismatic mechanism achieve the required motion?&quot;,&quot;responseSchema&quot;:{&quot;jointId&quot;:&quot;string&quot;,&quot;reachesTarget&quot;:&quot;boolean&quot;}}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;jointId&quot;:&quot;arm-shoulder&quot;,&quot;reachesTarget&quot;:true}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;jointId&quot;:&quot;arm-shoulder&quot;,&quot;reachesTarget&quot;:true}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="active-inspection">
+        <figure><img loading="lazy" src="images/tasks/orbital-service-rover-active-inspection.png" alt="轨道检修车 主动检查与澄清"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-orbital-service-rover-active-inspection</span><h3>主动检查与澄清</h3></header>
+          <p class="purpose">选择单位成本信息增益最高的下一次检查</p>
+          <p class="question">Which inspection should be requested next to maximize expected information gain per unit cost?</p>
+          <dl><dt>对应能力</dt><dd>主动感知 · 信息增益 · 成本敏感澄清</dd>
+          <dt>验证器</dt><dd>有限世界信息增益</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;prior&quot;: &quot;uniform&quot;,
+  &quot;hiddenWorlds&quot;: [
+    &quot;nominal&quot;,
+    &quot;reversed&quot;,
+    &quot;missing-brace&quot;,
+    &quot;jammed&quot;
+  ],
+  &quot;queries&quot;: [
+    {
+      &quot;id&quot;: &quot;rover-marker&quot;,
+      &quot;label&quot;: &quot;Inspect the joint orientation marker&quot;,
+      &quot;cost&quot;: 1,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;forward&quot;,
+        &quot;reversed&quot;: &quot;reverse&quot;,
+        &quot;missing-brace&quot;: &quot;forward&quot;,
+        &quot;jammed&quot;: &quot;forward&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;rover-brace&quot;,
+      &quot;label&quot;: &quot;Inspect the concealed brace bay&quot;,
+      &quot;cost&quot;: 2,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;present&quot;,
+        &quot;reversed&quot;: &quot;present&quot;,
+        &quot;missing-brace&quot;: &quot;absent&quot;,
+        &quot;jammed&quot;: &quot;present&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;rover-probe&quot;,
+      &quot;label&quot;: &quot;Apply a low-force actuation probe&quot;,
+      &quot;cost&quot;: 3,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;moves-positive&quot;,
+        &quot;reversed&quot;: &quot;moves-negative&quot;,
+        &quot;missing-brace&quot;: &quot;moves-positive&quot;,
+        &quot;jammed&quot;: &quot;no-motion&quot;
+      }
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;queryIds&quot;: [
+    &quot;rover-marker&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;queryId&quot;:&quot;rover-probe&quot;}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;queryId&quot;:&quot;rover-brace&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;queryId&quot;:&quot;rover-brace&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="multiobjective-design">
+        <figure><img loading="lazy" src="images/tasks/orbital-service-rover-multiobjective-design.png" alt="轨道检修车 多目标工程权衡"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-orbital-service-rover-multiobjective-design</span><h3>多目标工程权衡</h3></header>
+          <p class="purpose">识别成本、质量、刚度之间的 Pareto 解</p>
+          <p class="question">Return every non-dominated buildable alternative under lower cost, lower mass and higher stiffness.</p>
+          <dl><dt>对应能力</dt><dd>Pareto 推理 · 成本-质量-刚度权衡 · 工程设计</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;objectives&quot;: [
+    &quot;minimize cost&quot;,
+    &quot;minimize mass&quot;,
+    &quot;maximize stiffness&quot;
+  ],
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 7,
+      &quot;mass&quot;: 1.8,
+      &quot;stiffness&quot;: 9,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 6,
+      &quot;mass&quot;: 2.2,
+      &quot;stiffness&quot;: 11,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 5,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;paretoIds&quot;: [
+    &quot;carbon-beam&quot;,
+    &quot;tension-cable&quot;,
+    &quot;twin-truss&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;carbon-beam&quot;,&quot;twin-truss&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;tension-cable&quot;,&quot;twin-truss&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;tension-cable&quot;,&quot;twin-truss&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article></section><section class="model-section" data-model="harbor-container-crane">
+      <div class="model-overview">
+        <img src="images/models/harbor-container-crane-iso.png" alt="港口集装箱起重机">
+        <div><span class="eyebrow">原创机构型对象 · load handling</span>
+        <h2>港口集装箱起重机<small>Harbor Container Crane</small></h2>
+        <p>A twin-tower rail crane with traversing trolley, vertical hoist, control cabin and container payload.</p>
+        <dl><dt>可视零件</dt><dd>126</dd><dt>刚体模块</dt><dd>5</dd>
+        <dt>物理关节</dt><dd>5</dd><dt>任务</dt><dd>8 类</dd></dl></div>
+      </div><article class="task-row" data-kind="prefix-dynamics">
+        <figure><img loading="lazy" src="images/tasks/harbor-container-crane-prefix-dynamics.png" alt="港口集装箱起重机 全过程前缀动力学"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-harbor-container-crane-prefix-dynamics</span><h3>全过程前缀动力学</h3></header>
+          <p class="purpose">逐步装配时是否出现坠落、失稳或错误依赖</p>
+          <p class="question">Which candidate module order remains dynamically supported at every prefix, and where does the other first fail?</p>
+          <dl><dt>对应能力</dt><dd>长程规划 · 前缀动力学 · 因果支撑</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidates&quot;: [
+    {
+      &quot;id&quot;: &quot;plan-a&quot;,
+      &quot;order&quot;: [
+        &quot;dock-base&quot;,
+        &quot;gantry&quot;,
+        &quot;trolley&quot;,
+        &quot;hoist&quot;,
+        &quot;container&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;plan-b&quot;,
+      &quot;order&quot;: [
+        &quot;trolley&quot;,
+        &quot;dock-base&quot;,
+        &quot;gantry&quot;,
+        &quot;hoist&quot;,
+        &quot;container&quot;
+      ]
+    }
+  ],
+  &quot;protocol&quot;: {
+    &quot;gravity&quot;: 9.81,
+    &quot;horizonSecondsPerPrefix&quot;: 1,
+    &quot;unstableDisplacement&quot;: 0.35
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;validPlanId&quot;: &quot;plan-a&quot;,
+  &quot;invalidPlanFirstFailure&quot;: 0
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:1}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="insertion-access">
+        <figure><img loading="lazy" src="images/tasks/harbor-container-crane-insertion-access.png" alt="港口集装箱起重机 连续路径可达性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-harbor-container-crane-insertion-access</span><h3>连续路径可达性</h3></header>
+          <p class="purpose">工具或零件的扫掠体能否无碰撞到达维修界面</p>
+          <p class="question">Which proposed swept-volume paths let the declared service tool reach the target interface without collision?</p>
+          <dl><dt>对应能力</dt><dd>连续碰撞检测 · 装配可达性 · 维修规划</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;serviceModule&quot;: &quot;trolley&quot;,
+  &quot;paths&quot;: [
+    {
+      &quot;id&quot;: &quot;rail-entry&quot;,
+      &quot;label&quot;: &quot;Reach the trolley drive from the open rail end&quot;,
+      &quot;start&quot;: [
+        -9,
+        8.8,
+        0
+      ],
+      &quot;end&quot;: [
+        -1.5,
+        8.8,
+        0
+      ],
+      &quot;halfExtents&quot;: [
+        0.4,
+        0.3,
+        0.4
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;tower-gap&quot;,
+      &quot;label&quot;: &quot;Lower a service probe through the tower gap&quot;,
+      &quot;start&quot;: [
+        0,
+        13,
+        0
+      ],
+      &quot;end&quot;: [
+        0,
+        8.8,
+        0
+      ],
+      &quot;halfExtents&quot;: [
+        0.4,
+        0.3,
+        0.4
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;cabin-side&quot;,
+      &quot;label&quot;: &quot;Reach the trolley through the occupied cabin side&quot;,
+      &quot;start&quot;: [
+        8,
+        5.8,
+        -3.2
+      ],
+      &quot;end&quot;: [
+        3.2,
+        5.8,
+        -3.2
+      ],
+      &quot;halfExtents&quot;: [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  ],
+  &quot;protocol&quot;: &quot;Rapier 3D cuboid shape cast; serviced module excluded so the query measures tool access to its interface.&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;accessiblePathIds&quot;: [
+    &quot;rail-entry&quot;,
+    &quot;tower-gap&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;rail-entry&quot;,&quot;tower-gap&quot;,&quot;cabin-side&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;rail-entry&quot;,&quot;tower-gap&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;tower-gap&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="fault-recovery">
+        <figure><img loading="lazy" src="images/tasks/harbor-container-crane-fault-recovery.png" alt="港口集装箱起重机 故障诊断与最小返工"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-harbor-container-crane-fault-recovery</span><h3>故障诊断与最小返工</h3></header>
+          <p class="purpose">从动力学后果定位故障关节并给出最小维修</p>
+          <p class="question">Identify the failed joint from the measured displacement and return the minimum certified recovery action sequence.</p>
+          <dl><dt>对应能力</dt><dd>故障定位 · 因果诊断 · 最小返工</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidateJointIds&quot;: [
+    &quot;hook-latch&quot;,
+    &quot;gantry-foot-a&quot;,
+    &quot;gantry-foot-b&quot;
+  ],
+  &quot;observation&quot;: {
+    &quot;childModule&quot;: &quot;container&quot;,
+    &quot;displacement&quot;: 0.850022147578437,
+    &quot;tilt&quot;: 0.0016914559171757988
+  },
+  &quot;actionCatalog&quot;: [
+    &quot;lower-hoist&quot;,
+    &quot;stabilize-container&quot;,
+    &quot;replace-hook-latch&quot;,
+    &quot;tension-hoist&quot;,
+    &quot;raise-test-load&quot;,
+    &quot;replace-unrelated-panel&quot;,
+    &quot;restart-from-empty&quot;
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;faultJointId&quot;: &quot;hook-latch&quot;,
+  &quot;actions&quot;: [
+    &quot;lower-hoist&quot;,
+    &quot;stabilize-container&quot;,
+    &quot;replace-hook-latch&quot;,
+    &quot;tension-hoist&quot;,
+    &quot;raise-test-load&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;hook-latch&quot;,&quot;actions&quot;:[&quot;lower-hoist&quot;,&quot;stabilize-container&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;hook-latch&quot;,&quot;actions&quot;:[&quot;replace-hook-latch&quot;,&quot;stabilize-container&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;hook-latch&quot;,&quot;actions&quot;:[&quot;lower-hoist&quot;,&quot;stabilize-container&quot;,&quot;replace-hook-latch&quot;,&quot;tension-hoist&quot;,&quot;raise-test-load&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="inventory-substitution">
+        <figure><img loading="lazy" src="images/tasks/harbor-container-crane-inventory-substitution.png" alt="港口集装箱起重机 有限库存替代"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-harbor-container-crane-inventory-substitution</span><h3>有限库存替代</h3></header>
+          <p class="purpose">缺件时满足成本、数量和刚度约束的替代</p>
+          <p class="question">A required brace is unavailable. Which listed replacement satisfies cost, piece-count and minimum-stiffness constraints?</p>
+          <dl><dt>对应能力</dt><dd>有限库存 · 结构替代 · 约束满足</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 7,
+      &quot;mass&quot;: 1.8,
+      &quot;stiffness&quot;: 9,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 6,
+      &quot;mass&quot;: 1.5,
+      &quot;stiffness&quot;: 11,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 5,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ],
+  &quot;requirements&quot;: {
+    &quot;maxCost&quot;: 7,
+    &quot;maxPieces&quot;: 1,
+    &quot;minStiffness&quot;: 8
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;alternativeId&quot;: &quot;carbon-beam&quot;
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;id&quot;:&quot;twin-truss&quot;,&quot;label&quot;:&quot;Two interlocked short trusses&quot;,&quot;pieces&quot;:2,&quot;cost&quot;:6,&quot;mass&quot;:1.5,&quot;stiffness&quot;:11,&quot;jointMode&quot;:&quot;fixed&quot;}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;carbon-beam&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;carbon-beam&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="dynamic-robustness">
+        <figure><img loading="lazy" src="images/tasks/harbor-container-crane-dynamic-robustness.png" alt="港口集装箱起重机 动态扰动鲁棒性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-harbor-container-crane-dynamic-robustness</span><h3>动态扰动鲁棒性</h3></header>
+          <p class="purpose">冲击下的最大瞬态位移和残余位移</p>
+          <p class="question">What is the largest tested impulse that stays within the declared transient and residual displacement limits?</p>
+          <dl><dt>对应能力</dt><dd>动态物理推理 · 冲击鲁棒性 · 失效阈值估计</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;targetModule&quot;: &quot;container&quot;,
+  &quot;impulseCandidates&quot;: [
+    10,
+    40,
+    100,
+    200
+  ],
+  &quot;limits&quot;: {
+    &quot;maxTransientDisplacement&quot;: 1.2,
+    &quot;maxResidualDisplacement&quot;: 0.45
+  },
+  &quot;simulator&quot;: &quot;Rapier 3D, 120 Hz, 12 solver iterations, 2 internal PGS iterations&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;maxSafeImpulse&quot;: 40
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:100}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:40}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:100}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="functional-kinematics">
+        <figure><img loading="lazy" src="images/tasks/harbor-container-crane-functional-kinematics.png" alt="港口集装箱起重机 功能与运动学正确性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-harbor-container-crane-functional-kinematics</span><h3>功能与运动学正确性</h3></header>
+          <p class="purpose">铰链、滑轨、转台或旋翼能否完成目标运动</p>
+          <p class="question">Under motor actuation, does the designated revolute or prismatic mechanism achieve the required motion?</p>
+          <dl><dt>对应能力</dt><dd>关节语义 · 功能预测 · 运动学推理</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;jointId&quot;: &quot;trolley-rail&quot;,
+  &quot;jointType&quot;: &quot;prismatic&quot;,
+  &quot;targetMotion&quot;: 2.8,
+  &quot;passFraction&quot;: 0.55
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;jointId&quot;: &quot;trolley-rail&quot;,
+  &quot;reachesTarget&quot;: false
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;id&quot;:&quot;m1-harbor-container-crane-functional-kinematics&quot;,&quot;kind&quot;:&quot;functional-kinematics&quot;,&quot;capability&quot;:[&quot;joint semantics&quot;,&quot;functional prediction&quot;,&quot;kinematic reasoning&quot;],&quot;question&quot;:&quot;Under motor actuation, does the designated revolute or prismatic mechanism achieve the required motion?&quot;,&quot;responseSchema&quot;:{&quot;jointId&quot;:&quot;string&quot;,&quot;reachesTarget&quot;:&quot;boolean&quot;}}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;jointId&quot;:&quot;trolley-rail&quot;,&quot;reachesTarget&quot;:true}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;jointId&quot;:&quot;trolley-rail&quot;,&quot;reachesTarget&quot;:true}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="active-inspection">
+        <figure><img loading="lazy" src="images/tasks/harbor-container-crane-active-inspection.png" alt="港口集装箱起重机 主动检查与澄清"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-harbor-container-crane-active-inspection</span><h3>主动检查与澄清</h3></header>
+          <p class="purpose">选择单位成本信息增益最高的下一次检查</p>
+          <p class="question">Which inspection should be requested next to maximize expected information gain per unit cost?</p>
+          <dl><dt>对应能力</dt><dd>主动感知 · 信息增益 · 成本敏感澄清</dd>
+          <dt>验证器</dt><dd>有限世界信息增益</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;prior&quot;: &quot;uniform&quot;,
+  &quot;hiddenWorlds&quot;: [
+    &quot;nominal&quot;,
+    &quot;reversed&quot;,
+    &quot;missing-brace&quot;,
+    &quot;jammed&quot;
+  ],
+  &quot;queries&quot;: [
+    {
+      &quot;id&quot;: &quot;crane-marker&quot;,
+      &quot;label&quot;: &quot;Inspect the joint orientation marker&quot;,
+      &quot;cost&quot;: 2,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;forward&quot;,
+        &quot;reversed&quot;: &quot;reverse&quot;,
+        &quot;missing-brace&quot;: &quot;forward&quot;,
+        &quot;jammed&quot;: &quot;forward&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;crane-brace&quot;,
+      &quot;label&quot;: &quot;Inspect the concealed brace bay&quot;,
+      &quot;cost&quot;: 3,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;present&quot;,
+        &quot;reversed&quot;: &quot;present&quot;,
+        &quot;missing-brace&quot;: &quot;absent&quot;,
+        &quot;jammed&quot;: &quot;present&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;crane-probe&quot;,
+      &quot;label&quot;: &quot;Apply a low-force actuation probe&quot;,
+      &quot;cost&quot;: 1,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;moves-positive&quot;,
+        &quot;reversed&quot;: &quot;moves-negative&quot;,
+        &quot;missing-brace&quot;: &quot;moves-positive&quot;,
+        &quot;jammed&quot;: &quot;no-motion&quot;
+      }
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;queryIds&quot;: [
+    &quot;crane-probe&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="pass">通过</td>
+              <td><code>{&quot;queryId&quot;:&quot;crane-probe&quot;}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;queryId&quot;:&quot;crane-probe&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;queryId&quot;:&quot;crane-probe&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="multiobjective-design">
+        <figure><img loading="lazy" src="images/tasks/harbor-container-crane-multiobjective-design.png" alt="港口集装箱起重机 多目标工程权衡"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-harbor-container-crane-multiobjective-design</span><h3>多目标工程权衡</h3></header>
+          <p class="purpose">识别成本、质量、刚度之间的 Pareto 解</p>
+          <p class="question">Return every non-dominated buildable alternative under lower cost, lower mass and higher stiffness.</p>
+          <dl><dt>对应能力</dt><dd>Pareto 推理 · 成本-质量-刚度权衡 · 工程设计</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;objectives&quot;: [
+    &quot;minimize cost&quot;,
+    &quot;minimize mass&quot;,
+    &quot;maximize stiffness&quot;
+  ],
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 7,
+      &quot;mass&quot;: 1.8,
+      &quot;stiffness&quot;: 9,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 6,
+      &quot;mass&quot;: 1.5,
+      &quot;stiffness&quot;: 11,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 5,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;paretoIds&quot;: [
+    &quot;tension-cable&quot;,
+    &quot;twin-truss&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;carbon-beam&quot;,&quot;twin-truss&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;twin-truss&quot;,&quot;tension-cable&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;tension-cable&quot;,&quot;twin-truss&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article></section><section class="model-section" data-model="bascule-canal-gate">
+      <div class="model-overview">
+        <img src="images/models/bascule-canal-gate-iso.png" alt="双叶运河开启桥">
+        <div><span class="eyebrow">原创机构型对象 · movable infrastructure</span>
+        <h2>双叶运河开启桥<small>Bascule Canal Gate</small></h2>
+        <p>A twin-tower canal crossing with two hinged decks, drive cartridge, counterweight gears and service galleries.</p>
+        <dl><dt>可视零件</dt><dd>142</dd><dt>刚体模块</dt><dd>6</dd>
+        <dt>物理关节</dt><dd>7</dd><dt>任务</dt><dd>8 类</dd></dl></div>
+      </div><article class="task-row" data-kind="prefix-dynamics">
+        <figure><img loading="lazy" src="images/tasks/bascule-canal-gate-prefix-dynamics.png" alt="双叶运河开启桥 全过程前缀动力学"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-bascule-canal-gate-prefix-dynamics</span><h3>全过程前缀动力学</h3></header>
+          <p class="purpose">逐步装配时是否出现坠落、失稳或错误依赖</p>
+          <p class="question">Which candidate module order remains dynamically supported at every prefix, and where does the other first fail?</p>
+          <dl><dt>对应能力</dt><dd>长程规划 · 前缀动力学 · 因果支撑</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidates&quot;: [
+    {
+      &quot;id&quot;: &quot;plan-a&quot;,
+      &quot;order&quot;: [
+        &quot;quay&quot;,
+        &quot;tower-left&quot;,
+        &quot;tower-right&quot;,
+        &quot;drive-cartridge&quot;,
+        &quot;west-deck&quot;,
+        &quot;east-deck&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;plan-b&quot;,
+      &quot;order&quot;: [
+        &quot;drive-cartridge&quot;,
+        &quot;quay&quot;,
+        &quot;tower-left&quot;,
+        &quot;tower-right&quot;,
+        &quot;west-deck&quot;,
+        &quot;east-deck&quot;
+      ]
+    }
+  ],
+  &quot;protocol&quot;: {
+    &quot;gravity&quot;: 9.81,
+    &quot;horizonSecondsPerPrefix&quot;: 1,
+    &quot;unstableDisplacement&quot;: 0.35
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;validPlanId&quot;: &quot;plan-a&quot;,
+  &quot;invalidPlanFirstFailure&quot;: 0
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-b&quot;,&quot;invalidPlanFirstFailure&quot;:1}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="insertion-access">
+        <figure><img loading="lazy" src="images/tasks/bascule-canal-gate-insertion-access.png" alt="双叶运河开启桥 连续路径可达性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-bascule-canal-gate-insertion-access</span><h3>连续路径可达性</h3></header>
+          <p class="purpose">工具或零件的扫掠体能否无碰撞到达维修界面</p>
+          <p class="question">Which proposed swept-volume paths let the declared service tool reach the target interface without collision?</p>
+          <dl><dt>对应能力</dt><dd>连续碰撞检测 · 装配可达性 · 维修规划</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;serviceModule&quot;: &quot;drive-cartridge&quot;,
+  &quot;paths&quot;: [
+    {
+      &quot;id&quot;: &quot;gallery-entry&quot;,
+      &quot;label&quot;: &quot;Reach the drive lock along the west service gallery&quot;,
+      &quot;start&quot;: [
+        -5,
+        2.2,
+        -8
+      ],
+      &quot;end&quot;: [
+        -5,
+        2.2,
+        -3.8
+      ],
+      &quot;halfExtents&quot;: [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;tower-drop&quot;,
+      &quot;label&quot;: &quot;Lower a tool through the tower roof&quot;,
+      &quot;start&quot;: [
+        -5,
+        10,
+        -2.9
+      ],
+      &quot;end&quot;: [
+        -5,
+        3.3,
+        -2.9
+      ],
+      &quot;halfExtents&quot;: [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;deck-side&quot;,
+      &quot;label&quot;: &quot;Reach the drive through the closed deck side&quot;,
+      &quot;start&quot;: [
+        0,
+        2.2,
+        -7
+      ],
+      &quot;end&quot;: [
+        -4.1,
+        2.2,
+        -3.2
+      ],
+      &quot;halfExtents&quot;: [
+        0.35,
+        0.35,
+        0.35
+      ]
+    }
+  ],
+  &quot;protocol&quot;: &quot;Rapier 3D cuboid shape cast; serviced module excluded so the query measures tool access to its interface.&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;accessiblePathIds&quot;: [
+    &quot;gallery-entry&quot;,
+    &quot;deck-side&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;gallery-entry&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;gallery-entry&quot;,&quot;tower-drop&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;gallery-entry&quot;,&quot;tower-drop&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="fault-recovery">
+        <figure><img loading="lazy" src="images/tasks/bascule-canal-gate-fault-recovery.png" alt="双叶运河开启桥 故障诊断与最小返工"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-bascule-canal-gate-fault-recovery</span><h3>故障诊断与最小返工</h3></header>
+          <p class="purpose">从动力学后果定位故障关节并给出最小维修</p>
+          <p class="question">Identify the failed joint from the measured displacement and return the minimum certified recovery action sequence.</p>
+          <dl><dt>对应能力</dt><dd>故障定位 · 因果诊断 · 最小返工</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidateJointIds&quot;: [
+    &quot;drive-lock&quot;,
+    &quot;tower--1-foot-a&quot;,
+    &quot;tower--1-foot-b&quot;
+  ],
+  &quot;observation&quot;: {
+    &quot;childModule&quot;: &quot;drive-cartridge&quot;,
+    &quot;displacement&quot;: 38.8567987305983,
+    &quot;tilt&quot;: 3.1188014526687393
+  },
+  &quot;actionCatalog&quot;: [
+    &quot;lock-decks-open&quot;,
+    &quot;open-gallery&quot;,
+    &quot;remove-damaged-drive&quot;,
+    &quot;install-drive-cartridge&quot;,
+    &quot;calibrate-hinge&quot;,
+    &quot;close-gallery&quot;,
+    &quot;replace-unrelated-panel&quot;,
+    &quot;restart-from-empty&quot;
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;faultJointId&quot;: &quot;drive-lock&quot;,
+  &quot;actions&quot;: [
+    &quot;lock-decks-open&quot;,
+    &quot;open-gallery&quot;,
+    &quot;remove-damaged-drive&quot;,
+    &quot;install-drive-cartridge&quot;,
+    &quot;calibrate-hinge&quot;,
+    &quot;close-gallery&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;tower--1-foot-a&quot;,&quot;actions&quot;:[&quot;lock-decks-open&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;drive-lock&quot;,&quot;actions&quot;:[&quot;open-gallery&quot;,&quot;remove-damaged-drive&quot;,&quot;install-drive-cartridge&quot;,&quot;calibrate-hinge&quot;,&quot;close-gallery&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;drive-lock&quot;,&quot;actions&quot;:[&quot;open-gallery&quot;,&quot;remove-damaged-drive&quot;,&quot;install-drive-cartridge&quot;,&quot;close-gallery&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="inventory-substitution">
+        <figure><img loading="lazy" src="images/tasks/bascule-canal-gate-inventory-substitution.png" alt="双叶运河开启桥 有限库存替代"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-bascule-canal-gate-inventory-substitution</span><h3>有限库存替代</h3></header>
+          <p class="purpose">缺件时满足成本、数量和刚度约束的替代</p>
+          <p class="question">A required brace is unavailable. Which listed replacement satisfies cost, piece-count and minimum-stiffness constraints?</p>
+          <dl><dt>对应能力</dt><dd>有限库存 · 结构替代 · 约束满足</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 7,
+      &quot;mass&quot;: 1.8,
+      &quot;stiffness&quot;: 9,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 6,
+      &quot;mass&quot;: 2.2,
+      &quot;stiffness&quot;: 11,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 10,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ],
+  &quot;requirements&quot;: {
+    &quot;maxCost&quot;: 4,
+    &quot;maxPieces&quot;: 1,
+    &quot;minStiffness&quot;: 10
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;alternativeId&quot;: &quot;tension-cable&quot;
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;id&quot;:&quot;twin-truss&quot;,&quot;label&quot;:&quot;Two interlocked short trusses&quot;,&quot;pieces&quot;:2,&quot;cost&quot;:6,&quot;mass&quot;:2.2,&quot;stiffness&quot;:11,&quot;jointMode&quot;:&quot;fixed&quot;}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;tension-cable&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;tension-cable&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="dynamic-robustness">
+        <figure><img loading="lazy" src="images/tasks/bascule-canal-gate-dynamic-robustness.png" alt="双叶运河开启桥 动态扰动鲁棒性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-bascule-canal-gate-dynamic-robustness</span><h3>动态扰动鲁棒性</h3></header>
+          <p class="purpose">冲击下的最大瞬态位移和残余位移</p>
+          <p class="question">What is the largest tested impulse that stays within the declared transient and residual displacement limits?</p>
+          <dl><dt>对应能力</dt><dd>动态物理推理 · 冲击鲁棒性 · 失效阈值估计</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;targetModule&quot;: &quot;west-deck&quot;,
+  &quot;impulseCandidates&quot;: [
+    20,
+    100,
+    300,
+    600
+  ],
+  &quot;limits&quot;: {
+    &quot;maxTransientDisplacement&quot;: 0.2,
+    &quot;maxResidualDisplacement&quot;: 0.1
+  },
+  &quot;simulator&quot;: &quot;Rapier 3D, 120 Hz, 12 solver iterations, 2 internal PGS iterations&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;maxSafeImpulse&quot;: 100
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:300}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:100}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:600}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="functional-kinematics">
+        <figure><img loading="lazy" src="images/tasks/bascule-canal-gate-functional-kinematics.png" alt="双叶运河开启桥 功能与运动学正确性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-bascule-canal-gate-functional-kinematics</span><h3>功能与运动学正确性</h3></header>
+          <p class="purpose">铰链、滑轨、转台或旋翼能否完成目标运动</p>
+          <p class="question">Under motor actuation, does the designated revolute or prismatic mechanism achieve the required motion?</p>
+          <dl><dt>对应能力</dt><dd>关节语义 · 功能预测 · 运动学推理</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;jointId&quot;: &quot;west-deck-hinge&quot;,
+  &quot;jointType&quot;: &quot;revolute&quot;,
+  &quot;targetMotion&quot;: 0.95,
+  &quot;passFraction&quot;: 0.55
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;jointId&quot;: &quot;west-deck-hinge&quot;,
+  &quot;reachesTarget&quot;: false
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>null</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;jointId&quot;:&quot;west-deck-hinge&quot;,&quot;reachesTarget&quot;:true}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;jointId&quot;:&quot;west-deck-hinge&quot;,&quot;reachesTarget&quot;:true}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="active-inspection">
+        <figure><img loading="lazy" src="images/tasks/bascule-canal-gate-active-inspection.png" alt="双叶运河开启桥 主动检查与澄清"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-bascule-canal-gate-active-inspection</span><h3>主动检查与澄清</h3></header>
+          <p class="purpose">选择单位成本信息增益最高的下一次检查</p>
+          <p class="question">Which inspection should be requested next to maximize expected information gain per unit cost?</p>
+          <dl><dt>对应能力</dt><dd>主动感知 · 信息增益 · 成本敏感澄清</dd>
+          <dt>验证器</dt><dd>有限世界信息增益</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;prior&quot;: &quot;uniform&quot;,
+  &quot;hiddenWorlds&quot;: [
+    &quot;nominal&quot;,
+    &quot;reversed&quot;,
+    &quot;missing-brace&quot;,
+    &quot;jammed&quot;
+  ],
+  &quot;queries&quot;: [
+    {
+      &quot;id&quot;: &quot;bridge-marker&quot;,
+      &quot;label&quot;: &quot;Inspect the joint orientation marker&quot;,
+      &quot;cost&quot;: 3,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;forward&quot;,
+        &quot;reversed&quot;: &quot;reverse&quot;,
+        &quot;missing-brace&quot;: &quot;forward&quot;,
+        &quot;jammed&quot;: &quot;forward&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;bridge-brace&quot;,
+      &quot;label&quot;: &quot;Inspect the concealed brace bay&quot;,
+      &quot;cost&quot;: 1,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;present&quot;,
+        &quot;reversed&quot;: &quot;present&quot;,
+        &quot;missing-brace&quot;: &quot;absent&quot;,
+        &quot;jammed&quot;: &quot;present&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;bridge-probe&quot;,
+      &quot;label&quot;: &quot;Apply a low-force actuation probe&quot;,
+      &quot;cost&quot;: 2,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;moves-positive&quot;,
+        &quot;reversed&quot;: &quot;moves-negative&quot;,
+        &quot;missing-brace&quot;: &quot;moves-positive&quot;,
+        &quot;jammed&quot;: &quot;no-motion&quot;
+      }
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;queryIds&quot;: [
+    &quot;bridge-brace&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;queryId&quot;:&quot;bridge-probe&quot;}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;queryId&quot;:&quot;bridge-brace&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;queryId&quot;:&quot;bridge-brace&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="multiobjective-design">
+        <figure><img loading="lazy" src="images/tasks/bascule-canal-gate-multiobjective-design.png" alt="双叶运河开启桥 多目标工程权衡"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-bascule-canal-gate-multiobjective-design</span><h3>多目标工程权衡</h3></header>
+          <p class="purpose">识别成本、质量、刚度之间的 Pareto 解</p>
+          <p class="question">Return every non-dominated buildable alternative under lower cost, lower mass and higher stiffness.</p>
+          <dl><dt>对应能力</dt><dd>Pareto 推理 · 成本-质量-刚度权衡 · 工程设计</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;objectives&quot;: [
+    &quot;minimize cost&quot;,
+    &quot;minimize mass&quot;,
+    &quot;maximize stiffness&quot;
+  ],
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 7,
+      &quot;mass&quot;: 1.8,
+      &quot;stiffness&quot;: 9,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 6,
+      &quot;mass&quot;: 2.2,
+      &quot;stiffness&quot;: 11,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 10,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;paretoIds&quot;: [
+    &quot;tension-cable&quot;,
+    &quot;twin-truss&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;carbon-beam&quot;,&quot;twin-truss&quot;,&quot;tension-cable&quot;,&quot;decorative-panel&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;tension-cable&quot;,&quot;twin-truss&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;tension-cable&quot;,&quot;twin-truss&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article></section><section class="model-section" data-model="adaptive-radio-observatory">
+      <div class="model-overview">
+        <img src="images/models/adaptive-radio-observatory-iso.png" alt="自适应射电观测站">
+        <div><span class="eyebrow">原创机构型对象 · scientific instrumentation</span>
+        <h2>自适应射电观测站<small>Adaptive Radio Observatory</small></h2>
+        <p>A terraced observatory with rotating segmented dome, elevation telescope and removable cryogenic camera.</p>
+        <dl><dt>可视零件</dt><dd>92</dd><dt>刚体模块</dt><dd>4</dd>
+        <dt>物理关节</dt><dd>3</dd><dt>任务</dt><dd>8 类</dd></dl></div>
+      </div><article class="task-row" data-kind="prefix-dynamics">
+        <figure><img loading="lazy" src="images/tasks/adaptive-radio-observatory-prefix-dynamics.png" alt="自适应射电观测站 全过程前缀动力学"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-adaptive-radio-observatory-prefix-dynamics</span><h3>全过程前缀动力学</h3></header>
+          <p class="purpose">逐步装配时是否出现坠落、失稳或错误依赖</p>
+          <p class="question">Which candidate module order remains dynamically supported at every prefix, and where does the other first fail?</p>
+          <dl><dt>对应能力</dt><dd>长程规划 · 前缀动力学 · 因果支撑</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidates&quot;: [
+    {
+      &quot;id&quot;: &quot;plan-a&quot;,
+      &quot;order&quot;: [
+        &quot;foundation&quot;,
+        &quot;dome&quot;,
+        &quot;telescope&quot;,
+        &quot;camera-pack&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;plan-b&quot;,
+      &quot;order&quot;: [
+        &quot;telescope&quot;,
+        &quot;foundation&quot;,
+        &quot;dome&quot;,
+        &quot;camera-pack&quot;
+      ]
+    }
+  ],
+  &quot;protocol&quot;: {
+    &quot;gravity&quot;: 9.81,
+    &quot;horizonSecondsPerPrefix&quot;: 1,
+    &quot;unstableDisplacement&quot;: 0.35
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;validPlanId&quot;: &quot;plan-a&quot;,
+  &quot;invalidPlanFirstFailure&quot;: 0
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-b&quot;,&quot;invalidPlanFirstFailure&quot;:1}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:1}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="insertion-access">
+        <figure><img loading="lazy" src="images/tasks/adaptive-radio-observatory-insertion-access.png" alt="自适应射电观测站 连续路径可达性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-adaptive-radio-observatory-insertion-access</span><h3>连续路径可达性</h3></header>
+          <p class="purpose">工具或零件的扫掠体能否无碰撞到达维修界面</p>
+          <p class="question">Which proposed swept-volume paths let the declared service tool reach the target interface without collision?</p>
+          <dl><dt>对应能力</dt><dd>连续碰撞检测 · 装配可达性 · 维修规划</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;serviceModule&quot;: &quot;camera-pack&quot;,
+  &quot;paths&quot;: [
+    {
+      &quot;id&quot;: &quot;optical-axis&quot;,
+      &quot;label&quot;: &quot;Reach the camera bayonet along the optical axis&quot;,
+      &quot;start&quot;: [
+        0,
+        4.8,
+        10
+      ],
+      &quot;end&quot;: [
+        0,
+        4.8,
+        5.7
+      ],
+      &quot;halfExtents&quot;: [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;dome-slot&quot;,
+      &quot;label&quot;: &quot;Lower a service probe through the dome slit&quot;,
+      &quot;start&quot;: [
+        0,
+        11,
+        4.9
+      ],
+      &quot;end&quot;: [
+        0,
+        6.2,
+        4.9
+      ],
+      &quot;halfExtents&quot;: [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;service-door&quot;,
+      &quot;label&quot;: &quot;Reach the bayonet through the occupied lower service room&quot;,
+      &quot;start&quot;: [
+        0,
+        2,
+        8
+      ],
+      &quot;end&quot;: [
+        0,
+        2,
+        0
+      ],
+      &quot;halfExtents&quot;: [
+        0.3,
+        0.3,
+        0.3
+      ]
+    }
+  ],
+  &quot;protocol&quot;: &quot;Rapier 3D cuboid shape cast; serviced module excluded so the query measures tool access to its interface.&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;accessiblePathIds&quot;: [
+    &quot;optical-axis&quot;,
+    &quot;dome-slot&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;optical-axis&quot;,&quot;dome-slot&quot;,&quot;service-door&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;optical-axis&quot;,&quot;dome-slot&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;optical-axis&quot;,&quot;dome-slot&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="fault-recovery">
+        <figure><img loading="lazy" src="images/tasks/adaptive-radio-observatory-fault-recovery.png" alt="自适应射电观测站 故障诊断与最小返工"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-adaptive-radio-observatory-fault-recovery</span><h3>故障诊断与最小返工</h3></header>
+          <p class="purpose">从动力学后果定位故障关节并给出最小维修</p>
+          <p class="question">Identify the failed joint from the measured displacement and return the minimum certified recovery action sequence.</p>
+          <dl><dt>对应能力</dt><dd>故障定位 · 因果诊断 · 最小返工</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidateJointIds&quot;: [
+    &quot;camera-bayonet&quot;,
+    &quot;dome-ring&quot;,
+    &quot;elevation-axis&quot;
+  ],
+  &quot;observation&quot;: {
+    &quot;childModule&quot;: &quot;camera-pack&quot;,
+    &quot;displacement&quot;: 4.795309258862589,
+    &quot;tilt&quot;: 2.042290970019796
+  },
+  &quot;actionCatalog&quot;: [
+    &quot;park-telescope&quot;,
+    &quot;open-dome-slit&quot;,
+    &quot;remove-camera&quot;,
+    &quot;clean-bayonet&quot;,
+    &quot;install-camera&quot;,
+    &quot;recalibrate-optics&quot;,
+    &quot;replace-unrelated-panel&quot;,
+    &quot;restart-from-empty&quot;
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;faultJointId&quot;: &quot;camera-bayonet&quot;,
+  &quot;actions&quot;: [
+    &quot;park-telescope&quot;,
+    &quot;open-dome-slit&quot;,
+    &quot;remove-camera&quot;,
+    &quot;clean-bayonet&quot;,
+    &quot;install-camera&quot;,
+    &quot;recalibrate-optics&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;dome-ring&quot;,&quot;actions&quot;:[&quot;remove-camera&quot;,&quot;clean-bayonet&quot;,&quot;install-camera&quot;,&quot;recalibrate-optics&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;camera-bayonet&quot;,&quot;actions&quot;:[&quot;remove-camera&quot;,&quot;clean-bayonet&quot;,&quot;install-camera&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;camera-bayonet&quot;,&quot;actions&quot;:[&quot;park-telescope&quot;,&quot;remove-camera&quot;,&quot;clean-bayonet&quot;,&quot;install-camera&quot;,&quot;recalibrate-optics&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="inventory-substitution">
+        <figure><img loading="lazy" src="images/tasks/adaptive-radio-observatory-inventory-substitution.png" alt="自适应射电观测站 有限库存替代"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-adaptive-radio-observatory-inventory-substitution</span><h3>有限库存替代</h3></header>
+          <p class="purpose">缺件时满足成本、数量和刚度约束的替代</p>
+          <p class="question">A required brace is unavailable. Which listed replacement satisfies cost, piece-count and minimum-stiffness constraints?</p>
+          <dl><dt>对应能力</dt><dd>有限库存 · 结构替代 · 约束满足</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 5,
+      &quot;mass&quot;: 1.5,
+      &quot;stiffness&quot;: 12,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 6,
+      &quot;mass&quot;: 2.2,
+      &quot;stiffness&quot;: 11,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 5,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ],
+  &quot;requirements&quot;: {
+    &quot;maxCost&quot;: 5,
+    &quot;maxPieces&quot;: 1,
+    &quot;minStiffness&quot;: 11
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;alternativeId&quot;: &quot;carbon-beam&quot;
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>null</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;carbon-beam&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;carbon-beam&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="dynamic-robustness">
+        <figure><img loading="lazy" src="images/tasks/adaptive-radio-observatory-dynamic-robustness.png" alt="自适应射电观测站 动态扰动鲁棒性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-adaptive-radio-observatory-dynamic-robustness</span><h3>动态扰动鲁棒性</h3></header>
+          <p class="purpose">冲击下的最大瞬态位移和残余位移</p>
+          <p class="question">What is the largest tested impulse that stays within the declared transient and residual displacement limits?</p>
+          <dl><dt>对应能力</dt><dd>动态物理推理 · 冲击鲁棒性 · 失效阈值估计</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;targetModule&quot;: &quot;telescope&quot;,
+  &quot;impulseCandidates&quot;: [
+    20,
+    100,
+    500,
+    2000
+  ],
+  &quot;limits&quot;: {
+    &quot;maxTransientDisplacement&quot;: 0.5,
+    &quot;maxResidualDisplacement&quot;: 0.2
+  },
+  &quot;simulator&quot;: &quot;Rapier 3D, 120 Hz, 12 solver iterations, 2 internal PGS iterations&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;maxSafeImpulse&quot;: 100
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:2000}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:100}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:500}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="functional-kinematics">
+        <figure><img loading="lazy" src="images/tasks/adaptive-radio-observatory-functional-kinematics.png" alt="自适应射电观测站 功能与运动学正确性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-adaptive-radio-observatory-functional-kinematics</span><h3>功能与运动学正确性</h3></header>
+          <p class="purpose">铰链、滑轨、转台或旋翼能否完成目标运动</p>
+          <p class="question">Under motor actuation, does the designated revolute or prismatic mechanism achieve the required motion?</p>
+          <dl><dt>对应能力</dt><dd>关节语义 · 功能预测 · 运动学推理</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;jointId&quot;: &quot;elevation-axis&quot;,
+  &quot;jointType&quot;: &quot;revolute&quot;,
+  &quot;targetMotion&quot;: 0.7,
+  &quot;passFraction&quot;: 0.55
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;jointId&quot;: &quot;elevation-axis&quot;,
+  &quot;reachesTarget&quot;: false
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;id&quot;:&quot;m1-adaptive-radio-observatory-functional-kinematics&quot;,&quot;kind&quot;:&quot;functional-kinematics&quot;,&quot;capability&quot;:[&quot;joint semantics&quot;,&quot;functional prediction&quot;,&quot;kinematic reasoning&quot;],&quot;question&quot;:&quot;Under motor actuation, does the designated revolute or prismatic mechanism achieve the required motion?&quot;,&quot;responseSchema&quot;:{&quot;jointId&quot;:&quot;string&quot;,&quot;reachesTarget&quot;:&quot;boolean&quot;}}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;jointId&quot;:&quot;elevation-axis&quot;,&quot;reachesTarget&quot;:true}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;jointId&quot;:&quot;elevation-axis&quot;,&quot;reachesTarget&quot;:true}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="active-inspection">
+        <figure><img loading="lazy" src="images/tasks/adaptive-radio-observatory-active-inspection.png" alt="自适应射电观测站 主动检查与澄清"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-adaptive-radio-observatory-active-inspection</span><h3>主动检查与澄清</h3></header>
+          <p class="purpose">选择单位成本信息增益最高的下一次检查</p>
+          <p class="question">Which inspection should be requested next to maximize expected information gain per unit cost?</p>
+          <dl><dt>对应能力</dt><dd>主动感知 · 信息增益 · 成本敏感澄清</dd>
+          <dt>验证器</dt><dd>有限世界信息增益</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;prior&quot;: &quot;uniform&quot;,
+  &quot;hiddenWorlds&quot;: [
+    &quot;nominal&quot;,
+    &quot;reversed&quot;,
+    &quot;missing-brace&quot;,
+    &quot;jammed&quot;
+  ],
+  &quot;queries&quot;: [
+    {
+      &quot;id&quot;: &quot;observatory-marker&quot;,
+      &quot;label&quot;: &quot;Inspect the joint orientation marker&quot;,
+      &quot;cost&quot;: 1,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;forward&quot;,
+        &quot;reversed&quot;: &quot;reverse&quot;,
+        &quot;missing-brace&quot;: &quot;forward&quot;,
+        &quot;jammed&quot;: &quot;forward&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;observatory-brace&quot;,
+      &quot;label&quot;: &quot;Inspect the concealed brace bay&quot;,
+      &quot;cost&quot;: 2,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;present&quot;,
+        &quot;reversed&quot;: &quot;present&quot;,
+        &quot;missing-brace&quot;: &quot;absent&quot;,
+        &quot;jammed&quot;: &quot;present&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;observatory-probe&quot;,
+      &quot;label&quot;: &quot;Apply a low-force actuation probe&quot;,
+      &quot;cost&quot;: 3,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;moves-positive&quot;,
+        &quot;reversed&quot;: &quot;moves-negative&quot;,
+        &quot;missing-brace&quot;: &quot;moves-positive&quot;,
+        &quot;jammed&quot;: &quot;no-motion&quot;
+      }
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;queryIds&quot;: [
+    &quot;observatory-marker&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;queryId&quot;:&quot;observatory-probe&quot;}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;queryId&quot;:&quot;observatory-brace&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;queryId&quot;:&quot;observatory-brace&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="multiobjective-design">
+        <figure><img loading="lazy" src="images/tasks/adaptive-radio-observatory-multiobjective-design.png" alt="自适应射电观测站 多目标工程权衡"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-adaptive-radio-observatory-multiobjective-design</span><h3>多目标工程权衡</h3></header>
+          <p class="purpose">识别成本、质量、刚度之间的 Pareto 解</p>
+          <p class="question">Return every non-dominated buildable alternative under lower cost, lower mass and higher stiffness.</p>
+          <dl><dt>对应能力</dt><dd>Pareto 推理 · 成本-质量-刚度权衡 · 工程设计</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;objectives&quot;: [
+    &quot;minimize cost&quot;,
+    &quot;minimize mass&quot;,
+    &quot;maximize stiffness&quot;
+  ],
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 5,
+      &quot;mass&quot;: 1.5,
+      &quot;stiffness&quot;: 12,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 6,
+      &quot;mass&quot;: 2.2,
+      &quot;stiffness&quot;: 11,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 5,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;paretoIds&quot;: [
+    &quot;carbon-beam&quot;,
+    &quot;tension-cable&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;carbon-beam&quot;,&quot;twin-truss&quot;,&quot;decorative-panel&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;decorative-panel&quot;,&quot;tension-cable&quot;,&quot;carbon-beam&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;carbon-beam&quot;,&quot;tension-cable&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article></section><section class="model-section" data-model="wildfire-tiltrotor">
+      <div class="model-overview">
+        <img src="images/models/wildfire-tiltrotor-iso.png" alt="山火救援倾转旋翼机">
+        <div><span class="eyebrow">原创机构型对象 · aerial emergency response</span>
+        <h2>山火救援倾转旋翼机<small>Wildfire Tiltrotor</small></h2>
+        <p>A twin-rotor firefighting aircraft with tilting nacelles, removable water tank and serviceable drivetrain.</p>
+        <dl><dt>可视零件</dt><dd>43</dd><dt>刚体模块</dt><dd>6</dd>
+        <dt>物理关节</dt><dd>5</dd><dt>任务</dt><dd>8 类</dd></dl></div>
+      </div><article class="task-row" data-kind="prefix-dynamics">
+        <figure><img loading="lazy" src="images/tasks/wildfire-tiltrotor-prefix-dynamics.png" alt="山火救援倾转旋翼机 全过程前缀动力学"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-wildfire-tiltrotor-prefix-dynamics</span><h3>全过程前缀动力学</h3></header>
+          <p class="purpose">逐步装配时是否出现坠落、失稳或错误依赖</p>
+          <p class="question">Which candidate module order remains dynamically supported at every prefix, and where does the other first fail?</p>
+          <dl><dt>对应能力</dt><dd>长程规划 · 前缀动力学 · 因果支撑</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidates&quot;: [
+    {
+      &quot;id&quot;: &quot;plan-a&quot;,
+      &quot;order&quot;: [
+        &quot;fuselage&quot;,
+        &quot;water-tank&quot;,
+        &quot;nacelle-left&quot;,
+        &quot;nacelle-right&quot;,
+        &quot;rotor-left&quot;,
+        &quot;rotor-right&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;plan-b&quot;,
+      &quot;order&quot;: [
+        &quot;rotor-left&quot;,
+        &quot;fuselage&quot;,
+        &quot;water-tank&quot;,
+        &quot;nacelle-left&quot;,
+        &quot;nacelle-right&quot;,
+        &quot;rotor-right&quot;
+      ]
+    }
+  ],
+  &quot;protocol&quot;: {
+    &quot;gravity&quot;: 9.81,
+    &quot;horizonSecondsPerPrefix&quot;: 1,
+    &quot;unstableDisplacement&quot;: 0.35
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;validPlanId&quot;: &quot;plan-a&quot;,
+  &quot;invalidPlanFirstFailure&quot;: 0
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-b&quot;,&quot;invalidPlanFirstFailure&quot;:1}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="insertion-access">
+        <figure><img loading="lazy" src="images/tasks/wildfire-tiltrotor-insertion-access.png" alt="山火救援倾转旋翼机 连续路径可达性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-wildfire-tiltrotor-insertion-access</span><h3>连续路径可达性</h3></header>
+          <p class="purpose">工具或零件的扫掠体能否无碰撞到达维修界面</p>
+          <p class="question">Which proposed swept-volume paths let the declared service tool reach the target interface without collision?</p>
+          <dl><dt>对应能力</dt><dd>连续碰撞检测 · 装配可达性 · 维修规划</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;serviceModule&quot;: &quot;water-tank&quot;,
+  &quot;paths&quot;: [
+    {
+      &quot;id&quot;: &quot;belly-lift&quot;,
+      &quot;label&quot;: &quot;Reach the tank latch through the open belly bay&quot;,
+      &quot;start&quot;: [
+        0,
+        0.5,
+        0.8
+      ],
+      &quot;end&quot;: [
+        0,
+        1.4,
+        0.8
+      ],
+      &quot;halfExtents&quot;: [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;rear-ramp&quot;,
+      &quot;label&quot;: &quot;Reach the latch through the occupied tail bay&quot;,
+      &quot;start&quot;: [
+        0,
+        3.2,
+        8
+      ],
+      &quot;end&quot;: [
+        0,
+        3.2,
+        0
+      ],
+      &quot;halfExtents&quot;: [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;side-door&quot;,
+      &quot;label&quot;: &quot;Reach the latch through the side crew cabin&quot;,
+      &quot;start&quot;: [
+        -7,
+        3.2,
+        0.8
+      ],
+      &quot;end&quot;: [
+        0,
+        3.2,
+        0.8
+      ],
+      &quot;halfExtents&quot;: [
+        0.35,
+        0.35,
+        0.35
+      ]
+    }
+  ],
+  &quot;protocol&quot;: &quot;Rapier 3D cuboid shape cast; serviced module excluded so the query measures tool access to its interface.&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;accessiblePathIds&quot;: [
+    &quot;belly-lift&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;belly-lift&quot;,&quot;rear-ramp&quot;,&quot;side-door&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;belly-lift&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;belly-lift&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="fault-recovery">
+        <figure><img loading="lazy" src="images/tasks/wildfire-tiltrotor-fault-recovery.png" alt="山火救援倾转旋翼机 故障诊断与最小返工"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-wildfire-tiltrotor-fault-recovery</span><h3>故障诊断与最小返工</h3></header>
+          <p class="purpose">从动力学后果定位故障关节并给出最小维修</p>
+          <p class="question">Identify the failed joint from the measured displacement and return the minimum certified recovery action sequence.</p>
+          <dl><dt>对应能力</dt><dd>故障定位 · 因果诊断 · 最小返工</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidateJointIds&quot;: [
+    &quot;tank-latch&quot;,
+    &quot;nacelle-left-tilt&quot;,
+    &quot;rotor-left-shaft&quot;
+  ],
+  &quot;observation&quot;: {
+    &quot;childModule&quot;: &quot;water-tank&quot;,
+    &quot;displacement&quot;: 1.512847675688582,
+    &quot;tilt&quot;: 0.02915028059294535
+  },
+  &quot;actionCatalog&quot;: [
+    &quot;secure-airframe&quot;,
+    &quot;open-belly-panel&quot;,
+    &quot;lower-tank&quot;,
+    &quot;replace-latch&quot;,
+    &quot;raise-tank&quot;,
+    &quot;close-belly-panel&quot;,
+    &quot;replace-unrelated-panel&quot;,
+    &quot;restart-from-empty&quot;
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;faultJointId&quot;: &quot;tank-latch&quot;,
+  &quot;actions&quot;: [
+    &quot;secure-airframe&quot;,
+    &quot;open-belly-panel&quot;,
+    &quot;lower-tank&quot;,
+    &quot;replace-latch&quot;,
+    &quot;raise-tank&quot;,
+    &quot;close-belly-panel&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;nacelle-left-tilt&quot;,&quot;actions&quot;:[&quot;lower-tank&quot;,&quot;secure-airframe&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;tank-latch&quot;,&quot;actions&quot;:[&quot;open-belly-panel&quot;,&quot;lower-tank&quot;,&quot;replace-latch&quot;,&quot;raise-tank&quot;,&quot;close-belly-panel&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;tank-latch&quot;,&quot;actions&quot;:[&quot;secure-airframe&quot;,&quot;open-belly-panel&quot;,&quot;lower-tank&quot;,&quot;replace-latch&quot;,&quot;raise-tank&quot;,&quot;close-belly-panel&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="inventory-substitution">
+        <figure><img loading="lazy" src="images/tasks/wildfire-tiltrotor-inventory-substitution.png" alt="山火救援倾转旋翼机 有限库存替代"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-wildfire-tiltrotor-inventory-substitution</span><h3>有限库存替代</h3></header>
+          <p class="purpose">缺件时满足成本、数量和刚度约束的替代</p>
+          <p class="question">A required brace is unavailable. Which listed replacement satisfies cost, piece-count and minimum-stiffness constraints?</p>
+          <dl><dt>对应能力</dt><dd>有限库存 · 结构替代 · 约束满足</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 7,
+      &quot;mass&quot;: 1.8,
+      &quot;stiffness&quot;: 9,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 4,
+      &quot;mass&quot;: 1.5,
+      &quot;stiffness&quot;: 12,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 5,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ],
+  &quot;requirements&quot;: {
+    &quot;maxCost&quot;: 4,
+    &quot;maxPieces&quot;: 2,
+    &quot;minStiffness&quot;: 11
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;alternativeId&quot;: &quot;twin-truss&quot;
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;id&quot;:&quot;carbon-beam&quot;,&quot;label&quot;:&quot;One long carbon beam&quot;,&quot;pieces&quot;:1,&quot;cost&quot;:7,&quot;mass&quot;:1.8,&quot;stiffness&quot;:9,&quot;jointMode&quot;:&quot;fixed&quot;}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;twin-truss&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;twin-truss&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="dynamic-robustness">
+        <figure><img loading="lazy" src="images/tasks/wildfire-tiltrotor-dynamic-robustness.png" alt="山火救援倾转旋翼机 动态扰动鲁棒性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-wildfire-tiltrotor-dynamic-robustness</span><h3>动态扰动鲁棒性</h3></header>
+          <p class="purpose">冲击下的最大瞬态位移和残余位移</p>
+          <p class="question">What is the largest tested impulse that stays within the declared transient and residual displacement limits?</p>
+          <dl><dt>对应能力</dt><dd>动态物理推理 · 冲击鲁棒性 · 失效阈值估计</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;targetModule&quot;: &quot;rotor-left&quot;,
+  &quot;impulseCandidates&quot;: [
+    2,
+    8,
+    20,
+    40
+  ],
+  &quot;limits&quot;: {
+    &quot;maxTransientDisplacement&quot;: 1.2,
+    &quot;maxResidualDisplacement&quot;: 0.45
+  },
+  &quot;simulator&quot;: &quot;Rapier 3D, 120 Hz, 12 solver iterations, 2 internal PGS iterations&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;maxSafeImpulse&quot;: 2
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:20}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:8}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:20}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="functional-kinematics">
+        <figure><img loading="lazy" src="images/tasks/wildfire-tiltrotor-functional-kinematics.png" alt="山火救援倾转旋翼机 功能与运动学正确性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-wildfire-tiltrotor-functional-kinematics</span><h3>功能与运动学正确性</h3></header>
+          <p class="purpose">铰链、滑轨、转台或旋翼能否完成目标运动</p>
+          <p class="question">Under motor actuation, does the designated revolute or prismatic mechanism achieve the required motion?</p>
+          <dl><dt>对应能力</dt><dd>关节语义 · 功能预测 · 运动学推理</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;jointId&quot;: &quot;nacelle-left-tilt&quot;,
+  &quot;jointType&quot;: &quot;revolute&quot;,
+  &quot;targetMotion&quot;: 1.2,
+  &quot;passFraction&quot;: 0.55
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;jointId&quot;: &quot;nacelle-left-tilt&quot;,
+  &quot;reachesTarget&quot;: true
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>null</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;jointId&quot;:&quot;nacelle-left-tilt&quot;,&quot;reachesTarget&quot;:true}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;jointId&quot;:&quot;nacelle-left-tilt&quot;,&quot;reachesTarget&quot;:true}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="active-inspection">
+        <figure><img loading="lazy" src="images/tasks/wildfire-tiltrotor-active-inspection.png" alt="山火救援倾转旋翼机 主动检查与澄清"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-wildfire-tiltrotor-active-inspection</span><h3>主动检查与澄清</h3></header>
+          <p class="purpose">选择单位成本信息增益最高的下一次检查</p>
+          <p class="question">Which inspection should be requested next to maximize expected information gain per unit cost?</p>
+          <dl><dt>对应能力</dt><dd>主动感知 · 信息增益 · 成本敏感澄清</dd>
+          <dt>验证器</dt><dd>有限世界信息增益</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;prior&quot;: &quot;uniform&quot;,
+  &quot;hiddenWorlds&quot;: [
+    &quot;nominal&quot;,
+    &quot;reversed&quot;,
+    &quot;missing-brace&quot;,
+    &quot;jammed&quot;
+  ],
+  &quot;queries&quot;: [
+    {
+      &quot;id&quot;: &quot;tiltrotor-marker&quot;,
+      &quot;label&quot;: &quot;Inspect the joint orientation marker&quot;,
+      &quot;cost&quot;: 2,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;forward&quot;,
+        &quot;reversed&quot;: &quot;reverse&quot;,
+        &quot;missing-brace&quot;: &quot;forward&quot;,
+        &quot;jammed&quot;: &quot;forward&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;tiltrotor-brace&quot;,
+      &quot;label&quot;: &quot;Inspect the concealed brace bay&quot;,
+      &quot;cost&quot;: 3,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;present&quot;,
+        &quot;reversed&quot;: &quot;present&quot;,
+        &quot;missing-brace&quot;: &quot;absent&quot;,
+        &quot;jammed&quot;: &quot;present&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;tiltrotor-probe&quot;,
+      &quot;label&quot;: &quot;Apply a low-force actuation probe&quot;,
+      &quot;cost&quot;: 1,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;moves-positive&quot;,
+        &quot;reversed&quot;: &quot;moves-negative&quot;,
+        &quot;missing-brace&quot;: &quot;moves-positive&quot;,
+        &quot;jammed&quot;: &quot;no-motion&quot;
+      }
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;queryIds&quot;: [
+    &quot;tiltrotor-probe&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="pass">通过</td>
+              <td><code>{&quot;queryId&quot;:&quot;tiltrotor-probe&quot;}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;queryId&quot;:&quot;tiltrotor-probe&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;queryId&quot;:&quot;tiltrotor-probe&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="multiobjective-design">
+        <figure><img loading="lazy" src="images/tasks/wildfire-tiltrotor-multiobjective-design.png" alt="山火救援倾转旋翼机 多目标工程权衡"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-wildfire-tiltrotor-multiobjective-design</span><h3>多目标工程权衡</h3></header>
+          <p class="purpose">识别成本、质量、刚度之间的 Pareto 解</p>
+          <p class="question">Return every non-dominated buildable alternative under lower cost, lower mass and higher stiffness.</p>
+          <dl><dt>对应能力</dt><dd>Pareto 推理 · 成本-质量-刚度权衡 · 工程设计</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;objectives&quot;: [
+    &quot;minimize cost&quot;,
+    &quot;minimize mass&quot;,
+    &quot;maximize stiffness&quot;
+  ],
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 7,
+      &quot;mass&quot;: 1.8,
+      &quot;stiffness&quot;: 9,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 4,
+      &quot;mass&quot;: 1.5,
+      &quot;stiffness&quot;: 12,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 5,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;paretoIds&quot;: [
+    &quot;tension-cable&quot;,
+    &quot;twin-truss&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;carbon-beam&quot;,&quot;twin-truss&quot;,&quot;tension-cable&quot;,&quot;decorative-panel&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;twin-truss&quot;,&quot;carbon-beam&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;twin-truss&quot;,&quot;tension-cable&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article></section><section class="model-section" data-model="polar-research-station">
+      <div class="model-overview">
+        <img src="images/models/polar-research-station-iso.png" alt="极地科研站">
+        <div><span class="eyebrow">原创机构型对象 · remote infrastructure</span>
+        <h2>极地科研站<small>Polar Research Station</small></h2>
+        <p>An elevated insulated station with pressure airlock, sliding solar array and serviceable wind turbine.</p>
+        <dl><dt>可视零件</dt><dd>66</dd><dt>刚体模块</dt><dd>5</dd>
+        <dt>物理关节</dt><dd>4</dd><dt>任务</dt><dd>8 类</dd></dl></div>
+      </div><article class="task-row" data-kind="prefix-dynamics">
+        <figure><img loading="lazy" src="images/tasks/polar-research-station-prefix-dynamics.png" alt="极地科研站 全过程前缀动力学"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-polar-research-station-prefix-dynamics</span><h3>全过程前缀动力学</h3></header>
+          <p class="purpose">逐步装配时是否出现坠落、失稳或错误依赖</p>
+          <p class="question">Which candidate module order remains dynamically supported at every prefix, and where does the other first fail?</p>
+          <dl><dt>对应能力</dt><dd>长程规划 · 前缀动力学 · 因果支撑</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidates&quot;: [
+    {
+      &quot;id&quot;: &quot;plan-a&quot;,
+      &quot;order&quot;: [
+        &quot;station-base&quot;,
+        &quot;wind-mast&quot;,
+        &quot;solar-carriage&quot;,
+        &quot;wind-rotor&quot;,
+        &quot;airlock-door&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;plan-b&quot;,
+      &quot;order&quot;: [
+        &quot;wind-rotor&quot;,
+        &quot;station-base&quot;,
+        &quot;wind-mast&quot;,
+        &quot;solar-carriage&quot;,
+        &quot;airlock-door&quot;
+      ]
+    }
+  ],
+  &quot;protocol&quot;: {
+    &quot;gravity&quot;: 9.81,
+    &quot;horizonSecondsPerPrefix&quot;: 1,
+    &quot;unstableDisplacement&quot;: 0.35
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;validPlanId&quot;: &quot;plan-a&quot;,
+  &quot;invalidPlanFirstFailure&quot;: 0
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-b&quot;,&quot;invalidPlanFirstFailure&quot;:1}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;validPlanId&quot;:&quot;plan-a&quot;,&quot;invalidPlanFirstFailure&quot;:0}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="insertion-access">
+        <figure><img loading="lazy" src="images/tasks/polar-research-station-insertion-access.png" alt="极地科研站 连续路径可达性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-polar-research-station-insertion-access</span><h3>连续路径可达性</h3></header>
+          <p class="purpose">工具或零件的扫掠体能否无碰撞到达维修界面</p>
+          <p class="question">Which proposed swept-volume paths let the declared service tool reach the target interface without collision?</p>
+          <dl><dt>对应能力</dt><dd>连续碰撞检测 · 装配可达性 · 维修规划</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;serviceModule&quot;: &quot;airlock-door&quot;,
+  &quot;paths&quot;: [
+    {
+      &quot;id&quot;: &quot;outside-swing&quot;,
+      &quot;label&quot;: &quot;Reach the airlock hinge from the exterior&quot;,
+      &quot;start&quot;: [
+        -8,
+        2.2,
+        0
+      ],
+      &quot;end&quot;: [
+        -4.3,
+        2.2,
+        0
+      ],
+      &quot;halfExtents&quot;: [
+        0.3,
+        0.35,
+        0.35
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;roof-drop&quot;,
+      &quot;label&quot;: &quot;Lower a probe through the sloped roof&quot;,
+      &quot;start&quot;: [
+        -3.8,
+        10,
+        0
+      ],
+      &quot;end&quot;: [
+        -3.8,
+        4,
+        0
+      ],
+      &quot;halfExtents&quot;: [
+        0.3,
+        0.35,
+        0.35
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;interior-slide&quot;,
+      &quot;label&quot;: &quot;Reach the hinge through the occupied laboratory&quot;,
+      &quot;start&quot;: [
+        4,
+        2.2,
+        0
+      ],
+      &quot;end&quot;: [
+        -3.1,
+        2.2,
+        0
+      ],
+      &quot;halfExtents&quot;: [
+        0.3,
+        0.35,
+        0.35
+      ]
+    }
+  ],
+  &quot;protocol&quot;: &quot;Rapier 3D cuboid shape cast; serviced module excluded so the query measures tool access to its interface.&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;accessiblePathIds&quot;: [
+    &quot;outside-swing&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;outside-swing&quot;,&quot;interior-slide&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;outside-swing&quot;,&quot;roof-drop&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;accessiblePathIds&quot;:[&quot;outside-swing&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="fault-recovery">
+        <figure><img loading="lazy" src="images/tasks/polar-research-station-fault-recovery.png" alt="极地科研站 故障诊断与最小返工"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-polar-research-station-fault-recovery</span><h3>故障诊断与最小返工</h3></header>
+          <p class="purpose">从动力学后果定位故障关节并给出最小维修</p>
+          <p class="question">Identify the failed joint from the measured displacement and return the minimum certified recovery action sequence.</p>
+          <dl><dt>对应能力</dt><dd>故障定位 · 因果诊断 · 最小返工</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;candidateJointIds&quot;: [
+    &quot;mast-foot&quot;,
+    &quot;airlock-hinge&quot;,
+    &quot;rotor-shaft&quot;
+  ],
+  &quot;observation&quot;: {
+    &quot;childModule&quot;: &quot;wind-mast&quot;,
+    &quot;displacement&quot;: 1.325397842129698,
+    &quot;tilt&quot;: 0.40894493815152666
+  },
+  &quot;actionCatalog&quot;: [
+    &quot;feather-rotor&quot;,
+    &quot;lock-mast&quot;,
+    &quot;replace-foot-brace&quot;,
+    &quot;release-mast&quot;,
+    &quot;spin-test&quot;,
+    &quot;replace-unrelated-panel&quot;,
+    &quot;restart-from-empty&quot;
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;faultJointId&quot;: &quot;mast-foot&quot;,
+  &quot;actions&quot;: [
+    &quot;feather-rotor&quot;,
+    &quot;lock-mast&quot;,
+    &quot;replace-foot-brace&quot;,
+    &quot;release-mast&quot;,
+    &quot;spin-test&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;rotor-shaft&quot;,&quot;actions&quot;:[&quot;replace-foot-brace&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;mast-foot&quot;,&quot;actions&quot;:[&quot;replace-foot-brace&quot;,&quot;lock-mast&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;faultJointId&quot;:&quot;mast-foot&quot;,&quot;actions&quot;:[&quot;lock-mast&quot;,&quot;replace-foot-brace&quot;,&quot;release-mast&quot;,&quot;spin-test&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="inventory-substitution">
+        <figure><img loading="lazy" src="images/tasks/polar-research-station-inventory-substitution.png" alt="极地科研站 有限库存替代"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-polar-research-station-inventory-substitution</span><h3>有限库存替代</h3></header>
+          <p class="purpose">缺件时满足成本、数量和刚度约束的替代</p>
+          <p class="question">A required brace is unavailable. Which listed replacement satisfies cost, piece-count and minimum-stiffness constraints?</p>
+          <dl><dt>对应能力</dt><dd>有限库存 · 结构替代 · 约束满足</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 7,
+      &quot;mass&quot;: 1.8,
+      &quot;stiffness&quot;: 9,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 6,
+      &quot;mass&quot;: 2.2,
+      &quot;stiffness&quot;: 11,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 12,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ],
+  &quot;requirements&quot;: {
+    &quot;maxCost&quot;: 3,
+    &quot;maxPieces&quot;: 1,
+    &quot;minStiffness&quot;: 11
+  }
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;alternativeId&quot;: &quot;tension-cable&quot;
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;id&quot;:&quot;twin-truss&quot;,&quot;label&quot;:&quot;Two interlocked short trusses&quot;,&quot;pieces&quot;:2,&quot;cost&quot;:6,&quot;mass&quot;:2.2,&quot;stiffness&quot;:11,&quot;jointMode&quot;:&quot;fixed&quot;}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;tension-cable&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;alternativeId&quot;:&quot;tension-cable&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="dynamic-robustness">
+        <figure><img loading="lazy" src="images/tasks/polar-research-station-dynamic-robustness.png" alt="极地科研站 动态扰动鲁棒性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-polar-research-station-dynamic-robustness</span><h3>动态扰动鲁棒性</h3></header>
+          <p class="purpose">冲击下的最大瞬态位移和残余位移</p>
+          <p class="question">What is the largest tested impulse that stays within the declared transient and residual displacement limits?</p>
+          <dl><dt>对应能力</dt><dd>动态物理推理 · 冲击鲁棒性 · 失效阈值估计</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;targetModule&quot;: &quot;wind-rotor&quot;,
+  &quot;impulseCandidates&quot;: [
+    2,
+    10,
+    30,
+    60
+  ],
+  &quot;limits&quot;: {
+    &quot;maxTransientDisplacement&quot;: 1.2,
+    &quot;maxResidualDisplacement&quot;: 0.45
+  },
+  &quot;simulator&quot;: &quot;Rapier 3D, 120 Hz, 12 solver iterations, 2 internal PGS iterations&quot;
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;maxSafeImpulse&quot;: 10
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:20}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:10}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;maxSafeImpulse&quot;:10}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="functional-kinematics">
+        <figure><img loading="lazy" src="images/tasks/polar-research-station-functional-kinematics.png" alt="极地科研站 功能与运动学正确性"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-polar-research-station-functional-kinematics</span><h3>功能与运动学正确性</h3></header>
+          <p class="purpose">铰链、滑轨、转台或旋翼能否完成目标运动</p>
+          <p class="question">Under motor actuation, does the designated revolute or prismatic mechanism achieve the required motion?</p>
+          <dl><dt>对应能力</dt><dd>关节语义 · 功能预测 · 运动学推理</dd>
+          <dt>验证器</dt><dd>Rapier 3D 刚体/关节/Shape Cast</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;jointId&quot;: &quot;solar-rail&quot;,
+  &quot;jointType&quot;: &quot;prismatic&quot;,
+  &quot;targetMotion&quot;: 1.5,
+  &quot;passFraction&quot;: 0.55
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;jointId&quot;: &quot;solar-rail&quot;,
+  &quot;reachesTarget&quot;: true
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;id&quot;:&quot;solar-rail&quot;,&quot;reachesTarget&quot;:true}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;jointId&quot;:&quot;solar-rail&quot;,&quot;reachesTarget&quot;:true}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;jointId&quot;:&quot;solar-rail&quot;,&quot;reachesTarget&quot;:true}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="active-inspection">
+        <figure><img loading="lazy" src="images/tasks/polar-research-station-active-inspection.png" alt="极地科研站 主动检查与澄清"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-polar-research-station-active-inspection</span><h3>主动检查与澄清</h3></header>
+          <p class="purpose">选择单位成本信息增益最高的下一次检查</p>
+          <p class="question">Which inspection should be requested next to maximize expected information gain per unit cost?</p>
+          <dl><dt>对应能力</dt><dd>主动感知 · 信息增益 · 成本敏感澄清</dd>
+          <dt>验证器</dt><dd>有限世界信息增益</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;prior&quot;: &quot;uniform&quot;,
+  &quot;hiddenWorlds&quot;: [
+    &quot;nominal&quot;,
+    &quot;reversed&quot;,
+    &quot;missing-brace&quot;,
+    &quot;jammed&quot;
+  ],
+  &quot;queries&quot;: [
+    {
+      &quot;id&quot;: &quot;station-marker&quot;,
+      &quot;label&quot;: &quot;Inspect the joint orientation marker&quot;,
+      &quot;cost&quot;: 3,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;forward&quot;,
+        &quot;reversed&quot;: &quot;reverse&quot;,
+        &quot;missing-brace&quot;: &quot;forward&quot;,
+        &quot;jammed&quot;: &quot;forward&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;station-brace&quot;,
+      &quot;label&quot;: &quot;Inspect the concealed brace bay&quot;,
+      &quot;cost&quot;: 1,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;present&quot;,
+        &quot;reversed&quot;: &quot;present&quot;,
+        &quot;missing-brace&quot;: &quot;absent&quot;,
+        &quot;jammed&quot;: &quot;present&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;station-probe&quot;,
+      &quot;label&quot;: &quot;Apply a low-force actuation probe&quot;,
+      &quot;cost&quot;: 2,
+      &quot;returns&quot;: {
+        &quot;nominal&quot;: &quot;moves-positive&quot;,
+        &quot;reversed&quot;: &quot;moves-negative&quot;,
+        &quot;missing-brace&quot;: &quot;moves-positive&quot;,
+        &quot;jammed&quot;: &quot;no-motion&quot;
+      }
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;queryIds&quot;: [
+    &quot;station-brace&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;queryId&quot;:&quot;station-probe&quot;}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="pass">通过</td>
+              <td><code>{&quot;queryId&quot;:&quot;station-brace&quot;}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="pass">通过</td>
+              <td><code>{&quot;queryId&quot;:&quot;station-brace&quot;}</code></td></tr></tbody></table></details>
+        </div>
+      </article><article class="task-row" data-kind="multiobjective-design">
+        <figure><img loading="lazy" src="images/tasks/polar-research-station-multiobjective-design.png" alt="极地科研站 多目标工程权衡"></figure>
+        <div class="task-copy">
+          <header><span class="task-index">m1-polar-research-station-multiobjective-design</span><h3>多目标工程权衡</h3></header>
+          <p class="purpose">识别成本、质量、刚度之间的 Pareto 解</p>
+          <p class="question">Return every non-dominated buildable alternative under lower cost, lower mass and higher stiffness.</p>
+          <dl><dt>对应能力</dt><dd>Pareto 推理 · 成本-质量-刚度权衡 · 工程设计</dd>
+          <dt>验证器</dt><dd>结构约束与最小动作评分器</dd></dl>
+          <details><summary>模型实际输入</summary><pre>{
+  &quot;objectives&quot;: [
+    &quot;minimize cost&quot;,
+    &quot;minimize mass&quot;,
+    &quot;maximize stiffness&quot;
+  ],
+  &quot;alternatives&quot;: [
+    {
+      &quot;id&quot;: &quot;carbon-beam&quot;,
+      &quot;label&quot;: &quot;One long carbon beam&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 7,
+      &quot;mass&quot;: 1.8,
+      &quot;stiffness&quot;: 9,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;twin-truss&quot;,
+      &quot;label&quot;: &quot;Two interlocked short trusses&quot;,
+      &quot;pieces&quot;: 2,
+      &quot;cost&quot;: 6,
+      &quot;mass&quot;: 2.2,
+      &quot;stiffness&quot;: 11,
+      &quot;jointMode&quot;: &quot;fixed&quot;
+    },
+    {
+      &quot;id&quot;: &quot;tension-cable&quot;,
+      &quot;label&quot;: &quot;One tension cable&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 3,
+      &quot;mass&quot;: 0.6,
+      &quot;stiffness&quot;: 12,
+      &quot;jointMode&quot;: &quot;spring&quot;
+    },
+    {
+      &quot;id&quot;: &quot;decorative-panel&quot;,
+      &quot;label&quot;: &quot;One fairing panel&quot;,
+      &quot;pieces&quot;: 1,
+      &quot;cost&quot;: 2,
+      &quot;mass&quot;: 0.8,
+      &quot;stiffness&quot;: 1,
+      &quot;jointMode&quot;: &quot;none&quot;
+    }
+  ]
+}</pre></details>
+          <details class="oracle"><summary>Oracle / 正确答案</summary><pre>{
+  &quot;paretoIds&quot;: [
+    &quot;tension-cable&quot;
+  ]
+}</pre></details>
+          <details><summary>模型回答与得分</summary>
+            <table class="answer-table"><thead><tr><th>模型</th><th>结果</th><th>回答</th></tr></thead><tbody>
+            <tr><td>Qwen3-0.6B 本地文本</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;carbon-beam&quot;,&quot;twin-truss&quot;]}</code></td></tr><tr><td>GPT-4.1 mini</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;tension-cable&quot;,&quot;twin-truss&quot;]}</code></td></tr><tr><td>Gemini 2.5 Flash</td><td class="fail">失败</td>
+              <td><code>{&quot;paretoIds&quot;:[&quot;tension-cable&quot;,&quot;twin-truss&quot;]}</code></td></tr></tbody></table></details>
+        </div>
+      </article></section></main>
+  <script>document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');const f=b.dataset.filter;document.querySelectorAll('.task-row').forEach(r=>r.classList.toggle('hidden',f!=='all'&&r.dataset.kind!==f));});</script>

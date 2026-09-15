@@ -8,5 +8,6 @@ export default defineConfig({
   server: { fs: { strict: true, allow: [resolve(root, 'web'), resolve(root, 'shared.ts'), resolve(root, '../../node_modules')],
     deny: ['**/.env*', '**/.runtime/**', '**/artifacts/**'] } },
   build: { outDir: resolve(root, '../dist-suite'), emptyOutDir: true,
-    rollupOptions: { input: { main: resolve(root, 'web/index.html'), render: resolve(root, 'web/render.html') } } },
+    rollupOptions: { input: { main: resolve(root, 'web/index.html'), render: resolve(root, 'web/render.html'),
+      mechanism: resolve(root, 'web/mechanism-render.html') } } },
 });

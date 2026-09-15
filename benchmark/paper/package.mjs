@@ -6,7 +6,7 @@ import { renameSync } from 'node:fs';
 const here = dirname(fileURLToPath(import.meta.url));
 const output = resolve(here, 'brickatlas-cvpr-source.zip');
 const temporary = resolve(here, `.source-${process.pid}.zip`);
-execFileSync('zip', ['-q', '-r', temporary, 'main.tex', 'supplement.tex', 'references.bib', 'cvpr.sty', 'ieeenat_fullname.bst',
+execFileSync('zip', ['-q', '-r', temporary, 'main.tex', 'main.zh-CN.md', 'supplement.tex', 'references.bib', 'cvpr.sty', 'ieeenat_fullname.bst',
   'tables', 'figures', 'README.md', 'BUILD.md', 'evidence.json', 'pdf-verification.json',
   'generate-tables.mjs', 'generate-study.mjs', 'study-evidence.json', 'check_pdf.py', 'supplement-verification.json',
   'generate-audit.mjs', 'generate-figures.py', 'audit-evidence.json', 'figure-evidence.json',
@@ -18,6 +18,6 @@ execFileSync('zip', ['-q', '-r', temporary, 'main.tex', 'supplement.tex', 'refer
   'frontier-manual.tex', 'frontier-evidence.json', 'verify-frontier.mjs',
   'diagnostic-manual.tex', 'verify-diagnostic.mjs', 'constructibility-manual.tex',
   'constructibility-evidence.json', 'generate-constructibility.mjs',
-  'omr-evidence.json', 'generate-omr.py'], { cwd: here });
+  'mechanism-manual.tex', 'mechanism-evidence.json', 'generate-mechanism.mjs'], { cwd: here });
 renameSync(temporary, output);
 console.log(output);
