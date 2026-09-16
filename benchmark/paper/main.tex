@@ -15,29 +15,29 @@
 Brick Structure, Reasoning, and Executable Intervention}
 \author{Development Manuscript\\Author and affiliation metadata intentionally omitted}
 \begin{document}
-\input{hierarchy3-results.tex}
+\input{hierarchy-expanded-results.tex}
 \maketitle
 
 \begin{abstract}
 Brick reasoning involves both object complexity and task composition.
 Increasing the number of views or edits does not create independent
 objects, and naming a task ``physical'' does not validate its mechanics.
-We introduce Hierarchy-3, a corrected public development release of BrickAtlas
-crossing 48 original layouts with 48 shared task families.
-Four structural strata contain twelve layouts each; every layout supports
+We introduce the expanded Hierarchy-3 public development release of BrickAtlas,
+crossing 144 original digital layouts with 48 shared task families.
+Four structural strata contain 36 layouts each; every layout supports
 22 atomic, 15 metacognitive/physical, six procedural, and five
-integrative tasks, for 2,304 questions on 6,339 visible parts.
+integrative tasks, for 6,912 questions on 42,617 visible parts.
 A state-transition interpreter checks submitted actions, while
 resource and possible-world validators evaluate scheduling and
 conditional policies. Rapier supplies actual collision queries and
 sampled dynamic traces for all objects. The original BrickAtlas website
 now exposes every layout as interactive 3D geometry, with exploded
 inspection and playback of submitted actions.
-A low-cost pilot yields \PilotSuccess{} successes on \PilotN{} fixed questions for
+A historical pilot on the retained 48-layout release yielded \PilotSuccess{} successes on \PilotN{} fixed questions for
 GPT-4.1 mini at \$\PilotCost. This tests pipeline functionality,
 not calibrated difficulty or a model ranking. The revision corrects
 ambiguous choices, geometry envelopes, inter-module penetrations and replay state.
-All 48 layouts satisfy the new nominal-state protocol, whose finite-force
+All 144 layouts satisfy the declared nominal-state protocol, whose finite-force
 servos and conservative geometry remain explicit limitations.
 \end{abstract}
 
@@ -58,10 +58,11 @@ procedures, and integrated constraints. Crucially, the same 48 families
 occur at every level, so comparisons can hold task identity fixed.
 Figure~\ref{fig:matrix} shows the complete crossed design.
 
-This release corrects the 40-layout Hierarchy-2 library and adds eight
-compositions, preserving its six Mechanism-1 objects and crossing every
-source with 48 tasks. These are 48 layouts, not 48 independently sampled mechanical families: new layouts
-reuse authored components. OMR/LDraw examples inform visual design but
+This expansion retains all 48 corrected Hierarchy-3 layouts and their
+2,304 tasks byte-for-byte, and adds 96 layouts with 4,608 tasks.
+Twelve construction families each contribute two configurations at four
+structural levels. These are 144 layouts, not 144 independently sampled
+mechanical families: new layouts reuse authored components. OMR/LDraw examples inform visual design but
 are not benchmark cases. The retired 5,120 procedural sources remain
 historical regression data and are excluded from the new scale.
 
@@ -75,7 +76,7 @@ parts, exploded configurations, and intermediate action states.
 
 We make the following contributions:
 \begin{enumerate}
-\item a balanced four-by-four organization with 48 authored layouts
+\item a balanced four-by-four organization with 144 authored layouts
 and 48 task families repeated on every layout;
 \item executable action, schedule, and possible-world contracts with
 negative controls and explicit physical-evidence boundaries;
@@ -109,11 +110,11 @@ insertion force, connector tolerance, grasping, and hardware transfer.
 \section{Library and Crossed Design}
 \begin{figure*}[t]
 \centering
-\includegraphics[height=.58\textheight,width=.76\textwidth,keepaspectratio]{figures/hierarchy3-teaser.pdf}
+\includegraphics[height=.58\textheight,width=.76\textwidth,keepaspectratio]{figures/hierarchy-expanded-teaser.pdf}
 \caption{\textbf{Representative layouts at all four structural levels.}
 Rows progress from D1 to D4; three fixed representatives per level are
 shown. These are canvas renders from the original application, not
-generated concept images. All 48 layouts and all four views per layout
+generated concept images. All 144 layouts and all four views per layout
 are provided in the supplementary index.}
 \label{fig:objects}
 \end{figure*}
@@ -122,7 +123,7 @@ are provided in the supplementary index.}
 \centering\small
 \begin{tabular}{lrrr}
 \toprule Level & Layouts & Parts/layout & Questions\\\midrule
-\tableinput{tables/hierarchy3-scale.tex}
+\tableinput{tables/hierarchy-expanded-scale.tex}
 \bottomrule
 \end{tabular}
 \caption{Actual release counts. D2 and D3 overlap in part count because
@@ -138,17 +139,28 @@ D4 adds multi-workcell systems, including cargo terminals, docking
 yards, energy stations, and service hangars.
 
 Table~\ref{tab:scale} reports actual counts rather than nominal target
-intervals. The library has 546 rigid modules and 503 declared joints.
+intervals. The library has 2,040 rigid modules and 1,938 declared joints.
 All layouts are agent-authored using reusable construction primitives;
 no independent human design study was conducted. Some new layouts
 share serial-stage constructors and differ in joint type, topology or
 branch count; layout count does not establish semantic independence.
+All 96 additions have distinct geometry fingerprints after removing
+names, colors and global translation. The retained indexed latch and
+orthogonal probe stage share geometry but differ in joint configuration;
+the complete collection has 143 distinct geometry fingerprints.
+
+New constructions include arms, grippers, carousels, cross-feed stages,
+cradles, drums, gantries, folding panels, elastic suspensions, gates,
+inclined probes and turntables. D2 adds a movable carrier and console,
+D3 combines two stations with storage, and D4 combines three or four
+stations with shared inspection. This creates matched construction
+families across levels, without claiming independent design samples.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=.92\textwidth]{figures/hierarchy3-matrix.pdf}
+\includegraphics[width=.92\textwidth]{figures/hierarchy-expanded-matrix.pdf}
 \caption{\textbf{Crossed structural scope and task composition.}
-Each cell contains twelve sources. Every source contributes 22 atomic,
+Each cell contains 36 sources. Every source contributes 22 atomic,
 15 meta/physical, six procedural, and five integrative questions.
 The axes are design strata; measured monotonic difficulty is not assumed.}
 \label{fig:matrix}
@@ -168,7 +180,7 @@ future train/test splits must group related layouts and reused components.
 The present public development set has no hidden confirmation split.
 
 \subsection{Matched Coverage}
-Every level has 576 questions. Atomic tasks are repeated across levels,
+Every level has 1,728 questions. Atomic tasks are repeated across levels,
 including recognition, counting, local edits, topology, and pose
 corrections. Meta tasks include both physical-record interpretation
 and uncertainty-aware decisions, with new nonuniform posteriors,
@@ -274,7 +286,7 @@ shape casts per object, excluding the serviced module.
 
 After 120 nominal steps, the audit records a geometric representative
 point's displacement, angular displacement, and non-spring joint residuals.
-All 48 objects satisfy fixed thresholds of 0.35 scene units, 0.15 radians,
+All 144 objects satisfy fixed thresholds of 0.35 scene units, 0.15 radians,
 and 0.02 scene units respectively. Every rendered vertex lies within
 its envelope. All joint anchor pairs initially coincide, and oriented
 cuboid contact queries find no penetration above 0.005 between any
@@ -285,9 +297,9 @@ with a driven over-limit regression control.
 Corrections relocate interfering service modules, rudders, drills,
 racks, pumps and transfer stages, repair four inconsistent tower
 anchors, and add separated elastic moorings to the flood-response barge.
-The simulator protocol also changes from the earlier 120/20/100 holding
-motor settings. Therefore improved outcomes cannot be attributed solely
-to geometry corrections. Active finite-force servos are not passive
+These corrections and the change from 120/20/100 motor settings were
+introduced in the retained 48-layout release. The expansion uses that
+same protocol and thresholds. Active finite-force servos are not passive
 stability or real LEGO material calibration.
 
 Impulse application and response measurement use the geometric
@@ -307,7 +319,7 @@ diagnostics rather than silently treated as precise mesh collisions.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/hierarchy3-pilot.pdf}
-\caption{Pilot cell counts on the two design axes. A green cell means
+\caption{Historical pilot on retained base-48 objects. A green cell means
 one correct response, not established 100\% population accuracy.}
 \label{fig:pilot}
 \end{figure}
@@ -323,29 +335,33 @@ These are observed counts, not estimates of whole-cell accuracy.}
 \label{tab:pilot}
 \end{table}
 
-The fixed pilot selects local-frame transformation, expected loss,
+The historical fixed pilot selected local-frame transformation, expected loss,
 guarded repair, and resource repair at each level. GPT-4.1 mini receives one
 image and public structured evidence at temperature zero, with a
 2,200-token output cap, no automatic retries, and no provider fallback.
 The \PilotN{} responses yield \PilotSuccess{} exact successes at \$\PilotCost; raw replies,
 provider IDs, costs, and public-input hashes are archived.
 Table~\ref{tab:pilot} preserves each denominator.
+No new paid model calls were made for the 96 additions; these historical
+counts are not accuracy measurements on the 144-layout expansion.
 
-Deterministic checks accept all 2,304 reference answers. A separate
-public-precondition solver succeeds on 384 action tasks. The simple
-constant-choice/empty-answer control succeeds on \ControlSuccess/2,304 cases,
+Deterministic checks accept all 6,912 reference answers. A separate
+public-precondition solver succeeds on 1,152 action tasks. The simple
+constant-choice/empty-answer control succeeds on \ControlSuccess/6,912 cases,
 with heterogeneous choice cardinalities and output contracts.
 Reference acceptance is evaluator validation, not learned-model
 performance; the action solver has privileged symbolic rules compared
 with a purely visual agent.
 
-The original application's homepage lists all 48 benchmark models.
+The original application's homepage lists all 144 benchmark models.
 Each opens an orbit-controlled 3D workspace with zoom, pan, canonical
 views, module isolation, explosion, and image export. Its task panel
 shows all 48 contracts, and action JSON can be replayed with a step
 slider and first-failure feedback. Selection and isolation preserve
-the current frame's active modules. The same renderer generates 192
-audited model views. Every source and every task family is indexed in
+the current frame's active modules. The release contains 192 retained
+views and 384 new captures, totaling 576 audited model views.
+The human review dashboard reads its denominator from the catalog;
+existing task IDs and feedback remain compatible. Every source and every task family is indexed in
 the supplement; full question/choice/input/answer records are shipped
 in the Chinese question bank and machine-readable release.
 
@@ -372,8 +388,8 @@ from passing software tests.
 
 \section{Conclusion}
 Hierarchy-3 provides a common source-by-task organization for brick
-reasoning, execution, and integrated decisions. Its 48 layouts,
-2,304 questions, state-based scoring, actual simulator records, and
+reasoning, execution, and integrated decisions. Its 144 layouts,
+6,912 questions, state-based scoring, actual simulator records, and
 original-site 3D access make the benchmark easier to inspect and
 extend. Versioned errata preserve historical inputs and scores while
 the corrected release remains explicit about physical and statistical boundaries.

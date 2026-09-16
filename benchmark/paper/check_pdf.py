@@ -49,8 +49,8 @@ for index, page in enumerate(document):
     pages.append(frame)
 assert not out_of_bounds, out_of_bounds
 if args.paper == "main":
-    assert "Hierarchy-3" in text and "2,304" in text and "6,339" in text
-    assert "OMR/LDraw" in text and "not benchmark cases" in text
+    assert "Hierarchy-3" in text and "6,912" in text and "42,617" in text
+    assert "OMR/LDraw" in text and "not benchmark cases" in " ".join(text.split())
     assert references_start is not None
     assert main_content_last_page <= 8, f"Main content exceeds 8 pages: {main_content_last_page}"
     assert len(set(re.findall(r"Figure (\d+)\.", text))) >= 2, "Missing hierarchy matrix/pilot figures"

@@ -75,14 +75,14 @@ export function BenchmarkReviewDashboard() {
     </header>
     <main className="bench-review-main">
       <section className="bench-review-summary">
-        <div><small>批次进度</small><strong>{rows.length} / {total || 2304}</strong>
-          <progress max={total || 2304} value={rows.length} /></div>
+        <div><small>批次进度 · {entries.length} 个模型</small><strong>{rows.length} / {total || '…'}</strong>
+          <progress max={total || 1} value={rows.length} /></div>
         <div><CheckCircle2 size={18} /><span>通过</span><strong>{passed}</strong></div>
         <div><XCircle size={18} /><span>不通过</span><strong>{failed}</strong></div>
-        <div><span>待审核</span><strong>{Math.max(0, (total || 2304) - rows.length)}</strong></div>
+        <div><span>待审核</span><strong>{total ? Math.max(0, total - rows.length) : '…'}</strong></div>
       </section>
       <div className="bench-review-actions">
-        <button onClick={exportBatch}><Download size={17} />导出本批次 JSON</button>
+        <button onClick={exportBatch} disabled={!entries.length}><Download size={17} />导出本批次 JSON</button>
         <button onClick={() => input.current?.click()}><FileUp size={17} />导入审核 JSON</button>
         <input ref={input} hidden type="file" accept="application/json,.json"
           onChange={event => void importFile(event.target.files?.[0])} />
@@ -97,9 +97,9 @@ export function BenchmarkReviewDashboard() {
         <h1>按难度汇总</h1>
         <div className="bench-review-levels">{byDifficulty.map(level =>
           <div key={level.difficulty}><strong>{level.difficulty}</strong>
-            <span>{level.reviewed}/{level.taskCount || 576} 已审核</span>
+            <span>{level.reviewed}/{level.taskCount || '…'} 已审核</span>
             <small>{level.failures} 条不通过</small>
-            <progress max={level.taskCount || 576} value={level.reviewed} /></div>)}</div>
+            <progress max={level.taskCount || 1} value={level.reviewed} /></div>)}</div>
       </section>
       <section>
         <h2>全部模型</h2>

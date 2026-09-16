@@ -7,19 +7,24 @@
 \makeatletter
 \newcommand{\tableinput}[1]{\@@input #1 }
 \makeatother
-\title{BrickAtlas Hierarchy-3: Complete Supplementary Index}
+\title{BrickAtlas Hierarchy-3 Expanded: Complete Supplementary Index}
 \author{Development Manuscript\\Author metadata intentionally omitted}
 \begin{document}
-\input{hierarchy3-results.tex}
+\input{hierarchy-expanded-results.tex}
 \maketitle
 \section{Scope and Version}
-This supplement indexes the current Hierarchy-3 release: 48 layouts,
-48 families per layout, and 2,304 questions. It accompanies the
+This supplement indexes the expanded Hierarchy-3 release: 144 layouts,
+48 families per layout, and 6,912 questions. It accompanies the
 machine-readable public inputs, answers, quality records, and original
 website 3D interface. It replaces the previous manuscript's appendix
 as the current entry point. Older Mechanism-1, Hierarchy-1, Hierarchy-2 and retired
 grid experiments remain in their versioned data directories and Git
-history; their scores are not pooled into this release.
+history; their scores are not pooled into this release. The base-48
+Hierarchy-3 models and their 2,304 tasks are preserved byte-for-byte.
+The 96 additions use twelve construction families, two configurations
+per family, and four structural levels. All new geometry fingerprints
+are distinct; one retained pair shares geometry with different joints.
+The 144 model layouts therefore have 143 geometry fingerprints.
 
 \section{Reading the Contracts}
 Each task has a source ID, difficulty stratum, task layer, family,
@@ -33,7 +38,7 @@ per task. Empty feasible sets are accepted when appropriate.
 The full companion \texttt{QUESTION\_BANK.zh-CN.md} includes every
 question, every option, every input, and every reference answer.
 The following family table describes all contracts, and the per-object
-pages index all 2,304 task instances with four actual website renders
+pages index all 6,912 task instances with four actual website renders
 per object. No page implies an independent human annotation.
 
 \section{Atomic Operations}
@@ -113,7 +118,7 @@ service module. The static query world is independent of settling.
 After 120 nominal steps, an impulse $(10,1.8,3.5)$ is applied one unit
 above the target geometric representative point. The same attached
 point supplies the displacement measurements. The next 120 steps produce eleven
-samples. Nominal state is evaluated before the impulse. All 48 layouts
+samples. Nominal state is evaluated before the impulse. All 144 layouts
 satisfy representative-point displacement below 0.35, angular displacement
 below 0.15 rad and non-spring joint residual below 0.02. Initial anchor
 pairs coincide. No module pair has oriented-cuboid
@@ -143,14 +148,15 @@ absent modules. Six old constant-answer families now vary actual
 parameters, and all 48 semantic answer distributions are published.
 
 \section{Pilot and Reproduction}
-The GPT-4.1 mini pilot contains 16 fixed questions, one per level/layer
+The historical base-48 GPT-4.1 mini pilot contains 16 fixed questions, one per level/layer
 cell. Families are local-frame, expected-loss, guarded-repair, and
 resource-repair. \PilotSuccess{} of \PilotN{} responses succeed at a total cost of \$\PilotCost.
 Each cell has one response, so no stable accuracy estimate or model
 ranking follows. Input hashes, generation IDs, provider receipts, and
 raw predictions are archived separately from the reference answers.
+There are no new paid model measurements for the 96 added layouts.
 
-The 2,304 oracle checks validate the evaluator; 384 public-precondition
+The 6,912 oracle checks validate the evaluator; 1,152 public-precondition
 solutions validate action execution. A constant-choice/empty-answer
 control passes \ControlSuccess{} cases. These controls do not establish task novelty
 or human difficulty. The figures use original-site canvas captures,
@@ -159,10 +165,10 @@ release.
 
 From the repository root:
 \begin{verbatim}
-npm --prefix benchmark run h3:release
+npm --prefix benchmark run h3x:release
 npm run start:local
-npm --prefix benchmark run h3:render
-npm --prefix benchmark run h3:docs
+npm --prefix benchmark run h3x:browser
+npm --prefix benchmark run h3x:docs
 npm --prefix benchmark test
 npm run build
 \end{verbatim}
@@ -180,11 +186,11 @@ intentionally includes a reference-answer control.
 \bottomrule
 \end{tabular}
 \end{center}
-Each row appears on twelve source layouts at each of four levels.
+Each row appears on 36 source layouts at each of four levels.
 Rows sharing an object remain correlated; source-level reporting and
 family-grouped confirmation are required. The per-object pages below
 are the complete release index. A model's render count is not a source
 count, and shared part counts do not imply equivalent task difficulty.
 
-\input{hierarchy3-cases.tex}
+\input{hierarchy-expanded-cases.tex}
 \end{document}

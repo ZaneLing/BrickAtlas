@@ -57,10 +57,11 @@ export function BenchmarkLibrary({ compact = false }: { compact?: boolean }) {
     <a href={`${import.meta.env.BASE_URL}benchmark/review`}><ClipboardCheck size={16} />人工审核台</a>
     <a href={`${base}docs/main.pdf`}>论文 PDF</a><a href={`${base}docs/supplement.pdf`}>附录 PDF</a>
     <a href={`${base}docs/REPORT.zh-CN.md`}>中文报告</a></div>
-    {!compact && <details><summary>展开难度矩阵与试跑热力图（每格 n=1）</summary>
-      <div className="bench-figures"><a href={`${base}figures/hierarchy3-matrix.png`}><img src={`${base}figures/hierarchy3-matrix.png`} alt="四级结构与四层任务矩阵" /></a>
-      <a href={`${base}figures/hierarchy3-pilot.png`}><img src={`${base}figures/hierarchy3-pilot.png`} alt="16题流程试跑计数，非总体准确率" /></a></div>
+    {!compact && <details><summary>展开模型库与任务覆盖矩阵</summary>
+      <div className="bench-figures"><a href={`${base}figures/expanded-matrix.png`}><img src={`${base}figures/expanded-matrix.png`} alt="四级结构与四层任务矩阵" /></a>
+      <a href={`${base}figures/expanded-library.png`}><img src={`${base}figures/expanded-library.png`} alt="全部模型实际三维视图" /></a></div>
       <a href={`${base}docs/QUESTION_BANK.zh-CN.md`}>下载全部题目、输入与答案</a>
+      <p>旧版 48 模型上的 16 题试跑单独保留，新增模型尚未进行模型准确率测量。</p>
     </details>}
     {error && <p role="alert">{error}</p>}
     <div className="bench-grid">{shown.map(m => <a className="bench-card" key={m.id}
@@ -164,7 +165,7 @@ export function BenchmarkPage({ modelId }: { modelId?: string }) {
         return;
       }
     }
-    setReviewMessage('本批次 2,304 道题已全部审核');
+    setReviewMessage('本批次题目已全部审核');
   };
   const submitReview = (decision: 'pass' | 'fail') => {
     if (!current) return;
@@ -213,8 +214,8 @@ export function BenchmarkPage({ modelId }: { modelId?: string }) {
           <output>{step}/{execution.frames.length - 1}</output><span>{execution.frames[step]?.actionId ?? '初始状态'}</span></div>}
       </main>
       <aside className="bench-tasks"><div className="bench-task-heading"><div><small>逐题人工审核</small><h2>任务与能力</h2></div>
-        <button title="导出当前审核批次" aria-label="导出当前审核批次"
-          onClick={() => downloadReviewBatch(reviews, entries.reduce((sum, entry) => sum + entry.tasks, 0) || 2304)}>
+        <button title="导出当前审核批次" aria-label="导出当前审核批次" disabled={!entries.length}
+          onClick={() => downloadReviewBatch(reviews, entries.reduce((sum, entry) => sum + entry.tasks, 0))}>
           <Download size={17} /></button></div>
         <div className="bench-model-review-progress">
           <span>本模型 {modelReviews.length}/{data.tasks.length}</span>
