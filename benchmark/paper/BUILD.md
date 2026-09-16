@@ -1,37 +1,34 @@
-# Hierarchy-2 Verified Build
+# Hierarchy-3 Expanded Publication Build
 
 - Compiler: Tectonic 0.17.0, macOS aarch64.
-- Official compiler archive SHA256:
-  `a3f1cac7c5678f01661a92212f58480ae3b0634115d880dbc59e2953ded45667`.
-- Official CVPR author-kit revision: `291758547e923160eb4d37079b7b9f0dfce82355`.
+- CVPR author-kit revision: `291758547e923160eb4d37079b7b9f0dfce82355`.
 - Template files are unchanged; report mode includes page numbers.
-- Main: five content pages plus one reference page, US Letter.
-- Supplement: 43 pages, including four website renders and 35 task entries
-  for each of all 40 objects.
-- PDF checks: no undefined references, overfull boxes, page-boundary text
-  violations, or empty pages.
-- Figures use actual original-site canvas renders and archived pilot results.
-- Dataset: 40 layouts, 5,070 parts, 355 modules, 318 joints, 1,400 tasks.
-- Quality boundary: 17/40 layouts pass the declared nominal-drift threshold.
-  The complete library is not certified as physically stable or LEGO compatible.
-- Pilot: GPT-4.1 mini, 14/16, $0.0113044. All 16 receipts are archived;
-  one response per cell does not establish population accuracy.
-- Website: all 40 models pass load/orbit/explosion/assembly-replay checks;
-  four mobile cases pass rendering and overflow checks.
-- Regression: 212 benchmark tests and 69 original-site unit tests pass.
-  Both TypeScript projects and the production Vite build pass.
-- `verify-hierarchy2.mjs` binds the release manifest, run, paper, and
-  original-site model/document copies.
-- `verify-artifacts.mjs` also preserves checks on older versioned evidence.
+- Main: eight pages including references; substantive content ends on page 7.
+- Supplement: 152 pages, including four views and 48 task entries for all
+  144 configurations, plus complete worked dismantling/repair examples.
+- Main figures: actual 3D model gallery, six-action dismantling, seven-action
+  service repair. English labels only.
+- Tables: related settings, structural coverage, crossed task design,
+  constant/uniform choice controls, historical pilot; additional appendix
+  contracts, per-step mappings, physical measurements, and family diagnostics.
+- PDF checks: no CJK text, undefined references, overfull boxes, out-of-page
+  text, or empty pages. Embedded rasters match English plates or raw views.
+- Data: 144 configurations, 143 geometric fingerprints, 42,617 primitives,
+  2,040 modules, 1,938 joints, 6,912 tasks, 576 canonical views.
+- All 144 configurations pass the declared nominal-state protocol. This
+  does not certify passive stability, commercial connectors, or robot paths.
+- Historical base-48 pilot: GPT-4.1 mini, 7/16, $0.013621. No new paid calls.
+- All 212 benchmark tests pass. Publication changes do not change task data,
+  the application, the scorer, or existing human-review decisions.
+- `verify-hierarchy-expanded.mjs` checks current data, source-image hashes,
+  analysis tables, pilot, PDF checks, and website document parity.
+- `verify-artifacts.mjs` also preserves older versioned evidence checks.
 
-Reproduction commands are in `../hierarchy-v2/README.md`.
-The source ZIP includes current TeX, generated tables and figures. Regeneration
-requires the full repository; the ZIP is a manuscript source package.
-
-The previous Mechanism-1 manuscript is retained in Git at commit `865b583`.
-Historical data and source generators remain versioned separately. They are
-not counted in Hierarchy-2's 1,400 questions or 16-response pilot.
+Reproduction commands are in `README.md` and the English supplement.
+The source ZIP contains the current manuscript and its generated dependencies;
+it is not a standalone benchmark dataset. Recomputing analysis or browser
+captures requires the full repository. Archived frames suffice for composition.
 
 Paper hashes are recorded in `pdf-verification.json` and
-`supplement-verification.json`. The page limit and software checks do not
-establish submission readiness, human difficulty, or independent replication.
+`supplement-verification.json`. Passing software and page-layout checks does
+not establish submission readiness, human difficulty, or independent replication.

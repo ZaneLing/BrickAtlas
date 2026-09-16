@@ -1,14 +1,52 @@
 # BrickAtlas English Manuscript
 
-Current manuscript: **Hierarchy-2**, 40 layouts and 1,400 crossed questions,
-six main PDF pages (five content plus references) and a 43-page supplement
-indexing all objects and task instances. Reproduce with
-[`../hierarchy-v2/README.md`](../hierarchy-v2/README.md).
-The original application's `/benchmark` routes render all objects and replay
-submitted programs. `hierarchy2-evidence.json` binds current paper counts;
-`verify-hierarchy2.mjs` verifies dataset, pilot, UI evidence and website copies.
-The remaining historical generators listed below are retained for earlier
-versions and are not additional Hierarchy-2 experiments.
+Current manuscript: **Hierarchy-3 expanded**, 144 configurations and 6,912
+questions. The eight-page English main PDF includes three actual 3D plates,
+five tables, and references. The 152-page English supplement includes all
+144 configuration pages, 48 task families, full dismantling and repair
+examples, rejected transitions, and answer-concentration diagnostics.
+The separate Chinese companion is not embedded in either PDF.
+
+The original application's `/benchmark` and `/benchmark/review` routes render
+the models, replay programs, and collect task feedback. Current evidence is
+bound by `hierarchy-expanded-evidence.json`, `publication-analysis.json`,
+`publication-capture.json`, and `publication-figures.json`;
+`verify-hierarchy-expanded.mjs` checks these artifacts and website parity.
+Only the archived 7/16 base-48 pilot is a learned-model measurement discussed
+in this manuscript. No new model inference was performed.
+
+## Current publication reproduction
+
+From the repository root (Node 22, dependencies installed):
+
+```bash
+node node_modules/tsx/dist/cli.mjs benchmark/paper/analyze-publication.ts
+# Optional recapture: requires npm run start:local at port 5173 and Chrome.
+node node_modules/tsx/dist/cli.mjs benchmark/paper/capture-publication.ts
+python3 benchmark/paper/compose-publication.py
+cd benchmark/paper
+../.runtime/tectonic --keep-logs main.tex
+../.runtime/tectonic --keep-logs supplement.tex
+python3 check_pdf.py
+python3 check_pdf.py --paper supplement
+```
+
+PDF checks require the dependencies in `requirements.txt`. They reject CJK
+text and bind embedded images to English publication plates or unlabelled
+canonical views. The archived frames suffice to compose figures without
+recapturing. Capture does not submit human review decisions.
+
+Then, from the repository root:
+
+```bash
+npm --prefix benchmark run h3x:sync
+node node_modules/tsx/dist/cli.mjs benchmark/suite/hierarchy3-expanded/release.ts --manifest
+node benchmark/paper/verify-artifacts.mjs
+node benchmark/paper/package.mjs
+```
+
+The remaining historical generators and result descriptions below are retained
+for earlier versions; they are not additional experiments in the current paper.
 
 `main.tex` is an English current-state research manuscript, not a submitted or
 accepted paper. It uses the official CVPR 2026 author kit in **pagenumbers**
@@ -52,9 +90,9 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 - `../review-gallery/index.html`: authored calibration sources and the retired
   5,120-source procedural regression gallery.
 
-- `main.tex`: Mechanism-1 motivation, original objects, Rapier physics contract,
-  eight task families, measured model results, and explicit research limits.
-- `main.pdf`: five main-content pages plus one reference page.
+- `main.tex`: current crossed design, task contracts, Rapier protocol,
+  structural/control tables, historical pilot, and explicit research limits.
+- `main.pdf`: eight pages including references.
 - `supplement.tex`, `supplement.pdf`: detailed task schemas, catalog counts,
   model variants, ambiguity controls, historical experiments, and future designs.
 - `REVIEW.zh-CN.md`: reviewer-oriented gap analysis and remaining evidence gates.
@@ -69,8 +107,8 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 - `../challenge-cases-v2/`: six connected 49--63-part structures and twelve advanced
   task contracts. Oracle checks are complete; model result cells remain blank.
   Original `../challenge-cases/` is retained but deprecated for new evaluation.
-- `figures/`: the main teaser and task taxonomy use original Mechanism-1
-  objects. Historical OMR and procedural assets are not benchmark figures.
+- `figures/publication-*`: English plates and raw replay frames for the current paper.
+  Historical OMR and procedural assets are not current benchmark figures.
 - `evidence.json`: source paths/hashes for numerical evidence and upstream template.
 - `generate-tables.mjs`: table generation and evidence assertions.
 - `generate-study.mjs`, `study-evidence.json`: new study tables and source hashes.
@@ -91,7 +129,7 @@ the relevant year's rules, setting genuine metadata, and meeting research gates.
 - `../suite/challenge/`, `generate-challenge.ts`, `challenge-evidence.json`:
   advanced models, evaluators, renders, tables, and evidence hashes.
 
-## Compile
+## Historical generators and general TeX setup
 
 From the repository root, regenerate tables:
 
@@ -184,7 +222,7 @@ python check_pdf.py --paper=supplement
 ```
 
 It checks US Letter dimensions, text bounds, unresolved references, overfull
-boxes, five main figures, and an actual eight-page content bound (not merely
+boxes, English image provenance, and an actual eight-page content bound (not merely
 where references start). It renders pages into `.runtime/paper-inspection/`.
 
 After PDF checks, from the repository root:

@@ -23,11 +23,14 @@ output.mkdir(parents=True, exist_ok=True)
 pages = []
 out_of_bounds = []
 text = ""
+image_count = 0
 references_start = None
 main_content_last_page = None
 for index, page in enumerate(document):
     assert abs(page.rect.width - 612) < 1 and abs(page.rect.height - 792) < 1
     page_text = page.get_text()
+    assert not re.search(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]", page_text), f"CJK text on page {index + 1}"
+    image_count += len(page.get_images())
     if references_start is None and re.search(r"(?m)^References$", page_text):
         references_start = index + 1
         before_references = page_text.split("References", 1)[0].strip()
@@ -55,6 +58,27 @@ if args.paper == "main":
     assert main_content_last_page <= 8, f"Main content exceeds 8 pages: {main_content_last_page}"
     assert len(set(re.findall(r"Figure (\d+)\.", text))) >= 2, "Missing hierarchy matrix/pilot figures"
 assert not re.search(r"\[\?\]", text)
+assert image_count >= (2 if args.paper == "main" else 576)
+# Raster labels cannot be audited by PDF text extraction: bind all inserted
+# rasters to the inspected publication plates or the canonical raw 3D views.
+allowed = set()
+for image_path in list((ROOT / "figures").glob("publication-*.png")) + list((ROOT / "figures/hierarchy-expanded").glob("*.png")):
+    raster = Image.open(image_path).convert("RGB")
+    allowed.add(hashlib.sha256(raster.tobytes()).hexdigest())
+for page in document:
+    for entry in page.get_images():
+        pixmap = fitz.Pixmap(document, entry[0])
+        if pixmap.n != 3:
+            pixmap = fitz.Pixmap(fitz.csRGB, pixmap)
+        # PDF plates use JPEG encoding; provenance is checked against their
+        # embedded image streams below, while raw PNGs are lossless.
+        digest = hashlib.sha256(pixmap.samples).hexdigest()
+        if digest not in allowed:
+            for plate in (ROOT / "figures").glob("publication-*.pdf"):
+                with fitz.open(plate) as source:
+                    for row in source[0].get_images():
+                        allowed.add(hashlib.sha256(fitz.Pixmap(source, row[0]).samples).hexdigest())
+            assert digest in allowed, f"Untracked image on page {page.number + 1}"
 contact = Image.new("RGB", (420*3, 570*((len(pages)+2)//3)), "#dddddd")
 for i, image in enumerate(pages):
     contact.paste(image, ((i % 3)*420, (i//3)*570))
@@ -63,6 +87,8 @@ result = {
     "pages": len(document), "paperSize": "US Letter", "textOnEveryPage": True,
     "unresolvedCitationsOrReferences": False, "overfullBoxes": False,
     "textOutsidePage": out_of_bounds,
+    "cjkTextFound": False, "imageOccurrences": image_count,
+    "imagesBoundToEnglishPlatesOrRawViews": True,
     "pdfSha256": hashlib.sha256((ROOT / (args.paper + ".pdf")).read_bytes()).hexdigest(),
     "referencesStartPage": references_start,
     "mainContentPageUpperBound": main_content_last_page if main_content_last_page is not None else len(document),

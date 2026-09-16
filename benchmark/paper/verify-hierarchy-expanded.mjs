@@ -47,5 +47,30 @@ for (const [name, report] of [['main', 'pdf-verification'], ['supplement', 'supp
   const check = read(resolve(paper, `${report}.json`));
   assert.equal(hash(resolve(paper, `${name}.pdf`)), check.pdfSha256);
   assert.equal(check.overfullBoxes, false); assert.equal(check.unresolvedCitationsOrReferences, false);
+  assert.equal(check.cjkTextFound, false);
+  assert.equal(check.imagesBoundToEnglishPlatesOrRawViews, true);
 }
+const publication = read(resolve(paper, 'publication-analysis.json'));
+const capture = read(resolve(paper, 'publication-capture.json'));
+const plates = read(resolve(paper, 'publication-figures.json'));
+for (const item of [publication, capture, plates])
+  for (const [p, expected] of Object.entries(item.sources)) assert.equal(hash(resolve(root, p)), expected, p);
+for (const [p, expected] of Object.entries(plates.outputs)) assert.equal(hash(resolve(root, p)), expected, p);
+assert.equal(plates.englishLabelsOnly, true);
+assert.ok(plates.labels.every(label => /^[\x00-\x7f]*$/.test(label)));
+assert.equal(capture.wroteHumanReviews, false);
+assert.equal(capture.frames.length, 17);
+for (const frame of capture.frames) assert.equal(hash(resolve(root, frame.file)), frame.sha256);
+assert.equal(capture.frames.filter(f => !f.accepted).length, 2);
+assert.equal(publication.controls.referencePassed, 6912);
+assert.equal(publication.controls.actionSolverPassed, 1152);
+assert.equal(publication.controls.constantOrEmptyPassed, 1340);
+assert.equal(publication.pilot.strictPassed, 7);
+const range = xs => xs[0] === xs[1] ? `${xs[0]}` : xs.join('--');
+assert.equal(readFileSync(resolve(paper, 'tables/publication-structure.tex'), 'utf8'), publication.levels.map(l =>
+  `${l.level} & ${l.models} & ${range(l.parts.range)} & ${l.parts.median} & ${range(l.modules.range)} & ${range(l.depth.range)} & ${l.tasks} \\\\`).join('\n') + '\n');
+assert.equal(readFileSync(resolve(paper, 'tables/publication-controls.tex'), 'utf8'), publication.levels.map(l =>
+  `${l.level} & ${l.choices} & ${l.constantChoicePass} & ${(100*l.constantChoicePass/l.choices).toFixed(1)} & ${(100*l.uniformChoiceExpectation).toFixed(1)} & ${range(l.actionRange)} \\\\`).join('\n') + '\n');
+assert.equal(readFileSync(resolve(paper, 'tables/publication-families.tex'), 'utf8'), publication.families.map(f =>
+  `${f.family} & ${f.format} & ${f.n} & ${(100*f.semanticMajority).toFixed(1)} & ${f.steps ? range(f.steps) : '--'} \\\\`).join('\n') + '\n');
 console.log(JSON.stringify({ verified: true, models: 144, tasks: 6912, retainedCompatible: 48, views: 576 }));
