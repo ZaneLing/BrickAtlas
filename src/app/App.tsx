@@ -29,6 +29,7 @@ const AssemblyGame = lazy(() => import('../assembly/AssemblyGame').then(module =
 const AssemblyGameHub = lazy(() => import('../assembly/AssemblyGame').then(module => ({ default: module.AssemblyGameHub })));
 const BenchmarkPage = lazy(() => import('../benchmark/BenchmarkPage').then(module => ({ default: module.BenchmarkPage })));
 const BenchmarkLibrary = lazy(() => import('../benchmark/BenchmarkPage').then(module => ({ default: module.BenchmarkLibrary })));
+const BenchmarkReviewDashboard = lazy(() => import('../benchmark/ReviewDashboard').then(module => ({ default: module.BenchmarkReviewDashboard })));
 
 declare global { interface Window { __atlas?: () => ReturnType<AtlasScene['snapshot']> } }
 const viewNames = (tr: Translator) => ({
@@ -804,6 +805,8 @@ function AppRoutes() {
   const { locale, tr, toggleLocale } = useLocale();
   useEffect(() => { document.title = tr('Brick Atlas｜积木世界', 'Brick Atlas | Build the world'); }, [tr]);
   const relative = location.pathname.slice(import.meta.env.BASE_URL.replace(/\/$/, '').length) || '/';
+  if (relative === '/benchmark/review' || relative === '/benchmark/review/')
+    return <BenchmarkReviewDashboard />;
   const benchMatch = /^\/benchmark(?:\/([^/]+))?\/?$/.exec(relative);
   if (benchMatch) return <BenchmarkPage modelId={benchMatch[1]} />;
   if (relative === '/' || relative === '') return <CatalogPage locale={locale} tr={tr} toggleLocale={toggleLocale} />;

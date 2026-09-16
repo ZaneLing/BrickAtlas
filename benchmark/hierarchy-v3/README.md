@@ -9,6 +9,20 @@ Open the original website at `http://127.0.0.1:5173/benchmark`.
 Every model supports orbit, zoom, pan, four views, explosion, isolation,
 and submitted-action replay with the same interpreter as offline scoring.
 
+## Human review workflow
+
+Open `http://127.0.0.1:5173/benchmark/review` for the batch dashboard.
+Each model links to its 3D task workspace. The right panel supports pending/pass/fail
+filters, previous/next navigation, pass or fail decisions, required failure reasons,
+undo, and automatic movement to the next pending task across models.
+
+Drafts are stored in browser local storage under
+`brickatlas:hierarchy3:reviews:v1`. Export produces a versioned JSON batch with
+task/model/difficulty/layer/family metadata, timestamps, decisions, reasons, and
+aggregate counts. Import merges records by task ID and keeps the newest timestamp.
+Export the batch before clearing browser data; the exported failure list is the
+input for the next correction pass.
+
 - [中文报告](REPORT.zh-CN.md), [完整问答库](QUESTION_BANK.zh-CN.md), [校正记录](ERRATA.zh-CN.md).
 - `models/*.json`: complete geometry, tasks, physics and validation records.
 - `public.json` / `answers.json`: separated public inputs and answers.
