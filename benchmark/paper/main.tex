@@ -15,28 +15,30 @@
 Brick Structure, Reasoning, and Executable Intervention}
 \author{Development Manuscript\\Author and affiliation metadata intentionally omitted}
 \begin{document}
+\input{hierarchy3-results.tex}
 \maketitle
 
 \begin{abstract}
 Brick reasoning involves both object complexity and task composition.
 Increasing the number of views or edits does not create independent
 objects, and naming a task ``physical'' does not validate its mechanics.
-We introduce Hierarchy-2, a public development release of BrickAtlas
-crossing 40 original layouts with 35 shared task families.
-Four structural strata contain ten layouts each; every layout supports
-18 atomic, ten metacognitive/physical, four procedural, and three
-integrative tasks, for 1,400 questions on 5,070 visible parts.
+We introduce Hierarchy-3, a corrected public development release of BrickAtlas
+crossing 48 original layouts with 48 shared task families.
+Four structural strata contain twelve layouts each; every layout supports
+22 atomic, 15 metacognitive/physical, six procedural, and five
+integrative tasks, for 2,304 questions on 6,339 visible parts.
 A state-transition interpreter checks submitted actions, while
 resource and possible-world validators evaluate scheduling and
 conditional policies. Rapier supplies actual collision queries and
 sampled dynamic traces for all objects. The original BrickAtlas website
 now exposes every layout as interactive 3D geometry, with exploded
 inspection and playback of submitted actions.
-A fixed 16-question low-cost pilot yields 14 exact successes for
-GPT-4.1 mini at \$0.011304. This establishes pipeline functionality,
-not calibrated difficulty or a model ranking. Quality auditing finds
-only 17/40 layouts within the declared nominal-drift tolerance,
-which limits the physical claims of the release.
+A low-cost pilot yields \PilotSuccess{} successes on \PilotN{} fixed questions for
+GPT-4.1 mini at \$\PilotCost. This tests pipeline functionality,
+not calibrated difficulty or a model ranking. The revision corrects
+ambiguous choices, geometry envelopes, inter-module penetrations and replay state.
+All 48 layouts satisfy the new nominal-state protocol, whose finite-force
+servos and conservative geometry remain explicit limitations.
 \end{abstract}
 
 \section{Introduction}
@@ -52,14 +54,13 @@ BrickAtlas organizes evaluation along two axes. The vertical axis
 describes the structural scope of an object: component, assembly,
 mechanism, or system. The horizontal axis describes task composition:
 atomic operations, metacognitive and physical reasoning, executable
-procedures, and integrated constraints. Crucially, the same 35 families
+procedures, and integrated constraints. Crucially, the same 48 families
 occur at every level, so comparisons can hold task identity fixed.
 Figure~\ref{fig:matrix} shows the complete crossed design.
 
-This release extends the 18-layout Hierarchy-1 library with 22 original
-compositions, preserves its six Mechanism-1 objects, and replaces
-incomplete cross-level task coverage with 1,400 questions. These are 40
-layouts, not 40 independently sampled mechanical families: new layouts
+This release corrects the 40-layout Hierarchy-2 library and adds eight
+compositions, preserving its six Mechanism-1 objects and crossing every
+source with 48 tasks. These are 48 layouts, not 48 independently sampled mechanical families: new layouts
 reuse authored components. OMR/LDraw examples inform visual design but
 are not benchmark cases. The retired 5,120 procedural sources remain
 historical regression data and are excluded from the new scale.
@@ -74,21 +75,21 @@ parts, exploded configurations, and intermediate action states.
 
 We make the following contributions:
 \begin{enumerate}
-\item a balanced four-by-four organization with 40 authored layouts
-and 35 task families repeated on every layout;
+\item a balanced four-by-four organization with 48 authored layouts
+and 48 task families repeated on every layout;
 \item executable action, schedule, and possible-world contracts with
 negative controls and explicit physical-evidence boundaries;
 \item an integrated 3D browser sharing model data with the offline
 release and displaying reference or submitted programs; and
-\item a fully receipted low-cost pilot and a per-object quality audit
-that reports unstable simulations rather than hiding them.
+\item a versioned correction audit, semantic-answer baselines, and
+per-object geometry and nominal-state validation.
 \end{enumerate}
 
 \section{Related Work}
 BrickGPT~\cite{pun2025brickgpt} addresses stable brick generation;
 BrickNet~\cite{kulits2026bricknet} uses typed connection graphs.
 BrECS~\cite{ahn2024brecs} studies sequential assembly with budgets.
-Hierarchy-2 evaluates an existing design and its interventions; it does
+Hierarchy-3 evaluates an existing design and its interventions; it does
 not claim comparable asset scale or a new generative method.
 
 LEGO-Puzzles~\cite{tang2025legopuzzles} and
@@ -108,11 +109,11 @@ insertion force, connector tolerance, grasping, and hardware transfer.
 \section{Library and Crossed Design}
 \begin{figure*}[t]
 \centering
-\includegraphics[height=.58\textheight,width=.76\textwidth,keepaspectratio]{figures/hierarchy2-teaser.pdf}
+\includegraphics[height=.58\textheight,width=.76\textwidth,keepaspectratio]{figures/hierarchy3-teaser.pdf}
 \caption{\textbf{Representative layouts at all four structural levels.}
 Rows progress from D1 to D4; three fixed representatives per level are
 shown. These are canvas renders from the original application, not
-generated concept images. All 40 layouts and all four views per layout
+generated concept images. All 48 layouts and all four views per layout
 are provided in the supplementary index.}
 \label{fig:objects}
 \end{figure*}
@@ -121,7 +122,7 @@ are provided in the supplementary index.}
 \centering\small
 \begin{tabular}{lrrr}
 \toprule Level & Layouts & Parts/layout & Questions\\\midrule
-\tableinput{tables/hierarchy2-scale.tex}
+\tableinput{tables/hierarchy3-scale.tex}
 \bottomrule
 \end{tabular}
 \caption{Actual release counts. D2 and D3 overlap in part count because
@@ -137,18 +138,18 @@ D4 adds multi-workcell systems, including cargo terminals, docking
 yards, energy stations, and service hangars.
 
 Table~\ref{tab:scale} reports actual counts rather than nominal target
-intervals. The library has 355 rigid modules and 318 declared joints.
+intervals. The library has 546 rigid modules and 503 declared joints.
 All layouts are agent-authored using reusable construction primitives;
-no independent human design study was conducted. Canonical geometry
-checks reject exact duplicates after removing names and colors, but
-this does not establish semantic independence.
+no independent human design study was conducted. Some new layouts
+share serial-stage constructors and differ in joint type, topology or
+branch count; layout count does not establish semantic independence.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=.92\textwidth]{figures/hierarchy2-matrix.pdf}
+\includegraphics[width=.92\textwidth]{figures/hierarchy3-matrix.pdf}
 \caption{\textbf{Crossed structural scope and task composition.}
-Each cell contains ten sources. Every source contributes 18 atomic,
-ten meta/physical, four procedural, and three integrative questions.
+Each cell contains twelve sources. Every source contributes 22 atomic,
+15 meta/physical, six procedural, and five integrative questions.
 The axes are design strata; measured monotonic difficulty is not assumed.}
 \label{fig:matrix}
 \end{figure*}
@@ -167,13 +168,15 @@ future train/test splits must group related layouts and reused components.
 The present public development set has no hidden confirmation split.
 
 \subsection{Matched Coverage}
-Every level has 350 questions. Atomic tasks are repeated across levels,
+Every level has 576 questions. Atomic tasks are repeated across levels,
 including recognition, counting, local edits, topology, and pose
 corrections. Meta tasks include both physical-record interpretation
-and uncertainty-aware decisions. The four procedural families are
-assembly, disassembly, supported service repair, and compound editing.
-The integrative families are distributed repair, resource scheduling,
-and inspection-conditioned policies.
+and uncertainty-aware decisions, with new nonuniform posteriors,
+expected-loss decisions and force-moment calculations. Procedural
+families include assembly, disassembly, supported service repair,
+compound editing, guarded repair and rollback.
+Integration adds exclusive-tool repair and budget-constrained policies
+to distributed repair, scheduling and inspection-conditioned policies.
 
 Task identifiers bind source and family. Changing a render, color,
 answer order, or fault creates a condition within a source, not a new
@@ -185,7 +188,8 @@ not guarantee a harder local operation.
 \subsection{Atomic and Metacognitive Questions}
 Atomic tasks return a choice ID. Each distractor changes a relevant
 field, set, count, identity, or transformation. Option rotation is
-deterministic per task, and duplicate option values are removed.
+deterministic per task. Set-valued answers are canonicalized before
+deduplication; ordered vectors and programs retain their ordering.
 Some questions have fewer than four distinct alternatives; chance
 baselines must use the actual option count.
 
@@ -204,6 +208,10 @@ All utility-maximizing queries are accepted. Abstention tests whether
 all compatible worlds imply the same action. Posterior tasks condition
 the finite prior on an observed query result. Pareto tasks return every
 non-dominated alternative under cost, mass, and stiffness.
+Additional tasks use explicit nonuniform prior weights and asymmetric
+failure losses. Six previously constant-answer families now vary
+their actual parameters and semantic answers; the release reports
+per-family semantic-majority baselines, not just letter-choice baselines.
 
 Public inputs explicitly disclose structural metadata where required.
 Therefore most atomic scores measure structured reasoning with
@@ -232,6 +240,9 @@ open, remove, replace, verify, close, and release an interface.
 Compound editing substitutes a color operation within a protected
 service sequence. Independent actions can commute. Duplicate placements,
 unknown IDs, missing terminal steps, or budget overruns fail.
+Guarded repair and rollback expose unsafe shortcuts that cannot satisfy
+verified goals. Exclusive-tool tasks remove a shared availability fact
+until the active intervention releases the tool.
 
 The transition contract certifies symbolic intervention rules.
 It does not automatically simulate robot motion or tool contact for
@@ -253,26 +264,39 @@ denominator and reject unknown or duplicate case IDs. Per-family and
 per-source reporting is preferred to a pooled percentage.
 
 \section{Physics and Quality Audit}
-Rapier 0.20.0 runs at 120\,Hz with 12 solver iterations. Visible parts
-are conservatively approximated by cuboids and grouped into rigid
+Rapier 0.20.0 runs at 120\,Hz with 64 solver iterations. Visible parts
+are conservatively approximated by stud-inclusive cuboids and grouped into rigid
 bodies. Fixed, revolute, prismatic, and spring descriptors instantiate
 the declared mechanism. Bases are anchored; holding motors use public
-parameters. A separate static world performs three continuous service
+force-based stiffness 60,000, damping 1,500 and maximum force 20,000
+in scene units. A separate static world performs three continuous service
 shape casts per object, excluding the serviced module.
 
-After 120 nominal steps, the audit records maximum body-origin drift.
-Only 17/40 objects have drift below 0.35 scene units. The remaining
-23 are explicitly flagged in both the release and application. Drift
-may reflect compliant articulation, conservative collision envelopes,
-or defective authored geometry; this test does not establish the cause.
-We do not certify the complete library as physically stable.
+After 120 nominal steps, the audit records a geometric representative
+point's displacement, angular displacement, and non-spring joint residuals.
+All 48 objects satisfy fixed thresholds of 0.35 scene units, 0.15 radians,
+and 0.02 scene units respectively. Every rendered vertex lies within
+its envelope. All joint anchor pairs initially coincide, and oriented
+cuboid contact queries find no penetration above 0.005 between any
+module pair, including directly joined modules. Joint contacts remain
+enabled. Revolute limits are set and read back on instantiated joints,
+with a driven over-limit regression control.
 
+Corrections relocate interfering service modules, rudders, drills,
+racks, pumps and transfer stages, repair four inconsistent tower
+anchors, and add separated elastic moorings to the flood-response barge.
+The simulator protocol also changes from the earlier 120/20/100 holding
+motor settings. Therefore improved outcomes cannot be attributed solely
+to geometry corrections. Active finite-force servos are not passive
+stability or real LEGO material calibration.
+
+Impulse application and response measurement use the geometric
+representative point, remaining invariant under a change of local origin.
 An off-center impulse is followed by 120 simulation steps, sampled at
 eleven time points. Dynamic questions ask for the maximum of the
 \emph{sampled translational response}, not the continuous maximum, a
-rotational safety bound, or a calibrated load threshold. They remain
-interpretable on unstable objects as diagnostic traces but cannot be
-used to claim real-world robustness.
+rotational safety bound, or a calibrated load threshold. They cannot
+be used to claim real-world robustness.
 
 Other checks cover unique identities, finite poses, positive dimensions,
 declared dependency order, rendered-image hashes, and exact website/
@@ -282,7 +306,7 @@ diagnostics rather than silently treated as precise mesh collisions.
 \section{Pilot and Inspectable Release}
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{figures/hierarchy2-pilot.pdf}
+\includegraphics[width=\linewidth]{figures/hierarchy3-pilot.pdf}
 \caption{Pilot cell counts on the two design axes. A green cell means
 one correct response, not established 100\% population accuracy.}
 \label{fig:pilot}
@@ -291,7 +315,7 @@ one correct response, not established 100\% population accuracy.}
 \centering\small
 \begin{tabular}{lrrrr}
 \toprule Level & Atomic & Meta & Procedure & Integrated\\\midrule
-\tableinput{tables/hierarchy2-pilot.tex}
+\tableinput{tables/hierarchy3-pilot.tex}
 \bottomrule
 \end{tabular}
 \caption{GPT-4.1 mini pipeline pilot. Each cell is one fixed question.
@@ -299,27 +323,28 @@ These are observed counts, not estimates of whole-cell accuracy.}
 \label{tab:pilot}
 \end{table}
 
-The fixed pilot selects boundary identification, information gain,
-service repair, and scheduling at each level. GPT-4.1 mini receives one
+The fixed pilot selects local-frame transformation, expected loss,
+guarded repair, and resource repair at each level. GPT-4.1 mini receives one
 image and public structured evidence at temperature zero, with a
 2,200-token output cap, no automatic retries, and no provider fallback.
-The 16 responses yield 14 exact successes at \$0.011304; raw replies,
+The \PilotN{} responses yield \PilotSuccess{} exact successes at \$\PilotCost; raw replies,
 provider IDs, costs, and public-input hashes are archived.
 Table~\ref{tab:pilot} preserves each denominator.
 
-Deterministic checks accept all 1,400 reference answers. A separate
-public-precondition solver succeeds on 200 action tasks. The simple
-constant-choice/empty-answer control succeeds on 268/1,400 cases,
+Deterministic checks accept all 2,304 reference answers. A separate
+public-precondition solver succeeds on 384 action tasks. The simple
+constant-choice/empty-answer control succeeds on \ControlSuccess/2,304 cases,
 with heterogeneous choice cardinalities and output contracts.
 Reference acceptance is evaluator validation, not learned-model
 performance; the action solver has privileged symbolic rules compared
 with a purely visual agent.
 
-The original application's homepage lists all 40 benchmark models.
+The original application's homepage lists all 48 benchmark models.
 Each opens an orbit-controlled 3D workspace with zoom, pan, canonical
 views, module isolation, explosion, and image export. Its task panel
-shows all 35 contracts, and action JSON can be replayed with a step
-slider and first-failure feedback. The same renderer generates 160
+shows all 48 contracts, and action JSON can be replayed with a step
+slider and first-failure feedback. Selection and isolation preserve
+the current frame's active modules. The same renderer generates 192
 audited model views. Every source and every task family is indexed in
 the supplement; full question/choice/input/answer records are shipped
 in the Chinese question bank and machine-readable release.
@@ -334,8 +359,9 @@ ranking, or level-wise discrimination claims.
 
 Physical realism is limited by compound bodies, cuboid envelopes,
 anchored bases, and uncalibrated material parameters. Digital primitive
-connectivity is not commercial LEGO clutch-force validity. Only a
-subset passes the nominal-drift check. Symbolic repair transitions
+connectivity is not commercial LEGO clutch-force validity. Passing
+the declared nominal-state protocol does not certify arbitrary
+motion, passive balance, or extreme loads. Symbolic repair transitions
 and exploded display layouts are not collision-free robot trajectories.
 
 Future confirmation requires source-family-disjoint hidden designs,
@@ -345,12 +371,12 @@ These are outstanding scientific requirements, not outcomes inferred
 from passing software tests.
 
 \section{Conclusion}
-Hierarchy-2 provides a common source-by-task organization for brick
-reasoning, execution, and integrated decisions. Its 40 layouts,
-1,400 questions, state-based scoring, actual simulator records, and
+Hierarchy-3 provides a common source-by-task organization for brick
+reasoning, execution, and integrated decisions. Its 48 layouts,
+2,304 questions, state-based scoring, actual simulator records, and
 original-site 3D access make the benchmark easier to inspect and
-extend. Explicit quality failures and small-sample result boundaries
-remain part of the release.
+extend. Versioned errata preserve historical inputs and scores while
+the corrected release remains explicit about physical and statistical boundaries.
 
 \clearpage
 {\small\bibliographystyle{ieeenat_fullname}\bibliography{references}}

@@ -1,13 +1,15 @@
 # Brick Atlas 模型测试场
 
-当前主版本：[Hierarchy-2 扩容报告](hierarchy-v2/REPORT.zh-CN.md) ·
-[完整1,400题问答库](hierarchy-v2/QUESTION_BANK.zh-CN.md) · [复现](hierarchy-v2/README.md)。
-40个原创布局、5,070个可视部件，四级各10个对象；全部35个任务族覆盖每一级。
+当前主版本：[Hierarchy-3 扩充与校正报告](hierarchy-v3/REPORT.zh-CN.md) ·
+[完整2,304题问答库](hierarchy-v3/QUESTION_BANK.zh-CN.md) · [复现](hierarchy-v3/README.md) · [校正记录](hierarchy-v3/ERRATA.zh-CN.md)。
+48个原创布局、6,339个可视部件，四级各12个对象；全部48个任务族覆盖每一级。
 所有模型已接入原网站首页及 http://127.0.0.1:5173/benchmark ，支持自由3D、
 展开、隔离与执行动作JSON。论文为 [main.pdf](paper/main.pdf)，附录为
 [supplement.pdf](paper/supplement.pdf)，中文对照为 [main.zh-CN.md](paper/main.zh-CN.md)。
-本版GPT-4.1 mini固定16题试跑为14/16、$0.011304；40个模拟对象中17个通过名义漂移容差，
-其余作为明确标记的诊断源，不声称全库力学稳定。
+48个模拟对象均通过新版名义状态与所有模块对碰撞门槛；这只适用于公开的有限力伺服协议，
+不认证商业LEGO扣合或机器人插入。新版廉价模型结果见同版报告。
+
+历史：[Hierarchy-2](hierarchy-v2/README.md)，40布局、1400题；旧14/16试跑保留，未计入新版。
 
 历史版本：[Hierarchy-1 四级积木库与 90 道核心题](hierarchy-v1/index.html) ·
 [分层基准中文报告](hierarchy-v1/HIERARCHY_REPORT.zh-CN.md) ·

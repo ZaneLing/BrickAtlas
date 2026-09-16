@@ -25,13 +25,13 @@ function modelSummary(model: MechanismModel) {
   };
 }
 
-function infoGain(worlds: string[], query: InspectionQuery) {
+export function infoGain(worlds: string[], query: InspectionQuery) {
   const groups = new Map<string, number>();
   for (const world of worlds) groups.set(query.returns[world], (groups.get(query.returns[world]) ?? 0) + 1);
   const h = Math.log2(worlds.length);
   const conditional = [...groups.values()].reduce((sum, n) => {
     const p = n / worlds.length;
-    return sum - p * Math.log2(n);
+    return sum + p * Math.log2(n);
   }, 0);
   return { queryId: query.id, informationGain: h - conditional, efficiency: (h - conditional) / query.cost };
 }

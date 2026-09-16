@@ -88,14 +88,16 @@ test('hierarchy-2: physics records are finite and task answers follow the measur
     assert.deepEqual(answerPaths, b.physics.paths.filter((p: any) => p.clear).map((p: any) => p.id).sort());
   }
 });
-test('hierarchy-2: public export hides answers and original website includes identical model data', () => {
+test('hierarchy-2: archived public export hides answers and frozen model hashes remain valid', () => {
   const pub = read('public.json'); assert.equal(pub.length, 1400);
   assert.ok(pub.every((t: any) => !Object.hasOwn(t, 'answer')));
+  const manifest = read('manifest.json');
   for (const m of all) {
-    assert.equal(readFileSync(resolve(root, 'public/benchmark/models', `${m.id}.json`), 'utf8'),
-      readFileSync(resolve(out, 'models', `${m.id}.json`), 'utf8'));
+    const bytes = readFileSync(resolve(out, 'models', `${m.id}.json`));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'),
+      manifest.files[`benchmark/hierarchy-v2/models/${m.id}.json`]);
     for (const view of ['iso', 'front', 'side', 'top'])
-      assert.ok(existsSync(resolve(root, 'public/benchmark/images', `${m.id}-${view}.png`)));
+      assert.ok(existsSync(resolve(out, 'images', `${m.id}-${view}.png`)));
   }
 });
 test('hierarchy-2: render hashes match canvas artifacts from original website', () => {

@@ -1,0 +1,68 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { OUT } from './release';
+import { semanticKey } from './tasks';
+import type { Task } from '../../../src/benchmark/types';
+const previous = resolve(OUT, '../hierarchy-v2');
+const catalog = JSON.parse(readFileSync(resolve(previous, 'catalog.json'), 'utf8'));
+const ambiguous = catalog.flatMap((m: any) => {
+  const tasks: Task[] = JSON.parse(readFileSync(resolve(previous, 'models', `${m.id}.json`), 'utf8')).tasks;
+  return tasks.filter(t => t.format === 'single-choice').flatMap(t => {
+    const answer = t.options!.find(o => o.id === t.answer.choiceId)!;
+    const equivalent = t.options!.filter(o => semanticKey(t, o.value) === semanticKey(t, answer.value));
+    return equivalent.length > 1 ? [{ id: t.id, originalChoiceId: t.answer.choiceId,
+      acceptedEquivalentChoiceIds: equivalent.map(o => o.id), value: answer.value }] : [];
+  });
+});
+writeFileSync(resolve(OUT, 'historical-ambiguities.json'), JSON.stringify({
+  previousVersion: 'brickatlas-hierarchy-2', frozenCommit: '0cb7708',
+  rule: 'For historical affected tasks only, accept any equivalent listed choice ID; report rescored results separately from original scores.',
+  affected: ambiguous,
+}, null, 2) + '\n');
+writeFileSync(resolve(OUT, 'ERRATA.zh-CN.md'), `# Hierarchy-3 校正记录
+
+校正基线：Hierarchy-2，Git \`0cb7708\`。两份独立代码复核均确认下列前四项实现缺陷和第五项设计缺陷。
+修订后的任务使用h3前缀；旧模型、旧题、旧试跑原始记录保留在hierarchy-v2。禁止把旧分数直接移入新版。
+
+| 序号 | 确认问题 | 修正及验证 | 代码 |
+|---|---|---|---|
+| 1 | ${ambiguous.length}道单选的集合选项有等价排列 | 按题型进行集合规范化；坐标与动作数组保留顺序；所有选项语义唯一 | [tasks.ts](../suite/hierarchy3/tasks.ts) |
+| 2 | Mechanism-1条件熵符号错误 | H条件=Σp log₂n；无信息查询IG=0，完全区分IG=log₂N；六个历史最佳queryIds未改变 | [tasks.ts](../suite/mechanism/tasks.ts) |
+| 3 | 球、圆柱、齿轮及凸点越出所谓保守包围体 | 统一完整轴向尺寸；包含凸点的包围体同时供渲染核验、定位、碰撞与路径使用；逐顶点包含验证 | [geometry.ts](../../src/benchmark/geometry.ts) |
+| 4 | 暂停回放时选模块会显示尚未安装/已拆除模块 | 可见性=当前帧激活集合∩隔离条件；选择只改变高亮与过滤 | [Scene.ts](../../src/benchmark/Scene.ts) |
+| 5 | 六个题族40/40语义答案恒定 | 参数化旋转、库存、违规位置、观测划分、Pareto属性和策略；公开语义多数答案基线 | [answer-distributions.json](answer-distributions.json) |
+| 6 | Rapier描述器未启用228个旋转关节的限位 | 创建后setLimits并回读所有有限位关节；超限目标驱动反例必须停在限位处 | [physics.ts](../suite/hierarchy3/physics.ts) |
+| 7 | 相连模块整对碰撞豁免漏掉实体穿插 | 检查所有模块对并保持接触启用；重新调整布局；注入相连模块实体穿透反例必须失败 | [validate.ts](../suite/hierarchy3/validate.ts) |
+| 8 | 冲击位置及采样位移依赖局部原点 | 施力与测量绑定几何代表点；纯换原点的变形测试保持轨迹不变 | [physics.ts](../suite/hierarchy3/physics.ts) |
+
+\`\`\`mermaid
+flowchart LR
+  A[原始布局与题目] --> B[统一几何与关节修正]
+  B --> C[窄相碰撞及名义状态核验]
+  C --> D[生成带版本的任务]
+  D --> E[参考解与错误答案双向验证]
+  E --> F[相同数据同步到原网页和论文]
+  style B fill:#c8e6c9,color:#1a5e20
+  style E fill:#bbdefb,color:#0d47a1
+\`\`\`
+
+## 实际模型与模拟修正
+
+- 原12个Builder对象的局部原点被规范到模块几何中心，保持世界几何和锚点位置一致。旧原点平移指标本身不是计算错误；新版另外记录代表点位移、转角和关节约束残差。
+- 修正bascule-canal-gate四个塔脚固定关节0.1单位锚点不一致；移动桥面及传动模块消除与岸体的未声明穿透。
+- 调整云台维修盒、夹持器手指、巡检艇舵、钻头、托盘、浮筒、剪式支杆、货架、集装箱、泵站、转运单元等的位置，保持连接锚点一致。具体坐标写在models.ts中。
+- 洪水应急船闸的单点弹簧系泊不能约束船体转动；补充两个分离的弹性系泊点，保留弹性运动。
+- 新协议使用120Hz、64次迭代、ForceBased有限力位置伺服：刚度60000、阻尼1500、最大力20000；旧协议的120/20/100不适合这些场景单位下的负载。雷达模型在32/64/96次迭代下的最大关节残差约0.0644/0.000814/0.0000056，最终统一采用64次。
+- 未把所有物体改成固定刚体，未提高0.35的平移阈值。新增0.15rad旋转和0.02关节残差门槛，所有模块对（包括直接关节对）的初始窄相穿透必须≤0.005。
+- 新旧协议同时改变几何和伺服，不能将名义状态改善全部归因于几何修正。此结果仅适用于公开协议，不是LEGO材料、扣合或机器人可执行性的认证。
+
+## 历史评分规则
+
+历史歧义题列表见historical-ambiguities.json。对这些旧题接受列出的任一等价选项ID，重新计算的结果必须明确标注“Hierarchy-2语义校正评分”并保留原分数。
+旧16题试跑选的是boundary、information-gain、service-repair和scheduling，没有覆盖歧义next-module题。历史14/16不因此改变，也不计作新版结果。
+
+## 仍需区分的边界
+
+本版验证的是模块级数字机构与公开规则。模块内部是刚体组合。商业连接器、逐零件扣合、每一步机器人工具运动尚未标定。
+结构级别没有通过人类作答或IRT校准。显式输入任务可以通过读取结构数据求解，不能据此声称纯视觉推理或新颖机制发现。
+`, 'utf8');

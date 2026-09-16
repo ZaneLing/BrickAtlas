@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import './verify-hierarchy2.mjs';
+import './verify-hierarchy3.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const read = path => JSON.parse(readFileSync(resolve(here, path), 'utf8'));

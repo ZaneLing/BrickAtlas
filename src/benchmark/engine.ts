@@ -74,7 +74,12 @@ export function score(task: Task, raw: unknown) {
 // Kahn-like public-precondition solver; no reference answer is read.
 export function solveActions(task: Task) {
   let facts = new Set<string>(task.input.initialFacts);
-  const ids: string[] = [], remaining = [...task.input.actions] as Action[];
+  const relevant = new Set<string>(task.input.goalFacts);
+  const catalog = task.input.actions as Action[];
+  for (let n = 0; n < catalog.length; n++) for (const a of catalog)
+    if (a.adds.some(f => relevant.has(f))) a.requires.forEach(f => relevant.add(f));
+  const ids: string[] = [], remaining = catalog.filter(a => a.adds.some(f => relevant.has(f))
+    && !a.adds.some(f => (task.input.absentFacts ?? []).includes(f)));
   for (let n = 0; n < task.input.actions.length; n++) {
     if (task.input.goalFacts.every((f: string) => facts.has(f))) break;
     const a = remaining.find(a => a.requires.every(f => facts.has(f))

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { BenchModel, ReplayFrame } from './types';
+import { bodyGeometry, studs } from './geometry';
 
 export class BenchmarkScene {
   readonly renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
@@ -23,6 +24,8 @@ export class BenchmarkScene {
   private down: (event: PointerEvent) => void;
   private pointer = new THREE.Vector2();
   private selected: string | null = null;
+  private activeModules: Set<string> | null = null;
+  private isolated = false;
 
   constructor(private host: HTMLElement, readonly model: BenchModel, onSelect: (id: string) => void) {
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -48,29 +51,13 @@ export class BenchmarkScene {
       const material = new THREE.MeshStandardMaterial({ color: p.color, roughness: 0.4,
         transparent: p.shape === 'window', opacity: p.shape === 'window' ? 0.52 : 1 });
       this.materials.push(material); this.sourceColors.set(material, material.color.clone());
-      const [x, y, z] = p.size;
-      let geometry: THREE.BufferGeometry;
-      if (p.shape === 'sphere') geometry = new THREE.SphereGeometry(Math.max(x, y, z) / 2, 16, 12);
-      else if (['gear', 'wheel', 'axle', 'cylinder'].includes(p.shape))
-        geometry = new THREE.CylinderGeometry(Math.max(x, z) / 2, Math.max(x, z) / 2, y, 24);
-      else if (p.shape === 'arch') geometry = new THREE.TorusGeometry(Math.max(x, z) * 0.33, Math.min(x, y, z) * 0.18, 10, 24, Math.PI);
-      else if (p.shape === 'slope') {
-        geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.Float32BufferAttribute([
-          -x/2,-y/2,-z/2, x/2,-y/2,-z/2, x/2,-y/2,z/2, -x/2,-y/2,z/2,
-          -x/2,y/2,z/2, -x/2,y/2,-z/2,
-        ], 3));
-        geometry.setIndex([0,1,2,0,2,3,0,4,5,0,3,4,3,2,4,2,1,4,1,5,4,0,5,1]); geometry.computeVertexNormals();
-      } else geometry = new THREE.BoxGeometry(x, y, z);
+      const geometry = bodyGeometry(p);
       this.geometries.push(geometry); group.add(new THREE.Mesh(geometry, material));
-      if (p.shape === 'brick' || p.shape === 'plate') {
-        const stud = new THREE.CylinderGeometry(0.19, 0.19, 0.1, 12); this.geometries.push(stud);
-        for (let i = 0; i < Math.max(1, Math.round(x)); i++) for (let j = 0; j < Math.max(1, Math.round(z)); j++) {
-          const mesh = new THREE.Mesh(stud, material);
-          mesh.position.set((i + 0.5) * x / Math.max(1, Math.round(x)) - x / 2, y / 2 + 0.05,
-            (j + 0.5) * z / Math.max(1, Math.round(z)) - z / 2);
-          group.add(mesh);
-        }
+      for (const s of studs(p)) {
+        const stud = new THREE.CylinderGeometry(s.radius, s.radius, s.height, 12);
+        this.geometries.push(stud);
+        const mesh = new THREE.Mesh(stud, material);
+        mesh.position.fromArray(s.position); group.add(mesh);
       }
       this.modules.get(p.moduleId)!.add(group);
       this.parts.push({ mesh: group, position: group.position.clone(), moduleId: p.moduleId });
@@ -85,7 +72,11 @@ export class BenchmarkScene {
       const ray = new THREE.Raycaster();
       ray.setFromCamera(new THREE.Vector2((e.clientX - rect.left) / rect.width * 2 - 1,
         -(e.clientY - rect.top) / rect.height * 2 + 1), this.camera);
-      const hit = ray.intersectObject(this.root, true)[0];
+      const hit = ray.intersectObject(this.root, true).find(hit => {
+        let node: THREE.Object3D | null = hit.object;
+        while (node) { if (!node.visible) return false; node = node.parent; }
+        return true;
+      });
       let node = hit?.object;
       while (node && !node.userData.moduleId) node = node.parent!;
       if (node?.userData.moduleId) onSelect(node.userData.moduleId);
@@ -140,8 +131,10 @@ export class BenchmarkScene {
   }
   highlight(id: string | null, isolate = false) {
     this.selected = id;
+    this.isolated = isolate;
     for (const [moduleId, group] of this.modules) {
-      group.visible = !isolate || !id || moduleId === id;
+      group.visible = (!this.activeModules || this.activeModules.has(moduleId))
+        && (!isolate || !id || moduleId === id);
       group.traverse(obj => {
         const material = (obj as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
         if (material?.emissive) material.emissive.set(moduleId === id ? '#483011' : '#000000');
@@ -149,8 +142,10 @@ export class BenchmarkScene {
     }
   }
   state(frame: ReplayFrame | null) {
+    this.activeModules = frame ? new Set(frame.activeModules) : null;
     for (const [id, group] of this.modules) {
-      group.visible = !frame || frame.activeModules.includes(id);
+      group.visible = (!this.activeModules || this.activeModules.has(id))
+        && (!this.isolated || !this.selected || this.selected === id);
       group.traverse(obj => {
         const material = (obj as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
         if (material?.color) material.color.copy(frame?.colors[id]

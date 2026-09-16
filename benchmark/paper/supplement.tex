@@ -7,16 +7,17 @@
 \makeatletter
 \newcommand{\tableinput}[1]{\@@input #1 }
 \makeatother
-\title{BrickAtlas Hierarchy-2: Complete Supplementary Index}
+\title{BrickAtlas Hierarchy-3: Complete Supplementary Index}
 \author{Development Manuscript\\Author metadata intentionally omitted}
 \begin{document}
+\input{hierarchy3-results.tex}
 \maketitle
 \section{Scope and Version}
-This supplement indexes the current Hierarchy-2 release: 40 layouts,
-35 families per layout, and 1,400 questions. It accompanies the
+This supplement indexes the current Hierarchy-3 release: 48 layouts,
+48 families per layout, and 2,304 questions. It accompanies the
 machine-readable public inputs, answers, quality records, and original
 website 3D interface. It replaces the previous manuscript's appendix
-as the current entry point. Older Mechanism-1, Hierarchy-1, and retired
+as the current entry point. Older Mechanism-1, Hierarchy-1, Hierarchy-2 and retired
 grid experiments remain in their versioned data directories and Git
 history; their scores are not pooled into this release.
 
@@ -32,7 +33,7 @@ per task. Empty feasible sets are accepted when appropriate.
 The full companion \texttt{QUESTION\_BANK.zh-CN.md} includes every
 question, every option, every input, and every reference answer.
 The following family table describes all contracts, and the per-object
-pages index all 1,400 task instances with four actual website renders
+pages index all 2,304 task instances with four actual website renders
 per object. No page implies an independent human annotation.
 
 \section{Atomic Operations}
@@ -49,6 +50,8 @@ offset; rotation selects a shortest signed yaw correction.
 Next-module questions test predecessor completion. Inventory checks
 conserve piece count; boundary questions identify every incident joint;
 no-operation questions reward preserving an already-correct state.
+Local-frame, orthographic projection, relative-order and joint
+freedom tasks extend the atomic coverage.
 
 These are controlled contracts, and several public inputs disclose
 the exact attributes needed for a solution. They are not all image-only
@@ -69,7 +72,9 @@ endpoints, accepting all matching interfaces. Inspection optimizes
 entropy reduction per unit query cost. Abstention checks agreement
 of actions across possible worlds. Posterior inference conditions
 a finite uniform prior on an observation. Pareto enumeration retains
-all non-dominated cost/mass/stiffness alternatives.
+all non-dominated cost/mass/stiffness alternatives. New families
+cover clearance margins, cross-product moments, weighted posteriors,
+expected losses, and sampled threshold exceedance.
 
 \section{Action State Machine}
 The initial fact set, action catalog, preconditions, forbidden facts,
@@ -77,6 +82,8 @@ add/delete effects, costs, budget, and goals are public.
 Assembly/disassembly changes module presence. A service intervention
 requires support before access, access before removal or modification,
 replacement before verification, closure before support release.
+Guarded repair and rollback expose invalid shortcuts, while shared-tool
+repair enforces exclusive access through a resource fact.
 Actions on independent modules may be interleaved. The evaluator never
 sorts or repairs a submitted program.
 
@@ -97,41 +104,65 @@ terminal actions, conflicts, and missing policy branches are tested
 with negative controls.
 
 \section{Simulator and Quality Boundaries}
-Rapier 0.20.0 runs at 120 Hz and 12 solver iterations.
-Modules are compound cuboid bodies. Bases are fixed. Holding motors
-use stiffness 120, damping 20, and maximum force 100 in scene units.
+Rapier 0.20.0 runs at 120 Hz and 64 solver iterations.
+Modules are compound stud-inclusive cuboid bodies. Bases are fixed. ForceBased holding motors
+use stiffness 60000, damping 1500, and maximum force 20000 in scene units.
 Three access casts use a 0.18-unit half-extent probe and exclude the
 service module. The static query world is independent of settling.
 
 After 120 nominal steps, an impulse $(10,1.8,3.5)$ is applied one unit
-above the target body origin. The next 120 steps produce eleven
-samples. Nominal drift is evaluated before the impulse. Only 17 of 40
-layouts have maximum body-origin drift below 0.35; the remaining
-layouts are diagnostic records, not certified stable constructions.
-Changing motor gains, collision geometry, or anchor assumptions changes
-the experiment and requires a new protocol/version.
+above the target geometric representative point. The same attached
+point supplies the displacement measurements. The next 120 steps produce eleven
+samples. Nominal state is evaluated before the impulse. All 48 layouts
+satisfy representative-point displacement below 0.35, angular displacement
+below 0.15 rad and non-spring joint residual below 0.02. Initial anchor
+pairs coincide. No module pair has oriented-cuboid
+penetration greater than 0.005. Direct joint interfaces participate
+in the collision gate and retain contacts; module interiors are compound rigid bodies.
+Revolute limits are explicitly enabled on instantiated joints and read
+back. A driven motor is stopped at its declared bound, and changing
+only the local coordinate origin preserves the sampled physical response.
+Geometry, anchors, some layouts, moorings and motor parameters changed
+together, so comparisons with Hierarchy-2 require the new protocol label.
+This does not certify commercial connector fit or arbitrary robot motion.
+
+\section{Corrections and Historical Scoring}
+Hierarchy-2 had eleven next-module questions with semantically equal
+set options in different orders. The corrected generator normalizes
+sets only; vectors and programs remain ordered. Historical affected
+choice IDs are recorded in \texttt{historical-ambiguities.json}; either
+equivalent answer is accepted under a separately labeled semantic
+rescoring. Historical raw scores are retained.
+
+The Mechanism-1 conditional-entropy sign was corrected. An
+uninformative four-world query now has information gain zero rather
+than four; the six historical optimal query labels did not change.
+All primitive dimensions now agree with the renderer and stud-inclusive
+envelopes. Paused replay selection and isolation cannot resurrect
+absent modules. Six old constant-answer families now vary actual
+parameters, and all 48 semantic answer distributions are published.
 
 \section{Pilot and Reproduction}
 The GPT-4.1 mini pilot contains 16 fixed questions, one per level/layer
-cell. Families are boundary, information gain, service repair, and
-scheduling. Fourteen responses succeed at a total cost of \$0.011304.
+cell. Families are local-frame, expected-loss, guarded-repair, and
+resource-repair. \PilotSuccess{} of \PilotN{} responses succeed at a total cost of \$\PilotCost.
 Each cell has one response, so no stable accuracy estimate or model
 ranking follows. Input hashes, generation IDs, provider receipts, and
 raw predictions are archived separately from the reference answers.
 
-The 1,400 oracle checks validate the evaluator; 200 public-precondition
+The 2,304 oracle checks validate the evaluator; 384 public-precondition
 solutions validate action execution. A constant-choice/empty-answer
-control passes 268 cases. These controls do not establish task novelty
+control passes \ControlSuccess{} cases. These controls do not establish task novelty
 or human difficulty. The figures use original-site canvas captures,
 and byte-identical model records are shipped to the website and offline
 release.
 
 From the repository root:
 \begin{verbatim}
-npm --prefix benchmark run h2:release
+npm --prefix benchmark run h3:release
 npm run start:local
-npm --prefix benchmark run h2:render
-npm --prefix benchmark run h2:docs
+npm --prefix benchmark run h3:render
+npm --prefix benchmark run h3:docs
 npm --prefix benchmark test
 npm run build
 \end{verbatim}
@@ -141,19 +172,19 @@ hashes. Public-input files exclude the answer; the review website
 intentionally includes a reference-answer control.
 
 \clearpage\onecolumn
-\section{All 35 Task Families}
+\section{All 48 Task Families}
 \begin{center}\small
 \begin{tabular}{llll}
 \toprule Family & Layer & Output & Evidence\\\midrule
-\tableinput{tables/hierarchy2-contracts.tex}
+\tableinput{tables/hierarchy3-contracts.tex}
 \bottomrule
 \end{tabular}
 \end{center}
-Each row appears on ten source layouts at each of four levels.
+Each row appears on twelve source layouts at each of four levels.
 Rows sharing an object remain correlated; source-level reporting and
 family-grouped confirmation are required. The per-object pages below
 are the complete release index. A model's render count is not a source
 count, and shared part counts do not imply equivalent task difficulty.
 
-\input{hierarchy2-cases.tex}
+\input{hierarchy3-cases.tex}
 \end{document}

@@ -27,7 +27,7 @@ export function BenchmarkLibrary({ compact = false }: { compact?: boolean }) {
   const shown = entries.filter(m => (difficulty === 'all' || m.difficulty === difficulty)
     && `${m.id} ${m.name} ${m.nameZh}`.toLowerCase().includes(query.toLowerCase()));
   return <section className="bench-library" id="benchmark">
-    <div className="bench-heading"><div><small>BRICKATLAS · HIERARCHY-2</small><h2>分层基准积木库</h2>
+    <div className="bench-heading"><div><small>BRICKATLAS · HIERARCHY-3</small><h2>分层基准积木库</h2>
       <p>四级结构难度 × 四层任务 · 每个模型都可旋转、展开、隔离和逐步回放。</p></div>
       <strong>{entries.length} 个对象 / {entries.reduce((s, m) => s + m.tasks, 0)} 题</strong></div>
     <div className="bench-controls"><select aria-label="基准难度筛选" value={difficulty} onChange={e => setDifficulty(e.target.value)}>
@@ -37,8 +37,8 @@ export function BenchmarkLibrary({ compact = false }: { compact?: boolean }) {
     <a href={`${base}docs/main.pdf`}>论文 PDF</a><a href={`${base}docs/supplement.pdf`}>附录 PDF</a>
     <a href={`${base}docs/REPORT.zh-CN.md`}>中文报告</a></div>
     {!compact && <details><summary>展开难度矩阵与试跑热力图（每格 n=1）</summary>
-      <div className="bench-figures"><a href={`${base}figures/hierarchy2-matrix.png`}><img src={`${base}figures/hierarchy2-matrix.png`} alt="四级结构与四层任务矩阵" /></a>
-      <a href={`${base}figures/hierarchy2-pilot.png`}><img src={`${base}figures/hierarchy2-pilot.png`} alt="16题流程试跑计数，非总体准确率" /></a></div>
+      <div className="bench-figures"><a href={`${base}figures/hierarchy3-matrix.png`}><img src={`${base}figures/hierarchy3-matrix.png`} alt="四级结构与四层任务矩阵" /></a>
+      <a href={`${base}figures/hierarchy3-pilot.png`}><img src={`${base}figures/hierarchy3-pilot.png`} alt="16题流程试跑计数，非总体准确率" /></a></div>
       <a href={`${base}docs/QUESTION_BANK.zh-CN.md`}>下载全部题目、输入与答案</a>
     </details>}
     {error && <p role="alert">{error}</p>}
@@ -60,6 +60,7 @@ export function BenchmarkPage({ modelId }: { modelId?: string }) {
   const [data, setData] = useState<{ model: BenchModel; tasks: Task[]; physics: any } | null>(null);
   const [error, setError] = useState('');
   const [explosion, setExplosion] = useState(0), [selected, setSelected] = useState('');
+  const [isolated, setIsolated] = useState(false);
   const [layer, setLayer] = useState('all'), [taskId, setTaskId] = useState('');
   const [program, setProgram] = useState(''), [step, setStep] = useState(0), [playing, setPlaying] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false), [feedback, setFeedback] = useState('');
@@ -76,13 +77,13 @@ export function BenchmarkPage({ modelId }: { modelId?: string }) {
   }, [modelId]);
   useEffect(() => {
     if (!data || !host.current) return;
-    const s = new BenchmarkScene(host.current, data.model, setSelected); scene.current = s;
+    const s = new BenchmarkScene(host.current, data.model, id => { setSelected(id); setIsolated(false); }); scene.current = s;
     window.__benchmark = () => s.snapshot();
     window.__benchmarkCapture = view => { s.view(view); return s.png(); };
     return () => { s.dispose(); scene.current = null; delete window.__benchmark; delete window.__benchmarkCapture; };
   }, [data]);
   useEffect(() => { scene.current?.explosion(explosion); }, [explosion]);
-  useEffect(() => { scene.current?.highlight(selected || null); }, [selected]);
+  useEffect(() => { scene.current?.highlight(selected || null, isolated); }, [selected, isolated]);
   const current = data?.tasks.find(t => t.id === taskId);
   const execution = useMemo(() => {
     if (!current || current.format !== 'actions') return null;
@@ -97,7 +98,7 @@ export function BenchmarkPage({ modelId }: { modelId?: string }) {
   }, [playing, step, execution]);
   const chooseTask = (id: string) => {
     const task = data?.tasks.find(t => t.id === id);
-    setTaskId(id); setSelected(task?.targetModule ?? ''); setShowAnswer(false); setFeedback('');
+    setTaskId(id); setSelected(task?.targetModule ?? ''); setIsolated(false); setShowAnswer(false); setFeedback('');
     setProgram(''); setStep(0); setPlaying(false);
   };
   if (!modelId) return <div className="bench-page"><BenchmarkLibrary /></div>;
@@ -112,18 +113,19 @@ export function BenchmarkPage({ modelId }: { modelId?: string }) {
     {data && <div className="bench-workgrid">
       <aside className="bench-sidebar"><small>{data.model.difficulty} · {data.model.family}</small><h1>{data.model.nameZh}</h1><p>{data.model.name}</p>
         <p>{data.model.parts.length} 零件 · {data.model.modules.length} 模块 · {data.model.joints.length} 关节</p>
-        <h3>结构与模块</h3><button onClick={() => { setSelected(''); scene.current?.highlight(null); scene.current?.state(null); }}>显示完整模型</button>
+        <h3>结构与模块</h3><button onClick={() => { chooseTask(''); scene.current?.highlight(null); scene.current?.state(null); }}>显示完整模型</button>
         {data.model.modules.map(m => <div className="bench-module" key={m.id}>
-          <button className={selected === m.id ? 'selected' : ''} onClick={() => setSelected(m.id)}>{m.name}</button>
-          <button aria-label={`隔离 ${m.id}`} onClick={() => { setSelected(m.id); requestAnimationFrame(() => scene.current?.highlight(m.id, true)); }}>隔离</button>
+          <button className={selected === m.id ? 'selected' : ''} onClick={() => { setSelected(m.id); setIsolated(false); }}>{m.name}</button>
+          <button aria-label={`隔离 ${m.id}`} onClick={() => { setSelected(m.id); setIsolated(true); }}>隔离</button>
         </div>)}
         <details><summary>结构核验范围</summary><p>原创可视部件与声明关节。展开仅用于查看，不是物理拆装路径。模拟采用固定基座与包围盒碰撞体。</p>
-        <p>原位稳定漂移：{data.physics.nominalDrift.toFixed(4)}；{data.physics.nominalWithinTolerance ? '在声明容差内' : '超出容差，物理题仅作轨迹诊断'}。</p></details>
+        <p>含凸点包围体；基座固定，活动关节采用有限力位置伺服。</p>
+        <p>模块代表点位移：{data.physics.nominalPointDrift.toFixed(4)}；最大转角：{data.physics.nominalAngularDrift.toFixed(4)} rad；{data.physics.nominalWithinTolerance ? '通过名义状态核验' : '未通过名义状态核验'}。</p></details>
       </aside>
       <main className="bench-view"><div className="bench-canvas" ref={host} />
         <div className="bench-viewtools">{['iso', 'front', 'side', 'top'].map((v, i) => <button key={v} onClick={() => scene.current?.view(v)}>{['自由视角', '正视', '侧视', '俯视'][i]}</button>)}
           <button onClick={() => scene.current?.fit()} aria-label="适配基准模型"><Expand size={16} /></button>
-          <button onClick={() => { setExplosion(0); setSelected(''); scene.current?.state(null); scene.current?.view('iso'); }} aria-label="复原基准模型"><RotateCcw size={16} /></button>
+          <button onClick={() => { setExplosion(0); chooseTask(''); scene.current?.highlight(null); scene.current?.state(null); scene.current?.view('iso'); }} aria-label="复原基准模型"><RotateCcw size={16} /></button>
           <button onClick={() => { const a = document.createElement('a'); a.href = scene.current!.png(); a.download = `${modelId}.png`; a.click(); }} aria-label="下载基准截图"><Download size={16} /></button>
         </div>
         <div className="bench-explode"><Box size={18} /><label>3D 展开 <input aria-label="基准展开程度" type="range" min="0" max="1" step="0.01" value={explosion} onChange={e => setExplosion(Number(e.target.value))} /></label><output>{Math.round(explosion * 100)}%</output><small>拖动旋转 · 滚轮缩放 · 右键平移</small></div>
@@ -132,7 +134,7 @@ export function BenchmarkPage({ modelId }: { modelId?: string }) {
           <output>{step}/{execution.frames.length - 1}</output><span>{execution.frames[step]?.actionId ?? '初始状态'}</span></div>}
       </main>
       <aside className="bench-tasks"><h2>任务与能力</h2><select aria-label="基准题型筛选" value={layer} onChange={e => setLayer(e.target.value)}>
-        <option value="all">全部题型（35）</option>{Object.entries(layerNames).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
+        <option value="all">全部题型（{data.tasks.length}）</option>{Object.entries(layerNames).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
         <select aria-label="选择基准题目" value={taskId} onChange={e => chooseTask(e.target.value)}><option value="">选择题目</option>
           {data.tasks.filter(t => layer === 'all' || t.layer === layer).map(t => <option key={t.id} value={t.id}>{layerNames[t.layer]} · {t.title}</option>)}</select>
         {current ? <><h3>{current.title}</h3><p>{current.question}</p><small>{current.capabilities.join(' · ')} / {current.evidence}</small>
