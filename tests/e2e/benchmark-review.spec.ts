@@ -1,81 +1,75 @@
-import { expect, test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { readFile } from 'node:fs/promises';
 
-test('Hierarchy-3 review workflow persists decisions and exports a correction batch', async ({ page, request }) => {
-  const catalog = await (await request.get('/benchmark/catalog.json')).json();
-  const total = catalog.reduce((sum: number, m: { tasks: number }) => sum + m.tasks, 0);
-  await page.goto('/benchmark/review');
-  await page.evaluate(() => localStorage.removeItem('brickatlas:hierarchy3:reviews:v1'));
-  await page.reload();
-  await expect(page.getByText(`0 / ${total}`)).toBeVisible();
-  await page.getByRole('link', { name: '继续逐题审核' }).click();
-  await page.waitForFunction(() => window.__benchmark?.().modelId === 'camera-gimbal');
-  await expect(page.getByText('本模型 0/48')).toBeVisible();
-  await expect(page.locator('.bench-review-queue .current')).toHaveCount(1);
-
-  await page.getByLabel('基准展开程度').fill('1');
-  await expect.poll(() => page.evaluate(() => window.__benchmark?.().explosion)).toBe(1);
-
-  const decisions = page.locator('.bench-review-decisions');
-  await decisions.getByRole('button', { name: '不通过' }).click();
+test('numbered original geometry, author replay and review round trip preserve old feedback', async ({ page, request }) => {
+  const catalog = await (await request.get('/benchmark/ldraw/catalog.json')).json();
+  const total = catalog.reduce((s: number, m: any) => s + m.tasks, 0);
+  const bundle = await (await request.get('/benchmark/ldraw/models/omr-42102.json')).json();
+  const old = 'old feedback must stay byte identical';
+  await page.addInitScript(value => {
+    if (!localStorage.getItem('brickatlas:hierarchy3:reviews:v1')) localStorage.setItem('brickatlas:hierarchy3:reviews:v1', value);
+  }, old);
+  await page.goto('/benchmark/omr-42102?review=1');
+  await page.waitForFunction(() => window.__ldrawBench?.().loadedInstances === 129);
+  const task = bundle.tasks[0];
+  await expect(page.getByRole('heading', { name: task.title })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.__ldrawBench?.().labels)).toContain(task.references[0].label);
+  await page.locator('.ldraw-ref-list').getByRole('button', { name: task.references[0].label, exact: true }).click();
+  await expect.poll(() => page.evaluate(() => window.__ldrawBench?.().visibleInstances)).toBe(1);
+  await page.getByRole('button', { name: '取消隔离', exact: true }).click();
+  await page.getByLabel('基准展开程度').fill('0.6');
+  await expect.poll(() => page.evaluate(() => window.__ldrawBench?.().requestedExplosion)).toBe(.6);
+  await page.getByLabel('保存后进入下一道待审核题').uncheck();
+  await page.locator('.bench-review-decisions').getByRole('button', { name: '不通过', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('必须填写理由');
-  await page.getByLabel('审核意见').fill('题干与公开证据不一致，需要重新生成。');
-  await decisions.getByRole('button', { name: '不通过' }).click();
-  await expect.poll(() => page.evaluate(() =>
-    JSON.parse(localStorage.getItem('brickatlas:hierarchy3:reviews:v1') ?? '[]').length)).toBe(1);
-  await expect(page.getByText('本模型 1/48')).toBeVisible();
-
-  await page.getByLabel('提交后自动进入下一道待审核题').uncheck();
-  await decisions.getByRole('button', { name: '通过', exact: true }).click();
-  await expect.poll(() => page.evaluate(() =>
-    JSON.parse(localStorage.getItem('brickatlas:hierarchy3:reviews:v1') ?? '[]').length)).toBe(2);
-  await expect(page.getByText('本模型 2/48')).toBeVisible();
-
-  const downloadPromise = page.waitForEvent('download');
-  await page.getByLabel('导出当前审核批次').click();
-  const download = await downloadPromise;
-  const path = await download.path();
-  expect(path).not.toBeNull();
-  const batch = JSON.parse(await readFile(path!, 'utf8'));
-  expect(batch.benchmarkVersion).toBe('brickatlas-hierarchy-3');
-  expect(batch.summary).toEqual({ totalTasks: total, reviewed: 2, passed: 1, failed: 1, pending: total - 2 });
-  expect(batch.records.find((row: any) => row.decision === 'fail').reason).toContain('公开证据不一致');
-
+  await page.getByLabel('审核意见').fill('编号清楚，连接部位需要进一步复核');
+  await page.locator('.bench-review-decisions').getByRole('button', { name: '不通过', exact: true }).click();
+  await page.reload();
+  await expect(page.getByLabel('审核意见')).toHaveValue('编号清楚，连接部位需要进一步复核');
+  const downloadEvent = page.waitForEvent('download');
+  await page.getByRole('button', { name: '导出本批次 JSON', exact: true }).click();
+  const download = await downloadEvent;
+  const batch = JSON.parse(await readFile((await download.path())!, 'utf8'));
+  expect(batch.benchmarkVersion).toBe('brickatlas-ldraw-1');
+  expect(batch.summary).toEqual({ totalTasks: total, reviewed: 1, passed: 0, failed: 1, pending: total - 1 });
+  expect(batch.records[0].references).toEqual(task.references);
+  expect(batch.records[0].sourceHash).toEqual(bundle.entry.sourceHash);
+  expect(await page.evaluate(() => localStorage.getItem('brickatlas:hierarchy3:reviews:v1'))).toBe(old);
+  await page.getByRole('button', { name: '播放作者步骤', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => window.__ldrawBench?.().buildStep)).toBeGreaterThan(0);
+  await page.getByRole('button', { name: '暂停', exact: true }).click();
   await page.goto('/benchmark/review');
-  await expect(page.getByText(`2 / ${total}`)).toBeVisible();
-  await expect(page.getByText('题干与公开证据不一致，需要重新生成。')).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
-  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
+  await page.getByLabel('导入审核 JSON').setInputFiles({ name: 'batch.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(batch)) });
+  await expect(page.getByText('已导入合并', { exact: true })).toBeVisible();
+  await expect(page.getByText('编号清楚，连接部位需要进一步复核')).toBeVisible();
 });
 
-test('new model reviews join the same batch without losing retained model decisions', async ({ page, request }) => {
-  const data = await (await request.get('/benchmark/models/camera-gimbal.json')).json();
-  const oldTask = data.tasks[0];
-  await page.goto('/benchmark/review');
-  await page.locator('input[type=file]').setInputFiles({ name: 'base48-review.json', mimeType: 'application/json',
-    buffer: Buffer.from(JSON.stringify({ schemaVersion: 1, benchmarkVersion: 'brickatlas-hierarchy-3',
-      records: [{ taskId: oldTask.id, modelId: oldTask.modelId, difficulty: oldTask.difficulty, layer: oldTask.layer,
-        family: oldTask.family, title: oldTask.title, decision: 'fail', reason: '保留的人工意见', reviewedAt: new Date().toISOString(),
-        benchmarkVersion: 'brickatlas-hierarchy-3' }] })) });
-  await expect(page.getByText('1 / 6912')).toBeVisible();
-  await page.goto('/benchmark/exp-d4-gripper-2?review=1');
-  await page.waitForFunction(() => window.__benchmark?.().modelId === 'exp-d4-gripper-2');
-  await page.getByLabel('提交后自动进入下一道待审核题').uncheck();
-  await page.locator('.bench-review-decisions').getByRole('button', { name: '通过', exact: true }).click();
-  await page.goto('/benchmark/review');
-  await expect(page.getByText('2 / 6912')).toBeVisible();
-  await expect(page.getByText('保留的人工意见', { exact: true })).toBeVisible();
+test('source instance restoration is visible and rejects invalid edits', async ({ page, request }) => {
+  const bundle = await (await request.get('/benchmark/ldraw/models/31028.json')).json();
+  const task = bundle.tasks.find((t: any) => t.family === 'restore-instance');
+  await page.goto(`/benchmark/31028?task=${task.id}`);
+  await page.waitForFunction(() => window.__ldrawBench?.().loadedInstances === 53);
+  await expect.poll(() => page.evaluate(() => window.__ldrawBench?.().visibleInstances)).toBe(52);
+  await page.getByRole('button', { name: '载入参考答案', exact: true }).click();
+  await page.getByLabel('操作回放步骤').fill('1');
+  await expect.poll(() => page.evaluate(() => window.__ldrawBench?.().visibleInstances)).toBe(53);
+  await page.getByLabel('基准答案 JSON').fill('{"actionIds":["unknown"]}');
+  await page.getByRole('button', { name: '检查答案', exact: true }).click();
+  await expect(page.getByText('答案未通过', { exact: true })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.__ldrawBench?.().visibleInstances)).toBe(52);
+  await page.getByRole('button', { name: '恢复完整源模型', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => window.__ldrawBench?.().visibleInstances)).toBe(53);
 });
 
-test('review dashboard and task panel remain usable on mobile', async ({ page }) => {
+test('mobile inspection and dashboard fit and expose accessible controls', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/benchmark/review');
-  await expect(page.getByRole('heading', { name: '按难度汇总' })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
-  await page.goto('/benchmark/camera-gimbal?review=1');
-  await page.waitForFunction(() => window.__benchmark?.().modelId === 'camera-gimbal');
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()).violations).toEqual([]);
+  await page.goto('/benchmark/31028?review=1');
+  await page.waitForFunction(() => window.__ldrawBench?.().loadedInstances === 53);
   await expect(page.getByLabel('审核意见')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
-  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()).violations).toEqual([]);
 });

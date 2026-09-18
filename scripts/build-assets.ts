@@ -9,7 +9,7 @@ import { LDrawConditionalLineMaterial } from 'three/addons/materials/LDrawCondit
 import { splitMpd, reference, normalize, dependencyClosure, resolveFile, buildManifest, hash, groups as carGroups, classify, boundsJSON, header } from './ldraw';
 import { instructionPlan } from './instructions';
 import type { AtlasManifest, GeometryBucket, MaterialRecord, GroupId } from '../src/model/types';
-import { modelCatalog } from '../atlas.config';
+import { modelCatalog, type ModelConfig } from '../atlas.config';
 
 const requestedId = process.argv.slice(2).find(argument => !argument.startsWith('--'));
 if (!requestedId) {
@@ -18,8 +18,12 @@ if (!requestedId) {
   }
   process.exit(0);
 }
-const atlasConfig = modelCatalog.find(model => model.id === requestedId);
+const externalConfig = process.argv.find(arg => arg.startsWith('--config='))?.slice('--config='.length);
+const atlasConfig: ModelConfig | undefined = externalConfig
+  ? JSON.parse(await readFile(externalConfig, 'utf8'))
+  : modelCatalog.find(model => model.id === requestedId);
 if (!atlasConfig) throw new Error(`Unknown model ${requestedId}`);
+if (atlasConfig.id !== requestedId || !/^[a-z0-9-]+$/.test(atlasConfig.id)) throw new Error('Invalid model configuration identity');
 const out = `public/models/${atlasConfig.id}`;
 await mkdir(out, { recursive: true });
 await mkdir('assets-built', { recursive: true });
@@ -123,6 +127,9 @@ await writeFile(`${out}/LDConfig.ldr`, colorText);
 // Flattening here is semantic, with one identity-space object per physical instance.
 const loader = new LDrawLoader();
 loader.setConditionalLineMaterial(LDrawConditionalLineMaterial);
+// Packed OMR files may embed "s/..." directly. Preserve the resolved namespace
+// instead of letting the loader redirect it to a different library part.
+loader.setFileMap(Object.fromEntries(closure.map(name => [name, name])));
 const references = semantic.instances.map(p => `1 ${p.colorCode} 0 0 0 1 0 0 0 1 0 0 0 1 ${resolveFile(files, `${p.partNumber}.dat`).name}`);
 const geometryText = [
   '0 FILE atlas-flat.ldr', '0 Atlas build model', '0 !LDRAW_ORG Model', colorText,

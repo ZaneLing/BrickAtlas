@@ -27,9 +27,9 @@ const ComposeStudio = lazy(() => import('../composer/ComposeStudio').then(module
 const DiyStudio = lazy(() => import('../diy/DiyStudio').then(module => ({ default: module.DiyStudio })));
 const AssemblyGame = lazy(() => import('../assembly/AssemblyGame').then(module => ({ default: module.AssemblyGame })));
 const AssemblyGameHub = lazy(() => import('../assembly/AssemblyGame').then(module => ({ default: module.AssemblyGameHub })));
-const BenchmarkPage = lazy(() => import('../benchmark/BenchmarkPage').then(module => ({ default: module.BenchmarkPage })));
-const BenchmarkLibrary = lazy(() => import('../benchmark/BenchmarkPage').then(module => ({ default: module.BenchmarkLibrary })));
-const BenchmarkReviewDashboard = lazy(() => import('../benchmark/ReviewDashboard').then(module => ({ default: module.BenchmarkReviewDashboard })));
+const BenchmarkPage = lazy(() => import('../benchmark/LDrawBenchmarkPage').then(module => ({ default: module.BenchmarkPage })));
+const BenchmarkLibrary = lazy(() => import('../benchmark/LDrawBenchmarkPage').then(module => ({ default: module.BenchmarkLibrary })));
+const BenchmarkReviewDashboard = lazy(() => import('../benchmark/LDrawBenchmarkPage').then(module => ({ default: module.BenchmarkReviewDashboard })));
 
 declare global { interface Window { __atlas?: () => ReturnType<AtlasScene['snapshot']> } }
 const viewNames = (tr: Translator) => ({

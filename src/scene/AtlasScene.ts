@@ -487,7 +487,8 @@ export class AtlasScene {
       }[state.view]).normalize();
     }
     for (const line of this.lineObjects) line.visible = state.edges && state.quality !== 'low';
-    this.renderer.shadowMap.enabled = state.buildStep === null;
+    this.renderer.shadowMap.enabled = state.buildStep === null && !state.isolation
+      && !state.hiddenBrickIds.length && !state.hiddenGroups.length;
     this.requestedPixelRatio = state.quality === 'low' ? 1 : state.quality === 'ultra' ? 4
       : state.quality === 'high' ? 3 : Math.min(Math.max(devicePixelRatio, 2), 3);
     const { width, height } = this.host.getBoundingClientRect();
@@ -543,7 +544,8 @@ export class AtlasScene {
     this.metrics.visibleInstances = this.visible.filter(p => this.loaded.has(p.groupId)).length;
     this.metrics.actualExplosion = this.actualExplosion;
     this.grid.visible = this.state.grid && this.actualExplosion < 0.02;
-    this.ground.visible = this.state.buildStep === null && this.actualExplosion < 0.98;
+    this.ground.visible = this.state.buildStep === null && this.actualExplosion < 0.98
+      && !this.state.isolation && !this.state.hiddenBrickIds.length && !this.state.hiddenGroups.length;
     this.controls.mouseButtons.LEFT = this.panMode || this.actualExplosion > 0.98 ? MOUSE.PAN : MOUSE.ROTATE;
     this.controls.enableRotate = !this.panMode && this.actualExplosion < 0.98;
     this.dirty = true;
@@ -593,6 +595,10 @@ export class AtlasScene {
 
   focusSelection() {
     this.focusInstances(this.state.selection, 1.5, true);
+  }
+
+  focusNumberedInstances(ids: string[]) {
+    this.focusInstances(ids, 1.5, true);
   }
 
   focusBuildStep(step: number) {

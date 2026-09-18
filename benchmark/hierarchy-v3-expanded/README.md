@@ -1,5 +1,12 @@
 # Hierarchy-3 expanded
 
+**Retired historical release.** Human review found imitation geometry,
+repeated constructors and ambiguous references. This dataset is no longer
+served at `/benchmark`. Its nominal servo passes do not establish authentic
+LEGO connectivity. Use [LDraw-1](../ldraw-v1/README.md); the counts and links
+below describe the archived release only. Historical source data and review
+records remain available for tracing corrections.
+
 144 original digital model configurations, four levels of 36 models each.
 Every model has 48 task families: 6,912 questions, including 4,608 newly
 generated instances. Total: 42,617 visible parts, 2,040 modules, 1,938 joints.

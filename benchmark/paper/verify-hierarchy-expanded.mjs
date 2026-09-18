@@ -2,6 +2,12 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+// Compatibility entry point: current checks follow the replacement release.
+// --historical reproduces the old verifier only in its original Git checkout.
+if (!process.argv.includes('--historical')) {
+  await import('./verify-artifacts.mjs');
+  process.exit(0);
+}
 const paper = import.meta.dirname, root = resolve(paper, '../..'), data = resolve(root, 'benchmark/hierarchy-v3-expanded');
 const read = p => JSON.parse(readFileSync(p, 'utf8'));
 const hash = p => createHash('sha256').update(readFileSync(p)).digest('hex');

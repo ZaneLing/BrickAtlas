@@ -1,197 +1,105 @@
-\documentclass[10pt,twocolumn,letterpaper]{article}
+\documentclass[10pt,letterpaper]{article}
 \usepackage[T1]{fontenc}
-\usepackage[pagenumbers]{cvpr}
-\usepackage{microtype}
-\usepackage{tabularx}
-\usepackage{hyperref}
-\makeatletter
-\newcommand{\tableinput}[1]{\@@input #1 }
-\makeatother
-\title{BrickAtlas Hierarchy-3 Expanded: Complete Supplementary Index}
-\author{Development Manuscript\\Author metadata intentionally omitted}
+\usepackage[margin=.75in]{geometry}
+\usepackage{graphicx,booktabs,tabularx,microtype}
+\usepackage[breaklinks,colorlinks,allcolors=blue]{hyperref}
+\title{BrickAtlas LDraw-1: Source and Question Supplement}
+\author{Development Manuscript}
+\date{}
 \begin{document}
-\input{hierarchy-expanded-results.tex}
+\input{ldraw-results.tex}
 \maketitle
-\section{Scope and Version}
-This supplement indexes the expanded Hierarchy-3 release: 144 layouts,
-48 families per layout, and 6,912 questions. It accompanies the
-machine-readable public inputs, answers, quality records, and original
-website 3D interface. It replaces the previous manuscript's appendix
-as the current entry point. Older Mechanism-1, Hierarchy-1, Hierarchy-2 and retired
-grid experiments remain in their versioned data directories and Git
-history; their scores are not pooled into this release. The base-48
-Hierarchy-3 models and their 2,304 tasks are preserved byte-for-byte.
-The 96 additions use twelve construction families, two configurations
-per family, and four structural levels. All new geometry fingerprints
-are distinct; one retained pair shares geometry with different joints.
-The 144 model layouts therefore have 143 geometry fingerprints.
+\section{Version and Scope}
+This supplement accompanies the LDraw-1 replacement release:
+\LDrawSources{} original sources, \LDrawParts{} part instances and
+\LDrawTasks{} tasks. It contains source attribution, actual four-view
+renders, numbered example inputs, all English question prompts and
+reference outputs. Full options and public evidence tables are provided
+in the versioned JSON. No old synthetic model, physical pass or model
+pilot is pooled into these counts.
 
-\section{Reading the Contracts}
-Each task has a source ID, difficulty stratum, task layer, family,
-capability, output format, evidence class, and public input.
-Single choices return \texttt{choiceId}; set-valued choices return
-\texttt{choiceIds}; operations return \texttt{actionIds};
-schedules return a job-to-start-time map; policies return a query and
-observation-to-action map. Choice values are shuffled deterministically
-per task. Empty feasible sets are accepted when appropriate.
+The original MPD files, colors, poses and dependency geometry are
+preserved. Temporary visibility edits apply only to a display copy.
+All source candidates and exclusion reasons appear in
+\texttt{benchmark/ldraw-v1/release.json}. Per-source audits retain
+unsupported instances and intersection candidates. The release is
+intended for review; it does not certify physical stability.
 
-The full companion \texttt{QUESTION\_BANK.zh-CN.md} includes every
-question, every option, every input, and every reference answer.
-The following family table describes all contracts, and the per-object
-pages index all 6,912 task instances with four actual website renders
-per object. No page implies an independent human annotation.
+\section{How to Read the Task Contracts}
+A displayed number such as \texttt{B0001} identifies one source
+instance. The same number appears in the task, interactive view and
+exported numbered image. A complete identity includes the source hash
+and instance ID. Repeated types are distinct instances.
 
-\section{Atomic Operations}
-Identification maps an image-highlighted service module to its ID.
-Counting groups visible parts by module. Color and position questions
-read explicit attributes and world bounding-box centers. Joint type,
-parents, roots, and incident-degree questions inspect the declared
-attachment graph.
+\begin{center}\small\input{ldraw-families.tex}\end{center}
 
-Recoloring changes exactly one part's color. Addition chooses an exact
-missing part descriptor. Removal identifies leaf modules. Replacement
-maximizes stiffness under a cost limit. Translation inverts an observed
-offset; rotation selects a shortest signed yaw correction.
-Next-module questions test predecessor completion. Inventory checks
-conserve piece count; boundary questions identify every incident joint;
-no-operation questions reward preserving an already-correct state.
-Local-frame, orthographic projection, relative-order and joint
-freedom tasks extend the atomic coverage.
+Visual tasks provide numbered images without answer-bearing source
+attributes. Source-data tasks explicitly provide coordinates, coverage
+or author-step records. Graph tasks reason about identified connector
+evidence. Scene-edit tasks execute public preconditions and preserve
+source poses. All JSON output keys are in English.
 
-These are controlled contracts, and several public inputs disclose
-the exact attributes needed for a solution. They are not all image-only
-perception tasks. One must report the information condition alongside
-accuracy and run ablations before assigning a visual interpretation.
+\section{Audit Interpretation}
+Coverage is the fraction of instances whose types have a connector
+definition. It is not the fraction that is physically connected.
+Components belong to a partial recognized graph. A source scene can
+contain several independent objects. The absence of a recognized edge
+is not proof of a floating part.
 
-\section{Meta and Physical Tasks}
-Prefix tasks detect the first violated predecessor.
-Accessibility reads actual continuous cuboid shape-cast records.
-Counterfactual tasks remove a specified node and recompute undirected
-reachability to anchored roots; the explicitly removed node is excluded
-from the answer. Dynamics asks for the largest sampled translational
-displacement from eleven actual Rapier measurements.
+The inset-mesh audit reports \LDrawIntersections{} intersection candidates
+without a recognized mating interface. They remain unresolved review
+items. Friction-fit geometry and gears can legitimately intersect a
+mesh approximation. Connector inference normalizes rotations under
+the upstream BrickNet implementation; rendering and collision queries
+preserve original poses. No source is moved to improve an audit score.
 
-Kinematic questions use declared joint axes and limits, not empirical
-actuation success. Diagnosis matches constraint type and observed
-endpoints, accepting all matching interfaces. Inspection optimizes
-entropy reduction per unit query cost. Abstention checks agreement
-of actions across possible worlds. Posterior inference conditions
-a finite uniform prior on an observation. Pareto enumeration retains
-all non-dominated cost/mass/stiffness alternatives. New families
-cover clearance margins, cross-product moments, weighted posteriors,
-expected losses, and sampled threshold exceedance.
+\section{Reproduction and Review}
+Run the acquisition and preparation scripts only when rebuilding source
+assets. The retained-source corpus, questions and website bundles are
+generated by \texttt{benchmark/suite/ldraw/release.ts}.
+The independent verifier reparses MPD sources using locked dependency
+files. Browser capture scripts produce real model views and numbered
+visual inputs. The paper generator derives counts and tables from these
+release artifacts.
 
-\section{Action State Machine}
-The initial fact set, action catalog, preconditions, forbidden facts,
-add/delete effects, costs, budget, and goals are public.
-Assembly/disassembly changes module presence. A service intervention
-requires support before access, access before removal or modification,
-replacement before verification, closure before support release.
-Guarded repair and rollback expose invalid shortcuts, while shared-tool
-repair enforces exclusive access through a resource fact.
-Actions on independent modules may be interleaved. The evaluator never
-sorts or repairs a submitted program.
+Reference solutions are supplied for reviewer inspection. Public model
+inputs exclude solutions; however, the development website exposes
+review files and is not a hidden test server. An evaluation harness must
+restrict its observations and record all tool access.
+Failure decisions require a written reason. New review records use
+separate storage and preserve old human feedback. Original authors and
+licenses are included on each source page below.
 
-For every action, the replay records accepted status, first error,
-current facts, visible modules, color overrides, and cumulative cost.
-Reference and submitted model JSON use the same interpreter in the
-original webpage. A visible explosion is a display transformation only.
-Neither symbolic acceptance nor rendered motion is claimed to certify
-clutch forces or robot insertion.
-
-\section{Integration}
-Multi-fault programs combine several targets with one budget and final
-goal. Scheduling checks integer starts, predecessor finishes, resource
-exclusion, and makespan. Policies must map all observations to actions
-correct in every compatible world; success on one sampled branch is
-insufficient. Unknown actions, repeated completed actions, omitted
-terminal actions, conflicts, and missing policy branches are tested
-with negative controls.
-
-\section{Simulator and Quality Boundaries}
-Rapier 0.20.0 runs at 120 Hz and 64 solver iterations.
-Modules are compound stud-inclusive cuboid bodies. Bases are fixed. ForceBased holding motors
-use stiffness 60000, damping 1500, and maximum force 20000 in scene units.
-Three access casts use a 0.18-unit half-extent probe and exclude the
-service module. The static query world is independent of settling.
-
-After 120 nominal steps, an impulse $(10,1.8,3.5)$ is applied one unit
-above the target geometric representative point. The same attached
-point supplies the displacement measurements. The next 120 steps produce eleven
-samples. Nominal state is evaluated before the impulse. All 144 layouts
-satisfy representative-point displacement below 0.35, angular displacement
-below 0.15 rad and non-spring joint residual below 0.02. Initial anchor
-pairs coincide. No module pair has oriented-cuboid
-penetration greater than 0.005. Direct joint interfaces participate
-in the collision gate and retain contacts; module interiors are compound rigid bodies.
-Revolute limits are explicitly enabled on instantiated joints and read
-back. A driven motor is stopped at its declared bound, and changing
-only the local coordinate origin preserves the sampled physical response.
-Geometry, anchors, some layouts, moorings and motor parameters changed
-together, so comparisons with Hierarchy-2 require the new protocol label.
-This does not certify commercial connector fit or arbitrary robot motion.
-
-\section{Corrections and Historical Scoring}
-Hierarchy-2 had eleven next-module questions with semantically equal
-set options in different orders. The corrected generator normalizes
-sets only; vectors and programs remain ordered. Historical affected
-choice IDs are recorded in \texttt{historical-ambiguities.json}; either
-equivalent answer is accepted under a separately labeled semantic
-rescoring. Historical raw scores are retained.
-
-The Mechanism-1 conditional-entropy sign was corrected. An
-uninformative four-world query now has information gain zero rather
-than four; the six historical optimal query labels did not change.
-All primitive dimensions now agree with the renderer and stud-inclusive
-envelopes. Paused replay selection and isolation cannot resurrect
-absent modules. Six old constant-answer families now vary actual
-parameters, and all 48 semantic answer distributions are published.
-
-\section{Pilot and Reproduction}
-The historical base-48 GPT-4.1 mini pilot contains 16 fixed questions, one per level/layer
-cell. Families are local-frame, expected-loss, guarded-repair, and
-resource-repair. \PilotSuccess{} of \PilotN{} responses succeed at a total cost of \$\PilotCost.
-Each cell has one response, so no stable accuracy estimate or model
-ranking follows. Input hashes, generation IDs, provider receipts, and
-raw predictions are archived separately from the reference answers.
-There are no new paid model measurements for the 96 added layouts.
-
-The 6,912 oracle checks validate the evaluator; 1,152 public-precondition
-solutions validate action execution. A constant-choice/empty-answer
-control passes \ControlSuccess{} cases. These controls do not establish task novelty
-or human difficulty. The figures use original-site canvas captures,
-and byte-identical model records are shipped to the website and offline
-release.
-
-From the repository root:
-\begin{verbatim}
-npm --prefix benchmark run h3x:release
-npm run start:local
-npm --prefix benchmark run h3x:browser
-npm --prefix benchmark run h3x:docs
-npm --prefix benchmark test
-npm run build
-\end{verbatim}
-Model inference is a separate paid command and is not required for
-offline score replay. The release manifest binds data and generator
-hashes. Public-input files exclude the answer; the review website
-intentionally includes a reference-answer control.
-
-\clearpage\onecolumn
-\section{All 48 Task Families}
-\begin{center}\small
-\begin{tabular}{llll}
-\toprule Family & Layer & Output & Evidence\\\midrule
-\tableinput{tables/hierarchy3-contracts.tex}
-\bottomrule
-\end{tabular}
+\clearpage
+\section{Worked Source Replay and Restoration}
+The examples below use original set 42102. The source-sequence task
+reveals the first six author steps without moving any source instance.
+At the three checkpoints, only the cumulative source-step instances
+are visible. Numbers identify the currently visible operands.
+\begin{center}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/sequence-1.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/sequence-3.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/sequence-6.jpg}
 \end{center}
-Each row appears on 36 source layouts at each of four levels.
-Rows sharing an object remain correlated; source-level reporting and
-family-grouped confirmation are required. The per-object pages below
-are the complete release index. A model's render count is not a source
-count, and shared part counts do not imply equivalent task difficulty.
+Left to right: after actions 1, 3 and 6. Action prerequisites encode the
+provided instruction order, not mechanical insertion conditions.
 
-\input{publication-worked.tex}
-\input{hierarchy-expanded-cases.tex}
+\subsection{Correct and Rejected Visibility Edits}
+The restoration task hides one numbered source instance.
+The accepted operation restores that instance at its original pose.
+An unknown action is rejected and leaves the display copy incomplete.
+These are editor transitions; no physical repair path is claimed.
+\begin{center}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/restore-before.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/restore-after.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/restore-invalid.jpg}
+\end{center}
+Left to right: missing instance, accepted restoration, rejected unknown
+action. The captured visibility counts are 128, 129 and 128.
+All transforms remain equal to their source values throughout.
+The complete action definitions, reference outputs, frame checksums and
+visibility snapshots are in the source bundle and
+\texttt{worked-renders.json}.
+
+\input{ldraw-cases.tex}
 \end{document}

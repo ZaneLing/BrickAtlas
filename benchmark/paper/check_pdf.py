@@ -52,17 +52,18 @@ for index, page in enumerate(document):
     pages.append(frame)
 assert not out_of_bounds, out_of_bounds
 if args.paper == "main":
-    assert "Hierarchy-3" in text and "6,912" in text and "42,617" in text
-    assert "OMR/LDraw" in text and "not benchmark cases" in " ".join(text.split())
+    assert "LDraw-1" in text and "617" in text and "15,334" in text
+    assert "6,912" not in text and "42,617" not in text
     assert references_start is not None
     assert main_content_last_page <= 8, f"Main content exceeds 8 pages: {main_content_last_page}"
-    assert len(set(re.findall(r"Figure (\d+)\.", text))) >= 2, "Missing hierarchy matrix/pilot figures"
+    assert len(set(re.findall(r"Figure (\d+)\.", text))) >= 2, "Missing source/numbered figures"
 assert not re.search(r"\[\?\]", text)
-assert image_count >= (2 if args.paper == "main" else 576)
+assert image_count >= (2 if args.paper == "main" else 120)
 # Raster labels cannot be audited by PDF text extraction: bind all inserted
 # rasters to the inspected publication plates or the canonical raw 3D views.
 allowed = set()
-for image_path in list((ROOT / "figures").glob("publication-*.png")) + list((ROOT / "figures/hierarchy-expanded").glob("*.png")):
+encoded_images = {hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT / "figures/ldraw/print").glob("*.jpg")}
+for image_path in (ROOT / "figures/ldraw").glob("*.png"):
     raster = Image.open(image_path).convert("RGB")
     allowed.add(hashlib.sha256(raster.tobytes()).hexdigest())
 for page in document:
@@ -70,15 +71,9 @@ for page in document:
         pixmap = fitz.Pixmap(document, entry[0])
         if pixmap.n != 3:
             pixmap = fitz.Pixmap(fitz.csRGB, pixmap)
-        # PDF plates use JPEG encoding; provenance is checked against their
-        # embedded image streams below, while raw PNGs are lossless.
         digest = hashlib.sha256(pixmap.samples).hexdigest()
-        if digest not in allowed:
-            for plate in (ROOT / "figures").glob("publication-*.pdf"):
-                with fitz.open(plate) as source:
-                    for row in source[0].get_images():
-                        allowed.add(hashlib.sha256(fitz.Pixmap(source, row[0]).samples).hexdigest())
-            assert digest in allowed, f"Untracked image on page {page.number + 1}"
+        encoded = hashlib.sha256(document.extract_image(entry[0])["image"]).hexdigest()
+        assert digest in allowed or encoded in encoded_images, f"Untracked image on page {page.number + 1}"
 contact = Image.new("RGB", (420*3, 570*((len(pages)+2)//3)), "#dddddd")
 for i, image in enumerate(pages):
     contact.paste(image, ((i % 3)*420, (i//3)*570))
