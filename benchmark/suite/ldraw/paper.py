@@ -108,15 +108,39 @@ macros = {"LDrawSources": len(catalog), "LDrawTasks": len(all_tasks), "LDrawPart
           "LDrawIntersections": stats["nonMatingIntersectionCandidates"], "LDrawVisual": stats["visualQuestions"]}
 (PAPER / "ldraw-results.tex").write_text("\n".join(r"\newcommand{\%s}{%s}" % (k, v) for k, v in macros.items())+"\n")
 
-# Two landscape-free pages per model: source plate, then full English questions.
+# Per-source plates followed by complete English options and compact evidence.
+def evidence(task):
+    inp, family = task["input"], task["family"]
+    if family in {"color", "shape-match"}:
+        return "Numbered visual input; source attributes are withheld from the model."
+    if family == "distance":
+        return "Centers (mm): " + "; ".join(f"{k} = ({', '.join(map(str, v))})" for k, v in inp["centers"].items()) + "."
+    if family == "interface":
+        r = inp["connectorRecord"]
+        return f"Record: family = {r['family']}; connector indices = {r['aConnector']}, {r['bConnector']}."
+    if family in {"neighbors", "graph-removal"}:
+        edges = sorted({tuple(sorted(e)) for e in inp["edges"]})
+        return ("Nodes: " + ", ".join(inp["nodes"]) + ". " if "nodes" in inp else "") + "Unique undirected pairs: " + "; ".join(" / ".join(e) for e in edges) + "."
+    if family == "coverage":
+        return "Definition coverage: " + "; ".join(f"{r['label']} = {'supported' if r['supported'] else 'unsupported'}" for r in inp["coverage"]) + "."
+    if family == "evidence-limit":
+        return "Available evidence: " + "; ".join(inp["available"]) + "."
+    if family == "source-step":
+        return "Expanded author records: " + "; ".join(f"step {r['index']}: {', '.join(r['numbers'])}" for r in inp["steps"]) + "."
+    if family == "source-sequence":
+        return "Source window: " + "; ".join(r["actionId"] + ": " + ", ".join(r["labels"]) for r in inp["sourceWindow"]) + f". Action budget: {inp['budget']}."
+    if family == "restore-instance":
+        return "Target: " + task["references"][0]["label"] + f". Action budget: {inp['budget']}. All other instances initially remain visible."
+    raise ValueError(family)
+
 appendix = []
 for m in catalog:
     b = bundles[m["id"]]
     appendix += [r"\clearpage", r"\section{" + tex(f"{m['setNumber']}: {m['name']}") + "}",
       tex(f"{m['parts']} source instances; {m['tasks']} tasks; {m['difficulty']} scale band.") + "\n",
+      r"\par\noindent Perspective, front, side and top views follow in reading order. Original source transforms are preserved.",
       r"\begin{center}" + picture(f"{m['id']}-iso.png") + picture(f"{m['id']}-front.png") + r"\\"
         + picture(f"{m['id']}-side.png") + picture(f"{m['id']}-top.png") + r"\end{center}",
-      r"\noindent Views: perspective, front, side, top. Original source transforms are preserved.",
       r"\paragraph{Attribution.}" + tex(m["author"] + ". " + m["license"] + ".")
         + r"\par\noindent\url{" + m["sourceUrl"] + "}",
       r"\paragraph{Source lock.}\small\texttt{" + m["sourceHash"][:32] + r"}\\\texttt{" + m["sourceHash"][32:] + r"}\normalsize",
@@ -127,16 +151,20 @@ for m in catalog:
         "These counts do not certify physical defects or gravitational stability."),
       r"\paragraph{Instructions.}" + tex(f"{m['sourceSteps']} expanded author steps." if m["sourceSteps"] else "No author STEP replay or source-order question is provided."),
       r"\clearpage\subsection{Numbered visual input and complete question index}",
-      r"\begin{center}" + picture(f"{m['id']}-numbered.png", r".55\linewidth") + r"\end{center}",
       "Only relevant numbers are shown. The website can isolate any instance; public visual tasks provide their own numbered images. "
-      "The following prompts are in English. Full operands, options, inputs and reference solutions are in the versioned JSON.",
+      "The following entries give every English prompt, all choice options, compact public evidence and the reference output. "
+      "Raw repeated connector records and full action fact sets remain in the versioned JSON.",
+      r"\begin{center}" + picture(f"{m['id']}-numbered.png", r".55\linewidth") + r"\end{center}",
       r"\begin{enumerate}"]
     for t in b["tasks"]:
         suffix = t["id"].removeprefix("ld1-"+m["id"]+"-")
         answer = t["answer"]
         readable = answer.get("choiceId") or ", ".join(answer.get("choiceIds", answer.get("actionIds", [])))
-        appendix.append(r"\item \textbf{" + tex(suffix) + "}. " + tex(t["promptEn"]) + " "
-          + r"\textit{Answer:} " + tex(readable) + ".")
+        options = "; ".join(o["id"] + ": " + o["label"] for o in t.get("options", []))
+        appendix.append(r"\item \textbf{" + tex(suffix) + "}. " + tex(t["promptEn"])
+          + r"\par {\small \textit{Input:} " + tex(evidence(t)) + " "
+          + (r"\par\textit{Options:} " + tex(options) + ". " if options else "")
+          + r"\par\textit{Reference output:} " + tex(readable) + ".}")
     appendix.append(r"\end{enumerate}")
 (PAPER / "ldraw-cases.tex").write_text("\n".join(appendix)+"\n")
 credits = ["# LDraw-1 retained-source attribution\n", "Original source bytes and scene poses are unchanged. "

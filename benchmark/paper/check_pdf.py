@@ -15,6 +15,9 @@ args = parser.parse_args()
 document = fitz.open(ROOT / (args.paper + ".pdf"))
 log = (ROOT / (args.paper + ".log")).read_text(errors="replace")
 assert not re.search(r"Overfull \\[hv]box|Citation .* undefined|Reference .* undefined|^!", log, re.M)
+source = (ROOT / (args.paper + ".tex")).read_text()
+figures = re.findall(r"\\begin\{figure\*?\}(.*?)\\end\{figure\*?\}", source, re.S)
+assert all(r"\caption" not in block for block in figures), "Below-image figure caption found"
 assert len(document) > 0
 output = ROOT.parent / ".runtime/paper-inspection"
 if args.paper == "supplement":
@@ -56,9 +59,10 @@ if args.paper == "main":
     assert "6,912" not in text and "42,617" not in text
     assert references_start is not None
     assert main_content_last_page <= 8, f"Main content exceeds 8 pages: {main_content_last_page}"
-    assert len(set(re.findall(r"Figure (\d+)\.", text))) >= 2, "Missing source/numbered figures"
+    assert len(figures) >= 7, "Missing publication plates or statistical plots"
+    assert "not run" in text and "Macro" in text, "Missing experimental status or metrics"
 assert not re.search(r"\[\?\]", text)
-assert image_count >= (2 if args.paper == "main" else 120)
+assert image_count >= (8 if args.paper == "main" else 129)
 # Raster labels cannot be audited by PDF text extraction: bind all inserted
 # rasters to the inspected publication plates or the canonical raw 3D views.
 allowed = set()
@@ -84,6 +88,8 @@ result = {
     "textOutsidePage": out_of_bounds,
     "cjkTextFound": False, "imageOccurrences": image_count,
     "imagesBoundToEnglishPlatesOrRawViews": True,
+    "figureCaptionsAbsent": True,
+    "vectorPlotSourceFiles": sorted(p.name for p in (ROOT / "analysis").glob("*.pdf")),
     "pdfSha256": hashlib.sha256((ROOT / (args.paper + ".pdf")).read_bytes()).hexdigest(),
     "referencesStartPage": references_start,
     "mainContentPageUpperBound": main_content_last_page if main_content_last_page is not None else len(document),

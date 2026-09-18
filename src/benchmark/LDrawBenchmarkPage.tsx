@@ -40,6 +40,7 @@ export function BenchmarkLibrary({ compact = false }: { compact?: boolean }) {
       <input aria-label="搜索基准模型" placeholder="套装编号 / 模型名称" value={query} onChange={e => setQuery(e.target.value)} />
       <a href={`${root}benchmark/review`}>人工审核台</a><a href={`${root}benchmark/docs/main.pdf`}>英文论文</a>
       <a href={`${root}benchmark/docs/supplement.pdf`}>英文附录</a><a href={`${base}release.json`}>来源与检查记录</a>
+      {!compact && <a href={`${root}benchmark/docs/brickatlas-cvpr-source.zip`}>论文源码与图表</a>}
       {!compact && <a href={root}>项目首页</a>}</div>
     <small>D1 ≤150 件 · D2 151–400 件 · D3 401–1000 件 · D4 &gt;1000 件；这是规模分层，尚未标定题目难度。</small>
     {error && <p role="alert">{error}</p>}

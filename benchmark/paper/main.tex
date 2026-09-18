@@ -1,387 +1,551 @@
-% Development manuscript: source-faithful replacement; no model benchmark scores.
+% Development draft: measured corpus statistics; unrun experiments stay blank.
 \documentclass[10pt,twocolumn,letterpaper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[pagenumbers]{cvpr}
-\usepackage{microtype}
-\usepackage{tabularx}
+\usepackage{microtype,tabularx}
 \definecolor{cvprblue}{rgb}{0.15,0.43,0.64}
 \usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
 \def\confName{CVPR}
 \def\confYear{2026}
-\title{BrickAtlas LDraw-1: Source-Faithful Brick Models\\
-with Numbered Visual and Structural Questions}
-\author{Development Manuscript\\Author and affiliation metadata intentionally omitted}
+\newcommand{\plateid}[1]{\refstepcounter{figure}\label{#1}}
+\title{BrickAtlas LDraw-1: Instance-Grounded Visual and\\
+Structural Reasoning over Original Brick Assemblies}
+\author{Development Manuscript\\Author and affiliation metadata pending}
 \begin{document}
 \input{ldraw-results.tex}
 \maketitle
+
 \begin{abstract}
-An assembly benchmark needs identifiable parts and trustworthy geometry
-before its reasoning scores can be interpreted. We present BrickAtlas
-LDraw-1, a replacement dataset built from \LDrawSources{} unmodified
-LDraw/OMR source models, containing \LDrawParts{} part instances and
-\LDrawTasks{} questions. Each source instance receives a stable number
-shared by the interactive renderer, public visual inputs, task operands,
-scorer, and human-review records. Questions use source attributes,
-author STEP metadata, recognized connector graphs, or explicitly scoped
-scene edits. A connector and inset-mesh audit reports its coverage and
-unresolved intersection candidates without asserting physical stability.
-Source reparsing reproduces every retained instance identity, color and
-pose; all reference answers pass their contracts. These are software
-controls, not measurements of model reasoning. We provide the original
-source locks, exclusions, pairwise similarity screens, numbered inputs,
-four-view appendix, and a review workflow. The release retires the
-previous synthetic geometry and its physical conclusions; model
-performance and human difficulty remain unmeasured.
+Reasoning about brick assemblies requires more than recognizing an
+object's silhouette: an evaluator must identify the exact part, preserve
+its geometry, and distinguish what is visible from what is structurally
+known. We introduce BrickAtlas LDraw-1, a benchmark of \LDrawSources{}
+original LDraw/OMR assemblies, \LDrawParts{} part instances, and
+\LDrawTasks{} questions across eleven task families. A stable instance
+number links rendered observations, source records, connector graphs,
+and executable scene edits. The task engine separates visual perception,
+source-data reasoning, graph reasoning, and instruction-following edits,
+with explicit evidence and success contracts. We provide real 3D inputs,
+functional task decompositions, source-level statistics, and a
+reproducible evaluation protocol. Independent reparsing verifies every
+retained source instance; all reference solutions and 75 public-action
+solver outputs satisfy their contracts. Answer-prior analysis exposes
+uneven task coverage and elementary evidence controls. These results
+validate the software interface, not learned-model ability or physical
+stability. Model, human, robustness, and physical-validation experiments
+are specified with unfilled result tables. The release makes assembly
+reasoning inspectable while retaining unresolved structural evidence.
 \end{abstract}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/ldraw/teaser.png}
-\caption{\textbf{Unmodified source assemblies.}
-Actual 3D renders of retained OMR models, including articulated vehicles,
-creatures, architecture, a motorcycle, and a launch vehicle.
-Geometry comes from original LDraw parts and source transforms.
-The complete supplement provides four views and attribution for every
-source. No geometry is generated to increase the model count.}
-\label{fig:sources}
+\plateid{fig:sources}
 \end{figure*}
 
 \section{Introduction}
-Visual plausibility is an insufficient foundation for evaluating
-assembly reasoning. A row of blocks may resemble a mechanism while
-having no real mating interfaces. Several near-identical layouts may
-inflate a dataset's size without adding structural variety. A prompt
-that names a ``support'' may be impossible to ground when several
-pieces share that description. Each issue can invalidate an apparently
-precise score before the model makes a reasoning error.
+An assembly assistant must connect language to individual physical
+parts. ``Remove the support'' is ambiguous when several pieces have the
+same shape and color. A convincing rendering can hide disconnected
+geometry. A connector graph can support an exact adjacency answer while
+remaining insufficient to predict whether an object will stand under
+gravity. Evaluating all three cases with a single notion of assembly
+success obscures the source of an error.
 
-These failures motivated a complete replacement of the earlier
-BrickAtlas Hierarchy-3 release. Human inspection identified disconnected
-imitation geometry, repeated construction patterns, and ambiguous
-module references. Its nominal servo checks did not establish real LEGO
-connectivity. We therefore retire that release as the active benchmark
-and do not transfer its counts, physical passes, or pilot model scores
-to LDraw-1.
+Recent work has advanced interactive reconstruction~\cite{walsman2022break},
+manual interpretation~\cite{wang2022manual}, and graph-backed brick
+generation~\cite{kulits2026bricknet}. These settings motivate a
+complementary question: can a model ground a request in a fixed,
+authentic assembly and reason correctly under the evidence provided?
+This question is useful even before introducing robotics. An assistant
+that selects the wrong instance or treats missing connector data as proof
+of a floating part cannot provide reliable downstream instructions.
 
-The replacement fixes the source object and authors questions around
-the evidence actually available. We retain complete original OMR files,
-their authors and licenses, and their dependency closures. Every physical
-part instance in the source has a stable \texttt{B0001}-style number.
-The number identifies an instance, not a reusable part type: two
-identical bricks receive different numbers. Relevant numbers appear
-with leader lines in the 3D view and in exported visual inputs.
-An instance can also be isolated, rotated, and inspected at its source
-pose.
+We introduce \textbf{BrickAtlas LDraw-1}. Its starting point is an
+unchanged original source assembly, not a generated arrangement that
+resembles one. Each occurrence of a part receives a stable
+\texttt{B0001}-style identifier. Questions, numbered renders, public
+evidence, action execution, and review records share that identity.
+Repeated part types remain separate instances. The source montage in
+Fig.~\ref{fig:sources} shows vehicles, creatures and larger structures;
+all are rendered from retained LDraw geometry.
 
-The task contract separates four kinds of evidence. Visual questions
-require a numbered rendering. Source-data questions supply the relevant
-attributes or instruction records. Graph questions reason about
-recognized connector edges. Scene-edit tasks reveal an original instance
-or replay an author's steps. None of these contracts establishes forces,
-friction, stability, or an insertion trajectory.
+Our design separates four observation contracts. Visual tasks identify
+color or corresponding part types from numbered images. Source-data
+tasks use supplied coordinates, coverage flags or author records.
+Graph tasks operate on recognized connector pairs. Scene-edit tasks
+restore an instance's visibility or follow a source-step window at fixed
+poses. This separation makes exact evaluation possible without treating
+an editor operation as a mechanically feasible insertion.
 
-Our contributions are a source-faithful replacement corpus, a common
-numbering interface for observation and evaluation, and reproducible
-checks that expose the limits of structural evidence. We release a
-reviewable dataset and protocol rather than a model leaderboard.
+The release has three contributions. First, it provides a
+source-preserving corpus with instance-level grounding and attributable
+dependencies. Second, it defines eleven inspectable task families,
+including set-valued graph answers and executable action sequences.
+Third, it provides a reproducible evaluation specification, descriptive
+analyses and failure-review artifacts that distinguish measured evidence
+from experiments still to be conducted. The current manuscript is a
+benchmark development draft: it reports no learned-model leaderboard
+and no claim of certified physical stability.
 
 \section{Related Work}
-\paragraph{Interactive and generative assembly.}
-Break and Make~\cite{walsman2022break} studies interactive structural
-understanding through disassembly and reconstruction.
-Visual manual translation~\cite{wang2022manual} connects assembly
-instructions with executable plans.
-BrickNet~\cite{kulits2026bricknet} provides a graph-backed representation
-of brick interfaces, while BrickGPT~\cite{pun2025brickgpt} studies
-physically stable and buildable generation. LDraw-1 uses the public
-BrickNet connector implementation as an audit tool for fixed original
-sources. It does not reproduce the generative or robotic evaluation
-protocols of those works.
+\paragraph{Brick representation and assembly.}
+Break and Make~\cite{walsman2022break} evaluates interactive structural
+understanding through disassembly and reconstruction. Translating a
+Visual LEGO Manual~\cite{wang2022manual} connects visual instructions to
+executable plans. BrickNet~\cite{kulits2026bricknet} represents typed
+interfaces and generates assemblies with connector graphs; we use its
+public connector implementation to audit fixed source placements.
+BrickGPT~\cite{pun2025brickgpt} targets text-conditioned stable, buildable
+structures. LDraw-1 evaluates questions over existing sources and does
+not reproduce those methods' generative or robotic results.
 
-\paragraph{Visual and physical reasoning.}
-CLEVR~\cite{johnson2017clevr} and GQA~\cite{hudson2019gqa} motivate
-explicitly compositional questions with inspectable answers.
-BLINK~\cite{fu2024blink} highlights limitations in basic visual
-perception. LEGO-Puzzles~\cite{tang2025legopuzzles} and
-PhyBlock~\cite{ma2025phyblock} evaluate spatial and physical planning
-under their respective observation and simulation contracts.
-Our contribution concerns source authenticity, instance grounding,
-and the boundary between CAD evidence and physical claims.
+\paragraph{Compositional visual reasoning.}
+CLEVR~\cite{johnson2017clevr} and GQA~\cite{hudson2019gqa} make question
+semantics and compositional operations explicit. We adopt this principle
+for numbered CAD instances, but do not inherit their balancing
+procedures or validation results. BLINK~\cite{fu2024blink} emphasizes
+basic perceptual failures, while LEGO-Puzzles~\cite{tang2025legopuzzles}
+studies multi-step spatial reasoning. A source part number in our
+reference solution is a CAD identity, not a guarantee that all visually
+equivalent parts share one label.
+
+\paragraph{Physical reasoning and evaluation.}
+PhyBlock~\cite{ma2025phyblock} evaluates physical understanding and
+planning under its simulation contract. Our graph and scene operations
+have narrower semantics: recognizing a hinge does not establish its
+load capacity or simulated dynamics. Dataset documentation
+principles~\cite{gebru2021datasheets} motivate explicit provenance,
+coverage and intended use. Shortcut learning~\cite{geirhos2020shortcut}
+and option-order sensitivity~\cite{zheng2024selectors} motivate the
+answer-prior and permutation controls specified below.
 
 \begin{table}[t]
 \centering\small
+\caption{Task positioning. Success criteria depend on the observation
+and action contract; no numerical cross-benchmark ranking is implied.}
+\label{tab:related}
 \begin{tabularx}{\linewidth}{lX}
 \toprule
-Setting & Primary evaluation object\\\midrule
+Setting & Evaluation object\\\midrule
 Break and Make & Interactive structural reconstruction\\
-BrickNet & Connector graphs and generated assemblies\\
-BrickGPT & Text-driven, buildable brick generation\\
+Visual LEGO Manual & Visual instructions to executable plans\\
+BrickNet / BrickGPT & Generated brick assemblies\\
 LEGO-Puzzles & Multi-step spatial reasoning\\
 PhyBlock & Physical understanding and planning\\
-LDraw-1 & Fixed original sources, numbered questions,
-explicit source and graph evidence\\\bottomrule
+LDraw-1 & Fixed sources, numbered instances, explicit evidence and scene edits\\
+\bottomrule
 \end{tabularx}
-\caption{Related settings differ in their observations, actions, and
-success criteria. This is a task comparison, not a performance ranking.}
-\label{tab:related}
 \end{table}
 
-\section{Source Corpus}
-\subsection{Acquisition and Identity}
-LDraw represents a reference by a part name, color, translation and
-linear transform~\cite{ldraw}. An MPD file may contain nested submodels
-and custom parts. We resolve the complete dependency closure and flatten
-the source hierarchy into part instances while retaining each instance's
-path, source file and line. Three.js LDrawLoader produces the real part
-meshes~\cite{threejs}. A single documented conversion maps LDraw units
-and axes to the viewer's millimeter coordinate frame.
-
-We preserve the original MPD bytes and their SHA256 digest. The website
-provides the unchanged source file, author, license, and source URL.
-The stored scene transform, color and part type are compared with a fresh
-source parse for every instance. Mesh chunks and dependencies have
-separate checksums. Grouping for display has no role in the connector
-ground truth.
-
-\subsection{Selection and Exclusions}
-The preparation inventory contains 43 candidates from the existing
-source catalog and newly acquired OMR files. Of these, 29 complete
-sources were converted. Fourteen were excluded during preparation
-for explicit reasons such as unresolved or unsupported geometry,
-attribution gaps, oversized models, singular transforms, or a mismatch
-between source instances and loader identities. Five additional sources
-were excluded after structural auditing: duplicate placements or
-connector-definition coverage below 90\%. The retained collection
-contains \LDrawSources{} sources from \LDrawSources{} set families.
-The machine-readable release manifest preserves every exclusion reason.
-
-The 90\% threshold limits the amount of unsupported input to graph
-questions. It is not a connectivity or quality score. Unknown parts
-remain in the displayed source and are reported explicitly; they are
-never deleted to raise coverage. A source scene can legitimately contain
-separate objects, such as a vehicle and a figure. We do not invent edges
-between them.
-
-\begin{table}[t]
-\centering\small\input{ldraw-scale.tex}
-\caption{Measured source scale. D1: at most 150 instances;
-D2: 151--400; D3: 401--1,000; D4: more than 1,000.
-These bands do not assert calibrated human or model difficulty.}
-\label{tab:scale}
-\end{table}
-
-\subsection{Diversity Screens}
-Only one primary build is retained per set family. Alternative builds,
-recolors and generated variants do not increase the source count.
-We compute a geometry fingerprint after removing source labels, colors,
-instance ordering and global translation. The retained sources have
-distinct fingerprints.
-
-We additionally report all 276 source-pair comparisons. Inventory
-similarity is a multiset Jaccard coefficient,
+\section{Benchmark Representation}
+\subsection{Source Identity and Numbered Observations}
+An assembly is a collection
 \begin{equation}
-J(A,B)=
-\frac{\sum_p\min(c_A(p),c_B(p))}
-{\sum_p\max(c_A(p),c_B(p))},
+M=\{(b_i,p_i,c_i,T_i,h_i)\}_{i=1}^{n},
 \end{equation}
-where $c_A(p)$ is the number of instances of type $p$ in source $A$.
-The maximum observed value is 0.450, between the large tractor and jet.
-Shared Technic inventories can produce this overlap even for distinct
-objects. A centered, scale-normalized nearest-center shape score is
-also supplied as a candidate screen. It is sensitive to orientation,
-sampling density and shared outlines; neither screen proves statistical
-independence. Human review remains necessary.
+where $b_i$ identifies an instance, $p_i$ is its LDraw part type, $c_i$
+its source color, $T_i$ its source transform, and $h_i$ its hierarchy
+path. Nested MPD submodels are expanded with source file and line
+provenance. Dependency closure and geometry are preserved. A documented
+axis and unit conversion maps LDraw coordinates to the viewer's
+millimeter frame~\cite{ldraw,threejs}.
 
-\section{Structural Evidence}
-\subsection{Connector Matching}
-We apply BrickNet 0.1.0 connector matching to the unchanged source
-placements, including its alias definitions and upstream tolerances.
-The algorithm recognizes stud/hole, fixed, axle, hinge and ball interface
-families. A graph vertex is a numbered source instance; an edge records
-the two connector indices, recognized family, and associated orientation
-or slide parameters. Multiple connector records can link the same pair.
-Graph questions use an undirected simple adjacency relation.
+Let $H$ be the original file's SHA256 digest. The number
+$\ell_i=\texttt{B}\Vert\mathrm{pad}_4(i)$ maps to one instance within
+$H$; $(H,b_i)$ is the complete identity. Numbering does not identify a
+type or describe a role. Thus two identical pins have different
+references even when a language description would be identical.
+Fresh source parsing verifies the stored type, color, transform and
+hierarchy for every instance.
 
-Coverage measures whether a part type has a connector definition.
-Connected components describe the graph that the matcher recognized.
-Neither quantity is the probability that the real assembly is connected.
-Custom flexible pieces, decorative parts and some printed variants
-can lack definitions. Alias matching and tolerances can also miss or
-overstate a contact.
-
-The upstream parser normalizes rotation matrices during connector
-inference. We record its maximum matrix deviation per source. The
-original source matrices remain the rendering ground truth. Inset-mesh
-collision queries use the original alias-transformed matrices, not
-the normalized graph poses.
-
-\subsection{Intersection Candidates}
-Inset collision meshes provide pairwise intersection candidates.
-Intersections at friction pins, gears and other mating geometry are
-not automatically defects. We report both all detected intersections
-and those without a recognized mating interface. The latter total
-\LDrawIntersections{} pairs across retained sources and remain visible
-in the review evidence. We neither suppress them nor move source
-parts to remove them.
-
-This audit does not measure forces, masses, friction, material deformation
-or passive dynamics. An accepted source is an authentic, reproducibly
-imported CAD object, not a certified physical assembly. Resolving the
-remaining candidates requires connector-aware inspection, more complete
-geometry definitions, or physical validation.
-
-\section{Numbered Tasks and Observations}
-\subsection{Instance Grounding}
-Let $M=\{(b_i,p_i,c_i,T_i)\}_{i=1}^n$ denote the source instances:
-$b_i$ is a stable instance ID, $p_i$ a part type, $c_i$ a color, and
-$T_i$ the original pose. The displayed number
-$\ell_i=\texttt{B}\Vert\mathrm{pad}_4(i)$ maps to exactly one $b_i$
-within a source hash. A globally unambiguous reference is therefore
-$(\mathrm{sourceHash},b_i)$.
-
-A question binds every operand to both $b_i$ and $\ell_i$.
-Leader lines anchor numbers at projected geometry centers. A label
-is an identity pointer, not proof that the part is unoccluded.
-The interface provides individual isolation and numbered inventory
-search. Dense tasks show at most twelve labels simultaneously, and every
-operand can be inspected separately. Screenshot export composites the
-same overlay with the model canvas.
+Numbered leader lines connect the relevant IDs to projected geometry.
+Fig.~\ref{fig:numbers} shows an operand-isolation view from set 42004.
+At most twelve labels appear simultaneously; each operand remains
+individually accessible through inventory lookup and isolation.
+Occlusion is not solved by a label alone. The interactive contract
+therefore permits rotation, zoom and isolation, while the static
+contract uses a frozen numbered input. All 140 visual questions have
+an exported operand image. Their public records omit source attributes
+and answers.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/ldraw/print/omr-42004-numbered.jpg}
-\caption{\textbf{Explicit instance references.}
-A visual correspondence question isolates its numbered operands from
-an original Technic source. Labels identify instances even when part
-types repeat. Isolation changes visibility only.}
-\label{fig:numbers}
+\plateid{fig:numbers}
 \end{figure}
 
-\subsection{Task Applicability}
-The release contains eleven families (Table~\ref{tab:families}).
-Tasks are generated only when their required evidence exists.
-Visual type matching requires another instance of the same source
-part type and different-type distractors. Source-step tasks require
-author STEP provenance. An editorial grouping or file-list order never
-substitutes for author instructions.
+\subsection{Typed Structural Evidence}
+The connector audit produces a multiset $R$ of records
+$(b_i,b_j,k_i,k_j,f,\theta)$, where $k_i,k_j$ index connectors, $f$
+is an interface family and $\theta$ contains matching parameters.
+BrickNet 0.1.0 recognizes stud, fixed, axle, hinge and ball families.
+For graph questions we use the simple undirected projection
+\begin{equation}
+E=\{\{b_i,b_j\}:\exists r\in R\text{ linking }b_i,b_j\}.
+\end{equation}
+Repeated connector records do not increase the degree. Unsupported
+definitions remain explicit. Definition coverage measures catalog
+support, while connected components describe the recognized graph;
+neither is a complete physical connectivity score.
+
+Connector inference uses the upstream alias rules and tolerances.
+Its parser normalizes rotation matrices, so we record the maximum
+deviation for each source. Rendering retains the original transforms,
+and inset-mesh queries use the original alias-transformed poses.
+Intersections are candidate evidence: friction-fit and gear geometry
+can intersect an approximation without constituting a defect.
+The release retains \LDrawIntersections{} pairs without recognized
+mating interfaces for further adjudication. No source parts are moved
+to improve these counts.
+
+\subsection{Executable Task Contract}
+A task $q=(H,\mathcal{B},o,f,x,y^\star)$ binds source $H$, numbered
+operands $\mathcal{B}$, observation contract $o$, family $f$, public
+input $x$ and reference output $y^\star$. Model-facing records contain
+the first five fields, with answers stored separately for review.
+Visual, source-data, graph and scene-edit inputs are denoted V, S, G
+and E, respectively.
+
+For scene edits, a state contains facts $F$ and a visible instance set
+$V$. An action $a$ specifies required facts $R_a$, forbidden facts
+$B_a$, additions $A_a$, deletions $D_a$ and cost $c_a$. It is legal if
+$R_a\subseteq F$, $B_a\cap F=\varnothing$, and its cumulative cost
+fits the task budget. Its fact transition is
+\begin{equation}
+F'=(F\setminus D_a)\cup A_a.
+\end{equation}
+The corresponding display transition changes visibility at original
+poses. Unknown actions, repeated completed steps, missing prerequisites
+and budget overruns are rejected. A rejected transition leaves the
+display state unchanged. Goal and prohibited facts define success.
+
+\section{Task Construction}
+\subsection{Functional Families and Applicability}
+Table~\ref{tab:operators} decomposes every family into its operations.
+The four organizational layers are atomic, metacognitive, procedural
+and integrative. They contain 213, 201, 130 and 73 tasks, respectively.
+These labels describe the intended operation, not an experimentally
+calibrated hierarchy of difficulty. In particular, some metacognitive
+items are elementary checks of an explicit evidence statement.
+
+\begin{table*}[t]
+\centering\small
+\caption{Complete task decomposition. Layers: A, atomic; M, metacognitive;
+P, procedural; I, integrative. Inputs: V, visual; S, source data;
+G, connector graph; E, scene edit. Operations describe the actual task
+generator rather than a learned model's hidden reasoning.}
+\label{tab:operators}
+\input{ldraw-operators.tex}
+\end{table*}
+
+The generator samples instances deterministically from each source,
+with a size-dependent cap of two to five targets. It creates tasks only
+when the evidence supports the contract. Type correspondence requires
+another instance of the same source type and different-type distractors.
+Distance questions use geometry bounding-box centers, not mass centers,
+and reject near ties. Connector classification supplies the record's
+family explicitly; its purpose is evidence reading, not visual contact
+inference.
+
+Neighbor questions require the exact set of adjacent candidates.
+Graph-deletion questions remove a vertex and incident edges from the
+supplied local induced graph, then count its connected components.
+Disconnected distractors can contribute to that count. This operation
+does not imply that the selected brick can physically be extracted
+without moving others. Coverage questions identify unsupported
+definitions, and evidence-limit questions ask whether the supplied
+audit establishes gravitational stability. The latter always has the
+semantic answer ``not established by this evidence.''
+
+There are 469 single-choice, 73 multiple-choice and 75 action tasks.
+Options are deterministically shuffled by task identity. This removes
+a fixed construction order but does not balance semantic answers.
+The applicability rules produce unequal counts across families and
+sources; we retain those differences rather than manufacture tasks
+without their prerequisites.
+
+\subsection{Six-Step Worked Example}
+Seventeen sources contain usable author STEP provenance. Expanded
+author steps preserve source hierarchy and ordering; editorial groups
+or file-list positions never substitute for instructions. The
+source-sequence family takes the first usable window of up to six
+steps and encodes predecessor facts. It evaluates following the
+supplied author order, not discovering a new assembly plan.
+
+Fig.~\ref{fig:steps} shows all six states for set 42102 in reading order.
+Table~\ref{tab:steps} lists the newly revealed IDs and state facts. Step
+lookup asks where an instance first appears; step sequence asks for the
+legal ordered program. Color, type and distance families bind numbered
+parts in the source, while graph deletion operates on supplied
+connector evidence. These are different questions about a common
+assembly, not six unmeasured levels of physical difficulty.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=.32\textwidth]{figures/ldraw/print/clean-sequence-1.jpg}
+\includegraphics[width=.32\textwidth]{figures/ldraw/print/clean-sequence-2.jpg}
+\includegraphics[width=.32\textwidth]{figures/ldraw/print/clean-sequence-3.jpg}\\
+\includegraphics[width=.32\textwidth]{figures/ldraw/print/clean-sequence-4.jpg}
+\includegraphics[width=.32\textwidth]{figures/ldraw/print/clean-sequence-5.jpg}
+\includegraphics[width=.32\textwidth]{figures/ldraw/print/clean-sequence-6.jpg}
+\plateid{fig:steps}
+\end{figure*}
 
 \begin{table}[t]
-\centering\small\input{ldraw-families.tex}
-\caption{Actual task applicability in LDraw-1.
-Counts vary by source; there is no universal task template quota.
-Record-classification and evidence-limit questions are basic controls,
-not claims of advanced physical reasoning.}
-\label{tab:families}
+\centering\small
+\caption{Set 42102 source-step trace. Each action also forbids its own
+completed fact and costs one unit; the final goal is \texttt{done-6}.}
+\label{tab:steps}
+\input{ldraw-step-trace.tex}
 \end{table}
 
-Visual tasks include color identification and part-type correspondence.
-Their public records omit part names, color attributes and solutions.
-Each of the \LDrawVisual{} visual questions has a numbered operand image,
-and interactive evaluation can rotate, zoom or isolate the source.
-Coordinate questions explicitly supply geometry bounding-box centers;
-these are not centers of mass.
+Restoration instead hides a target in a display copy and accepts only
+its restoration. For target \texttt{B0094}, the initial, accepted and
+rejected scenes contain 128, 129 and 128 visible instances. The
+supplement shows these states. Neither restoration nor STEP replay
+interpolates an insertion path; no collision-free or force-feasible
+trajectory is implied.
 
-Connector questions classify supplied records, identify all direct
-neighbors, and count components after deleting a numbered vertex from
-an induced local graph. Deletion is a graph operation. It does not mean
-that the corresponding physical brick can be extracted without moving
-its neighbors. Coverage and evidence-limit questions ask what can
-actually be concluded from a partial audit.
+\section{Corpus and Descriptive Analysis}
+\subsection{Acquisition, Scale and Diversity}
+The preparation inventory contains 43 candidates, of which 29 complete
+sources were converted. Fourteen were excluded for recorded preparation
+issues such as unresolved geometry, attribution gaps, size limits,
+singular transforms or loader identity mismatch. Five further sources
+were excluded for duplicate placements or definition coverage below
+90\%. This threshold limits unsupported graph evidence; it is not a
+physical acceptance probability. The remaining \LDrawSources{} sources
+represent \LDrawSources{} set families. Unknown parts remain in their
+original scenes.
 
-\subsection{Source Steps and Scene Edits}
-Seventeen retained sources provide usable author STEP records.
-The viewer replays their cumulative visible instances at the original
-poses. It does not interpolate fictional insertion paths.
-Sources without usable author steps have no replay or source-order
-questions.
+Table~\ref{tab:scale} gives the scale bands. The corpus contains 1,002
+distinct source part-type strings and 49 color codes; these are
+representation vocabularies, not canonical mechanical equivalence
+classes. Source sizes range from 53 to 1,978 instances, with median
+274. Fig.~\ref{fig:distribution} plots the empirical distributions and
+the relation between instance count and type count. Larger scenes do
+not simply repeat one small part inventory.
 
-The restoration family temporarily hides a numbered instance in a
-display copy. A correct action restores that instance at its original
-pose and preserves the remaining visibility. This is an editor task
-with a precise identity target. The source-sequence family reveals a
-short author-step window in order. It evaluates adherence to given
-source instructions, not a newly inferred mechanical assembly order.
-
-\section{Scoring and Review}
-Choice tasks use exact option IDs; set-valued outputs require the exact
-set with no duplicate IDs. Operation tasks use a public transition
-system. Each action has required facts, forbidden facts, additions,
-deletions and cost. The interpreter rejects unknown actions, violated
-preconditions, repeated completed steps and budget overruns. Success
-requires all goal facts and no prohibited facts.
-
-The same interpreter drives the website's operation replay. A rejected
-operation cannot silently update the visual state. Reference solutions
-are available in explicitly labeled review artifacts; model-facing JSON
-excludes them. Because this is a public development corpus, the review
-assets are not a secure hidden test set. Evaluation harnesses must
-provide only the designated inputs and log tool access.
-
-Reviewers mark each task pass or fail. Failure requires a reason.
-Records include source hash, task ID, numbered operands, decision and
-timestamp. Browser storage uses a new LDraw-1 namespace. Export and
-import support batch corrections without overwriting historical human
-feedback. Approval is a reviewer judgment; no automatic validation step
-writes a human pass.
-
-\section{Verification and Evaluation Status}
 \begin{table}[t]
-\centering\small\input{ldraw-controls.tex}
-\caption{Software and choice controls. Reference and invalid-control
-rows test contracts. The precondition solver uses public actions.
-The final two rows use only single-choice tasks. None is an MLLM result.}
+\centering\small
+\caption{Measured scale bands. D1: $\leq150$ instances; D2: 151--400;
+D3: 401--1,000; D4: $>1,000$. Bands measure source size only.}
+\label{tab:scale}
+\input{ldraw-scale.tex}
+\end{table}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{analysis/source-distribution.pdf}
+\plateid{fig:distribution}
+\end{figure*}
+
+We retain one primary build per set family. Geometry fingerprints
+remove labels, colors, instance ordering and global translation;
+all retained fingerprints differ. The 276 source pairs also receive
+an inventory screen,
+\begin{equation}
+J(A,B)=\frac{\sum_p\min(c_A(p),c_B(p))}
+{\sum_p\max(c_A(p),c_B(p))},
+\end{equation}
+where $c_A(p)$ counts occurrences of type $p$. The largest observed
+Jaccard value is 0.450, between the large tractor and jet. A
+centered, scale-normalized nearest-center score supplies an additional
+shape screen. Both are descriptive: shared inventories and orientation
+sensitivity prevent interpreting them as proof of independence.
+
+\subsection{Coverage and Structural Heterogeneity}
+Fig.~\ref{fig:coverage} reports all family-by-band counts. D3 has only
+two sources, whereas D4 has eight; source-order families additionally
+depend on author metadata. Consequently, a pooled score can change
+with source mix even if within-family performance is unchanged.
+Per-family and source-macro reporting are necessary.
+
+Fig.~\ref{fig:connectors} gives within-source connector composition.
+The audit records 34,877 matches: 27,132 stud, 6,976 axle, 411 hinge,
+326 fixed and 32 ball records. Stud interfaces dominate globally, while
+Technic sources contribute more axle and joint evidence. Records can
+repeat a part pair; these counts are not independent contacts and
+do not measure mechanical strength.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{analysis/family-scale.pdf}
+\plateid{fig:coverage}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{analysis/connector-diversity.pdf}
+\plateid{fig:connectors}
+\end{figure}
+
+\subsection{Answer Priors and Elementary Controls}
+Fig.~\ref{fig:priors} compares single-choice priors by family. Across
+469 items, always choosing A yields 26.652\% accuracy; uniform choice
+has expected accuracy 27.342\%, accounting for each item's option
+count. These values should not be generalized to exact-set or action
+outputs. The evidence-limit family has a constant semantic answer,
+so high accuracy there alone provides little evidence of reasoning.
+Graph-deletion answers are also concentrated. Per-family performance
+must therefore accompany any aggregate.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{analysis/answer-priors.pdf}
+\plateid{fig:priors}
+\end{figure*}
+
+Semantic concentration is computed in-sample for shared answer
+vocabularies; instance-valued answers have no cross-source semantic
+majority. It is a diagnostic, not a held-out baseline. No balancing or
+adversarial filtering result is claimed. Future balancing must be
+versioned so that the present questions and measured counts remain
+reproducible.
+
+\section{Evaluation Protocol}
+\subsection{Conditions, Metrics and Reproducibility}
+The proposed primary evaluation uses each task's designated public
+input: V (140 items), S (169), G (233), and E (75). Static and
+interactive visual results must be reported separately. An image-only
+system should not be scored as if it received the graph evidence, and
+a text-only control should not receive answer-bearing visual source
+attributes. Every run must freeze its checkpoint or API revision,
+prompt, decoding settings, image resolution, tool budget, timeout and
+task manifest.
+
+Single-choice success is exact option identity; multiple-choice success
+requires the exact set, with duplicate IDs invalid. Action success
+requires a legal complete execution and the specified goal state.
+Formatting errors, refusals and timeouts remain failures in the
+denominator and receive separate reason codes. Let $s_q\in\{0,1\}$ be
+task success and $Q_m$ the eligible questions for source $m$:
+\begin{align}
+\mathrm{Micro}&=\frac{\sum_q s_q}{|Q|},\\
+\mathrm{Macro}&=\frac{1}{|\mathcal M_Q|}
+ \sum_{m\in\mathcal M_Q}\frac{\sum_{q\in Q_m}s_q}{|Q_m|}.
+\end{align}
+For a restricted modality or family, $\mathcal M_Q$ contains only
+sources with eligible questions. Report exact success, valid-output
+rate and action-goal success separately. A partially correct neighbor
+set may receive secondary set F1, but does not count as exact success.
+
+Tasks within a source are correlated. Proposed confidence intervals
+resample source groups rather than individual questions, using a fixed
+seed and 10,000 bootstrap replicates~\cite{efron1979bootstrap}.
+For trained methods, folds must group all instances, views, questions
+and alternative builds by source set; neighboring source inventories
+require additional leakage inspection. No train/test split or
+confidence interval is presented as already established.
+
+\begin{table}[t]
+\centering\small
+\caption{Measured software and choice controls. Reference checks use
+privileged answers; the action solver uses public preconditions. Rates
+are contract validation or single-choice controls, not MLLM scores.}
 \label{tab:controls}
+\input{ldraw-controls.tex}
 \end{table}
 
-Independent source reparsing reproduces \LDrawParts{} instance records
-across all \LDrawSources{} sources. Checks cover identity, hierarchy,
-part type, color, transforms, dependency closure and mesh checksums.
-All \LDrawTasks{} reference answers are accepted. A public-precondition
-solver satisfies all 75 scene-edit tasks. A total of 1,606 invalid
-choices or action sequences are rejected. Number mappings and visual
-input schemas are checked separately.
+\subsection{Measured Validation}
+Independent parsing reproduces all \LDrawParts{} source instances.
+Checks cover identities, types, colors, transforms, hierarchy,
+dependencies and mesh hashes. All \LDrawTasks{} reference answers pass
+their contracts, all 75 action tasks are solvable from public
+preconditions, and 1,606 invalid controls are rejected
+(Table~\ref{tab:controls}). These checks establish consistency between
+construction and execution. They do not establish perceptual grounding,
+task difficulty or physical truth.
 
-All 24 sources load their full instance count in the browser. Canonical
-perspective, front, side and top renders and numbered example views
-are captured from the same application. Browser tests exercise instance
-isolation, explosion, restoration, author-step playback, review
-persistence, JSON round trips and mobile controls.
+Every source loads its complete instance count in the viewer. Captures
+include four canonical views, numbered operand images and worked
+action frames. Interaction checks exercise isolation, explosion, source
+replay, rejected operations and review persistence. Review records
+bind the source hash, task ID, numbered operands, decision, reason and
+timestamp. A failed review requires a reason; software validation never
+writes a human approval.
 
-These controls are necessary for reproducibility but do not establish
-dataset difficulty or real-world validity. We have not run a new
-language-model or vision-language-model evaluation on LDraw-1, and make
-no comparative model-performance claim. The earlier synthetic pilot
-is excluded entirely.
+\subsection{Planned Model Comparisons and Ablations}
+Table~\ref{tab:models} specifies candidate model families for the main
+comparison. Exact checkpoints and service revisions remain to be
+frozen. All numeric result cells are intentionally empty because no
+learned model has been evaluated on this release. The supplement
+provides per-family, scale, action and resource tables with the same
+missing-result convention.
 
-\paragraph{Proposed evaluation.}
-A future frozen evaluation should separate image-only, interactive
-visual, source-data and graph inputs. It should report exact success,
-format validity, tool usage, and source-macro averages. Splits must
-respect set families and inspect high-similarity source pairs.
-Human audits should report agreement and error categories.
-Instance-number permutation and option-order controls can detect
-shortcuts. These experiments remain proposed, with no filled-in model
-accuracy cells.
+\begin{table}[t]
+\centering\small
+\caption{Proposed learned-model comparison: exact success (\%) on
+designated inputs. V/S/G/E are modality scores; Macro averages sources.
+Candidate families are planning entries, not completed runs.
+All blank result cells mean \emph{not run}.}
+\label{tab:models}
+\input{ldraw-plan-models.tex}
+\end{table}
 
-\section{Limitations and Release Status}
-The corpus is small and has uneven source scales. Several task families
-are deliberately elementary evidence controls. Parts within one source
-are not independent samples, and common LEGO inventories may span
-sources. Familiar commercial sets may occur in model pretraining.
-Public reference artifacts make contamination possible.
+Table~\ref{tab:ablations} isolates access to images, view control,
+numbered isolation and graph evidence. Withholding a required graph is
+an information ablation, not the same task condition. The public action
+solver row in this planned table concerns standardized resource
+logging; its existing contract success is reported separately above.
+Tool-using agents must log observations and calls, including failed
+calls, rather than only their final answers.
 
-Original OMR geometry is stronger evidence than imitation blocks, but
-it is still CAD authored by contributors. Unsupported connectors,
-intersection candidates and source conventions require review.
-Our 90\% coverage threshold is an operational selection rule, not an
-empirically calibrated physical threshold. The source-step order may
-differ from official instruction-book pages or a feasible robot plan.
+\begin{table}[t]
+\centering\small
+\caption{Proposed information and tool ablations. Acc.\ and Valid
+are percentages; Calls is mean tool calls per task. Each comparison
+uses a frozen model and its eligible subset. Cells are unrun.}
+\label{tab:ablations}
+\input{ldraw-plan-ablations.tex}
+\end{table}
 
-LDraw-1 is therefore a source-faithful review release. Its current
-contribution is a verifiable object-and-question interface with explicit
-limits. Claims about stability, forces, coupled motion, insertion or
-extraction will require additional evidence before becoming benchmark
-ground truth.
+Robustness tests permute IDs consistently across operands, overlays,
+evidence and scoring, or permute option order while preserving semantic
+answers. Camera changes test visual sensitivity. Color changes apply
+only to type-correspondence questions that explicitly ignore color,
+and remain evaluation copies of fixed sources. Equivalent edge-order
+changes test serialization sensitivity. Paired consistency measures
+agreement after mapping outputs back to canonical identities; correct
+agreement and consistently wrong answers must be distinguished.
+
+Human review should separately assess ID legibility, visual answer
+ambiguity, source attribution, graph semantics and intersection
+candidates. Independent dual review, agreement and adjudication counts
+are proposed, with no human-pass rate yet available. Physical validation
+requires additional assumptions about materials, contact and loads;
+its results must remain separate from question accuracy.
+
+\section{Discussion and Limitations}
+LDraw-1 exposes a useful distinction between object authenticity,
+evidence completeness and answer correctness. Preserving a real source
+prevents arbitrary geometric edits from silently changing the question,
+but does not prove that contributor-authored CAD is physically valid.
+The 573 unresolved intersection candidates, unsupported definitions and
+inference tolerances remain material limitations. Source scenes can
+also contain several legitimate independent objects.
+
+The corpus is small and uneven. Several families are evidence-reading
+controls, and the public-action solver's perfect contract success shows
+that these action tasks do not demand discovering mechanical plans.
+Original part-type strings can distinguish visually near-identical
+variants; ambiguous correspondence items require human adjudication.
+D1--D4 encode size, not measured cognitive difficulty.
+
+Commercial sets may be familiar from pretraining. Public review
+artifacts include answers, so the development website is not a hidden
+test server. Evaluation must restrict models to designated inputs and
+audit tool access. Earlier synthetic-release model pilots and physical
+claims are excluded from this release.
+
+\section{Conclusion}
+BrickAtlas LDraw-1 provides a common identity and evidence interface for
+visual, structural and procedural questions over original assemblies.
+Its current contribution is a reproducible corpus and executable
+evaluation specification, supported by measured source statistics and
+software controls. The unfilled model and validation tables identify
+the empirical work needed before claiming model rankings, calibrated
+difficulty or physical reliability.
 
 \bibliographystyle{ieeenat_fullname}
 \bibliography{references}

@@ -1,105 +1,392 @@
 \documentclass[10pt,letterpaper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[margin=.75in]{geometry}
-\usepackage{graphicx,booktabs,tabularx,microtype}
+\usepackage{graphicx,booktabs,tabularx,microtype,amsmath}
 \usepackage[breaklinks,colorlinks,allcolors=blue]{hyperref}
-\title{BrickAtlas LDraw-1: Source and Question Supplement}
+\title{BrickAtlas LDraw-1: Data, Task Contracts and Evaluation Supplement}
 \author{Development Manuscript}
 \date{}
 \begin{document}
 \input{ldraw-results.tex}
 \maketitle
-\section{Version and Scope}
-This supplement accompanies the LDraw-1 replacement release:
-\LDrawSources{} original sources, \LDrawParts{} part instances and
-\LDrawTasks{} tasks. It contains source attribution, actual four-view
-renders, numbered example inputs, all English question prompts and
-reference outputs. Full options and public evidence tables are provided
-in the versioned JSON. No old synthetic model, physical pass or model
-pilot is pooled into these counts.
 
-The original MPD files, colors, poses and dependency geometry are
-preserved. Temporary visibility edits apply only to a display copy.
-All source candidates and exclusion reasons appear in
-\texttt{benchmark/ldraw-v1/release.json}. Per-source audits retain
-unsupported instances and intersection candidates. The release is
-intended for review; it does not certify physical stability.
+\section{Reading Guide and Release Scope}
+This supplement accompanies a benchmark development draft with
+\LDrawSources{} original OMR sources, \LDrawParts{} part instances and
+\LDrawTasks{} tasks. Sections 2--4 expand the task and replay semantics.
+Sections 5--7 specify unrun experiments and their result tables.
+Subsequent source dossiers provide attribution, source locks, four
+canonical 3D views, a numbered input example, every English prompt,
+all choice options, compact input evidence and reference outputs.
+The answer-bearing dossiers are review material, not model input.
 
-\section{How to Read the Task Contracts}
-A displayed number such as \texttt{B0001} identifies one source
-instance. The same number appears in the task, interactive view and
-exported numbered image. A complete identity includes the source hash
-and instance ID. Repeated types are distinct instances.
+All brick images are actual application renders. Presentation plates
+contain only 3D geometry, except for necessary B-number identity labels
+in numbered inputs. Explanations and step mappings appear in prose and
+tables. Original model colors, poses and dependency geometry are
+unchanged. Temporary visibility edits affect a display copy.
 
-\begin{center}\small\input{ldraw-families.tex}\end{center}
+The earlier synthetic release was retired after human inspection found
+disconnected imitation geometry, repetitive layouts and ambiguous
+module names. Its pilot model scores and nominal physical passes do
+not transfer to LDraw-1. The current source manifest records every
+candidate and exclusion; original data and human feedback remain
+separate from the active release.
 
-Visual tasks provide numbered images without answer-bearing source
-attributes. Source-data tasks explicitly provide coordinates, coverage
-or author-step records. Graph tasks reason about identified connector
-evidence. Scene-edit tasks execute public preconditions and preserve
-source poses. All JSON output keys are in English.
+\section{Evidence and Identity}
+\subsection{Grounding Contract}
+A complete part reference comprises source hash and instance ID; a
+display number such as \texttt{B0001} identifies exactly one instance
+within that source. Repeated types receive distinct IDs. Questions,
+overlays, isolation, public evidence and review records use the same
+mapping. Numbered images show relevant operands rather than assigning
+a vague role such as ``support'' to a brick.
 
-\section{Audit Interpretation}
+Visual inputs contain a numbered operand image and public observation
+permissions. They do not include source part names, color attributes,
+reference answers or private evidence details. Source-data and graph
+questions explicitly supply the data they require. The review website
+also exposes source attributes for human inspection; that interface is
+not a secure model-evaluation sandbox.
+
+\subsection{Connector and Intersection Interpretation}
 Coverage is the fraction of instances whose types have a connector
-definition. It is not the fraction that is physically connected.
-Components belong to a partial recognized graph. A source scene can
-contain several independent objects. The absence of a recognized edge
-is not proof of a floating part.
+definition, not the fraction physically connected. Recognized graph
+components can be incomplete, and one source can legitimately contain
+multiple separate objects. Parallel raw connector records become one
+undirected pair when computing adjacency and connected components.
+Graph questions never infer missing edges from visual proximity.
 
-The inset-mesh audit reports \LDrawIntersections{} intersection candidates
-without a recognized mating interface. They remain unresolved review
-items. Friction-fit geometry and gears can legitimately intersect a
-mesh approximation. Connector inference normalizes rotations under
-the upstream BrickNet implementation; rendering and collision queries
-preserve original poses. No source is moved to improve an audit score.
+The audit retains \LDrawIntersections{} mesh-intersection candidates
+without recognized mating interfaces. Friction fits, pins and gears
+can overlap inset-mesh approximations. These pairs have not been
+adjudicated as physical defects. The public audit retains unsupported
+parts, mesh availability, duplicate placement checks and graph-pose
+normalization deviations. Original matrices remain the rendering
+ground truth. No material, mass, friction, gravity or deformation
+experiment has been completed for this release.
 
-\section{Reproduction and Review}
-Run the acquisition and preparation scripts only when rebuilding source
-assets. The retained-source corpus, questions and website bundles are
-generated by \texttt{benchmark/suite/ldraw/release.ts}.
-The independent verifier reparses MPD sources using locked dependency
-files. Browser capture scripts produce real model views and numbered
-visual inputs. The paper generator derives counts and tables from these
-release artifacts.
+\section{Full Functional Taxonomy}
+\begin{center}\small\input{ldraw-operators.tex}\end{center}
+Layer codes A/M/P/I denote atomic, metacognitive, procedural and
+integrative organization. Input codes V/S/G/E denote visual, source
+data, connector graph and scene edit. Counts describe the frozen
+release and are not equal quotas. Source scale is separate from
+question family and operation depth.
 
-Reference solutions are supplied for reviewer inspection. Public model
-inputs exclude solutions; however, the development website exposes
-review files and is not a hidden test server. An evaluation harness must
-restrict its observations and record all tool access.
-Failure decisions require a written reason. New review records use
-separate storage and preserve old human feedback. Original authors and
-licenses are included on each source page below.
+\subsection{Choice and Set Outputs}
+Color questions use original LDraw color names as choices. Type
+correspondence asks for equality of the source type string after
+ignoring color and pose. A printed variant may therefore differ from
+an otherwise similar shape; visually ambiguous cases require review.
+Distance choices are selected using Euclidean distance between supplied
+geometry bounding-box centers. These centers are not centers of mass.
+
+Interface classification reads the family already present in a
+connector record. Neighbors returns the exact set of candidate
+instances linked to the target. Graph deletion takes the supplied node
+set, removes the target and incident edges, and counts remaining
+components, including isolated distractor nodes. Missing definitions
+mean unknown support, not proof of a floating part.
+
+Single-choice outputs use \texttt{choiceId}. Multiple-choice outputs
+use \texttt{choiceIds}; order is ignored but duplicates are invalid.
+An unknown option or extra member fails exact evaluation. A reference
+answer is accepted only by the corresponding task contract.
+
+\subsection{Action Semantics}
+Action outputs use \texttt{actionIds}. Legal execution requires every
+required fact, no forbidden fact and sufficient remaining cost budget.
+Each transition removes its deletion facts and inserts its addition
+facts. Success requires all goal facts and none of the prohibited
+facts. Unknown actions, illegal preconditions, repeats and over-budget
+sequences fail. Display state follows the accepted execution prefix;
+rejection cannot silently perform an edit.
+
+In a source window, action \texttt{step-k} requires the preceding
+completion fact (or \texttt{start} for the first action), forbids its
+own completion fact, and adds that fact for unit cost. Visible
+instances are the union of completed source-window steps. Restoration
+requires the missing fact for its target, deletes that fact, adds its
+present fact and reveals the original instance for unit cost. A
+distractor restoration lacks its missing precondition.
 
 \clearpage
 \section{Worked Source Replay and Restoration}
-The examples below use original set 42102. The source-sequence task
-reveals the first six author steps without moving any source instance.
-At the three checkpoints, only the cumulative source-step instances
-are visible. Numbers identify the currently visible operands.
+\subsection{All Six Author Steps}
+Set 42102 contains 129 source instances. The six panels below show
+the first source window after actions 1--6, in reading order. A fixed
+camera is used during capture; print derivatives crop and pad empty
+background. All parts retain their original pose. The table identifies
+each addition and its fact transition.
 \begin{center}
-\includegraphics[width=.32\linewidth]{figures/ldraw/print/sequence-1.jpg}
-\includegraphics[width=.32\linewidth]{figures/ldraw/print/sequence-3.jpg}
-\includegraphics[width=.32\linewidth]{figures/ldraw/print/sequence-6.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/clean-sequence-1.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/clean-sequence-2.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/clean-sequence-3.jpg}\\
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/clean-sequence-4.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/clean-sequence-5.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/clean-sequence-6.jpg}
 \end{center}
-Left to right: after actions 1, 3 and 6. Action prerequisites encode the
-provided instruction order, not mechanical insertion conditions.
+\begin{table}[h]
+\centering
+\caption{Executable six-action trace. The action budget is six and
+the final goal is \texttt{done-6}. No insertion trajectory is specified.}
+\input{ldraw-step-trace.tex}
+\end{table}
 
-\subsection{Correct and Rejected Visibility Edits}
-The restoration task hides one numbered source instance.
-The accepted operation restores that instance at its original pose.
-An unknown action is rejected and leaves the display copy incomplete.
-These are editor transitions; no physical repair path is claimed.
+\begin{table}[h]
+\centering\small
+\caption{How the same source supports distinct question operations.
+The sequence does not impose a six-level difficulty hierarchy.}
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+Family & Relation to the source and replay\\\midrule
+Color / part type & Bind a numbered source instance and inspect its original appearance.\\
+Distance & Compare provided geometry centers for numbered source candidates.\\
+Interface / neighbors & Query recognized connector evidence for numbered parts.\\
+Graph deletion & Delete a target from the supplied local graph; do not change the CAD source.\\
+Step lookup & Find the expanded source step where a selected instance appears.\\
+Step sequence & Execute the six given source-window steps in predecessor order.\\
+Restoration & Restore a hidden source instance; this is independent of STEP ordering.\\
+Evidence controls & State what coverage and geometric audits can establish.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\clearpage
+\subsection{Accepted and Rejected Restoration}
+The following panels show the same source with \texttt{B0094}
+temporarily hidden, restored by its valid action, and still hidden
+after an unknown action is rejected. Visible counts are 128, 129 and
+128, respectively. The camera focuses the target's region and stays
+fixed across the three states. No geometry is moved.
 \begin{center}
-\includegraphics[width=.32\linewidth]{figures/ldraw/print/restore-before.jpg}
-\includegraphics[width=.32\linewidth]{figures/ldraw/print/restore-after.jpg}
-\includegraphics[width=.32\linewidth]{figures/ldraw/print/restore-invalid.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/clean-restore-before.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/clean-restore-after.jpg}
+\includegraphics[width=.32\linewidth]{figures/ldraw/print/clean-restore-invalid.jpg}
 \end{center}
-Left to right: missing instance, accepted restoration, rejected unknown
-action. The captured visibility counts are 128, 129 and 128.
-All transforms remain equal to their source values throughout.
-The complete action definitions, reference outputs, frame checksums and
-visibility snapshots are in the source bundle and
-\texttt{worked-renders.json}.
+
+\begin{table}[h]
+\centering\small
+\caption{Restoration transition contract for the worked target. Source
+instance \texttt{brick\_000094} is displayed as \texttt{B0094}.}
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+Field & Value or rule\\\midrule
+Target & \texttt{B0094}; all other source instances remain visible.\\
+Accepted action & \texttt{restore-B0094}, requiring the target's missing fact.\\
+Fact update & Delete missing-target; add present-target; preserve distractor presence.\\
+Visibility update & Reveal the target at its original source transform.\\
+Budget & One action of unit cost.\\
+Rejected control & \texttt{unknown}; no matching public action, so no state update.\\
+Success & Target present, distractor present, target missing fact absent.\\
+Out of scope & A collision-free insertion, contact force or stability proof.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The file \path{publication-renders.json} records the new captures.
+It includes task IDs, source hash, visibility snapshots and image checksums.
+Earlier numbered checkpoints remain in \path{worked-renders.json}.
+Original pixels are retained alongside all print derivatives.
+
+\section{Evaluation Design and Missing-Result Convention}
+Every blank numeric cell in the following tables means \emph{not run}.
+The machine-readable \texttt{ldraw-experiments.json} stores these values
+as null. Empty cells are neither zeros nor unavailable successful
+results. There are no learned-model or human measurements to aggregate.
+Candidate families are planning entries; exact checkpoint revisions,
+API model identifiers, prompts, decoding and tools must be frozen
+before execution.
+
+\subsection{Run Configuration}
+Each run record should include dataset and source hashes, model
+identifier, prompt hash, decoding parameters, seed when supported,
+input image dimensions, observation condition, tool permissions,
+call budget, timeout, hardware or API backend, and timestamp.
+Question-level receipts should retain response text, parsed output,
+validity, exact success, failure category, tool calls, action trace,
+latency, token counts and billed cost when available. Retries and
+failures remain visible in these receipts.
+
+The primary condition supplies each task's designated public input.
+Static V tasks use the frozen numbered image. Interactive V adds
+declared camera and isolation tools. S, G and E receive their public
+structured evidence. Withholding evidence is an explicit ablation.
+No model receives review answers or source color/type fields for V.
+
+\subsection{Aggregation and Split Policy}
+Micro accuracy weights tasks equally. Source-macro accuracy first
+averages eligible tasks within each source, then averages sources with
+at least one eligible task. Per-family and per-modality scores use the
+same eligibility convention. Set F1 is secondary to exact neighbor-set
+success. Action-format validity, legal execution and goal success are
+reported separately.
+
+Proposed 95\% intervals use 10,000 source-cluster bootstrap replicates
+and a published seed. A paired comparison resamples the same sources
+for both conditions. The source corpus has only 24 clusters, including
+two D3 sources, so scale-specific uncertainty needs explicit caveats.
+Repeated decoding should be reported within source rather than treated
+as additional independent scenes.
+
+Any training protocol must freeze grouped folds before fitting models.
+All views, tasks, numbered permutations and alternative builds of a set
+stay together. Inventory-neighbor inspection supplements the set-family
+rule. This draft does not claim a finalized training split or
+uncontaminated test set.
+
+\clearpage
+\section{Unrun Model and Diagnostic Tables}
+\begin{table}[h]
+\centering\small
+\caption{Planned exact success (\%) by candidate family and input.
+V: 140; S: 169; G: 233; E: 75. Micro and Macro follow the main protocol.}
+\input{ldraw-plan-models.tex}
+\end{table}
+
+\begin{table}[h]
+\centering\small
+\caption{Planned per-family exact success (\%). Column abbreviations:
+SmolVLM, Qwen3-VL, Llama 4, GPT-4.1, Gemini and Claude.
+The $N$ column is measured dataset size; all score columns are empty.}
+\input{ldraw-plan-families.tex}
+\end{table}
+
+\begin{table}[h]
+\centering\small
+\caption{Planned source-scale exact success (\%) and overall source-macro
+95\% confidence interval. Scale bands do not assert human difficulty.}
+\input{ldraw-plan-scale.tex}
+\end{table}
+
+\begin{table}[h]
+\centering\small
+\caption{Planned action-task evaluation on 75 tasks. Valid: well-formed
+output; Goal: legal execution reaching the goal. Cost and Steps are
+means over successful tasks, accompanied by the success denominator.}
+\input{ldraw-plan-actions.tex}
+\end{table}
+
+\clearpage
+\subsection{Information and Tool Ablations}
+Hold the model, prompts outside the changed condition and eligible
+questions fixed. Static, camera-control and isolation conditions use
+the same 140 visual items. A text-without-image control retains the
+prompt, numbered candidates and options; it tests priors without
+visual evidence. Graph withholding removes supplied edges for the
+233 graph items and is not comparable to the primary contract without
+explicit qualification.
+
+\begin{table}[h]
+\centering\small
+\caption{Unrun ablations. Acc.\ and Valid are percentages; Calls is
+mean tool calls across eligible tasks. The public solver's separately
+verified goal success does not fill unmeasured resource-log cells.}
+\input{ldraw-plan-ablations.tex}
+\end{table}
+
+\subsection{Paired Robustness}
+An ID permutation is a bijection applied consistently to public
+references, visible labels, graph endpoints, action names and scorer
+mapping. Choice permutations preserve semantic answers. Camera
+perturbations preserve the source geometry and task identity, while
+color nuisance applies only to the 67 type-correspondence tasks that
+explicitly ignore color. Evaluation copies do not overwrite source
+files. Equivalent edge ordering preserves the same simple graph.
+
+\begin{table}[h]
+\centering\small
+\caption{Unrun paired robustness. Base and Changed are exact success
+(\%); Consist.\ is mapped-output agreement (\%). Agreement alone can
+include two wrong answers, so correct paired agreement must also be
+retained in run receipts. Pool sizes are known; scores are unmeasured.}
+\input{ldraw-plan-robustness.tex}
+\end{table}
+
+\subsection{Efficiency}
+Token counts should include input and output separately in receipts.
+Calls include unsuccessful tool/API calls; latency is end-to-end
+per task including allowed retries. The p50 and p95 summarize the same
+eligible pool. Report model-loading costs separately for local models.
+USD denotes actual billed inference cost; local energy or hardware cost
+requires a separately declared accounting rule.
+
+\begin{table}[h]
+\centering\small
+\caption{Unrun resource measurements. Tokens, Calls and USD are means
+per eligible task; latency quantiles are seconds. Unbilled or untracked
+quantities must not be filled with an assumed zero.}
+\input{ldraw-plan-resources.tex}
+\end{table}
+
+\clearpage
+\section{Human and Physical Validation Plan}
+\subsection{Human Review}
+The proposed procedure uses two independent reviewers per sampled
+item, with source-stratified coverage and adjudication of disagreements.
+Report the sampling rule, reviewed denominator, pass criteria, raw
+agreement and an appropriate chance-adjusted statistic. A pass must
+distinguish readable grounding from correct semantics. Ambiguous
+visual equivalence, occluded leader lines, faulty distractors and
+unsupported physical language receive separate reason codes.
+
+The review application stores source hash, task ID, numbered operands,
+pass/fail, reason and timestamp. Failure requires a written explanation.
+Export and import support batch correction without changing historical
+feedback. No automated contract check is counted as human acceptance.
+
+\begin{table}[h]
+\centering\small
+\caption{Unrun human assessment. Pool sizes are known.
+Reviewed is a count; Pass and Agree are percentages over declared
+denominators; Time is median seconds per reviewed unit.}
+\input{ldraw-plan-human.tex}
+\end{table}
+
+\subsection{Physical Evidence}
+Connector-aware inspection should categorize each intersection
+candidate as intended mating, a mesh approximation issue, a source
+problem or unresolved. The procedure must retain inspected pair IDs,
+part definitions and evidence images. Unsupported connector parts need
+their own denominator and adjudication. A rejected candidate may
+require source exclusion or revised evidence; silently moving a source
+part is not an admissible correction.
+
+Insertion/extraction studies require start and goal configurations,
+collision geometry and allowed neighboring motion. Dynamics studies
+add mass, friction, contact, material and boundary conditions.
+Physical assembly tests must specify parts, loads and measurement
+procedures. These extensions are not already benchmark ground truth.
+
+\begin{table}[h]
+\centering\small
+\caption{Unrun physical validation. Each row requires a declared unit
+(pair, part, operation or assembly), sampling policy and acceptance
+criterion. Counts cannot be pooled across procedures.}
+\input{ldraw-plan-physical.tex}
+\end{table}
+
+\section{Reproduction and Audit Trail}
+The release generator and independent source verifier bind questions
+to unchanged MPD files and dependency locks. The publication generator
+derives statistics, CSV tables and four vector Matplotlib plots from
+the same bundles. It records input and output hashes. Descriptive
+plots show measured source properties and choice priors; no performance
+curve is inferred from an empty experimental cell.
+
+Build commands and exact Python requirements accompany the manuscript.
+PDF checks reject CJK text, unresolved references, overfull boxes,
+out-of-page words, untracked raster images and captions inside brick
+figure environments. Main content remains within the eight-page CVPR
+budget. The source package includes the manuscript, figures, numerical
+plot data and null-valued experiment specification.
+
+The following dossiers summarize repeated connector pairs as unique
+undirected edges for readability, matching graph-question semantics.
+Full raw records, source-step provenance and action fact lists remain
+in the versioned JSON. These human-readable summaries do not alter
+task inputs or reference outputs.
 
 \input{ldraw-cases.tex}
 \end{document}

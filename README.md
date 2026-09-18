@@ -38,6 +38,10 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
   synthetic benchmark is retired; remaining connector/intersection evidence
   is explicit. [Paper](benchmark/paper/main.pdf) and
   [complete appendix](benchmark/paper/supplement.pdf) are synchronized with the release.
+  The CVPR-format draft includes eleven functional task decompositions,
+  six-step real 3D replay, four vector statistical plots and nine proposed
+  experiment tables. All 258 unrun result cells remain blank; no learned-model
+  or physical-validation result is invented.
 - Browse 15 traceable models with high-resolution, physically based 3D rendering.
 - Rotate, zoom, pan, switch views, auto-rotate, and inspect exploded assemblies.
 - Select any brick to view its part number, color, dimensions, subassembly, and 3D shape.
