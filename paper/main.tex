@@ -12,7 +12,20 @@
 with Paired LDraw Observations}
 \author{Anonymous submission}
 \begin{document}
+\twocolumn[{
+\renewcommand{\twocolumn}[1][]{#1}
 \maketitle
+\centering
+\includegraphics[width=\textwidth]{figures/source-overview.pdf}
+\captionof{figure}{Real source assemblies across D1--D4 scale bands:
+two examples per band, retaining original LDraw geometry and poses.
+Source IDs and part counts connect each render to the released catalog.
+These assemblies provide provenance; the primary requests use the
+operand views in Figures~\ref{fig:color-gt} and~\ref{fig:pairs}.
+The supplement depicts all 24 sources.}
+\label{fig:sources}
+\vspace{12pt}
+}]
 \raggedbottom
 \makeatletter
 \setlength{\@dblfptop}{0pt}
@@ -71,7 +84,7 @@ available to the evaluator. Every endpoint has a fixed question,
 option list, image, gold answer, and provenance record.
 
 The primary benchmark has two complementary visual families
-(Figure~\ref{fig:pairs}). \textbf{Color} asks about the currently
+(Figures~\ref{fig:color-gt} and~\ref{fig:pairs}). \textbf{Color} asks about the currently
 rendered color of a single labeled part. Its paired intervention
 changes appearance while keeping geometry and pose fixed.
 \textbf{Part-type} asks which labeled candidate matches a target's
@@ -79,21 +92,6 @@ visible geometry. The target stays fixed while two candidate labels
 exchange referents. This tests geometry matching together with
 selection of the correct current label. We report the two families
 separately because their visual requirements differ.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=.83\textwidth]{figures/paired-observations.pdf}
-\caption{Actual paired observations from OMR 42004. Top: the current
-color of B0035 changes from Blue to Red; geometry, pose and camera
-remain fixed. Bottom: B0035 remains the target, while candidate
-labels B0036 and B0116 exchange referents; the matching geometry
-therefore receives a different answer token. Identical within-family
-crops and gold annotations are used only in the paper; the lower
-crop omits the remote swapped candidate. Models receive the full
-1280$\times$800 images and the complete current-display questions.
-These are stimulus examples, not observed model responses.}
-\label{fig:pairs}
-\end{figure*}
 
 The evaluation connects three questions. First, is the answer
 well defined in the exact observation? Second, can declared shallow
@@ -227,6 +225,31 @@ review; the present visual benchmark does not resolve those judgments.
 
 \section{Construction and Qualification}
 \subsection{Controlled visual changes}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/color-question-gt.pdf}
+\caption{Color question and ground truth from the released dataset.
+The question and four options are identical across independent A/B
+requests; the GT changes from D (Blue) to C (Red). The source record
+remains Black. Empty margins are cropped identically for publication;
+all operand pixels and labels are retained. GT annotations are outside
+model input. The shared reference contract appears in the supplement.}
+\label{fig:color-gt}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/type-question-gt.pdf}
+\caption{Part-type question, all candidates and exact GT JSON.
+B0035 is the fixed target. The matching source instance is labeled
+B0036 in A and B0116 in B, changing choice C to D.
+The common crop retains the remote candidate involved in the swap;
+no operand is moved or omitted. Parts are shown at source poses with
+surrounding assembly omitted. Record-level GT is audited against
+part types; human visual answerability remains pending.}
+\label{fig:pairs}
+\end{figure*}
+
 \paragraph{Color.}
 Each of 73 pairs renders one operand and one label. Only the body-color
 parameter changes between two distinct named opaque colors; geometry,
@@ -329,6 +352,13 @@ answers and invalid B output partition the B outcomes. Retention is
 an observed answer pattern, not evidence of an internal memory mechanism.
 We report valid A, valid B and valid-both rates alongside semantic
 metrics. Stable invalid strings do not count as semantic consistency.
+
+Figures~\ref{fig:color-gt} and~\ref{fig:pairs} make the scoring
+contract concrete. Color's GT token pair is $(D,C)$; Part-type's
+is $(C,D)$. For either example, only matching both tokens earns
+Both=1. Returning the A gold on B instead contributes to old-gold
+retention. These statements define the scorer; no displayed GT is
+a claimed model response.
 
 \subsection{Aggregation and uncertainty}
 For outcome $z_{si}$ from pair $i$ of source $s$, the primary estimator is
@@ -468,6 +498,18 @@ All measured entries remain empty.}
 \end{table*}
 
 \subsection{Text-graph reasoning and algorithmic controls}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/graph-question-gt.pdf}
+\caption{An actual strong graph pair with exact question and GT.
+The diagram visualizes the supplied edge lists after deleting B0024:
+one six-cycle versus two triangles. All six surviving node IDs and
+six edges are shown. Equal degree statistics coexist with different
+component-count answers. The model receives text edge lists;
+this explanatory drawing does not assert physical connections.}
+\label{fig:graph-gt}
+\end{figure*}
+
 The supporting task asks for the number of connected components
 after deleting a named node from an explicit undirected graph,
 counting isolated survivors. The natural inventory has 73 questions.
@@ -480,6 +522,8 @@ count. They compare a six-cycle with two triangles, plus identical
 isolates. The other 61 pairs across 23 sources are degree-visible
 controls. Their invariance partners are reported separately.
 These hypothetical edge lists are not newly inferred physical connections.
+Figure~\ref{fig:graph-gt} shows a complete strong example and its
+independently recomputed component-count GT.
 
 Deterministic audits already establish the relevance of this partition.
 An isolates-plus-one heuristic solves 72/73 natural questions and

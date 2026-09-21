@@ -19,6 +19,73 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def visual_evidence(manifest):
+    evidence = load(HERE / "visual-evidence.json")
+    def check_records(value):
+        if isinstance(value, dict):
+            if "file" in value and "sha256" in value:
+                assert sha(ROOT / value["file"]) == value["sha256"], value["file"]
+            for child in value.values():
+                check_records(child)
+        elif isinstance(value, list):
+            for child in value:
+                check_records(child)
+    check_records(evidence)
+    figures = {f["figure"]: f for f in evidence["figures"]}
+    assert len(figures) == 7
+    catalog = load(ROOT / "benchmark/ldraw-v2/catalog.json")
+    assert {s["source_id"] for s in figures["source-atlas"]["sources"]} == {m["id"] for m in catalog}
+    obs = {o["observation_id"]: o for o in manifest["observations"]}
+    checked = set()
+    for figure in evidence["figures"]:
+        assert figure["model_responses"] is None
+        pdf_path = next(o["file"] for o in figure["outputs"] if o["file"].endswith(".pdf"))
+        pdf = fitz.open(ROOT / pdf_path)
+        assert len(pdf) == 1
+        text = pdf[0].get_text()
+        assert not re.search(r"[\u4e00-\u9fff]", text), pdf_path
+        compact = "".join(text.split())
+        for source in figure["sources"]:
+            oid = source.get("observation_id")
+            if oid not in obs:
+                continue
+            o = obs[oid]
+            assert source["payload"] == o["payload"] and source["gold"] == o["gold"], oid
+            assert "".join(o["payload"]["question"].split()) in compact, oid
+            for option in o["payload"]["options"]:
+                assert "".join(f"{option['id']}: {option['label']}".split()) in compact, oid
+            assert json.dumps(o["gold"], separators=(",", ":")) in compact, oid
+            bundle = load(ROOT / f"public/benchmark/ldraw-v2/models/{o['source_id']}.json")
+            parts = {p["id"]: p for p in bundle["parts"]}
+            if o["family"] == "color":
+                assert o["render_spec"]["body_color"]["name"] == o["gold_semantics"]
+            else:
+                target_type = parts[o["canonical_target"]["instance_id"]]["partNumber"]
+                candidates = o["render_spec"].get("candidate_ids")
+                if candidates is None:
+                    candidates = [o["display_referents"][x["label"]]["instance_id"]
+                                  for x in o["payload"]["options"]]
+                matching = [i for i, candidate in enumerate(candidates)
+                            if parts[candidate]["partNumber"] == target_type]
+                assert len(matching) == 1
+                assert o["payload"]["options"][matching[0]]["id"] == o["gold"]["choiceId"], oid
+            checked.add(oid)
+    assert len(checked) == 13
+    graph_sources = figures["graph-question-gt"]["sources"]
+    for source in graph_sources:
+        # Independent union-find reconstruction of component-count GT.
+        parent = {node: node for node in source["surviving_nodes"]}
+        def find(node):
+            while parent[node] != node:
+                node = parent[node]
+            return node
+        for a, b in source["surviving_edges"]:
+            parent[find(a)] = find(b)
+        assert len({find(n) for n in parent}) == source["gold"]
+    return {"new_figures": 7, "source_assemblies_shown": 24,
+            "verified_visual_examples": len(checked), "verified_graph_examples": len(graph_sources)}
+
+
 def main():
     config = load(HERE / "experiments.json")
     budget = load(ROOT / config["model_source"])
@@ -47,6 +114,7 @@ def main():
     assert sum(p["family"] == "color" for p in manifest["pairs"]) == 73
     assert sum(p["family"] == "shape-match" for p in manifest["pairs"]) == 67
     assert len(index["observations"]) == 347
+    figures = visual_evidence(manifest)
     bibliography = (HERE / "references.bib").read_text()
     keys = set(re.findall(r"@\w+\{([^,]+),", bibliography))
     documents = {}
@@ -70,15 +138,18 @@ def main():
         text = "\n".join(pages)
         assert "??" not in text, f"{stem}: unresolved reference"
         if stem == "main":
+            assert len(pdf[0].get_images()) >= 8, "First-page source figure missing"
             for phrase in ["GPT-6 Astra", "Qwen3.5-27B", "DeepSeek-R1", "Planned Experiments",
-                           "NewAcc", "Old-gold", "Part-type", "306"]:
-                if phrase != "306":
-                    assert phrase in text, phrase
+                           "NewAcc", "Old-gold", "Part-type", "B0035", "B0116",
+                           "ld2-10014-graph-removal-2"]:
+                assert phrase in text, phrase
         documents[stem] = {"pages": len(pdf), "sha256": sha(HERE / f"{stem}.pdf"),
-                           "text_characters": len(text)}
+                           "text_characters": len(text),
+                           "figure_count": len(re.findall(r"\\includegraphics", source)),
+                           "embedded_raster_images": sum(len(page.get_images()) for page in pdf)}
     result = {"status": "passed", "models": 15, "visual_models": 13, "text_models": 2,
               "empty_result_cells": cells, "primary_pairs": 140, "visual_observations": 347,
-              "documents": documents, "human_or_model_collection_performed": False}
+              "figures": figures, "documents": documents, "human_or_model_collection_performed": False}
     (HERE / "verification.json").write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2))
 

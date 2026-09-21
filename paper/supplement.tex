@@ -31,6 +31,10 @@ Only 140 parents contribute primary visual pairs: 73 Color and
 67 Part-type. Table~\ref{tab:sources} lists their source coverage.
 Table~\ref{tab:scale} groups the historical resource by assembly scale.
 The scale bands are not validated cognitive-difficulty levels.
+Figure~\ref{fig:source-atlas} presents every source using the
+original full-assembly renders, with source ID, scale band and part
+count. Together with the main-paper examples, it separates the
+physical source collection from its task-specific observations.
 
 \begin{table}[H]
 \centering\small
@@ -56,6 +60,10 @@ its observation ID, source identity, display mapping, condition and
 gold. The model-visible input does not expose these audit fields.
 All labels resolve inside the current image. The prescribed output
 is exactly one JSON object containing one listed \texttt{choiceId}.
+The exact shared identity contract is:
+\begin{quote}\small
+\input{generated/example-contract.tex}
+\end{quote}
 
 Changes to text, options, image bytes, dimensions or image policy
 require renewed qualification of affected observations. Provider
@@ -76,13 +84,32 @@ referents, B0116 selects that same geometry in B.
 This is a change in the correct reference, not a change in the
 canonical part's type.
 
-The main figure uses these actual PNGs with identical crop rectangles
-within each family. Gold annotations belong only to the publication.
-The copied \texttt{figure-provenance.json} identifies original
-observations, PNG hashes and crop rectangles, and
-\texttt{asset-provenance.json} binds the current publication assets
-to their archived source bytes. There are no fabricated model
-responses in the figure.
+The main figures show the actual PNGs, verbatim questions, complete
+option lists and GT JSON. Identical crops remove empty margins and
+retain every operand and label. Table~\ref{tab:gt-referents} exposes
+the source-record derivation: only the candidate with part type 32250
+matches the target, and its current label determines the choice ID.
+The source identifier and displayed label must be kept distinct.
+The GT is generated from records, not asserted to have passed human
+qualification.
+
+\begin{table*}[t]
+\centering\small
+\caption{GT derivation for the main Part-type example. Source instance
+IDs and part types remain constant; the current label of the matching
+candidate changes. Options C and D refer to B0036 and B0116 respectively,
+so the required outputs are \texttt{\{"choiceId":"C"\}} for A and
+\texttt{\{"choiceId":"D"\}} for B.}
+\label{tab:gt-referents}
+\input{generated/gt-referents.tex}
+\end{table*}
+
+\texttt{visual-evidence.json} binds every new figure to source
+captures or exact observation wires, questions, options, golds and
+crop rectangles. The archived figure provenance remains available
+for the reused replay. Figure~\ref{fig:more-pairs} supplies four
+additional pairs from different sources; selection is illustrative,
+not based on model outputs or certified answerability.
 
 \subsection{Appearance baseline}
 The legal Color baseline accepts one wire containing only PNG and
@@ -111,12 +138,12 @@ are available with the audit.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=.75\textwidth]{figures/position-control.png}
-\caption{Complete auxiliary position-reference input for OMR 42004.
-The target is above four candidates; the matching candidate is third
-from the left. No labels appear inside the image. These isolated
-parts are observations, not a proposed freestanding assembly.
-The panel comparison changes layout and visual access together.}
+\includegraphics[width=\textwidth]{figures/panel-question-gt.pdf}
+\caption{Auxiliary position-reference question, complete native image,
+all options and exact GT for OMR 42004. The correct choice is C,
+third from the left. No labels or GT were added inside the native
+image. Isolated parts are observations, not a proposed freestanding
+assembly. The comparison changes layout and visual access together.}
 \label{fig:panel}
 \end{figure*}
 
@@ -312,8 +339,31 @@ eight-source coverage limit generalization.
 \caption{Historical given-order 3D visibility replay for set 42102.
 Parts appear at their saved source transforms. The supplied sequence
 is an inspection control, not a discovered model plan; it does not
-certify an insertion path or gravity stability.}
+certify an insertion path or gravity stability. Section~5.1 and
+Table~\ref{tab:replay-gt} provide the exact question, action IDs
+and newly visible part IDs.}
+\label{fig:replay}
 \end{figure*}
+
+\subsection{Replay question and action ground truth}
+The historical task \texttt{ld2-omr-42102-source-sequence-1} asks:
+\begin{quote}\small
+\input{generated/replay-question.tex}
+\end{quote}
+Its GT is the ordered action list \texttt{[step-1, step-2, step-3,
+step-4, step-5, step-6]}. Table~\ref{tab:replay-gt} lists the exact
+part IDs revealed by each action in Figure~\ref{fig:replay}. This
+is a supplied-order visibility control, distinct from the primary
+visual pairs and from physically validated assembly planning.
+
+\begin{table}[H]
+\centering\small
+\caption{Historical replay GT. Actions reveal the listed IDs at saved
+poses. Cumulative counts are derived from the recorded source window.}
+\label{tab:replay-gt}
+\setlength{\tabcolsep}{3pt}
+\input{generated/replay-gt.tex}
+\end{table}
 
 \section{Collection and Publication Contract}
 The main paper lists 15 proposed models and 306 empty result cells
@@ -349,4 +399,27 @@ tarballs and runtimes are excluded; full historical recovery checks
 require those separate bundles. Hashes establish local consistency,
 while genuine human independence and provider origin additionally
 require collection oversight.
+
+\clearpage
+\begin{figure*}[p]
+\centering
+\includegraphics[width=\textwidth]{figures/source-atlas.pdf}
+\caption{All 24 source assemblies, retaining original LDraw geometry
+and saved poses. IDs and counts are read from the source catalog;
+the images are hash-verified original browser captures. Scale bands
+describe source size. These views are for resource inspection and
+are not substituted for frozen primary model inputs.}
+\label{fig:source-atlas}
+\end{figure*}
+
+\begin{figure*}[p]
+\centering
+\includegraphics[width=\textwidth]{figures/additional-question-gt.pdf}
+\caption{Four further real paired examples with complete question,
+options and GT: two Color and two Part-type parents from four sources.
+Within each pair only shared empty margins are cropped; all operands
+remain in their source poses. Green text is evaluator GT outside
+model input. No generated model responses or human judgments are shown.}
+\label{fig:more-pairs}
+\end{figure*}
 \end{document}
