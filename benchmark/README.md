@@ -1,244 +1,61 @@
-# Brick Atlas 模型测试场
+# BrickAtlas Benchmark
 
-当前主版本：[LDraw-1](ldraw-v1/README.md) · [撤回与重建说明](ldraw-v1/ERRATA.zh-CN.md)。
-24 个原始 OMR 模型、15,334 个真实零件实例、617 道题。
-原始几何不变，逐件编号与题目、三维视图、评分、审核记录一致。
-模型库：http://127.0.0.1:5173/benchmark ，审核台：http://127.0.0.1:5173/benchmark/review 。
-支持旋转、缩放、展开、按编号隔离及作者 STEP 显示回放。
-当前 [英文论文](paper/main.pdf) 与 [英文附录](paper/supplement.pdf) 使用新版统计。
-源文件保真和评分检查已经完成；573 对无已识别接口的交叠候选仍需复核，
-没有声明完整物理稳定或可插拔验证。未进行新的模型推理。
+主要入口：[数据目录](DATASETS.md) · [指标与评分代码](METRICS.md) ·
+[当前英文论文](../paper/README.md) · [历史审稿与论文归档](../tem/README.md)。
 
-**以下均为历史版本记录，不构成当前有效性、规模或模型准确率声明。**
-Hierarchy-3 的 144 个合成模型已撤下当前入口，旧人工反馈仍可导出。
+## 当前研究
 
-历史：[Hierarchy-2](hierarchy-v2/README.md)，40布局、1400题；旧14/16试跑保留，未计入新版。
+本项目评测模型能否根据当前图像中的证据回答问题，并在成对观察改变后继续答对。
+Color 测试渲染颜色，Part-type 测试几何匹配后的候选编号选择，两类分别报告。
+文本图测试显式图上的连通分量，独立于视觉分数。
 
-历史版本：[Hierarchy-1 四级积木库与 90 道核心题](hierarchy-v1/index.html) ·
-[分层基准中文报告](hierarchy-v1/HIERARCHY_REPORT.zh-CN.md) ·
-[完整问答库](hierarchy-v1/QUESTION_BANK.zh-CN.md)。
-Hierarchy-1 包含 18 个原创对象、1,773 个可视零件和 D1–D4 四级难度；
-每个对象覆盖原子、元认知/物理、可执行操作和综合约束四层任务。
-低成本 OpenRouter 固定 16 题流程试跑中，GPT-4.1 mini 得分 13/16，
-本轮费用为 $0.006553。
+| 内容 | 规模 | 目录 |
+|---|---:|---|
+| Color | 73 对 / 146 张图 | `ldraw-evidence-v3/` |
+| Part-type | 67 对 / 134 张图 | `ldraw-evidence-v3/` |
+| 位置面板 | 67 张图 | `ldraw-evidence-v3/` |
+| 文本图 | 219 条独立观察 | `ldraw-evidence-v1/matched-graphs-v1/` |
+| 原始来源 | 24 个模型 / 15,334 个实例 | `ldraw-v2/sources/` |
+| 历史题目档案 | 617 道 | `../public/benchmark/evidence-v3/dossiers.json` |
 
-上一版对象口径：[题目类别、数据规模与全部 Case 清单](BENCHMARK_INVENTORY.zh-CN.md) ·
-[Mechanism-1 全部 48 道题](mechanism-v1/index.html) ·
-[中文论文](paper/main.zh-CN.md)。正式主线为6个原创整体机构、48道任务和Rapier
-物理/碰撞验证。OMR/LDraw仅保留为设计参考；5,120个随机结构仅作历史回归。
+数据版本仍为 `brickatlas-display-v3`；`ldraw-evidence-v4-draft/` 增加测量审计，
+不代表另生成一批视觉题。当前论文的 15 模型实验是待冻结的新方案；
+v3 已封存的三模型运行清单不能直接替换成这 15 个模型。
+真人资格审核尚未完成，没有新模型实验结果。
 
-[Mechanism-1 模型实测](mechanism-v1/MODEL_REPORT.zh-CN.md)：GPT-4.1 mini
-28/48，Gemini 2.5 Flash 31/48，本地Qwen3-0.6B 3/48。
+## 数据检查与三维查看
 
-最新过程评测：[Constructibility-1 计划与实施报告](CONSTRUCTIBILITY_UPGRADE.zh-CN.md) ·
-[78 条过程可搭性条件](constructibility-v1/README.md)。该版本把前缀支撑、
-工具净空、最小恢复、施工中缺货和校准式主动检查连成一个可执行协议；
-当前仍是 6 个已公开源结构上的开发集，不含新模型、人类或真实力学结果。
+从仓库根目录运行：
 
-最新：[Diagnostic-2审稿机制修订](DIAGNOSTIC_UPGRADE.zh-CN.md) ·
-[配对视觉与维修案例](diagnostic-v2/index.html)。新版138条条件共用6个设计源，
-旧Frontier固定模板问题已公开记录，不把新旧成绩混合。
-
-上一轮：[相关工作核查与158–408件Frontier升级](FRONTIER_REPORT.zh-CN.md) ·
-[六个大结构与48题图集](frontier-cases/index.html)。
-旧117,910题保留作历史审计，不计入新层规模。
-
-历史：[九维度审稿与修订报告](REVIEW_REPORT.zh-CN.md) ·
-[18 个模型逐例报告](review-gallery/REPORT.zh-CN.md) ·
-[退役程序回归集](review-gallery/procedural-001.html)。
-Challenge v1 保留作历史记录，新输入与评分使用 `challenge-cases-v2/`。
-
-## 历史多任务套件
-
-旧八类程序化套件位于 [suite/](suite/README.md)，入口默认 http://127.0.0.1:5175。
-启动命令 `npm run suite:start`，数据准备 `npm run suite:prepare`。
-先读 [Case、Ground Truth 与模型测试中文说明](CASE_GUIDE.zh-CN.md)，其中区分
-已退役的5,120个程序结构、117,910个任务条件、curated案例和交互式操作回放。
-难度升级、相关工作对比和 49--63 件 challenge 层见
-[Challenge Casebank 中文报告](CHALLENGE_REPORT.zh-CN.md)。
-查看 [详细计划](PLAN-multitask.md)、[数据卡](suite/DATASET_CARD.md)、[指标](suite/METRICS.md) 和 [多任务实测报告](suite/REPORT.md)。
-不包含机械手、机器人或VLA。下面保留旧CARE-mini的文档和5174入口，旧实验不与新榜单合并。
-
-## CARE-mini v1（保留）
-
-独立的 **CARE-mini v1** benchmark 模块。原项目的浏览、拼装、DIY、资产和入口保持不变。
-
-[v1 交付报告与实测结果](REPORT-v1.zh-CN.md)
-
-## 启动
-
-在本目录运行，使用父仓库已安装的依赖，要求 Node.js 22+：
-
-```bash
-npm start
-```
-
-默认地址是 `http://127.0.0.1:5174`。端口占用时自动向后寻找空闲端口，实际地址打印在终端，并写入 `.runtime/server.json`。不会重启或占用原项目的 5173 服务。
-
-开发前台运行：
-
-```bash
+```sh
+npm ci
 npm run dev
 ```
 
-本机仓库自带 Node 时也可以从父目录运行：
+- 数据、pair、答案和历史档案：`http://127.0.0.1:5173/benchmark/evidence-v3/index.html`
+- 原始积木三维旋转、缩放、按编号隔离及回放：`http://127.0.0.1:5173/benchmark`
+- 正式盲审：[QA-AND-RUN.md](ldraw-evidence-v3/QA-AND-RUN.md)，使用独立审核包。
 
-```bash
-.tools/node-v22.23.2-darwin-arm64/bin/node benchmark/launch.mjs
-```
+## 代码与实验
 
-页面初次打开只启动免费的人工测试 episode，**不会调用付费模型**。
+| 用途 | 目录或文件 |
+|---|---|
+| 成对评分、统计、人审、推理 | `suite/ldraw-evidence-v3/` |
+| 逐观察审计、单图像颜色基线 | `suite/ldraw-evidence-v4-draft/` |
+| 模型名单与空白表格生成 | `../paper/experiments.json`、`../paper/build_tables.py` |
+| 预算与 MVP 设计 | `experiment-plans/model-budget-20260920/` |
+| 历史多任务评分 | `suite/METRICS.md`、`core/world.ts` |
 
-## 三个视图
+MVP 覆盖 15 个模型，按既有预算快照建议准备 ¥800–1,000。
+接入计划为 12 个 OpenRouter 模型、3 个自部署模型；可用性、精度和价格需在正式采集前重新冻结。
+抽样 ID、新提供商适配器、MVP 子集人审 gate 尚未实现，不应将预算文件当作可运行实验。
 
-- **测试场**：任务选择、Active/Passive 协议、三维视角、拆解预测、Blueprint JSON、重建编辑、结束评分。
-- **试验结果**：真实 OpenRouter 运行结果、请求费用、逐步观测/动作回放、Markdown 报告下载。
-- **协议与边界**：动作、坐标、预算、评分和未实现的物理能力。
+## 历史版本
 
-人工测试和真实模型使用同一个 `Environment.step()` 与 scorer。人工页面“执行蓝图”是确定性快捷操作；真实运行器会调用新上下文的模型作为 Builder，不把快捷操作冒充模型结果。
+`ldraw-v1/`、`ldraw-v2/` 保存来源与旧题；`ldraw-evidence-v1/`、`ldraw-evidence-v2/`
+保留旧协议及当前版本所继承的精确资产。`hierarchy-*`、`mechanism-v1/`、
+`constructibility-v1/`、`diagnostic-v2/`、`suite/` 中的早期合成数据和实测结果
+独立保留，不并入当前视觉 benchmark。
 
-## 首轮 Pilot
-
-仅选用两个低成本视觉模型，而非全部 OpenRouter 模型：
-
-- `openai/gpt-4.1-mini`
-- `google/gemini-2.5-flash`
-
-每模型 4 个 Active episode 和 2 个同目标、无故障 Passive 对照，共 12 个 episode。
-每个目标只有 8 块积木；原仓库 15 个 OMR 套装不参与本轮全量测试。
-
-运行前启动服务，然后在页面明确确认付费，或者在本目录执行：
-
-```bash
-npm run pilot
-```
-
-只测一个模型：
-
-```bash
-npm run pilot -- --model=openai/gpt-4.1-mini
-```
-
-非默认端口：
-
-```bash
-BENCHMARK_URL=http://127.0.0.1:5175 npm run pilot
-```
-
-默认模型适配器为 OpenRouter chat completions；API key 从服务端 `OPENROUTER_API_KEY` 或父目录已有的 `.env` 加载，不进入前端。
-
-## 成本保护
-
-- campaign 累计硬预算 **$4.50**，保留相对用户 $5 上限的 $0.50 缓冲。不是每次刷新网页都重新获得预算。
-- `.runtime/campaign-ledger.json` 持久化每次请求的预留、实际成本和 generation ID。
-- 请求前使用文本字节上界、每张 640x480 图片的保守 token 额度、输出上限和 provider 价格上限预留。
-- 每个模型的 prompt/completion 单价有 allowlist 上限。禁止模型 fallback、自动重试和未列出的模型。
-- 请求超时或响应缺少 `usage.cost` 时保留预留并停止，避免未知计费情况下继续花费。
-- CLI 和页面共用 `.runtime/pilot.lock`；同一时间只允许一个付费 Pilot。
-- `pending` 是正在发送或等待响应的预留，`uncertain` 是需要人工核对的费用。崩溃后的 pending 也会阻止继续运行。
-- 若需要核对失败请求，应先通过 OpenRouter 活动记录或 `/generation` 核实；不要直接删除 ledger 或用新文件绕过累计预算。
-- 这是本机预算控制，不替代 OpenRouter 账户级 spending limit。报告中的费用为推理 credits，不含充值手续费。
-
-## v1 的实际测量
-
-数据来自一个程序化密封盒结构族。两个变体拥有相同外壳、BOM 和可见身份，内部蓝色砖的位置/朝向不同。
-闭壳下允许的四个镜头都由渲染像素测试验证一致；移除顶盖后可区分。
-两者在粗粒度砖间连接图上同构，所以 v1 测的是**隐藏几何识别**，不是已经验证了不同受力拓扑的因果发现。
-
-流程：
-
-1. 模型观察 RGB 与可见 part ID/color，不提供目标坐标。
-2. Active 可拆解；Passive 不可拆解。拆解前预测新增可见数量和剩余连通分量。
-3. 模型提交有序网格位姿蓝图。没有正确性提示。
-4. 丢弃全部探索上下文，同型号模型的新上下文只收到蓝图和库存。
-5. Builder 执行真实编辑。有效但错误的放置保留，批量动作只保留合法前缀。
-6. 部分任务会在足够多次放置后移除或偏移顶盖，模型只能从后续观察发现。
-7. 模型主动 finish 或耗尽动作额度后，确定性 scorer 评分。
-
-恢复成功只在“故障前已经正确建成、且故障实际触发”的 episode 中单列。不满足条件记 N/A，不能记为恢复成功。
-
-### 规则而非真实物理
-
-支持 6 个真实 Part ID 对应的简化矩形砖/薄板。渲染使用 Three.js 程序化几何。
-所有位姿在整数 stud / plate 网格，方向限四个 yaw。
-世界规则检查砖体重叠、下方 stud 支撑、向上移除通道。
-`place` 是离散位姿操作，不检查连续插入路径，不认证真实可执行装配顺序。
-
-尚不支持：任意 LDraw 几何、clip/pin/axle 连接器、连续 SE(3)、扣合力、承重、重心、机器人、步骤 DAG、跨模型 handoff。
-请勿把 v1 分数描述成真实物理装配能力或“优于所有 benchmark”。
-
-## 评分与统计
-
-- 同型号/颜色/网格 footprint 的零件进行多重集匹配，ID 可互换，方砖 90 度和长砖 180 度对称被接受。
-- Part F1、派生连接 Edge F1、blueprint executable、最终 exact、完整 lifecycle success。
-- 拆解前预测准确率、非法动作数、决策数、primitive 编辑数、恢复成功、故障后编辑数。
-- `run.json` 保存费用、tokens、provider、generation ID 和原始模型 JSON。
-- 小样本 Wilson 区间仅为描述；共享结构族的 episode 非独立样本，不能据此判定可靠排名。
-- Active 总集含故障，Passive 不含；只有相同无故障配对可用于 Active/Passive 对照。
-
-## 验证
-
-```bash
-npm test
-npm run check
-npm run build
-npm run test:ui
-npm run test:replay
-```
-
-UI 测试需要服务已启动，但绝不发送付费请求；如果正在运行真实 Pilot，请等结束后再运行它的费用不变断言。
-重放验证不调用模型；它核对保存的观察、动作、图像 hash、最终评分和实际费用。
-
-## 输出和复现
-
-```text
-results/
-  latest.json
-  <run-id>/
-    run.json
-    protocol.json
-    diagnostics.json
-    REPORT.zh-CN.md
-    verification.json
-    replay-verification.json
-    observations/<sha256>.png
-  verification/
-    desktop.png
-    mobile.png
-    closed.png
-    opened-a.png
-    opened-b.png
-    verification.json
-```
-
-`protocolHash`、`taskHash`、`sourceHash` 和逐文件 hash 固定运行时实现。
-本轮配置、模型输出与观察是 **public pilot**，不是私有测试数据，未来可被训练模型看见。
-服务限制在 loopback；Vite 仅允许 web/shared/node_modules，私有 task 源、`.env`、ledger 不向浏览器静态服务。
-本机管理员和 runner 可信，不把这种设计声称为抵抗恶意本地用户的远程沙箱。
-
-重新生成最新报告，不产生推理费用：
-
-```bash
-npm run report
-```
-
-条件化 Builder 诊断使用 oracle 蓝图，另存结果，不计入主试验成功率：
-
-```bash
-npm run diagnostics
-```
-
-此命令会付费调用两个模型各三例，共用 $4.50 campaign 账本；如果本轮已有诊断结果会拒绝再次运行。
-
-## 模块结构
-
-- `core/world.ts`：规则、连接、库存和评分。
-- `core/tasks.ts`：服务端任务生成，不导入前端。
-- `core/environment.ts`：阶段、观察、动作、故障注入。
-- `core/prompts.ts`：冻结的 Inspector/Builder 提示词。
-- `core/budget.ts` / `core/openrouter.ts`：预算与付费模型适配。
-- `run.ts` / `report.ts`：真实试验与报告生成。
-- `server.ts`：独立 API 与 Vite 服务。
-- `web/`：人工测试场与结果回放，`render.html` 为可信离屏 Three.js 渲染页。
-- `shared/`：公开目录、类型与坐标规则。
-- `tests/`：不付费的正确性、隔离与 UI 验证。
+所有中间论文、审稿、修改指导已归档至 `../tem/`。旧路径兼容链接用于历史脚本、
+网页和哈希校验；当前论文统一修改 `../paper/`。

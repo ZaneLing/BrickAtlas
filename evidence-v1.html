@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BrickAtlas · Evidence-following revision</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#163247;background:#f2f5f7;line-height:1.6}
+body{max-width:960px;margin:auto;padding:48px 24px}h1{font-size:clamp(30px,4vw,44px);line-height:1.15;margin:14px 0 24px}
+.eyebrow{letter-spacing:.12em;font-size:12px;color:#4d6477}.lead{font-size:19px;max-width:750px}
+nav,.cards{display:flex;gap:16px;flex-wrap:wrap}nav{margin:28px 0}a{color:#095c82}
+nav a{padding:12px 18px;background:#fff;border:1px solid #becdd7;border-radius:6px;text-decoration:none;font-weight:600}
+section{margin:32px 0;padding:24px;background:#fff;border:1px solid #d9e1e7;border-radius:8px}
+h2{font-size:21px;margin:0 0 14px}table{border-collapse:collapse;width:100%}td,th{padding:9px;text-align:left;border-bottom:1px solid #dde5ea}
+code{overflow-wrap:anywhere}.status{padding:16px;border-left:4px solid #b67535;background:#fff6e9}
+footer{font-size:13px;color:#536c7d}a:focus-visible{outline:3px solid #e59e45;outline-offset:3px}
+</style>
+<main>
+<p class="eyebrow">BRICKATLAS / LDRAW2-EVIDENCE-V1</p>
+<h1>Following evidence<br>about the same part.</h1>
+<p class="lead">A measurement protocol on original LDraw assemblies: do answers follow changed evidence, and remain correct when the meaning stays the same?</p>
+<nav aria-label="Research artifacts">
+<a href="/benchmark/evidence-v1/main.pdf">Read the paper</a>
+<a href="/benchmark/evidence-v1/supplement.pdf">Complete question appendix</a>
+<a href="/benchmark/evidence-v1/paper-source.zip" download>Download paper source</a>
+<a href="/ldraw-v2.html">Open the 3D source viewer</a>
+</nav>
+<p class="status"><strong>Evidence status:</strong> corpus and algorithmic checks are complete. Learned-model experiments and independent human answerability review remain unrun. Blank scores do not mean zero.</p>
+<section>
+<h2>Report each capability separately</h2>
+<table>
+<thead><tr><th scope="col">Report role</th><th scope="col">Items</th><th scope="col">Families</th></tr></thead>
+<tbody>
+<tr><th scope="row">Core visual</th><td>140</td><td>Color, Part-type</td></tr>
+<tr><th scope="row">Structural evidence</th><td>146</td><td>Neighbors, Graph deletion</td></tr>
+<tr><th scope="row">Nonconstant controls</th><td>290</td><td>Distance, Interface, Coverage, Step lookup, Restoration</td></tr>
+<tr><th scope="row">Constant controls</th><td>41</td><td>Evidence limit, Step sequence</td></tr>
+</tbody>
+</table>
+<p>All 617 original questions and 24 sources are retained. The four roles do not form a composite capability ranking.</p>
+</section>
+<section>
+<h2>Measured graph controls</h2>
+<p>Counting nodes alone solves 63 of 73 natural deletion questions (86.30% micro; 83.75% source macro). It solves both sides of zero answer-changing pairs. BFS and union-find solve both sides of all 73 pairs. These are algorithmic results.</p>
+<p>A separate challenge contains 219 hypothetical graph observations and 146 matched pairs. It preserves the natural questions and adds no source. New model inference is required.</p>
+<a href="/benchmark/evidence-v1/node-prior-audit.json">Inspect the per-question graph audit</a>
+</section>
+<section>
+<h2>Review the exact evidence</h2>
+<p>The existing 3D viewer supports source inspection, instance selection, isolation, expansion and replay. Human judgments for model comparisons must instead inspect the exact request pixels.</p>
+<p><a href="/benchmark/evidence-v1/wrong-image-review.html">Open the 140-observation exact-wire review</a> · <a href="/benchmark/evidence-v1/qa-template.json" download>Download the pending feedback template</a></p>
+<p>All 140 visual items, 111 other flagged items and 573 intersection candidates remain pending human adjudication. Review exports bind decisions to request and image hashes.</p>
+</section>
+<footer>Analysis version <code>ldraw2-evidence-v1</code>. Original source release <code>brickatlas-ldraw-2</code> remains unchanged. The paper and its local source archive document the protocol and provenance.</footer>
+</main>
+</html>

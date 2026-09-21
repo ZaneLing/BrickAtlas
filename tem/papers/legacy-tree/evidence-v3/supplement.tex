@@ -1,0 +1,528 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage[review]{cvpr}
+\usepackage{times,graphicx,amsmath,amssymb,booktabs,tabularx,float}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\definecolor{cvprblue}{rgb}{0.15,0.43,0.64}
+\usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
+\renewcommand{\topfraction}{.95}
+\renewcommand{\dbltopfraction}{.95}
+\renewcommand{\textfraction}{.05}
+\def\paperID{Draft}
+\def\confName{CVPR}
+\def\confYear{2026}
+\input{generated/numbers.tex}
+\title{BrickAtlas Display-Grounded Evidence Following\\Scientific Supplement}
+\author{Anonymous submission}
+\begin{document}
+\maketitle
+\raggedbottom
+
+\section{Reading Guide and Version Boundary}
+This supplement documents the display-v3 observation contract,
+human qualification, response statistics and graph audit. The full
+617 historical question dossiers are distributed separately as
+\texttt{dossiers.json} and a searchable HTML interface. They are not
+617 new display-v3 questions. Historical prompts and answers remain
+historical even when a parent ID is linked to new observations.
+
+The analysis version is \texttt{ldraw2-evidence-v3}; the visual dataset
+is \texttt{brickatlas-display-v3}. Color's 146 endpoints, the 67 panels,
+graph inputs and historical dossiers retain their earlier bytes.
+A separate parent-mapping overlay supplies current pair IDs; old
+dossier links remain in the original JSON. Both primary Part-type
+arms are rebuilt. Canonical source identity is the
+source hash and placed-instance ID. Display references resolve within
+one current image. The complete four-part identity rule and all
+parent-to-observation mappings are released with the dataset.
+No old model answer or review is transferred to a new prompt.
+
+The artifact has three distinct inspection modes. The evaluator site
+exposes pairing, gold and provenance for scientific audit. The blind
+review packages expose only one exact observation at a time, without
+gold or pair membership. The historical 3D viewer allows rotation,
+zoom, source-part isolation, expansion and visibility replay.
+Only the blind packages implement the qualification protocol; richer
+3D access cannot substitute for judging native model-input pixels.
+
+\section{Exact Visual Stimuli}
+\subsection{Reference questions and a concrete pair}
+For the OMR 42004 Color example, both arms ask:
+\begin{quote}\small
+What color is the object currently marked B0035 in this image?
+\end{quote}
+Both include the rule that references select current image objects and
+that appearances or labels may have been edited. Gold changes from
+Blue (choice D) to Red (choice C). Original source truth stores Black.
+This is an explicit rendered-appearance counterfactual, not a claim
+that the source record changed.
+
+For the corresponding Part-type example, both arms ask:
+\begin{quote}\small
+Which displayed candidate label currently marks an object with the
+same visible part geometry as the target marked B0035? Ignore color
+and pose. Answer from this image, not from historical source identities.
+\end{quote}
+Candidate B0036 in A has the same source type, 32250, as the target.
+After the B0036/B0116 candidate-reference swap, B0116 selects that
+same matching geometry in B. The option-ID gold changes from C to D.
+This describes generated golds only. There is no observed model
+C-to-D or C-to-C response case in the current release.
+
+Figure~1 in the main paper uses the actual native PNGs with an identical
+crop rectangle for the two arms within each family. Its annotations
+are paper-only. \texttt{figure-provenance.json} records the four
+observation IDs, full PNG hashes and crop rectangles. Full images and
+full prompts remain available through the paired-observation inspector.
+
+\subsection{Rendering audit}
+All primary and auxiliary images have a native resolution of
+1280$\times$800. Color edits keep the geometry, pose, camera, label
+projections, visibility and material settings identical. The body mask
+is the projected part body; one pixel of dilation accommodates
+antialiasing at the silhouette. Changed pixels outside that mask
+number zero in every Color pair. The mask test is not a measurement
+of human color separability, projected difficulty or assembly stability.
+
+The 73 pairs use two distinct named opaque colors each; both arms
+may differ from the historical source appearance. Aggregate category
+counts are 37 Red, 37 Blue, 36 Yellow and 36 Black. Canonical color,
+part type and transforms are preserved separately. The donor
+feasibility inventory retains every candidate considered for the older
+mechanism and explains why a general donor swap cannot be relabeled
+as a color-only intervention.
+
+Part-type regenerates all 134 primary images after joint option/swap
+assignment. Within every pair the underlying geometry render is
+byte-identical, with pixel changes confined to label masks.
+Two independent regeneration canaries are byte-identical. Source poses,
+camera and anchor projections remain fixed. Independent gold validation
+reconstructs the display mapping and source part-type equality;
+visual uniqueness remains a human judgment.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=.85\textwidth]{figures/position-control.png}
+\caption{Complete position-reference control image for the OMR 42004
+example. The upper panel is the target and the four lower panels
+are candidates referenced by ordinal position in the question.
+No text is embedded in the image. The correct candidate is third
+from the left among the four candidates. These isolated source
+parts are not a proposed assembly. This interface changes layout
+and visible access, so its contrast with candidate labels is descriptive,
+not an identified OCR effect.}
+\label{fig:position}
+\end{figure*}
+
+\subsection{Position-reference control}
+The 67 auxiliary observations each have a target panel and four
+candidate panels, without labels inside the image
+(Figure~\ref{fig:position}). The question describes which panel is
+the target and the ordering of the four candidates. The correct option
+is derived independently from source geometry/type correspondence.
+No candidate-reference change pair is manufactured from these panels.
+
+Each auxiliary observation requires two independent raw human reviews,
+for 134 additional judgments. Its final decidable set and accuracy
+are separate from the 280 primary endpoints and their paired Both.
+Comparing it with a label-based arm changes several factors at once:
+reference interface, separation of objects and view access. A higher
+score would not isolate geometry skill, and a lower score would not
+isolate position understanding.
+
+\section{Finite Assignment and Answer Priors}
+The candidate inventory records visible operand IDs, source types,
+source bounding-box centers and projected label anchors. All 24
+permutations of four options are paired with each admissible nonmatching
+swap, preserving unique source-type matching. The 4,824 configurations
+are ordered by parent, option-label tuple and swap instance.
+Constraint-equivalent configurations retain the smallest integer hash
+cost, leaving 2,412 binary variables.
+
+The frozen constraints require exactly one configuration per parent,
+16--17 golds per arm/position, 5--6 per off-diagonal transition,
+fixed-choice source accuracy at most .30, and each declared oracle-A
+rule's micro/source accuracy at most .40. SciPy 1.17.1/HiGHS, one thread
+and zero relative gap return optimum 1,007,668. The checked assignment
+file is authoritative; its contract, inventory and code hashes remain
+available. There is no model-result-based seed search.
+
+\begin{table}[H]
+\centering\small
+\caption{Transition counts: rows are A gold, columns B gold.
+Left: frozen Color (73). Right: optimized Part-type (67).}
+\label{tab:transitions}
+\input{generated/transitions-color.tex}\hspace{12pt}
+\input{generated/transitions-type.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{All 13 declared Part-type oracle-A attacks, B accuracy (\%).
+A is supplied correctly, so NewAcc=Both. Each rule excludes the
+A-matching candidate and never reads B. Source intervals are descriptive
+after design optimization, not out-of-sample guarantees.}
+\label{tab:shortcuts}
+\setlength{\tabcolsep}{3pt}
+\input{generated/shortcuts-type.tex}
+\end{table}
+
+Option rules select first/last alternatives or cyclic positions.
+Label rules select smallest/largest alternate numbers or closest/farthest
+numbers from the target. Spatial rules select nearest/farthest source
+centers or projected anchors. Ties use ascending original numeric labels.
+Spatial audits additionally receive A-side source geometry:
+they are privileged construction attacks, not image-only baselines.
+The independent auditor reconstructs candidates/golds from source
+records and rendering metadata, not the optimizer's hit counts.
+
+Both families also report fixed-choice and smallest/largest option-label
+text rules with A accuracy, NewAcc, Both, every prediction/error,
+source intervals and author sensitivity. The old first-alternative attack
+is archived at 67/67, versus 23/67 now. Color was not optimized; its
+largest declared oracle-A micro score is 32/73. Neither family claims
+universal shortcut immunity.
+
+\begin{table*}[!t]
+\centering\small
+\caption{All source assemblies. Band is source scale. Color and
+Part-type count primary parents, each contributing exactly one A/B
+pair. All 24 sources appear in both visual families; variants do not
+increase source count.}
+\label{tab:sources}
+\input{generated/sources.tex}
+\end{table*}
+
+\section{Human Review Protocol}
+\subsection{Sampling universe and blinding}
+Six initial packages contain 115, 116, 114, 115, 115 and 119 units.
+Their union covers 146 Color endpoints, 134 Part-type endpoints and
+67 position controls exactly twice. Each reviewer sees at most one
+observation per parent, including panels. Three-observation parents
+use all six people without exposing counterparts. Assignments cross
+arm/slot combinations and hide condition names. The validator checks
+displayed text/options and image bytes against each frozen wire.
+
+Reviewers work independently before model inference and do not receive
+pair membership, condition labels, canonical source records, gold,
+model responses or another person's answers. The coordinator distributes
+one package to each of six different people. The native image is
+scrollable rather than silently downsampled. A reviewer attests that
+the full native observation was inspected.
+
+\subsection{Raw and final records}
+Every raw record contains:
+\begin{itemize}\setlength\itemsep{1pt}
+\item opaque unit ID and exact wire-observation hash;
+\item reviewer pseudonym, timestamp and independence attestation;
+\item decidable, ambiguous, unanswerable or contradictory decision;
+\item chosen visual option where applicable;
+\item four Boolean reference/answer/visibility/contradiction checks;
+\item reason code, free-text reason and native-size attestation.
+\end{itemize}
+A decidable record requires a listed option, all four checks passing,
+and the no-exclusion reason code. Nondecidable records require a
+reason. Raw records are never overwritten by a final decision.
+Duplicate raw reviews, reuse of a reviewer identity across the six
+slots, obsolete hashes and synthetic evidence are rejected.
+
+If categorical decisions, choices and checks agree, the record is
+finalized under the frozen rule. Different explanatory prose alone
+does not constitute a categorical disagreement. Any decision, choice
+or check disagreement requires an additional person's adjudication.
+The adjudicator sees the single observation and the two judgments,
+but not gold, the other endpoint or model responses. A reason is
+required. Up to three extra adjudicator slots receive disjoint parents;
+they cannot be initial reviewers or see any other view of a parent.
+Final import reconstructs decisions from retained original exports.
+A final decidable choice conflicting with the generated
+gold returns the item to pending and requires dataset revision.
+
+\subsection{Agreement and gate semantics}
+For doubly reviewed units, raw decision agreement is the fraction
+of equal categorical decisions. Descriptive pooled two-slot kappa is
+\begin{equation}
+\kappa=(p_o-p_e)/(1-p_e),
+\end{equation}
+where $p_e$ is computed from the two empirical decision marginals.
+Assigned people vary across units; this is not the reliability
+coefficient of one fixed pair of reviewers.
+No doubly reviewed units yields null; degenerate marginals with
+$p_e=1$ also yield null. Choice agreement and each structured check
+have separate statistics. Primary and auxiliary counts are explicit.
+Adjudicated agreement does not replace raw agreement.
+
+Before real inference, every planned endpoint needs a final nonpending
+decision. This gate does not require every endpoint to be decidable:
+ambiguous, unanswerable and contradictory outcomes remain part of
+the full benchmark report. Additional QA-subset estimates require
+both endpoints to be finally decidable. Missing either A or B blocks
+that pair's inclusion. The final summary is reconstructed from retained
+raw inputs; editing a summary cannot satisfy the gate.
+
+At release, raw human reviews are 0/560 for primary endpoints and
+0/134 for auxiliary controls. Final primary decisions are 0/280;
+both-decidable pairs are 0/140. These are unresolved acceptance
+requirements. Software tests exercise the rule with temporary
+synthetic fixtures; none is imported as a real review.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=.8\textwidth]{figures/given-order-replay.pdf}
+\caption{Historical given-order visibility replay for set 42102,
+retained as a 3D inspection example. Six accepted actions reveal
+parts at original source transforms. The sequence is supplied by
+the control, not discovered by a model. Display correspondence
+does not demonstrate a collision-free insertion path or gravity
+stability. The original figure hash is retained in publication provenance.}
+\label{fig:replay}
+\end{figure*}
+
+\section{Statistics and Genuine Response Evidence}
+\subsection{Outcomes and denominators}
+For a changed-answer pair, B outcomes are mutually exclusive:
+correct new answer, valid old answer, another valid answer, or invalid.
+Their micro proportions sum to one over all planned pairs.
+A accuracy and Both additionally distinguish the A endpoint.
+Missing calls do not remove the pair. JSON validity is reported for
+each arm and for both, not inferred from semantic correctness alone.
+
+Conditional adaptation uses only A-correct pairs. Micro adaptation is
+the both-correct count divided by that count. Source-macro adaptation
+first computes each source's conditional rate, then averages over
+sources with at least one A-correct pair. The report includes both
+eligible pair and eligible source counts. Those two estimands can
+differ; neither replaces unconditional Both.
+
+For invariance graph pairs, $y_A=y_B$. Both remains the joint success
+criterion. A repeated wrong answer is consistent but incorrect.
+Stability of raw invalid strings has no semantic meaning. The current
+visual release does not import older camera/ID-renaming invariance
+responses under the new display contract.
+
+\subsection{Sources, subset shifts and rank comparisons}
+Source-macro estimates give equal weight to sources after averaging
+their within-family pairs. Whole-source resampling uses 10,000 draws
+and a fixed seed, 20260920. Paired model differences use the same
+items and resampling weights. The QA-minus-full calculation recomputes
+both means using shared source draws and the subset's actual source
+coverage. A draw containing no eligible subset source is recorded
+as undefined; it is not assigned a zero score.
+
+Rank points are computed using exact rational source means. Equal
+values receive midranks, avoiding arbitrary floating-point thresholds
+for ties. The rank comparison reports A, NewAcc and Both, the sign
+of each paired difference, point reversals versus ties, descriptive
+intervals and agreement of directions across full/QA sets. With many
+families or models, these unadjusted comparisons remain exploratory.
+An interval containing zero supports neither directional ranking nor
+equivalence. The estimand is a single complete invocation set; no
+interval here measures cross-call provider variability.
+
+\subsection{Author and contributor sensitivity}
+Sources group by their first credited model author, removing bracketed
+handles and retaining OMR editors separately: 18 primary authors and
+17 contributor-connected clusters. The latter connect any sources sharing
+an author/editor; source 10014 joins Robert Paciorek's cluster via OMR
+editing. Table~\ref{tab:authors} lists the repeated primary authors.
+
+\begin{table}[H]
+\centering\small
+\caption{Repeated primary authors: 10/24 sources in four groups.
+Other primary-author groups each contain one source.}
+\label{tab:authors}
+\input{generated/authors.tex}
+\end{table}
+
+For within-source mean $m_s$ and eligible sources $S_a$ of author $a$,
+the sensitivity mean is
+$|A|^{-1}\sum_a |S_a|^{-1}\sum_{s\in S_a}m_s$.
+Ten thousand whole-author draws (seed 20260920) recompute equal-author
+and equal-source means with shared draws, including their difference.
+Each author's omission yields source/author means; paired model
+differences flag changed directions. The procedure repeats for contributor
+clusters and reports actual eligible source/group counts for each subset.
+
+All 276 source pairs have part-number count-multiset and set Jaccards.
+Table~\ref{tab:overlap} shows the five largest count overlaps. No spatial
+alignment is performed; similar inventories need not share geometry.
+
+\begin{table}[H]
+\centering\small
+\caption{Largest inventory overlaps. Count J. is
+$\sum_t\min(n_{at},n_{bt})/\sum_t\max(n_{at},n_{bt})$;
+Set J. is intersection/union of distinct part types.}
+\label{tab:overlap}
+\input{generated/overlap.tex}
+\end{table}
+
+\subsection{Response cases and authenticity boundary}
+Only the exact roster of nine terminal live runs can enter empirical
+analysis, including explicitly closed failures. All visual/no-image runs
+share one finalized QA snapshot. Run IDs, adapter files/hashes, inclusion
+reasons and requested/expected revisions are frozen. Missing or extra
+runs block analysis; changing a model requires a new study version.
+The runner records raw response bytes, extracted output
+text, normalized choice, model revision and full-request hash. Analysis
+reparses raw responses; it does not trust manually entered accuracy
+columns. Missing or malformed responses remain failures. Requests and
+intents precede network calls. Interruption closure distinguishes unattempted
+requests from attempted calls without receipts; both remain in the 2,739
+scheduled denominator. Closure records are not provider responses.
+The model-run index binds each roster entry, requests, receipts, QA,
+run dates and report rows. Current completed/planned runs are 0/9.
+
+The no-image control removes only image content from all 347 visual
+messages per model. It retains question/options and measures evidence
+dependency. Its family-specific outcomes and paired visual-minus-no-image
+differences remain separate from graph scores.
+
+Case extraction uses genuine QA-decidable pairs, separately by family
+and model. It looks for A-correct to new gold, A-correct to old gold,
+and the same valid wrong answer at both endpoints. Selection is
+deterministic by hash order within a case type. An absent type stays
+absent, and its absence is not filled with a constructed response.
+At release there are no eligible real cases and no empirical rank
+comparison. The example in Section~2 describes stimulus semantics only.
+
+The collection pipeline checks hashes, provenance and declared
+response models. Local files and attestations alone cannot
+cryptographically prove that a remote provider generated a receipt
+or that two humans worked independently. Retained provider records
+and coordinator oversight complement the machine checks.
+
+\section{Graph Partitions and Algorithmic Results}
+\subsection{Full strong-pair inventory}
+Table~\ref{tab:strong} lists all 12 strong changed-answer pairs.
+Every row matches surviving nodes, edge count, target degree,
+complete degree multiset and isolate count. BFS and union-find are
+both correct on every row. Anonymous degree and 1-WL feature
+predictors are jointly incorrect on every row because their restricted
+features do not distinguish the two golds.
+
+\begin{table}[H]
+\centering\small
+\caption{Every strong change pair; 12 pairs from eight sources.
+The final column is the exact per-pair result, not an average
+over generated variants. BFS and union-find have Both=1 on every row.
+The machine audit additionally supplies full feature signatures,
+source-held-out lookup support and predictions.}
+\label{tab:strong}
+\input{generated/strong-pairs.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{Natural graph source-macro accuracy in percent, with
+descriptive whole-source percentile intervals. All 73 items and
+24 sources are retained. Lookup training excludes the test source
+and is separate from hypothetical graphs.}
+\label{tab:natural}
+\input{generated/graph-natural.tex}
+\end{table}
+
+\subsection{Natural distribution and invariance}
+Table~\ref{tab:natural} supplies natural source intervals; the main
+paper reports exact item counts. A node-count \emph{lookup} is
+distinct from the older hard-coded $|V|-1$ predictor: it learns a
+feature-to-answer table on other sources. The distinction is preserved
+in filenames, labels and reports.
+
+Table~\ref{tab:inv} gives both invariance partitions. The 73 anchors
+are reused from the change pairs, so counting all pair endpoints
+would yield 292 appearances but only 219 distinct observations.
+The lookup training population includes changed endpoints once and
+excludes isomorphic invariance copies. This prevents those copies
+from disproportionately weighting a source label.
+
+\begin{table}[H]
+\centering\small
+\caption{Both-correct on invariance pairs. Strong and degree-visible
+sources overlap with the corresponding changed-answer partitions.
+Stable predictions need not be correct.}
+\label{tab:inv}
+\input{generated/graph-invariance.tex}
+\end{table}
+
+\subsection{Answer balance and small-sample limits}
+The strong direction count is six increases and six decreases.
+Table~\ref{tab:balance} discloses that raw arm answer frequencies
+are not identical. Both is invariant to swapping endpoint roles.
+Symmetric endpoint accuracy averages the two endpoints within
+each existing pair. Optional equal arm weighting uses each endpoint
+in both arm roles with half weight; it changes neither observations
+nor pair/source counts. It does not create uniform label frequencies.
+
+\begin{table}[H]
+\centering\small
+\caption{Stored strong-change answer histograms. Equal numbers of
+increases/decreases do not imply equal per-answer arm frequencies.}
+\label{tab:balance}
+\input{generated/answer-balance.tex}
+\end{table}
+
+The Wilson intervals [0, .2425] and [.7575, 1] for 0/12 and 12/12
+are approximate because source reuse violates pair independence.
+Boundary whole-source bootstraps may collapse to a point. The
+released intervals and per-pair data expose these limitations rather
+than imply a precisely known population effect.
+
+All strong graphs instantiate a narrow construction: six-cycle
+versus two triangles, plus identical isolates. Uniform-feature
+anonymous 1-WL cannot distinguish them at any refinement depth.
+A degree or 1-WL lookup cannot evade this collision by fitting labels
+more aggressively. A model with unique-ID features, positions,
+spectral information or higher-order computation is outside this
+feature restriction. No trained GNN or language-model result is
+claimed by the algorithmic audit.
+
+\section{Source Coverage and Historical Controls}
+Table~\ref{tab:sources} makes source coverage explicit. Source files
+come with recorded URLs, author attribution, license metadata and
+content hashes in the historical catalog. Dataset-level paired
+analysis cannot substitute for source-level split discipline.
+Any future training/evaluation split must keep each source and all
+its derived views, interventions and controls together. Common part
+libraries may still create dependencies across such splits.
+
+The historical families remain an inspection resource. Distance
+reads coordinates and computes a value; Interface and Coverage
+read supplied records; Step lookup reads author annotations.
+Neighbors and Graph deletion operate the explicitly supplied graph.
+Evidence limit and Step sequence include fixed-answer controls.
+Restoration follows a visibility contract at a saved source pose.
+None establishes physical insertion planning.
+
+The viewer can replay these actions, expose the original graph/records
+and inspect part IDs. Expansion is an inspection transformation,
+not a physically valid final arrangement. Isolation omits supports
+without changing the saved assembly. Source-local overlap candidates
+still require physical review. The new color and label interventions
+do not claim to have corrected the historical source geometry.
+
+\section{Reproduction and Acceptance Checklist}
+The source package contains this manuscript, its main paper, generated
+tables, figures, bibliography and the CVPR style. Both PDFs compile
+with Tectonic. The repository additionally contains the publication
+generator, frozen stimuli, review packages, validators and raw-input
+hashes. The build guide specifies the checked runtime and commands.
+
+The following machine checks are complete in this release:
+347 frozen native visual observations; 140 paired gold changes;
+73 controlled body-pixel differences; all visual golds independently
+recomputed; 219 graph request snapshots and dual-algorithm gold checks;
+all 2,739 planned request envelopes; and 27 new protocol/analysis tests.
+The 26 historical tests remain preserved. Browser and PDF inspection
+validate delivery behavior and layout. Those inspections are not
+human visual-task certification.
+
+Empirical acceptance remains open for the 560 primary human reviews,
+134 auxiliary reviews and any necessary adjudications, followed by
+new model inference. The required analysis must show full and
+QA-decidable results, valid-format rates, family-specific response
+transitions, paired source intervals and genuine case examples where
+they exist. If the findings fail to reveal added diagnostic value,
+the claims must contract accordingly. No receipt-free score,
+invented rank reversal or synthetic human judgment can close these
+requirements.
+\end{document}

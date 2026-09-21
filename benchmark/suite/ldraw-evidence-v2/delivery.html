@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BrickAtlas · Display-grounded evidence</title>
+<style>
+:root{--ink:#16302f;--muted:#536664;--line:#d8e1da;--paper:#f7f8f3;--white:#fff;--accent:#146955;--warm:#805814}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 system-ui,-apple-system,sans-serif}
+a{color:var(--accent);text-underline-offset:4px}a:hover{color:#083e32}button,input,select{font:inherit}button,a.button{cursor:pointer;background:var(--accent);color:white;border:1px solid var(--accent);padding:9px 15px;border-radius:5px;text-decoration:none;display:inline-block}button.secondary,a.secondary{background:transparent;color:var(--accent)}button:disabled{opacity:.45;cursor:default}input,select{border:1px solid #a8b9b1;background:white;border-radius:4px;padding:9px;min-width:0}input:focus,select:focus,button:focus-visible,a:focus-visible{outline:3px solid #cfad49;outline-offset:3px}
+header,main,footer{max-width:1220px;margin:auto;padding:0 34px}header{display:flex;align-items:center;justify-content:space-between;padding-top:24px;padding-bottom:24px;border-bottom:1px solid var(--line)}.brand{font-weight:750;letter-spacing:-.04em;font-size:25px;text-decoration:none}nav{display:flex;gap:20px;font-size:14px}nav a{text-decoration:none}section{padding:46px 0;border-bottom:1px solid var(--line);scroll-margin-top:12px}.eyebrow{font:700 12px/1.4 system-ui;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}h1{font:500 clamp(35px,5vw,62px)/1.08 Georgia,serif;letter-spacing:-.045em;max-width:850px;margin:18px 0 24px}h2{font:500 32px/1.2 Georgia,serif;margin:0 0 14px}h3{font-size:18px;margin:0 0 12px}p{max-width:850px;margin:12px 0}.lead{font-size:19px;color:var(--muted);max-width:820px}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);margin-top:35px;padding-top:22px;gap:20px}.stat strong{font:500 32px/1.2 Georgia,serif;display:block}.stat span,.small{font-size:13px;color:var(--muted)}.notice{border-left:3px solid #b78427;background:#f1ead8;padding:14px 20px;margin:25px 0;color:#594313}.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.card{background:white;border:1px solid var(--line);border-radius:6px;padding:24px}.card p{font-size:15px}.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:24px 0 14px}.controls label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}.controls input{min-width:280px}.grow{flex:1}.grow select{width:100%}.scroll{overflow:auto}.native canvas{max-width:none!important;width:1280px!important}.observation{background:#fff;border:1px solid var(--line);border-radius:5px;padding:16px;min-width:0}.observation canvas{display:block;max-width:100%;height:auto;margin:auto;background:#fff}.tag{font-size:12px;font-weight:650;padding:3px 9px;background:#e4eee6;border-radius:3px;display:inline-block}.hash{overflow-wrap:anywhere;font:11px/1.6 ui-monospace,monospace;color:var(--muted)}.prompt{border-left:2px solid var(--accent);padding:8px 16px;background:#edf2eb}.optionline{font-size:13px}.pair-head{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:12px}table{width:100%;border-collapse:collapse;text-align:left;font-size:14px}th{font-weight:650;background:#eaf0e8}th,td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}.row-title{font-weight:650;overflow-wrap:anywhere}td button{font-size:12px;padding:4px 10px}td .small{display:block}.pager{display:flex;align-items:center;justify-content:space-between;margin:15px 0}.pager>div{display:flex;gap:8px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 ui-monospace,monospace;background:#eff3ee;border-radius:4px;padding:16px;max-height:420px;overflow:auto}details{margin-top:15px}summary{cursor:pointer;font-size:14px}.detail{margin-top:20px;background:white;border:1px solid var(--line);padding:24px;border-radius:6px}.detail h3{overflow-wrap:anywhere}.download-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}.download-list a{padding:12px;border-bottom:1px solid var(--line)}footer{font-size:13px;color:var(--muted);padding-top:28px;padding-bottom:35px}.error{color:#9e3023}#aux{margin-top:20px}#aux .observation{max-width:850px}.statusline{min-height:24px}
+@media(max-width:700px){header,main,footer{padding-left:18px;padding-right:18px}header{align-items:start}nav{gap:10px;flex-wrap:wrap;justify-content:flex-end;max-width:210px}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.controls{display:grid;grid-template-columns:1fr}.controls input{min-width:0;width:100%}.download-list{grid-template-columns:1fr}h2{font-size:27px}.card{padding:18px}.pair-head{align-items:start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="#top">BrickAtlas<span style="color:#829385"> / </span></a><nav aria-label="Main navigation"><a href="#protocol">Protocol</a><a href="#observations">Pairs</a><a href="#dossiers">617 dossiers</a><a href="#downloads">Downloads</a></nav></header>
+<main id="top">
+<section>
+<div class="eyebrow">Research release · evidence-v2</div>
+<h1>Does the answer follow<br>the current visual evidence?</h1>
+<p class="lead">An explicit display-reference contract, paired LDraw observations, and auditable response analysis. Color changes and candidate-label changes are measured separately.</p>
+<div class="actions"><a class="button" href="/benchmark/evidence-v2/paper/main.pdf">Read the paper ↗</a><a class="button secondary" href="#observations">Inspect paired observations</a><a class="button secondary" href="/ldraw-v2.html">Open the 3D source viewer ↗</a></div>
+<div class="stats"><div class="stat"><strong>24</strong><span>Original source assemblies</span></div><div class="stat"><strong>73 + 67</strong><span>Color + Part-type pairs</span></div><div class="stat"><strong>347</strong><span>Exact visual observations</span></div><div class="stat"><strong>617</strong><span>Searchable historical dossiers</span></div></div>
+<div class="notice" id="availability">Loading the evidence-availability record…</div>
+<p id="load-status" class="small statusline" role="status">Loading release files…</p>
+</section>
+<section id="protocol">
+<div class="eyebrow">One reference rule</div><h2>Labels select objects in the current image.</h2>
+<p>Canonical source identity supports construction and audit. Source truth stays in provenance. The scored answer follows the visible property or candidate reference in the supplied observation. All new prompts state this contract.</p>
+<div class="grid">
+<article class="card"><span class="tag">Color · 73 pairs</span><h3 style="margin-top:14px">Fixed geometry, edited appearance</h3><p>The same geometry, source pose, camera, labels and material settings receive two opaque body colors. The answer is the current rendered color.</p><p class="small">All 73 pairs have zero changed pixels beyond the body mask plus one antialiasing pixel. Visual decidability still requires human review.</p></article>
+<article class="card"><span class="tag">Part-type · 67 pairs</span><h3 style="margin-top:14px">Fixed target, reassigned candidate labels</h3><p>Two candidate labels exchange their visible referents. The answer follows the current label on matching geometry. A separate 67-item position-panel control changes the reference interface.</p><p class="small">The panel comparison also changes layout and access. It cannot alone identify an OCR effect.</p></article>
+</div>
+<p class="small">There is no pooled visual capability score. Historical source bands describe scale. Isolated views and expanded displays are inspection modes; they do not depict new freestanding assemblies.</p>
+</section>
+<section id="observations">
+<div class="eyebrow">Evaluator inspection</div><h2>Read the contract. Inspect both observations.</h2>
+<p>This inspector exposes gold and pairing for scientific audit. Independent reviewers must receive only their own blind review package. Displaying a pair here does not count as benchmark human QA.</p>
+<div class="controls"><label>Family<select id="pair-family"><option value="">Both families</option><option value="color">Color</option><option value="shape-match">Part-type</option></select></label><label class="grow">Parent question<select id="pair-select" aria-label="Paired parent question"></select></label><button class="secondary" id="native" aria-pressed="false">View native pixels</button></div>
+<div id="pair-meta" class="small"></div><p id="pair-question" class="prompt"></p><div id="pair-options" class="optionline"></div>
+<details><summary>Exact system instruction and identity contract</summary><pre id="wire-text"></pre></details>
+<div class="grid" id="pair-images" style="margin-top:20px"></div><div id="aux"></div>
+<p class="small">The canvases display the released scientific PNG bytes. “Fit” scales the on-page view; “native pixels” preserves 1280 × 800 for inspection. No image here is a generated illustration or a model response.</p>
+</section>
+<section id="graph">
+<div class="eyebrow">Computed algorithmic evidence</div><h2>Strong graph pairs and degree-visible controls.</h2>
+<p>The primary proof of concept contains 12 degree-matched change pairs from eight sources. The other 61 change pairs are controls with visible degree differences. Their anchors are shared with invariance pairs.</p>
+<div class="scroll"><table><thead><tr><th>Partition</th><th>Pairs / sources</th><th>Degree lookup Both</th><th>1-WL lookup Both</th><th>Isolates + one Both</th><th>BFS Both</th></tr></thead><tbody id="graph-rows"></tbody></table></div>
+<p class="small">Anonymous 1-WL cannot distinguish the strong cycle/triangles construction. These are deterministic algorithm results, with no learned-model inference. Natural isolates + one accuracy is 72/73. The <a href="/benchmark/evidence-v2/graph-audit.json">complete audit</a> includes every pair, source-held-out lookup support, feature collisions and intervals.</p>
+</section>
+<section id="dossiers">
+<div class="eyebrow">Separate historical artifact</div><h2>All 617 questions, searchable.</h2>
+<p>These are the preserved LDraw-v2 prompts, inputs and golds. New visual observations link back to their parents and require new reviews and responses. The <a href="/benchmark/evidence-v2/dossiers.json" download>complete JSON export</a> retains every original record.</p>
+<div class="controls"><label class="grow">Search ID, source, label or question<input id="search" type="search" placeholder="B0035, 42004, graph-removal…" aria-label="Search dossiers"></label><label>Family<select id="family"><option value="">All families</option></select></label><label>Role<select id="role"><option value="">All roles</option><option>Core visual</option><option>Structural evidence</option><option>Nonconstant control</option><option>Constant control</option></select></label><button id="reset" class="secondary">Reset filters</button></div>
+<div class="pager"><span id="count" class="small" role="status"></span><div><button id="previous" class="secondary" aria-label="Previous dossier page">←</button><button id="next" class="secondary" aria-label="Next dossier page">→</button></div></div>
+<div class="scroll"><table><thead><tr><th>Historical task / source</th><th>Family / role</th><th>Question</th><th>Inspect</th></tr></thead><tbody id="dossier-rows"></tbody></table></div>
+<article id="dossier-detail" class="detail" hidden></article>
+</section>
+<section id="downloads">
+<div class="eyebrow">Reproduce and review</div><h2>Paper, evidence and blind queues.</h2>
+<div class="download-list">
+<a href="/benchmark/evidence-v2/paper/main.pdf">Main paper · PDF</a>
+<a href="/benchmark/evidence-v2/paper/supplement.pdf">Scientific supplement · PDF</a>
+<a href="/benchmark/evidence-v2/paper/source.zip" download>Paper source package · ZIP</a>
+<a href="/benchmark/evidence-v2/dossiers.json" download>617 historical dossiers · JSON</a>
+<a href="/benchmark/evidence-v2/family-registry.json">Stable family names · JSON</a>
+<a href="/benchmark/evidence-v2/paired-observations.json">New paired observation index · JSON</a>
+<a href="/benchmark/evidence-v2/REVISION-CONTRACT.md">Identity and evaluation contract</a>
+<a href="/benchmark/evidence-v2/protocol-ready.json">Evidence-availability report · JSON</a>
+<a href="/benchmark/evidence-v2/review-packages/reviewer-1.zip" download>Independent reviewer 1 · ZIP</a>
+<a href="/benchmark/evidence-v2/review-packages/reviewer-2.zip" download>Independent reviewer 2 · ZIP</a>
+<a href="/benchmark/evidence-v2/QA-AND-RUN.md">Review import, adjudication and inference guide</a>
+<a href="/benchmark/evidence-v2/GRAPH-AND-ANALYSIS-ACCEPTANCE.md">Graph and analysis acceptance record</a>
+<a href="/benchmark/evidence-v2/STIMULUS-QA-ACCEPTANCE.md">Stimulus and QA implementation record</a>
+<a href="/benchmark/evidence-v2/REVIEW-RESPONSE.md">Review-item acceptance ledger</a>
+</div>
+<p class="small">Distribute each blind package to a different reviewer without this evaluator index or the other package. Collect 560 primary reviews and 134 auxiliary reviews, adjudicate disagreements, then run pinned models. The guide preserves the original judgments and exact observation hashes.</p>
+</section>
+</main>
+<footer>BrickAtlas · brickatlas-display-v2 / ldraw2-evidence-v2 · English research artifact.<br>Earlier releases remain preserved. Human qualification and genuine model diagnostics are open empirical requirements.</footer>
+<script>
+const base='/benchmark/evidence-v2/', $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let dossiers=[],pairs=[],systemPrompt='',page=0,native=false,renderGeneration=0;
+async function read(name){const r=await fetch(base+name);if(!r.ok)throw new Error(name+': HTTP '+r.status);return r.json()}
+function filterDossiers(){const q=$('#search').value.trim().toLowerCase(),f=$('#family').value,r=$('#role').value;return dossiers.filter(t=>(!f||t.family_id===f)&&(!r||t.role===r)&&(!q||[t.parent_task_id,t.source_name,t.prompt_en,...t.references.map(x=>x.label)].join(' ').toLowerCase().includes(q)))}
+function showDossiers(){const list=filterDossiers(),pages=Math.max(1,Math.ceil(list.length/25));page=Math.min(page,pages-1);$('#count').textContent=`${list.length} of ${dossiers.length} questions · Page ${page+1} of ${pages}`;$('#previous').disabled=page===0;$('#next').disabled=page===pages-1;
+$('#dossier-rows').innerHTML=list.slice(page*25,(page+1)*25).map(t=>`<tr><td><span class="row-title">${esc(t.parent_task_id)}</span><span class="small">${esc(t.source_name)} · ${esc(t.source_id)}</span></td><td>${esc(t.display_name)}<span class="small">${esc(t.role)}</span></td><td>${esc(t.prompt_en)}</td><td><button data-task="${esc(t.parent_task_id)}">Open</button></td></tr>`).join('')||'<tr><td colspan="4">No matching questions. Change a filter or search term.</td></tr>';
+}
+function showDetail(id){const t=dossiers.find(x=>x.parent_task_id===id);if(!t)return;const d=$('#dossier-detail');d.hidden=false;d.innerHTML=`<span class="tag">Historical LDraw-v2 record</span><h3 style="margin-top:12px">${esc(id)}</h3><p>${esc(t.prompt_en)}</p><p class="small">${esc(t.version_boundary)}</p><p>References: ${t.references.map(x=>esc(x.label)).join(', ')||'None'}</p><div class="actions"><a class="button" href="${esc(t.viewer)}">Inspect source in 3D ↗</a><a class="button secondary" href="${esc(t.source_record)}">Full source bundle</a>${t.new_pair_ids.length?`<button class="secondary" data-pair="${esc(t.new_pair_ids[0])}">Inspect new display-v2 pair</button>`:''}</div><details open><summary>Historical input, options and gold</summary><pre>${esc(JSON.stringify({format:t.format,input:t.input,options:t.options,answer:t.answer,evidence:t.evidence_detail},null,2))}</pre></details><div class="hash">Source SHA-256: ${esc(t.source_hash)}</div>`;
+d.scrollIntoView({behavior:'smooth',block:'start'});
+const url=new URL(location.href);url.searchParams.set('task',id);history.replaceState(null,'',url);
+}
+function pairChoices(selected){const f=$('#pair-family').value,list=pairs.filter(p=>!f||p.family===f);$('#pair-select').innerHTML=list.map(p=>`<option value="${esc(p.pair_id)}">${esc(p.display_name+' · '+p.parent_task_id)}</option>`).join('');if(selected&&list.some(p=>p.pair_id===selected))$('#pair-select').value=selected;showPair()}
+async function drawObservation(o,host,gen){const wrap=document.createElement('article');wrap.className='observation';wrap.innerHTML=`<div class="pair-head"><span class="tag">${o.role==='primary'?'Observation '+esc(o.arm):'Auxiliary position control'}</span><strong>Gold: ${esc(o.gold_semantics)} (${esc(o.gold.choiceId)})</strong></div><div class="scroll"><canvas width="1280" height="800" aria-label="${esc(o.role==='primary'?'Observation '+o.arm:'Position control')}"></canvas></div><p class="small">Human QA: pending · No model response</p><a class="small" href="${esc(o.image)}" target="_blank" rel="noopener">Open original scientific PNG ↗</a><div class="hash">Observation: ${esc(o.observation_id)}<br>Wire SHA-256: ${esc(o.wire_observation_sha256)}</div>`;host.append(wrap);
+try{const response=await fetch(o.image);if(!response.ok)throw new Error('PNG unavailable');const bitmap=await createImageBitmap(await response.blob());if(gen===renderGeneration){wrap.querySelector('canvas').getContext('2d').drawImage(bitmap,0,0);wrap.dataset.loaded='true'}bitmap.close()}catch(e){if(gen===renderGeneration)wrap.insertAdjacentHTML('beforeend',`<p class="error">${esc(e.message)}</p>`)}
+}
+function showPair(){const p=pairs.find(x=>x.pair_id===$('#pair-select').value);if(!p)return;const gen=++renderGeneration,o=p.observations[0];$('#pair-meta').textContent=`${p.display_name} · ${p.mechanism} · ${p.source_id} · ${p.pair_id}`;$('#pair-question').textContent=o.payload.question;$('#pair-options').textContent=o.payload.options.map(x=>`${x.id}: ${x.label}`).join('  |  ');$('#wire-text').textContent=systemPrompt+'\n\n'+o.payload.identity_contract;$('#pair-images').innerHTML='';$('#aux').innerHTML='';for(const ob of p.observations){if(ob.role==='primary')drawObservation(ob,$('#pair-images'),gen);else{const box=document.createElement('details');box.innerHTML='<summary>Show separate position-reference control</summary>';const prompt=document.createElement('p');prompt.className='prompt';prompt.textContent=ob.payload.question;box.append(prompt);$('#aux').append(box);drawObservation(ob,box,gen)}}}
+function toggleNative(){native=!native;$('#observations').classList.toggle('native',native);$('#native').textContent=native?'Fit to panel':'View native pixels';$('#native').setAttribute('aria-pressed',String(native))}
+async function start(){try{const summary=await read('release-summary.json');$('#availability').textContent=`Human qualification: ${summary.human_primary_final}/${summary.human_primary_total} primary observations finalized. QA-comparable pairs: ${summary.qa_comparable_pairs}/140. Real model runs: ${summary.real_model_runs}. Reported results are stimulus and algorithmic audits.`;
+const archive=await read('dossiers.json');dossiers=archive.items;for(const [id,f]of Object.entries(archive.families))$('#family').insertAdjacentHTML('beforeend',`<option value="${esc(id)}">${esc(f.display_name)}</option>`);const paired=await read('paired-observations.json');pairs=paired.pairs;systemPrompt=paired.system_prompt;pairChoices(pairs.find(p=>p.parent_task_id==='ld2-omr-42004-color-1')?.pair_id);showDossiers();
+const labels={'strong-change':'Strong change · primary proof of concept','degree-visible-control':'Degree-visible change control','strong-invariance':'Strong invariance','degree-visible-invariance':'Degree-visible invariance'};$('#graph-rows').innerHTML=Object.entries(summary.graph).map(([id,x])=>`<tr><td>${labels[id]}</td><td>${x.pairs} / ${x.sources}</td>${['degree-histogram-lookup','anonymous-1wl-lookup','isolates-plus-one','bfs'].map(k=>`<td>${Math.round(x.baselines[k]*x.pairs)}/${x.pairs}</td>`).join('')}</tr>`).join('');$('#load-status').textContent=`Loaded ${dossiers.length} historical dossiers and ${pairs.length} new pairs.`;
+const task=new URL(location.href).searchParams.get('task');if(task)showDetail(task);
+}catch(e){$('#load-status').textContent='Unable to load release: '+e.message;$('#load-status').classList.add('error')}}
+$('#pair-family').addEventListener('change',()=>pairChoices());$('#pair-select').addEventListener('change',showPair);$('#native').addEventListener('click',toggleNative);
+for(const id of ['search','family','role'])$('#'+id).addEventListener(id==='search'?'input':'change',()=>{page=0;showDossiers()});
+$('#reset').addEventListener('click',()=>{for(const id of ['search','family','role'])$('#'+id).value='';page=0;showDossiers()});$('#previous').addEventListener('click',()=>{page--;showDossiers()});$('#next').addEventListener('click',()=>{page++;showDossiers()});
+$('#dossier-rows').addEventListener('click',e=>{const b=e.target.closest('[data-task]');if(b)showDetail(b.dataset.task)});$('#dossier-detail').addEventListener('click',e=>{const b=e.target.closest('[data-pair]');if(b){$('#pair-family').value='';pairChoices(b.dataset.pair);$('#observations').scrollIntoView({behavior:'smooth'})}});
+start();
+</script>
+</body>
+</html>

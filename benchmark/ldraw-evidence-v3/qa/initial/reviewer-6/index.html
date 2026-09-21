@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Independent visual review</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#1b2935;font:16px/1.55 system-ui,sans-serif}
+header{background:#152d41;color:white;padding:20px 32px;display:flex;justify-content:space-between;gap:20px;align-items:center}
+main{max-width:1460px;margin:auto;padding:28px}h1{font-size:24px;margin:0}h2{font-size:19px}p{max-width:100ch}
+section{background:white;border:1px solid #d9e1e8;border-radius:10px;padding:22px;margin:20px 0}
+label{display:block;margin:10px 0}input,select,textarea,button{font:inherit;padding:8px;border:1px solid #a6b5c1;border-radius:5px}
+input[type=checkbox],input[type=radio]{accent-color:#136788}button{background:#176887;color:white;cursor:pointer}button.secondary{background:white;color:#174763}
+button:disabled{opacity:.45;cursor:default}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.viewport{overflow:auto;max-height:850px;border:1px solid #d3dce4;background:white}
+#stimulus{display:block;width:1280px;height:800px;max-width:none}#identity{color:#455d6c}
+.check{display:flex;gap:22px;align-items:center;border-bottom:1px solid #e6edf2;padding:8px 0}.check span{flex:1}
+.check label{white-space:nowrap}textarea{width:100%;min-height:80px}#notice{color:#85320b;font-weight:600}
+.muted{color:#577184;font-size:14px}details{margin:12px 0}code{font-size:13px}
+</style></head><body>
+<header><h1>Independent visual review</h1><span id="progress">Loading queue…</span></header>
+<main>
+<p>Review each observation independently, using only the question and image shown here. Do not consult the source model, other observations, another reviewer's judgments, answer keys, or model responses. Report what is visually supported, even when it differs from your prior knowledge.</p>
+<section><label>Your reviewer ID <input id="reviewer" autocomplete="off" placeholder="Stable pseudonym"></label>
+<p class="muted">This page saves judgments in this browser. Export your JSON when finished and return it to the study coordinator. Use only the queue assigned to you. Never open another reviewer package; each person sees at most one observation from a parent question.</p>
+<div class="toolbar"><button id="previous" class="secondary">Previous</button><button id="next" class="secondary">Next</button>
+<button id="unreviewed" class="secondary">Next unreviewed</button><button id="export">Export feedback JSON</button></div></section>
+<section><code id="token"></code><p id="identity"></p><h2 id="question"></h2><ol id="options"></ol>
+<details><summary>Exact system instruction</summary><p id="system"></p></details>
+<details id="peerSection" hidden><summary>Independent judgments requiring adjudication</summary><pre id="peers" style="white-space:pre-wrap"></pre></details>
+<p class="muted">Native image: 1280 × 800 pixels. Scroll within the image if your viewport is smaller. Inspect the full image before attesting.</p>
+<div class="viewport"><img id="stimulus" alt="Observation under review"></div></section>
+<section><h2>Your visual judgment</h2><form id="form">
+<label>Decision <select id="decision" required><option value="">Choose…</option></select></label>
+<label>Visually correct option, if supported <select id="choice"><option value="">No unique answer</option></select></label>
+<div id="checks"></div>
+<label>Reason category <select id="reasonCode" required><option value="">Choose…</option></select></label>
+<label>Reason / visual evidence <textarea id="reason" required placeholder="Briefly explain the visible evidence or the ambiguity."></textarea></label>
+<label><input id="native" type="checkbox" required> I inspected the whole image at its native size.</label>
+<label><input id="independent" type="checkbox" required> <span id="independentText">I made this judgment independently, without external answers or another reviewer's decisions, and have not viewed other reviewer packages.</span></label>
+<button type="submit">Save judgment</button><p id="notice" role="status"></p></form></section>
+</main>
+<script type="module">
+const $=id=>document.getElementById(id), humanNames={
+unique_target_reference:'Does the target reference uniquely select one visible object?',
+unique_visual_option:'Do the options include exactly one visually correct answer?',
+sufficient_visibility:'Are the relevant features sufficiently visible?',
+no_reference_contradiction:'Is the observation free from contradictory references?'};
+const bytes=await(await fetch('./queue.json')).arrayBuffer();
+const queueHash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(n=>n.toString(16).padStart(2,'0')).join('');
+const q=JSON.parse(new TextDecoder().decode(bytes)), storage='brickatlas-independent-review-'+queueHash;
+let state=JSON.parse(localStorage.getItem(storage)||'{"reviewer":"","index":0,"reviews":{}}');
+function persist(){localStorage.setItem(storage,JSON.stringify(state))}
+$('reviewer').value=state.reviewer;
+$('reviewer').onchange=()=>{if(Object.keys(state.reviews).length&&$('reviewer').value.trim()!==state.reviewer){
+$('reviewer').value=state.reviewer;alert('Reviewer identity is fixed after the first saved judgment.');return;}
+state.reviewer=$('reviewer').value.trim();persist()};
+for(const d of q.decisions)$('decision').add(new Option(d,d));
+for(const r of q.reasons)$('reasonCode').add(new Option(r,r));
+for(const k of q.checks){const div=document.createElement('div');div.className='check';
+const span=document.createElement('span');span.textContent=humanNames[k];div.append(span);
+for(const value of ['yes','no']){const label=document.createElement('label'),input=document.createElement('input');
+input.type='radio';input.name=k;input.value=value;input.required=true;label.append(input,document.createTextNode(' '+value));div.append(label)}
+$('checks').append(div)}
+function show(){const r=q.queue[state.index],old=state.reviews[r.review_id];$('form').reset();$('notice').textContent='';
+$('progress').textContent=`Observation ${state.index+1} / ${q.queue.length} · ${Object.keys(state.reviews).length} saved`;
+$('token').textContent=r.review_id;$('identity').textContent=r.payload.identity_contract;$('question').textContent=r.payload.question;
+$('system').textContent=r.system_text;$('stimulus').src=r.image;$('options').replaceChildren();
+$('peerSection').hidden=!r.peer_reviews;$('peers').textContent=r.peer_reviews?JSON.stringify(r.peer_reviews,null,2):'';
+$('independentText').textContent=r.peer_reviews?'I adjudicated using only this observation and the two displayed judgments, without viewing its counterpart, other packages, source answers or model outputs.':'I made this judgment independently, without external answers or another reviewer’s decisions, and have not viewed other reviewer packages.';
+$('choice').replaceChildren(new Option('No unique answer',''));
+for(const o of r.payload.options){const li=document.createElement('li');li.textContent=o.id+' — '+o.label;$('options').append(li);
+$('choice').add(new Option(o.id+' — '+o.label,o.id))}
+if(old){$('decision').value=old.decision;$('choice').value=old.visual_choice||'';$('reasonCode').value=old.reason_code;
+$('reason').value=old.reason;$('native').checked=old.native_size_attestation;$('independent').checked=old.independence_attestation;
+for(const k of q.checks)document.querySelector(`input[name="${k}"][value="${old.checks[k]?'yes':'no'}"]`).checked=true}
+$('previous').disabled=state.index===0;$('next').disabled=state.index===q.queue.length-1;persist()}
+$('previous').onclick=()=>{state.index--;show()};$('next').onclick=()=>{state.index++;show()};
+$('unreviewed').onclick=()=>{for(let n=1;n<=q.queue.length;n++){const i=(state.index+n)%q.queue.length;
+if(!state.reviews[q.queue[i].review_id]){state.index=i;show();return}}$('notice').textContent='All observations have a saved judgment.'};
+$('form').onsubmit=e=>{e.preventDefault();state.reviewer=$('reviewer').value.trim();
+if(state.reviewer.length<2){$('notice').textContent='Enter your stable reviewer ID first.';return}
+const r=q.queue[state.index],checks=Object.fromEntries(q.checks.map(k=>[k,document.querySelector(`input[name="${k}"]:checked`).value==='yes']));
+if($('decision').value==='decidable'&&(!Object.values(checks).every(Boolean)||!$('choice').value||$('reasonCode').value!=='none')){
+$('notice').textContent='A decidable judgment requires four Yes checks, one answer, and reason category none.';return}
+if($('decision').value!=='decidable'&&$('reasonCode').value==='none'){$('notice').textContent='Choose a reason for excluding this observation.';return}
+state.reviews[r.review_id]={review_id:r.review_id,wire_observation_sha256:r.wire_observation_sha256,reviewer:state.reviewer,
+author_kind:'human',timestamp:new Date().toISOString(),decision:$('decision').value,visual_choice:$('choice').value||null,
+checks,reason_code:$('reasonCode').value,reason:$('reason').value.trim(),native_size_attestation:$('native').checked,
+independence_attestation:$('independent').checked};persist();show();$('notice').textContent='Judgment saved locally.'};
+$('export').onclick=()=>{const blob=new Blob([JSON.stringify({slot:q.slot,queue_sha256:queueHash,
+evidence_kind:'independent-human-review',reviewer:state.reviewer,reviews:Object.values(state.reviews)},null,2)+'\n'],{type:'application/json'});
+const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=q.slot+'-feedback.json';a.click();URL.revokeObjectURL(a.href)};
+show();
+</script></body></html>

@@ -1,0 +1,23 @@
+{
+  "extension_version": "ldraw2-matched-graphs-v1",
+  "analysis_version": "ldraw2-evidence-v1",
+  "seed": 20260919,
+  "status": "rules-fixed-before-new-model-responses",
+  "evidence_kind": "hypothetical-evidence",
+  "parent_family": "graph-removal",
+  "max_observations_per_parent": 3,
+  "max_observations_per_source": 15,
+  "natural_data_policy": "All original 73 items remain unchanged and separately reported.",
+  "nodes": "Reuse each parent's exact source-local node labels and target identity.",
+  "construction": [
+    "Create a hypothetical star from target to every surviving node.",
+    "For six or more survivors, compare a six-cycle with two triangles; leave other survivors isolated after target deletion. These match node count, edge count, target degree and every surviving node degree.",
+    "For four or five survivors, compare a four-node path with a three-node triangle plus isolated vertices. These match node count, edge count and target degree, but not surviving degrees.",
+    "Choose anchor type by alternating over a SHA256-seeded ordering of parent IDs. Partner changes the answer in either direction; a third observation relabels the anchor among survivors and preserves the answer.",
+    "Record explicit feasibility gaps: degree-matched different component counts are not claimed for four/five survivors, and hypothetical edge counts need not equal the original source graph.",
+    "Use a seeded permutation of opaque observation IDs; send each observation in a fresh independent request without parent, transformation, group or answer-direction fields."
+  ],
+  "aggregation": "Variants within original parent; parents within source; sources equally.",
+  "exclusions": "No source or parent is removed for its baseline or model score.",
+  "publication_policy": "Natural and challenge distributions remain separate. No physical source-connectivity or model-performance claim without corresponding evidence."
+}

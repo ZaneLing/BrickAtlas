@@ -1,0 +1,192 @@
+<html style="margin:0;padding:0;">
+<title>BrickAtlas LDraw-1 构念gap与重新定位</title>
+<div style="width:100%;box-sizing:border-box;font-family:-apple-system,'Segoe UI',sans-serif;background:#fafbfc;padding:20px 16px;color:#1a1a2e;">
+
+<div style="text-align:center;margin-bottom:18px;">
+<div style="font-size:18px;font-weight:700;color:#1a1a2e;">BrickAtlas LDraw-1：声称能力 × 实际测量 × 推荐定位</div>
+<div style="font-size:12px;color:#6b7280;margin-top:4px;">三条审稿意见对应的构念gap与可操作修正方向（示意，非论文图重绘）</div>
+</div>
+
+<!-- Three columns -->
+<div style="display:flex;gap:14px;align-items:stretch;flex-wrap:wrap;">
+
+<!-- Column 1: Claimed -->
+<div style="flex:1;min-width:240px;background:#fff;border:2px solid #e5e7eb;border-radius:10px;padding:14px;">
+<div style="font-size:13px;font-weight:700;color:#9ca3af;letter-spacing:1px;margin-bottom:8px;">论文暗示 / 标题主张</div>
+<div style="font-size:15px;font-weight:700;color:#b91c1c;margin-bottom:12px;">综合装配推理</div>
+<div style="font-size:12px;color:#4b5563;line-height:1.6;margin-bottom:10px;">"Instance-grounded visual and structural reasoning over original brick assemblies"</div>
+
+<!-- Claimed pipeline -->
+<div style="background:#fef2f2;border-radius:8px;padding:10px;margin-bottom:10px;">
+<div style="font-size:11px;font-weight:700;color:#991b1b;margin-bottom:6px;">声称的能力链</div>
+<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+<div style="background:#dc2626;color:#fff;font-size:11px;padding:5px 8px;border-radius:5px;font-weight:600;">视觉定位</div>
+<div style="color:#dc2626;font-size:14px;">→</div>
+<div style="background:#dc2626;color:#fff;font-size:11px;padding:5px 8px;border-radius:5px;font-weight:600;">结构判断</div>
+<div style="color:#dc2626;font-size:14px;">→</div>
+<div style="background:#dc2626;color:#fff;font-size:11px;padding:5px 8px;border-radius:5px;font-weight:600;">操作执行</div>
+</div>
+<div style="font-size:10px;color:#991b1b;margin-top:6px;font-style:italic;">暗示单题内跨环节联合推理</div>
+</div>
+
+<!-- Gap annotations -->
+<div style="font-size:11px;color:#6b7280;line-height:1.7;">
+<div style="margin-bottom:4px;"><span style="color:#b91c1c;font-weight:700;">❶</span> 与BrickNet/LEGO-Puzzles/PhyBlock差异仅为"任务不同"，未论证差异为何重要</div>
+<div style="margin-bottom:4px;"><span style="color:#b91c1c;font-weight:700;">❷</span> "能区分模型"可能来自字段读取/格式遵循，而非空间推理</div>
+<div><span style="color:#b91c1c;font-weight:700;">❸</span> 大型原始装配(15,334件) vs 单题仅需2-5件局部切片</div>
+</div>
+</div>
+
+<!-- Arrow -->
+<div style="display:flex;align-items:center;justify-content:center;min-width:40px;">
+<div style="font-size:28px;color:#9ca3af;">⇒</div>
+</div>
+
+<!-- Column 2: Actual -->
+<div style="flex:1.4;min-width:300px;background:#fff;border:2px solid #f59e0b;border-radius:10px;padding:14px;">
+<div style="font-size:13px;font-weight:700;color:#9ca3af;letter-spacing:1px;margin-bottom:8px;">代码与数据核验 · 实际测量</div>
+<div style="font-size:15px;font-weight:700;color:#b45309;margin-bottom:10px;">4个独立单模态层 · 0个跨模块单题</div>
+
+<!-- Four modality layers -->
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
+
+<div style="display:flex;align-items:center;gap:8px;">
+<div style="background:#3b82f6;color:#fff;font-size:11px;font-weight:700;padding:4px 8px;border-radius:5px;min-width:60px;text-align:center;">V 视觉</div>
+<div style="flex:1;font-size:11px;color:#374151;">
+<span style="background:#dbeafe;padding:2px 6px;border-radius:3px;margin-right:4px;">Color 73</span>
+<span style="background:#dbeafe;padding:2px 6px;border-radius:3px;">Part-type 67</span>
+<span style="font-size:10px;color:#16a34a;margin-left:6px;">✓ 真视觉感知</span>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;gap:8px;">
+<div style="background:#8b5cf6;color:#fff;font-size:11px;font-weight:700;padding:4px 8px;border-radius:5px;min-width:60px;text-align:center;">S 源数据</div>
+<div style="flex:1;font-size:11px;color:#374151;line-height:1.8;">
+<span style="background:#ede9fe;padding:2px 6px;border-radius:3px;margin-right:4px;">Distance 73</span>
+<span style="background:#ede9fe;padding:2px 6px;border-radius:3px;margin-right:4px;">Coverage 17</span>
+<span style="background:#ede9fe;padding:2px 6px;border-radius:3px;margin-right:4px;">Evidence-limit 24</span>
+<span style="background:#ede9fe;padding:2px 6px;border-radius:3px;">Step-lookup 55</span>
+<div><span style="font-size:10px;color:#dc2626;">⚠ 坐标/标志/固定答案/表格 — 纯字段读取，算术或查找</span></div>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;gap:8px;">
+<div style="background:#10b981;color:#fff;font-size:11px;font-weight:700;padding:4px 8px;border-radius:5px;min-width:60px;text-align:center;">G 图</div>
+<div style="flex:1;font-size:11px;color:#374151;line-height:1.8;">
+<span style="background:#d1fae5;padding:2px 6px;border-radius:3px;margin-right:4px;">Interface 87</span>
+<span style="background:#d1fae5;padding:2px 6px;border-radius:3px;margin-right:4px;">Neighbors 73</span>
+<span style="background:#d1fae5;padding:2px 6px;border-radius:3px;">Graph-deletion 73</span>
+<div><span style="font-size:10px;color:#dc2626;">⚠ family字段直给 / 边列表直给 / 局部小图(4-8节点)，60.3%答案=4</span></div>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;gap:8px;">
+<div style="background:#f59e0b;color:#fff;font-size:11px;font-weight:700;padding:4px 8px;border-radius:5px;min-width:60px;text-align:center;">E 编辑</div>
+<div style="flex:1;font-size:11px;color:#374151;line-height:1.8;">
+<span style="background:#fef3c7;padding:2px 6px;border-radius:3px;margin-right:4px;">Step-sequence 17</span>
+<span style="background:#fef3c7;padding:2px 6px;border-radius:3px;">Restoration 58</span>
+<div><span style="font-size:10px;color:#dc2626;">⚠ 线性前驱链 / missingID直接在input中 — 格式遵循，非规划</span></div>
+</div>
+</div>
+
+</div>
+
+<!-- Key facts -->
+<div style="background:#fffbeb;border-radius:8px;padding:10px;border:1px solid #fde68a;">
+<div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:6px;">核验事实</div>
+<div style="font-size:11px;color:#78350f;line-height:1.7;">
+• 每题input已包含全部解题信息，<b>0题需要完整装配上下文</b><br>
+• 实例ID跨族共享，但<b>0题要求单题内V→G→E联合推理</b><br>
+• 9/11族为字段读取/算术/查找；仅2族(Color, Part-type)为真视觉感知<br>
+• "Integrative"层仅含Graph-deletion(G-only)，非跨模态整合
+</div>
+</div>
+</div>
+
+<!-- Arrow -->
+<div style="display:flex;align-items:center;justify-content:center;min-width:40px;">
+<div style="font-size:28px;color:#9ca3af;">⇒</div>
+</div>
+
+<!-- Column 3: Recommended -->
+<div style="flex:1;min-width:240px;background:#fff;border:2px solid #10b981;border-radius:10px;padding:14px;">
+<div style="font-size:13px;font-weight:700;color:#9ca3af;letter-spacing:1px;margin-bottom:8px;">推荐重新定位</div>
+<div style="font-size:15px;font-weight:700;color:#047857;margin-bottom:12px;">跨模态诊断仪器</div>
+
+<div style="background:#ecfdf5;border-radius:8px;padding:10px;margin-bottom:10px;">
+<div style="font-size:11px;font-weight:700;color:#065f46;margin-bottom:6px;">核心主张（改写后）</div>
+<div style="font-size:11px;color:#064e3b;line-height:1.6;">首个在不变原始LDraw源上，用同一实例ID绑定V/S/G/E四契约，使<b>同零件的感知错误、证据读取错误、图运算错误、执行错误可分别归因</b>的诊断工具。</div>
+</div>
+
+<div style="font-size:11px;color:#374151;line-height:1.8;margin-bottom:10px;">
+<div style="font-weight:700;color:#047857;margin-bottom:4px;">类比文献位置</div>
+• CLEVR：视觉推理链内步骤分解<br>
+• <b>LDraw-1：跨观测契约的模态分解</b><br>
+• 不是能力排行榜，是故障定位仪
+</div>
+
+<div style="background:#f0fdf4;border-radius:8px;padding:10px;border:1px solid #bbf7d0;">
+<div style="font-size:11px;font-weight:700;color:#166534;margin-bottom:6px;">必须收窄的主张</div>
+<div style="font-size:11px;color:#14532d;line-height:1.7;">
+✗ 不声称"评估综合装配智能"<br>
+✗ 不暗示与BrickNet/PhyBlock竞争<br>
+✓ 明确定位为"可解释的分模块评测"<br>
+✓ 恒答族/字段读取族加标记单列
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- Bottom: priority actions -->
+<div style="margin-top:16px;background:#fff;border-radius:10px;padding:14px;border:1px solid #e5e7eb;">
+<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px;">修正优先级（按成本从低到高）</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+<div style="flex:1;min-width:200px;background:#eff6ff;border-radius:8px;padding:10px;border-left:4px solid #3b82f6;">
+<div style="font-size:11px;font-weight:700;color:#1e40af;margin-bottom:4px;">P0 · 立即做（改写，不需实验）</div>
+<div style="font-size:11px;color:#1e3a5f;line-height:1.6;">
+① 贡献段从"交付物清单"改为"失败归因可分"研究主张<br>
+② Table 1加"未覆盖的问题"列<br>
+③ 任务表加"测量对象"列，恒答族加†标记<br>
+④ "Integrative"改名或加脚注<br>
+⑤ Abstract/Intro收窄"综合推理"措辞
+</div>
+</div>
+
+<div style="flex:1;min-width:200px;background:#f0fdf4;border-radius:8px;padding:10px;border-left:4px solid #10b981;">
+<div style="font-size:11px;font-weight:700;color:#065f46;margin-bottom:4px;">P1 · 廉价描述性分析（现有数据可算）</div>
+<div style="font-size:11px;color:#064e3b;line-height:1.6;">
+① band×模态交叉表（D1-D4中V/S/G/E各占多少题）<br>
+② 答案集中度量化（Graph-deletion 60.3%=4等）<br>
+③ 题目冗余度/源内相关性统计<br>
+④ "总是猜最常见答案"基线分数
+</div>
+</div>
+
+<div style="flex:1;min-width:200px;background:#fffbeb;border-radius:8px;padding:10px;border-left:4px solid #f59e0b;">
+<div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:4px;">P2 · 实验设计调整（需跑模型）</div>
+<div style="font-size:11px;color:#78350f;line-height:1.6;">
+① 计划表加"完整场景vs局部裁剪"background-mask消融<br>
+② 写死消融判读规则（Text≈Image则视觉贡献=0）<br>
+③ 修复Restoration的missingID泄漏<br>
+④ （可选）设计1-2个真正的跨模块联合任务<br>
+⑤ 动作族拆"工具调用"vs"规划"两个分母
+</div>
+</div>
+
+<div style="flex:1;min-width:200px;background:#fef2f2;border-radius:8px;padding:10px;border-left:4px solid #ef4444;">
+<div style="font-size:11px;font-weight:700;color:#991b1b;margin-bottom:4px;">P3 · 模型跑完后实证</div>
+<div style="font-size:11px;color:#7f1d1d;line-height:1.6;">
+① 用消融结果实证区分"模块诊断"vs"综合能力"<br>
+② 若跨模块任务得分≫各单模块得分之积，则证明存在整合<br>
+③ 若background-mask无差异，则正式承认装配规模=素材来源<br>
+④ 人审ID可读性/视觉歧义/图语义
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</html>

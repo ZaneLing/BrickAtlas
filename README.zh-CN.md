@@ -5,12 +5,44 @@
 <h1 align="center">Brick Atlas</h1>
 
 <p align="center">
-  用于探索 LDraw 模型、检查单块积木、查看拼装说明和自由创作的桌面端三维工作空间。
+  基于真实 LDraw 零件的可审计视觉证据跟随 Benchmark，以及用于检查数据的三维工作空间。
 </p>
 
 <p align="center">
   <a href="README.md">English</a> · <strong>简体中文</strong>
 </p>
+
+## 仓库导航
+
+| 内容 | 入口 |
+|---|---|
+| 当前论文与附录 | [paper/](paper/README.md) · [正文 PDF](paper/main.pdf) · [附录 PDF](paper/supplement.pdf) |
+| Benchmark data、版本及规模 | [benchmark/DATASETS.md](benchmark/DATASETS.md) |
+| Metrics 定义与实现 | [benchmark/METRICS.md](benchmark/METRICS.md) |
+| 当前视觉题、pair ID、原始观察 | [benchmark/ldraw-evidence-v3/](benchmark/ldraw-evidence-v3/) |
+| 评分、人审、运行器代码 | [benchmark/suite/ldraw-evidence-v3/](benchmark/suite/ldraw-evidence-v3/) |
+| 逐观察审计与单图像基线 | [benchmark/ldraw-evidence-v4-draft/](benchmark/ldraw-evidence-v4-draft/) |
+| 模型清单及空白实验表 | [paper/experiments.json](paper/experiments.json) |
+| 全量与全模型 MVP 预算 | [benchmark/experiment-plans/](benchmark/experiment-plans/) |
+| 中间审稿、修改指导、旧论文 | [tem/](tem/README.md) |
+
+当前主要视觉测试为 **73 对 Color、67 对 Part-type**，另有 67 个位置面板；
+文本图辅助测试有 219 条独立观察。底层保留 24 个来源模型、15,334 个零件实例。
+617 道历史题是可检索资源，不叠加计入主要视觉测试数量。
+
+论文按“动机 → 任务定义 → 数据构建与人审 → 指标 → 实验设计”组织。
+计划覆盖 **15 个模型：13 个视觉语言模型、2 个纯文本模型**，正文结果单元格全部留空。
+真人资格审核和这轮模型实验尚未完成，现有算法审计与模型成绩分别标注。
+旧版封存的三个 OpenAI 模型协议继续独立保存。
+
+运行 `npm run dev` 后，数据检查入口为
+`http://127.0.0.1:5173/benchmark/evidence-v3/index.html`，
+三维来源查看器为 `/benchmark`。检查入口包含答案；
+正式人审使用[独立盲审包](benchmark/ldraw-evidence-v3/QA-AND-RUN.md)。
+
+今后修改论文统一进入 `paper/`。旧 `benchmark/paper` 和审稿路径通过兼容链接
+指向 `tem/`，保留历史哈希。代码、数据、图像、审核包和 PDF 纳入 Git；
+大型重复恢复压缩包及运行环境保留本地，详见 [tem 说明](tem/README.md)。
 
 ## 功能演示
 

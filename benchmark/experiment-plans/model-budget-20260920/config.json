@@ -1,0 +1,73 @@
+{
+  "status": "proposal-only-no-inference-or-procurement",
+  "price_checked_date": "2026-09-20",
+  "currency": "USD",
+  "usd_cny_budget_assumption": 7.0,
+  "contingency_fraction": 0.30,
+  "scope": "Current 347 visual observations, same-message no-image controls and 219 matched text-graph observations. The 617 historical dossiers are not an additional 617 scored requests.",
+  "counts": {"visual": 347, "no_image": 347, "graph": 219},
+  "text_input_tokens_budget_per_vlm_round": 260000,
+  "image_tokens_budget_per_observation": 2000,
+  "image_budget_note": "Conservative planning proxy, not a claim of identical provider tokenization. Claude 1280x800 is 46x29=1334 visual tokens; Gemini 3 high is about 1120. Validate OpenAI detail/multipliers and all provider usage before freezing.",
+  "output_token_scenarios": [64, 2048, 8192],
+  "mvp": {
+    "status": "budget-and-sampling-design-only",
+    "model_coverage": "All 15 distinct models in api_models and local_models, including economical-profile Sol.",
+    "repeats": 1,
+    "color_pairs": 12,
+    "part_type_pairs": 12,
+    "position_panels": 12,
+    "strong_graph_parents": 12,
+    "degree_visible_graph_parents": 6,
+    "counts": {"visual": 60, "no_image": 60, "graph": 54},
+    "extra_mode_configurations": ["gemini_pro", "qwen27"],
+    "text_tokens_per_request_budget": 300,
+    "image_tokens_per_image_budget": 2000,
+    "storage_usd": 5,
+    "openrouter_credit_purchase_fee_fraction": 0.055,
+    "openrouter_credit_purchase_min_fee_usd": 0.80,
+    "price_snapshot": "mvp/openrouter-audit.json",
+    "budget_output": "mvp/budget.json",
+    "sampling": "Choose complete visual pairs, stratified by source, source-scale band and answer position before outputs; retain the 12 selected Part-type panels. Keep all 12 strong graph parents and select 6 degree-visible parents with anchor/change/invariance, yielding 54 unique graph observations. Audit subset priors separately; full-set shortcut bounds need not survive subsampling.",
+    "acceptance": "Pipeline, format, image delivery and exploratory behavior only; not a stable ranking or a completed full-roster/full-dataset study. Selected IDs and native-input QA must be frozen before any live MVP run."
+  },
+  "output_note": "Total billed output includes hidden reasoning. 64 is a short-output cost floor, not an available no-thinking mode for every model; 2048 is a planning average, not a measurement; 8192 is an all-calls-saturate scenario, only a spend ceiling if adapters enforce a combined output cap.",
+  "api_models": [
+    {"id": "astra", "name": "GPT-6 Astra", "provider": "OpenAI", "api_id": "gpt-6-astra", "input_per_million": 10.0, "output_per_million": 50.0, "source": "https://developers.openai.com/api/docs/pricing"},
+    {"id": "sol", "name": "GPT-5.6 Sol", "provider": "OpenAI", "api_id": "gpt-5.6-sol", "input_per_million": 4.0, "output_per_million": 20.0, "source": "https://developers.openai.com/api/docs/pricing", "price_note": "Promotional rate advertised through at least 2026-11-21; used only in economical profile."},
+    {"id": "luna", "name": "GPT-5.6 Luna", "provider": "OpenAI", "api_id": "gpt-5.6-luna", "input_per_million": 0.2, "output_per_million": 1.2, "source": "https://developers.openai.com/api/docs/pricing"},
+    {"id": "fable", "name": "Claude Fable 5.1", "provider": "Anthropic", "api_id": "claude-fable-5-1", "input_per_million": 10.0, "output_per_million": 50.0, "source": "https://platform.claude.com/docs/en/about-claude/pricing"},
+    {"id": "sonnet", "name": "Claude Sonnet 5", "provider": "Anthropic", "api_id": "claude-sonnet-5", "input_per_million": 2.0, "output_per_million": 10.0, "source": "https://platform.claude.com/docs/en/about-claude/pricing"},
+    {"id": "gemini_pro", "name": "Gemini 3.1 Pro Preview", "provider": "Google", "api_id": "gemini-3.1-pro-preview", "input_per_million": 2.0, "output_per_million": 12.0, "source": "https://ai.google.dev/gemini-api/docs/pricing", "version_note": "Preview ID; exact backend revision stability must be assessed before committing a collection window."},
+    {"id": "gemini_flash", "name": "Gemini 3.8 Flash", "provider": "Google", "api_id": "gemini-3.8-flash", "input_per_million": 0.75, "output_per_million": 3.75, "source": "https://ai.google.dev/gemini-api/docs/pricing", "price_note": "Promotional rate through 2026-12-31; announced subsequent rate is 1.50 input and 7.50 output."}
+  ],
+  "gpu_price_source": "https://www.runpod.io/pricing",
+  "gpu_price_note": "Advertised Community Cloud per-device rates; not a capacity reservation or local-region quote. GPU duration is an engineering allowance, not measured throughput.",
+  "local_models": [
+    {"id": "qwen9", "name": "Qwen3.5-9B", "repo": "Qwen/Qwen3.5-9B", "track": "vlm", "gpu": "L40S 48GB", "devices": 1, "usd_per_device_hour": 1.09, "setup_wall_hours": 1.0, "wall_hours_per_round": 2.0},
+    {"id": "qwen27", "name": "Qwen3.5-27B", "repo": "Qwen/Qwen3.5-27B", "track": "vlm", "gpu": "A100 80GB", "devices": 1, "usd_per_device_hour": 1.59, "setup_wall_hours": 1.5, "wall_hours_per_round": 4.0},
+    {"id": "intern8", "name": "InternVL3.5-8B", "repo": "OpenGVLab/InternVL3_5-8B-HF", "track": "vlm", "gpu": "L40S 48GB", "devices": 1, "usd_per_device_hour": 1.09, "setup_wall_hours": 1.0, "wall_hours_per_round": 3.0},
+    {"id": "intern38", "name": "InternVL3.5-38B", "repo": "OpenGVLab/InternVL3_5-38B-HF", "track": "vlm", "gpu": "2 x A100 80GB", "devices": 2, "usd_per_device_hour": 1.59, "setup_wall_hours": 2.0, "wall_hours_per_round": 6.0},
+    {"id": "gemma4", "name": "Gemma 3 4B IT", "repo": "google/gemma-3-4b-it", "track": "vlm", "gpu": "L40S 48GB", "devices": 1, "usd_per_device_hour": 1.09, "setup_wall_hours": 1.0, "wall_hours_per_round": 1.5},
+    {"id": "gemma27", "name": "Gemma 3 27B IT", "repo": "google/gemma-3-27b-it", "track": "vlm", "gpu": "A100 80GB", "devices": 1, "usd_per_device_hour": 1.59, "setup_wall_hours": 1.5, "wall_hours_per_round": 3.0},
+    {"id": "qwen_text32", "name": "Qwen3-32B", "repo": "Qwen/Qwen3-32B", "track": "graph-only", "gpu": "A100 80GB", "devices": 1, "usd_per_device_hour": 1.59, "setup_wall_hours": 1.0, "wall_hours_per_round": 1.0},
+    {"id": "r1_distill32", "name": "DeepSeek-R1-Distill-Qwen-32B", "repo": "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B", "track": "graph-only", "gpu": "A100 80GB", "devices": 1, "usd_per_device_hour": 1.59, "setup_wall_hours": 1.0, "wall_hours_per_round": 2.0}
+  ],
+  "profiles": [
+    {"id": "economical", "repeats": 1, "api": ["sol", "sonnet", "gemini_flash"], "local": ["qwen9", "intern8", "gemma4"], "extra_api_configurations": [], "extra_local_configurations": [], "storage_usd": 10},
+    {"id": "core", "repeats": 3, "api": ["astra", "luna", "fable", "sonnet", "gemini_pro", "gemini_flash"], "local": ["qwen9", "qwen27", "intern8", "intern38", "gemma4", "gemma27", "qwen_text32", "r1_distill32"], "extra_api_configurations": [], "extra_local_configurations": [], "storage_usd": 10},
+    {"id": "recommended", "repeats": 3, "api": ["astra", "luna", "fable", "sonnet", "gemini_pro", "gemini_flash"], "local": ["qwen9", "qwen27", "intern8", "intern38", "gemma4", "gemma27", "qwen_text32", "r1_distill32"], "extra_api_configurations": ["gemini_pro"], "extra_local_configurations": ["qwen27"], "storage_usd": 10}
+  ],
+  "collection_notes": [
+    "This proposal does not edit evidence-v3's sealed three-model single-call roster.",
+    "No keys, paid inference, GPU rental, training or review invitations have been used.",
+    "A new study version must commit all models, revisions or collection-window limitations, adapters, conditions, repeats and inclusion rules before collecting responses.",
+    "All reported repeats are complete and retained. A/B calls are independent; no counterpart is sent as conversation history.",
+    "Use provider-supported generation settings; temperature zero is not universally supported or appropriate.",
+    "Main VLM results use native PNG bytes without externally supplied crops, OCR, tools or source records.",
+    "Weights use BF16/FP16 unless a separately labeled quantized configuration is explicitly committed.",
+    "The two extra configurations compare Qwen27 thinking-off/on and Gemini Pro lower/higher effort. Modes are configurations of existing models, not extra independent models.",
+    "Standard token rates, no cache or Batch discounts, no tools. Explicit cache-write fees, taxes, currency fees or regional uplifts are not itemized and must be accommodated within or added to contingency.",
+    "The cost floor and saturation scenario do not change the evaluation protocol. Choose and freeze one feasible output/effort policy before collecting any primary result."
+  ]
+}

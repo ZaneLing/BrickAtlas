@@ -1,0 +1,66 @@
+\subsection{Color}
+73 items; visual; atomic; single-choice.
+\paragraph{Public input.}\{\}; visualInput.numberedView supplies a frozen operand-isolation PNG; isolationAllowed=true
+\paragraph{Operation and scoring.}Bind the target B-number in the image; identify its source color name. Exact anonymous choiceId of the semantic answer.
+\paragraph{Interpretation.}Source color equality is an oracle, not proof of perceptual distinguishability.
+\paragraph{Control.}No known deterministic S1--S4 request shortcut; semantic priors reported separately.
+\subsection{Part type}
+67 items; visual; atomic; single-choice.
+\paragraph{Public input.}\{\}; visualInput.numberedView supplies a frozen operand-isolation PNG; isolationAllowed=true
+\paragraph{Operation and scoring.}Bind target and candidates in the image; match the source part type while ignoring color and pose. Exact anonymous choiceId of the semantic answer.
+\paragraph{Interpretation.}Near-identical source types require human adjudication; no unseen geometry is inferred.
+\paragraph{Control.}No known deterministic S1--S4 request shortcut; semantic priors reported separately.
+\subsection{Distance}
+73 items; source-data; atomic; single-choice.
+\paragraph{Public input.}centers, coordinateFrame
+\paragraph{Operation and scoring.}Read supplied bounding-box centers, compute Euclidean distance, select the unique minimum. Exact anonymous choiceId of the semantic answer.
+\paragraph{Interpretation.}Coordinates are explicit, not visually estimated. Candidates are hash sampled, not nearest spatial neighbors.
+\paragraph{Control.}No known deterministic S1--S4 request shortcut; semantic priors reported separately.
+\subsection{Interface}
+87 items; connector-graph; metacognitive; single-choice.
+\paragraph{Public input.}connectorRecord.\{family,aConnector,bConnector\}; scope
+\paragraph{Operation and scoring.}Read connectorRecord.family and select the identical label. Exact anonymous choiceId of the semantic answer.
+\paragraph{Interpretation.}An explicit record-reading control, not contact perception or load-capacity reasoning.
+\paragraph{Control.}No known deterministic S1--S4 request shortcut; semantic priors reported separately.
+\subsection{Neighbors}
+73 items; connector-graph; metacognitive; multiple-choice.
+\paragraph{Public input.}edges, graphMeaning
+\paragraph{Operation and scoring.}Collect candidate labels joined to the target by any supplied undirected edge; deduplicate. Exact set of choiceIds; order ignored; duplicate IDs invalid.
+\paragraph{Interpretation.}One-hop set extraction within the recognized graph, not physical connectivity discovery.
+\paragraph{Control.}No known deterministic S1--S4 request shortcut; semantic priors reported separately.
+\subsection{Graph deletion}
+73 items; connector-graph; graph-internal; integer.
+\paragraph{Public input.}edges, graphMeaning, nodes
+\paragraph{Operation and scoring.}Delete the named vertex and incident edges; count connected components including remaining isolated vertices. A safe JSON integer value exactly equal to the independent component count.
+\paragraph{Interpretation.}An operation within a supplied local graph; no extraction trajectory or cross-contract chain.
+\paragraph{Control.}No known deterministic S1--S4 request shortcut; semantic priors reported separately.
+\subsection{Coverage}
+17 items; source-data; metacognitive; single-choice.
+\paragraph{Public input.}coverage[].\{label,supported\}
+\paragraph{Operation and scoring.}Select the sole row whose supplied supported flag is false. Exact anonymous choiceId of the semantic answer.
+\paragraph{Interpretation.}A definition-coverage control; unsupported does not imply floating or disconnected.
+\paragraph{Control.}No known deterministic S1--S4 request shortcut; semantic priors reported separately.
+\subsection{Evidence limit}
+24 items; source-data; metacognitive; single-choice.
+\paragraph{Public input.}available
+\paragraph{Operation and scoring.}Select Not established by this evidence for the stated gravitational-stability claim. Exact anonymous choiceId of the semantic answer.
+\paragraph{Interpretation.}The semantic answer is constant; accuracy alone is not reasoning evidence.
+\paragraph{Control.}No known deterministic S1--S4 request shortcut; semantic priors reported separately. Constant semantic answer.
+\subsection{Step lookup}
+55 items; source-data; procedural; single-choice.
+\paragraph{Public input.}steps[].\{index,numbers\}; provenance
+\paragraph{Operation and scoring.}Find the target label in the supplied author-step table; select the smallest matching expanded index. Exact anonymous choiceId of the semantic answer.
+\paragraph{Interpretation.}Table lookup; source order is not evidence of collision-free assembly.
+\paragraph{Control.}No known deterministic S1--S4 request shortcut; semantic priors reported separately.
+\subsection{Step sequence}
+17 items; scene-edit; procedural; actions.
+\paragraph{Public input.}initialFacts; goalFacts; absentFacts; budget; actions[].\{id,label,requires,forbids?,adds,deletes,cost\}; editMode
+\paragraph{Operation and scoring.}Follow the public predecessor facts and reveal the supplied author window in order. String actionIds; legal full replay under prerequisites, forbids and budget; all goal facts and no prohibited facts.
+\paragraph{Interpretation.}A small explicit fact chain, not mechanical planning; the current six-step response template is constant.
+\paragraph{Control.}No known deterministic S1--S4 request shortcut; semantic priors reported separately. Identical six-step action program in this release.
+\subsection{Restoration}
+58 items; scene-edit; procedural; actions.
+\paragraph{Public input.}initialFacts; goalFacts; absentFacts; budget; actions[].\{id,label,requires,forbids?,adds,deletes,cost\}; editMode
+\paragraph{Operation and scoring.}Choose the restore action whose missing fact holds; execute it within budget and satisfy all goals. String actionIds; legal full replay under prerequisites, forbids and budget; all goal facts and no prohibited facts.
+\paragraph{Interpretation.}One visibility edit at an original source pose, not insertion-feasibility planning.
+\paragraph{Control.}No known deterministic S1--S4 request shortcut; semantic priors reported separately.

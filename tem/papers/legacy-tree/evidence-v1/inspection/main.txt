@@ -1,0 +1,1153 @@
+CVPR
+#Draft
+CVPR
+#Draft
+CVPR 2026 Submission #Draft. CONFIDENTIAL REVIEW COPY. DO NOT DISTRIBUTE.
+Following Evidence About the Same Part:
+An Instance-Aligned Benchmark on LDraw Assemblies
+Anonymous CVPR submission
+Paper ID Draft
+Abstract
+A correct answer about a part does not establish that
+001
+a vision-language model followed the evidence identify-
+002
+ing that part.
+The answer may follow a prior, persist
+003
+after relevant evidence changes, or change under an ir-
+004
+relevant display perturbation.
+We introduce BrickAtlas,
+005
+an instance-aligned measurement protocol on 24 human-
+006
+authored LDraw assemblies with 15,334 placed parts. Its
+007
+main question is whether answers about the same target
+008
+correctly follow changed visual evidence and remain cor-
+009
+rect under speciﬁed semantic invariances.
+The 617-item
+010
+resource separates 140 visual questions, 146 graph ques-
+011
+tions and two classes of controls. Paired observations bind
+012
+canonical identities, exact inputs, condition-speciﬁc gold
+013
+answers and answerability decisions. New-evidence accu-
+014
+racy and paired both-correct distinguish adaptation from
+015
+disruption. An audit of the unchanged graph questions il-
+016
+lustrates the need: counting nodes alone attains 86.30%
+017
+accuracy, but zero both-correct on answer-changing graph
+018
+pairs, while a graph algorithm solves both sides. A separate
+019
+matched-graph extension controls additional surface statis-
+020
+tics. We report veriﬁed corpus and algorithmic evidence;
+021
+visual model comparisons and human answerability review
+022
+remain unrun. The contribution is a reproducible resource
+023
+and falsiﬁable protocol, not a completed model ranking.
+024
+1. Introduction
+025
+In a dense assembly, two pieces can share geometry while
+026
+differing in color, position or identity. A question about one
+027
+piece therefore asks more than whether a familiar shape is
+028
+present: an answer must remain bound to the designated in-
+029
+stance. If the visible assignment of labels to pieces changes,
+030
+a model should follow the new evidence. If only the names
+031
+used to identify pieces change consistently, the semantic an-
+032
+swer should remain correct. Ordinary accuracy observes
+033
+neither distinction.
+034
+This motivates our primary research question: for the
+035
+same identiﬁed part in an original assembly, do answers
+036
+correctly follow task-relevant visual changes and remain
+037
+correct under speciﬁed answer-preserving changes?
+We
+038
+study Color and Part-type separately. Two supporting ques-
+039
+tions concern the total effect of hiding non-operands at a
+040
+ﬁxed camera and whether graph answers follow relations
+041
+beyond elementary input statistics.
+042
+Human-authored LDraw models [4] provide useful test
+043
+conditions: repeated instances, densely nested assemblies,
+044
+author step records and geometry at preserved source poses.
+045
+Instance identity links these assets without requiring them
+046
+all in one question. Figure 1 illustrates the distinction. A vi-
+047
+sual question uses a numbered image; a separate graph ques-
+048
+tion uses an explicit edge list; a visibility edit uses declared
+049
+actions. Shared identity permits controlled inspection, but
+050
+does not imply a within-item multimodal reasoning chain.
+051
+Related resources already supply important ingredients.
+052
+BrickNet [3] has instance and connector graphs; LEGO-
+053
+Puzzles [6] uses editable scenes and step-consistent renders;
+054
+PhyBlock [5] combines scene identity, dependencies and
+055
+simulated assembly. Our distinction is the explicitly paired
+056
+measurement: an identiﬁed target, exact observations, two
+057
+semantic golds, and a decision on whether each observation
+058
+makes the question answerable. A change in old-gold ac-
+059
+curacy alone cannot establish that an answer followed new
+060
+evidence.
+061
+The present empirical evidence is algorithmic. On all
+062
+73 natural deletion questions, a predictor that ignores edges
+063
+and returns the node count minus one answers 63 cor-
+064
+rectly. On the corresponding ﬁxed-node, answer-changing
+065
+pairs it answers neither pair jointly correctly; connected-
+066
+component algorithms solve both. This post-hoc replication
+067
+exposes a concrete interpretive gap between high accuracy
+068
+and evidence following. It is not a result about a learned
+069
+model.
+070
+Our contributions are threefold. First, we make same-
+071
+instance visual evidence following measurable on un-
+072
+changed source assemblies, with modular structural and ex-
+073
+ecution controls. Second, we deﬁne paired semantic mea-
+074
+sures and source-balanced estimates that separate correct
+075
+1
+
+CVPR
+#Draft
+CVPR
+#Draft
+CVPR 2026 Submission #Draft. CONFIDENTIAL REVIEW COPY. DO NOT DISTRIBUTE.
+(a) Numbered visual operands
+OMR 42004 · Mini Backhoe Loader
+B0035  =  brick_000035
+Part 32250  ·  Black
+B0036: same type, another instance
+B0196: part 2780 (pin)
+Source poses are preserved.
+(b) Canonical source record
+B0035
+B0034
+B0037
+B0038
+B0051
+(c) Recognized connector graph
+missing-B0035
+restore-B0035
+present-B0035
+Same saved pose; no insertion trajectory.
+(d) Independent visibility edit
+Figure 1. One source instance, separately scored contracts. In OMR 42004, B0035 is a black part 32250 and B0036 is another instance of
+the same type. (a) Detail from the numbered operand image; other source parts are hidden, with remaining poses unchanged. (b) Canonical
+source records disambiguate repeated types. (c) Recognized axle edges link B0035 to four other instances; this schematic does not depict
+spatial placement. (d) An independent action restores visibility at the saved pose. Records and graph facts are not supplied to the visual
+question. The links support inspection across tasks, not a single cross-module inference chain.
+adaptation, stable error and information withdrawal. Third,
+076
+we supply an audited natural distribution and an indepen-
+077
+dently veriﬁed hypothetical graph challenge. The full ques-
+078
+tion index, input provenance, baselines and executable anal-
+079
+ysis accompany the resource. The visual research question
+080
+remains open until exact-input human review and genuine
+081
+model responses are available.
+082
+2. Related Protocols
+083
+Compositional VQA resources such as CLEVR [2] and
+084
+GQA [1] motivate specifying what operations and evidence
+085
+a question requires. Our focus is narrower: following ev-
+086
+idence about an identiﬁed part under paired observations,
+087
+with separate controls for source lookups, graph operations
+088
+and display actions. Table 1 compares the three closest as-
+089
+sembly protocols. The supplement records paper pages, ex-
+090
+act versions and inspected ofﬁcial code symbols.
+091
+BrickNet generates graph-backed programs and mea-
+092
+sures parse, connectivity, collision and perceptual prop-
+093
+erties.
+Distinct placed instances and connectors are al-
+094
+ready explicit in its representation. LEGO-Puzzles evalu-
+095
+ates spatial and sequential VQA, sometimes jointly using
+096
+current, target and part images. Its v3 protocol includes
+097
+three-annotator veriﬁcation and editable rendered scenes.
+098
+PhyBlock evaluates planning against legal dependency or-
+099
+ders and physical understanding through static and dynamic
+100
+questions. Its scene records identify target instances, while
+101
+candidate IDs in planning can denote reusable block vari-
+102
+ants. These are substantial capabilities, not absences that
+103
+our use of IDs resolves.
+104
+The same-target, new-gold and both-correct VQA esti-
+105
+mands used here are not reported in these pinned versions.
+106
+Their assets could support extensions with this protocol.
+107
+Adding IDs and templates can establish which source entity
+108
+a question concerns; it does not by itself specify how the
+109
+answer should change for a second rendered observation,
+110
+whether that observation is decidable, or which semantic
+111
+transition a raw response exhibits. Those additional records
+112
+deﬁne the object of measurement in BrickAtlas.
+113
+3. Benchmark and Observation Contracts
+114
+3.1. Source assemblies and identity
+115
+The resource contains 24 original assemblies, 15,334 placed
+116
+instances and 617 questions. Source ﬁles, part transforms
+117
+and original gold answers are preserved. Each canonical
+118
+2
+
+CVPR
+#Draft
+CVPR
+#Draft
+CVPR 2026 Submission #Draft. CONFIDENTIAL REVIEW COPY. DO NOT DISTRIBUTE.
+Table 1. Related protocols and the evidence they measure. Comparisons use BrickNet’s CVPR 2026 paper, LEGO-Puzzles arXiv v3 and
+PhyBlock arXiv v2. “Not reported” refers to the speciﬁc paired VQA estimand, not an inability to implement it. Full page- and code-level
+evidence is in the supplement.
+Protocol
+Instance alignment and observations
+Controlled comparison
+Measured outcome
+BrickNet [3]
+Graph-local part and connector IDs;
+generates programs from a start token
+or caption.
+Graph/pose representations, sampling
+and training ablations.
+Parse/connectivity and collision valid-
+ity; render–text agreement. Our paired
+VQA estimand is not reported.
+LEGO-
+Puzzles [6]
+Image tokens, option labels and ar-
+rows; multiple current/target/part im-
+ages support spatial and sequential
+questions.
+Fixed camera across steps; editable
+scene attributes;
+step length and
+prompt comparisons.
+VQA/ordering accuracy and human-
+rated image generation.
+Our paired
+VQA estimand is not reported.
+PhyBlock [5]
+Scene-instance IDs and dependencies;
+reusable candidate IDs in planning;
+target/candidate images and optional
+feedback.
+Pose-constrained/topology-oriented
+scoring, stepwise feedback and simu-
+lated perturbations.
+AOV step precision/recall and physi-
+cal VQA accuracy. Our paired VQA
+estimand is not reported.
+BrickAtlas
+Canonical instance linked to images,
+records, graphs and display edits; each
+item has one declared contract.
+Same-target fact change,
+semantic
+invariance and evidence withdrawal,
+with separately bound golds.
+New-evidence accuracy and paired
+both-correct; source-cluster contrasts.
+Learned-model results remain unrun.
+identity combines a source hash with an instance ID. A dis-
+119
+play label such as B0035 is unique within its source, not
+120
+across the corpus. Repeated part numbers remain different
+121
+instances. Source-size bands D1–D4 describe corpus scale;
+122
+they are not validated cognitive difﬁculty levels.
+123
+The images use actual LDraw geometry. Hiding non-
+124
+operands and replaying visibility changes do not relocate
+125
+any part.
+Such partial observations can omit supporting
+126
+pieces; they represent access to an unchanged assembly, not
+127
+a proposed physical arrangement. Recognized connector
+128
+relations establish a limited graph, not exhaustive contact,
+129
+gravity stability or mechanical feasibility. Unresolved phys-
+130
+ical candidates are retained for review.
+131
+3.2. Task roles and scope
+132
+Every item has one declared model-visible contract: a num-
+133
+bered image (V), selected source records (S), explicit graph
+134
+evidence (G), or facts and discrete display actions (E). The
+135
+scorer’s source records, references and alternate gold are
+136
+separate from the request. No family is presented as a full
+137
+perception-to-assembly pipeline.
+138
+The four reporting roles are disjoint. Core visual ques-
+139
+tions comprise 73 Color and 67 Part-type items.
+Struc-
+140
+tural evidence comprises Neighbors and Graph deletion, 73
+141
+each. The 290 nonconstant controls test coordinate distance,
+142
+interface records, coverage ﬂags, author-step lookup and
+143
+visibility restoration. The 41 constant controls contain 24
+144
+evidence-limit responses and 17 ﬁxed step programs. All
+145
+items remain in the complete report; no composite capabil-
+146
+ity ranking mixes these roles.
+147
+Color selects the rendered target’s color category. Part-
+148
+type asks which numbered candidate shares its source type
+149
+while ignoring color and pose. Near-identical geometry can
+150
+make a source-derived type answer visually undecidable;
+151
+exact-input QA must resolve that boundary. Neighbors re-
+152
+turns an exact set from the supplied local graph. Graph
+153
+deletion returns the number of connected components after
+154
+removing the target, counting isolated survivors and dedu-
+155
+plicating undirected edges.
+156
+Execution controls expose preconditions,
+forbidden
+157
+facts, effects, budget and goals. A legal restoration makes
+158
+one hidden instance visible at its saved pose. The given-
+159
+order replay in Figure 2 follows six declared actions. Invalid
+160
+actions do not change the state. These controls measure
+161
+contract execution and output compliance, not mechanical
+162
+planning.
+163
+3.3. Paired observations
+164
+Let a pair be (i, s, oA, oB, yA, yB, τ), where i is the parent
+165
+question, s the source, o the exact observation, y its seman-
+166
+tic gold and τ its truth policy. We distinguish three policies.
+167
+Fact change assigns two distinct observation-conditioned
+168
+answers. Semantic invariance retains the canonical answer
+169
+after mapping display labels back to identities. Information
+170
+withdrawal retains the original gold for a dependency com-
+171
+parison while removing evidence needed to infer it.
+172
+The primary fact-change comparison pairs operand-only
+173
+with wrong-image. For Part-type, a displayed candidate-
+174
+label swap changes which option identiﬁes the matching
+175
+geometry. For Color, a donor image provides different vi-
+176
+sual content; shape can change too, so this is not a color-
+177
+only causal intervention.
+Original source-gold scores re-
+178
+main available as auxiliary dependency statistics. The new
+179
+analysis adds the image-conditioned gold without overwrit-
+180
+ing those scores.
+181
+Invariance comparisons cover consistent ID renaming,
+182
+3
+
+CVPR
+#Draft
+CVPR
+#Draft
+CVPR 2026 Submission #Draft. CONFIDENTIAL REVIEW COPY. DO NOT DISTRIBUTE.
+(a) step-1
+(b) step-2
+(c) step-3
+(d) step-4
+(e) step-5
+(f) step-6
+Figure 2. Given-order visibility replay for the supplied author window of set 42102. Panels (a)–(f) show the accepted actions step-1
+through step-6, with a common paper crop and original source transforms. The program is supplied by the contract and is constant across
+this control family. The frames demonstrate action-to-display correspondence; they do not establish discovery of an assembly order, an
+insertion trajectory or stability.
+camera changes and type-preserving color appearance
+183
+changes. The existing ID permutation uses longer labels
+184
+and can move text boxes, so it measures stability under nam-
+185
+ing and display changes rather than a pure identity-only ef-
+186
+fect. Semantic invariance is necessary but insufﬁcient for
+187
+visual answerability: a changed view can hide a distinguish-
+188
+ing feature.
+189
+4. Measurement Validity
+190
+4.1. Priors and retained denominators
+191
+Answer concentration has different meanings across fami-
+192
+lies (Figure 3). A frequent color category supports a global
+193
+constant predictor. An answer keyed by a source-speciﬁc in-
+194
+stance rarely repeats even if the operation is trivial. A small
+195
+exact-key repetition rate therefore does not certify reason-
+196
+ing difﬁculty.
+197
+Graph deletion illustrates a stronger input-conditioned
+198
+prior. For target t, let n′ be the number of surviving nodes
+199
+and c′ their component count.
+Deﬁne the analysis-only
+200
+deﬁcit
+201
+d = n′ −c′.
+(1)
+202
+If d = 0, returning |V | −1 is correct without reading any
+203
+edge. We retain all questions and report both d = 0 and
+204
+d > 0 strata. These strata describe the corpus and never
+205
+enter model prompts. Removing the easy stratum would
+206
+change the target distribution.
+207
+4.2. Independent gold and input checks
+208
+Node-only prediction accepts only a public node list. A later
+209
+scoring phase joins those saved predictions with references
+210
+and graph statistics. Breadth-ﬁrst search (BFS) and an inde-
+211
+pendently implemented union-ﬁnd procedure agree on ev-
+212
+ery original and intervened deletion gold. They explicitly
+213
+handle duplicate edges, isolated nodes and target deletion.
+214
+Graph oracles validate supplied evidence; they do not cer-
+215
+tify that all physical connections were recognized.
+216
+Each paired record binds source and dataset hashes,
+217
+exact model revision, adapter, prompt, both request bod-
+218
+ies, normalized predictions, gold provenance and truth pol-
+219
+icy. Validation reconstructs the wire request and parses the
+220
+saved raw response. It rejects mismatched revisions and
+221
+duplicate pairs. A missing B response remains a failed ob-
+222
+servation in the declared denominator; it is not removed by
+223
+taking the intersection of successful requests.
+224
+4.3. Answerability and quality decisions
+225
+Visual accuracy is interpretable only for inputs that support
+226
+the question. Review binds the actual image bytes and di-
+227
+mensions sent in the request, not a higher-resolution source
+228
+4
+
+CVPR
+#Draft
+CVPR
+#Draft
+CVPR 2026 Submission #Draft. CONFIDENTIAL REVIEW COPY. DO NOT DISTRIBUTE.
+0
+25
+50
+75
+100
+Most frequent answer (%)
+Color
+Interface
+Graph deletion
+Step lookup
+Evidence limit
+Step sequence
+23.3
+27.6
+60.3
+5.5
+100.0
+100.0
+(a) Global semantic answers
+0
+2
+4
+6
+Repeated exact key (%)
+Part type
+Distance
+Neighbors
+Coverage
+Restoration
+1.5
+1.4
+1.4
+5.9
+1.7
+(b) Source-scoped exact answers
+Figure 3. Two different corpus diagnostics. (a) The frequency of the most common global semantic answer exposes category and ﬁxed-
+output priors. (b) Exact source-scoped answers include the source and instance identity; low repetition is partly a consequence of that key
+space. The panels use separate scales and are not comparable measures of difﬁculty. In particular, the global constant-answer prior for
+graph deletion is weaker than the input-conditioned node-count baseline in Table 4. These are corpus counts, not model scores.
+render or an extra view. A paired visual comparison re-
+229
+quires independent answerability decisions for both obser-
+230
+vations. Pending, failed and access-difference cases remain
+231
+explicitly enumerated alongside the full-denominator result.
+232
+No model-dependent ﬁltering is permitted.
+233
+The current review inventory contains 140 visual items,
+234
+111 other ﬂagged items and 573 source-local intersection
+235
+candidates. A candidate can reﬂect intended mating, mesh
+236
+approximation, a source defect or an unresolved case; it is
+237
+not automatically a collision error. Software validation and
+238
+the paper’s enlargements do not count as human certiﬁca-
+239
+tion.
+240
+5. Evidence-Following Evaluation
+241
+5.1. Measures and aggregation
+242
+For N ﬁxed pairs with normalized predictions pA, pB, the
+243
+primary fact-change measures are
+244
+NewAcc = 1
+N
+X
+i
+[pBi = yBi],
+(2)
+245
+Both = 1
+N
+X
+i
+[pAi = yAi] [pBi = yBi].
+(3)
+246
+The optional conditional adaptation rate divides the same
+247
+both-correct numerator by P
+i[pAi = yAi]. A zero condi-
+248
+tional denominator returns undeﬁned, not zero. We always
+249
+retain the unconditional rates and display the conditional de-
+250
+nominator.
+251
+For wrong-image, B outcomes partition into the new an-
+252
+swer, the old answer, another legal answer, and invalid or
+253
+missing output. For invariance, we report both correct, A-
+254
+only correct, B-only correct, both wrong with the same se-
+255
+mantic answer, and both wrong with different answers. In-
+256
+valid outputs carry a separate reason and do not become
+257
+evidence of semantic agreement.
+Set answers are order-
+258
+independent, but illegal duplicates are not silently repaired;
+259
+action answers use the executable contract.
+260
+These measures resolve two ambiguities. A model can
+261
+be correct on both graphs while its accuracy difference is
+262
+zero. Conversely, an answer can change without either an-
+263
+swer being correct. A consistently wrong answer is also dis-
+264
+tinct from correct retention. Output changes and old-gold
+265
+accuracy remain useful auxiliary statistics, not substitutes
+266
+for paired correctness.
+267
+For pair-level values zspv, the source-balanced estimate
+268
+is
+269
+bµ = 1
+|S|
+X
+s∈S
+1
+|Ps|
+X
+p∈Ps
+1
+|Vsp|
+X
+v∈Vsp
+zspv.
+(4)
+270
+Thus variants ﬁrst average within a parent, parents within
+271
+a source, then sources equally.
+We also report micro
+272
+rates, parent counts and source counts. A family absent
+273
+from a source contributes no zero. Percentile 95% inter-
+274
+vals use 10,000 source-cluster bootstrap draws with seed
+275
+20260919.
+Model–baseline differences are computed on
+276
+the same paired items before resampling. Repeated obser-
+277
+vations do not increase the number of independent sources.
+278
+5.2. Primary question: visual evidence following
+279
+The visual experiment asks whether new-image accuracy
+280
+and both-correct remain high for a fact change, and whether
+281
+correct retention survives speciﬁed invariances. Color and
+282
+Part-type remain separate (Table 2). Lower accuracy against
+283
+5
+
+CVPR
+#Draft
+CVPR
+#Draft
+CVPR 2026 Submission #Draft. CONFIDENTIAL REVIEW COPY. DO NOT DISTRIBUTE.
+Table 2. Core visual reporting, with ﬁxed family denominators.
+No validated learned-model results are available: “–” means not
+run, never zero. Human answerability is pending. Family-speciﬁc
+results replace an all-task capability ranking.
+Family / model
+N
+Sources
+Source macro (%)
+Color
+73
+24
+–
+Part-type
+67
+24
+–
+the old gold is insufﬁcient: it can represent adaptation, con-
+284
+fusion or invalid output. The four B-outcome categories
+285
+reveal which occurred.
+286
+A concrete source example makes the contrast testable.
+287
+In OMR 42004, B0035 and B0036 share part type 32250,
+288
+while B0196 is a pin.
+With ﬁxed options A:B0196 and
+289
+C:B0036, the operand image’s gold is C. Swapping the visi-
+290
+ble B0036/B0196 labels makes the image-conditioned gold
+291
+A. The source CAD remains unchanged. C→A is the de-
+292
+sired paired response; C→C retains the old answer; C→B
+293
+is another legal error. These are scoring examples, not ob-
+294
+served model predictions. The supplement includes both
+295
+actual images and their provenance.
+296
+The result index currently contains only unrun learned-
+297
+model records. Exact requests and alternate gold mappings
+298
+are validated, but no claim about visual model sensitivity,
+299
+adaptation or robustness follows from that check. The pro-
+300
+tocol can falsify evidence following once genuine responses
+301
+and condition-speciﬁc QA exist.
+302
+5.3. Supporting question: background and view ac-
+303
+cess
+304
+Full-scene versus background-mask holds camera, scale,
+305
+lighting and label placement ﬁxed (Figure 4). Its primary
+306
+contrast is the paired source-macro accuracy difference.
+307
+Hiding non-operands both removes context and may expose
+308
+surfaces; those effects are not separately identiﬁed. Crop
+309
+changes magniﬁcation and cannot isolate background ef-
+310
+fects. Operand-only versus multi-view measures access to
+311
+two ﬁxed views, not adaptive exploration.
+312
+For each visual comparison, the release preserves the
+313
+planned set, the jointly decidable set, and reasons for pend-
+314
+ing or excluded interpretation. Differences are accompa-
+315
+nied by source counts and clustered intervals. An interval
+316
+containing zero does not establish equivalence. No unseg-
+317
+mented screenshot is used to invent an occlusion percentage
+318
+or projected target area. With no learned-model responses,
+319
+the direction and magnitude of these access effects remain
+320
+unknown.
+321
+Table 3. Structural family reporting on the natural distribution. “–
+” means learned-model inference is unrun. Deletion requires the
+algorithmic controls in Table 4 and paired success; an ordinary
+family score alone is insufﬁcient.
+Family / model
+N
+Sources
+Source macro (%)
+Neighbors
+73
+24
+–
+Graph deletion
+73
+24
+–
+5.4. Supporting question: graph evidence beyond
+322
+priors
+323
+The node-only baseline reaches 63/73 (86.30% micro;
+324
+83.75% source macro, 95% interval [72.92, 93.12]). The
+325
+interval concerns sampling variation across these source
+326
+clusters; the exact corpus count itself has no sampling un-
+327
+certainty.
+Only 10 items from 9 sources have positive
+328
+deﬁcit. This small stratum limits conclusions about natural
+329
+surviving-edge difﬁculty.
+330
+The existing intervention adds one edge between surviv-
+331
+ing components, keeping the node set ﬁxed and reducing
+332
+the gold component count by one.
+Table 4 shows zero
+333
+both-correct for node-only and always-four predictors, ver-
+334
+sus 100% for BFS/union-ﬁnd. The contrast establishes that
+335
+ordinary high accuracy on this distribution can be obtained
+336
+without consulting the deﬁning relations. It does not estab-
+337
+lish that any learned model uses this shortcut. The node-
+338
+prior concern was already known before this revision; the
+339
+replication and stratiﬁcation are post-hoc audits.
+340
+To control additional surface statistics, a separate ex-
+341
+tension ﬁxes three observations per parent: a hypotheti-
+342
+cal anchor, an answer-changing partner, and an isomorphic
+343
+answer-preserving variant. Its 219 observations form 146
+344
+pairs: 37 increases, 36 decreases and 73 unchanged answers.
+345
+All pairs match node set, unique edge count and target de-
+346
+gree. 12 answer-changing pairs also match the surviving
+347
+degree sequence; the other 61 parents have only four or ﬁve
+348
+survivors, for which the declared templates do not provide
+349
+that match.
+350
+For six or more survivors, a six-cycle versus two trian-
+351
+gles has different component counts despite identical per-
+352
+node degrees.
+For four or ﬁve survivors, a path versus
+353
+triangle-plus-isolates matches counts but not degrees. Ad-
+354
+ditional survivors are isolated. These graphs deliberately
+355
+change the evidence distribution and are labeled hypotheti-
+356
+cal; they are not newly inferred source connections. They
+357
+add no source and never replace the natural questions.
+358
+All extension golds agree under independent graph algo-
+359
+rithms. Rules and shufﬂed opaque observation IDs were
+360
+ﬁxed before new model responses.
+Each observation re-
+361
+ceives a fresh request without the transformation or an-
+362
+swer direction. The extension’s algorithmic veriﬁcation is
+363
+complete, while learned-model inference is unrun. Natural,
+364
+6
+
+CVPR
+#Draft
+CVPR
+#Draft
+CVPR 2026 Submission #Draft. CONFIDENTIAL REVIEW COPY. DO NOT DISTRIBUTE.
+(a) Full
+(b) Mask
+(c) Crop
+Same pixel window
+Same pixel window
+Reframed operands
+Figure 4. Full / Mask / Crop for the same Part-type item. Top: each original frame with the paper’s detail window. Bottom: enlarged
+details; Full and Mask use exactly the same pixel rectangle. Full/Mask ﬁx camera, scale, lighting and label placement, while hiding
+non-operands can reveal occluded surfaces. The comparison measures the total effect of this access change, not pure attention. Crop
+additionally reframes the operands. All enlargements and orange boxes exist only in the paper and are not model inputs. Original poses are
+preserved, and answerability remains subject to exact-input QA.
+Table 4. Measured algorithmic controls on the unchanged 73 deletion questions and their original/intervened pairs (24 sources). Both is
+the source-macro rate of answering each pair correctly. Natural source-macro intervals are 95% source-cluster intervals, reported in the
+text and supplement. These are executable baselines, not learned-model results.
+Algorithmic baseline
+Micro (%)
+Source macro (%)
+Both (%)
+Node count only
+86.30
+83.75
+0.00
+Always four
+60.27
+61.11
+0.00
+BFS / union-ﬁnd
+100.00
+100.00
+100.00
+original-intervention and matched-challenge results must re-
+365
+main separately reported.
+366
+6. Discussion and Resource Use
+367
+This resource isolates a modest but important require-
+368
+ment: answering about an identiﬁed part should follow
+369
+the evidence made available for that question. Preserved
+370
+source identity supports controlled observations; condition-
+371
+speciﬁc gold and raw semantic responses make correct adap-
+372
+tation distinguishable from disturbance. The algorithmic au-
+373
+dit demonstrates the interpretive value of that distinction on
+374
+the present graph distribution.
+375
+Several limits determine the scope of future conclusions.
+376
+The corpus has only 24 human-authored sources, and shared
+377
+parts or authoring conventions can create dependence be-
+378
+yond a source cluster. Visual answerability is unresolved.
+379
+Connector coverage is incomplete, display edits do not
+380
+model forces, and the matched challenge is an artiﬁcial
+381
+graph distribution.
+Modular task scores cannot locate a
+382
+model’s internal cognitive failure or demonstrate end-to-end
+383
+assembly.
+384
+The supplement contains all 617 questions and golds for
+385
+audit, full family/control tables, source coverage, protocol
+386
+evidence and failure cases. Reference-bearing materials are
+387
+evaluator resources, not inference inputs. Future training
+388
+splits must keep every source and all its views and variants
+389
+together. Reusing public sources also requires explicit con-
+390
+tamination and source-rights review.
+391
+The analysis separates unavailable evidence from mea-
+392
+sured zero. API errors, timeouts, refusals and invalid out-
+393
+7
+
+CVPR
+#Draft
+CVPR
+#Draft
+CVPR 2026 Submission #Draft. CONFIDENTIAL REVIEW COPY. DO NOT DISTRIBUTE.
+puts remain in the denominator with distinct reasons. A
+394
+completed result enters the paper only after its manifest, raw
+395
+receipts, semantic scoring and sample counts pass valida-
+396
+tion. The current contribution therefore remains a method
+397
+and resource with measured algorithmic controls. Visual
+398
+and physical conclusions require the corresponding human
+399
+and model evidence.
+400
+References
+401
+[1] Drew A. Hudson and Christopher D. Manning.
+GQA: A
+402
+new dataset for real-world visual reasoning and compositional
+403
+question answering. In Proceedings of the IEEE/CVF Con-
+404
+ference on Computer Vision and Pattern Recognition, pages
+405
+6700–6709, 2019. 2
+406
+[2] Justin Johnson, Bharath Hariharan, Laurens van der Maaten,
+407
+Li Fei-Fei, C. Lawrence Zitnick, and Ross Girshick. CLEVR:
+408
+A diagnostic dataset for compositional language and elemen-
+409
+tary visual reasoning. In Proceedings of the IEEE Conference
+410
+on Computer Vision and Pattern Recognition, pages 2901–
+411
+2910, 2017. 2
+412
+[3] Peter Kulits and Cordelia Schmid. BrickNet: Graph-backed
+413
+generative brick assembly. In Proceedings of the IEEE/CVF
+414
+Conference on Computer Vision and Pattern Recognition,
+415
+pages 39252–39261, 2026. 1, 3
+416
+[4] LDraw.org. LDraw ﬁle format speciﬁcation. https://www.
+417
+ldraw.org/article/218.html, 2026. 1
+418
+[5] Liang Ma, Jiajun Wen, Min Lin, Rongtao Xu, Xiwen Liang,
+419
+Bingqian Lin, Jun Ma, Yongxin Wang, Ziming Wei, Haokun
+420
+Lin, Mingfei Han, Meng Cao, Bokui Chen, Ivan Laptev,
+421
+and Xiaodan Liang.
+PhyBlock: A progressive benchmark
+422
+for physical understanding and planning via 3d block assem-
+423
+bly. arXiv:2506.08708v2, 2025. Version dated November 21,
+424
+2025; NeurIPS Datasets and Benchmarks. 1, 3
+425
+[6] Kexian Tang, Junyao Gao, Yanhong Zeng, Haodong Duan,
+426
+Yanan Sun, Zhening Xing, Wenran Liu, Kaifeng Lyu, and Kai
+427
+Chen. LEGO-Puzzles: How good are MLLMs at multi-step
+428
+spatial reasoning? arXiv:2503.19990v3, 2025. Version dated
+429
+June 20, 2025. 1, 3
+430
+8

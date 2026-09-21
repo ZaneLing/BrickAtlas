@@ -5,12 +5,51 @@
 <h1 align="center">Brick Atlas</h1>
 
 <p align="center">
-  An unofficial desktop workspace for exploring LDraw models, inspecting individual bricks, and following animated build instructions.
+  An auditable benchmark for visual evidence following on LDraw parts, with an interactive 3D inspection workspace.
 </p>
 
 <p align="center">
   <strong>English</strong> · <a href="README.zh-CN.md">简体中文</a>
 </p>
+
+## Research entry points
+
+| What you need | Location |
+|---|---|
+| Current paper and supplement | [paper/](paper/README.md) · [main PDF](paper/main.pdf) · [supplement PDF](paper/supplement.pdf) |
+| Benchmark data and version map | [benchmark/DATASETS.md](benchmark/DATASETS.md) |
+| Metrics, formulas and implementations | [benchmark/METRICS.md](benchmark/METRICS.md) |
+| Current visual observations and pair IDs | [benchmark/ldraw-evidence-v3/](benchmark/ldraw-evidence-v3/) |
+| Scoring, QA and inference code | [benchmark/suite/ldraw-evidence-v3/](benchmark/suite/ldraw-evidence-v3/) |
+| Measurement audits and image baseline | [benchmark/ldraw-evidence-v4-draft/](benchmark/ldraw-evidence-v4-draft/) |
+| Proposed models and blank experiment tables | [paper/experiments.json](paper/experiments.json) |
+| Full-study and all-model MVP budgets | [benchmark/experiment-plans/](benchmark/experiment-plans/) |
+| Historical reviews, revision guidance and manuscripts | [tem/](tem/README.md) |
+
+The current visual benchmark has **73 Color pairs and 67 Part-type pairs**,
+plus 67 auxiliary position panels. The supporting text-graph track has
+219 distinct observations. All derive from 24 source assemblies with 15,334
+placed parts. The 617 historical questions are an inspection resource, not
+617 additional primary visual tests.
+
+The manuscript follows benchmark motivation, task contracts, construction
+and qualification, metrics, then planned experiments. Its 15-model proposal
+contains 13 VLMs and two text-only models. **All planned result cells are
+blank.** Human qualification and that model study have not been completed.
+Existing algorithmic audits are labeled separately from learned-model results.
+The sealed older three-model protocol remains a separate study.
+
+To inspect data, run `npm run dev` and open
+`http://127.0.0.1:5173/benchmark/evidence-v3/index.html`.
+The evaluator view exposes answers; blind human review uses the dedicated
+[review packages and protocol](benchmark/ldraw-evidence-v3/QA-AND-RUN.md).
+The source 3D workspace remains at `/benchmark`.
+
+Current writing belongs in `paper/`. `benchmark/paper` and old review paths
+are compatibility links into `tem/`, preserving historical hashes.
+Source data, PNGs, review packages, code, PDFs and manifests are versioned.
+Large redundant recovery tarballs and local runtimes stay local; see
+[archive and reproduction boundaries](tem/README.md).
 
 ## Feature Videos
 
@@ -36,12 +75,9 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
   original OMR models, 15,334 numbered part instances and 617 questions at
   `/benchmark`, with numbered isolation and source STEP replay. The previous
   synthetic benchmark is retired; remaining connector/intersection evidence
-  is explicit. [Paper](benchmark/paper/main.pdf) and
-  [complete appendix](benchmark/paper/supplement.pdf) are synchronized with the release.
-  The CVPR-format draft includes eleven functional task decompositions,
-  six-step real 3D replay, four vector statistical plots and nine proposed
-  experiment tables. All 258 unrun result cells remain blank; no learned-model
-  or physical-validation result is invented.
+  is explicit. The [current paper](paper/main.pdf) and
+  [supplement](paper/supplement.pdf) distinguish this historical resource
+  from the paired visual benchmark and planned model study.
 - Browse 15 traceable models with high-resolution, physically based 3D rendering.
 - Rotate, zoom, pan, switch views, auto-rotate, and inspect exploded assemblies.
 - Select any brick to view its part number, color, dimensions, subassembly, and 3D shape.
