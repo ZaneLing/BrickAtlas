@@ -20,9 +20,10 @@ with Paired LDraw Observations}
 \captionof{figure}{Real source assemblies across D1--D4 scale bands:
 two examples per band, retaining original LDraw geometry and poses.
 Source IDs and part counts connect each render to the released catalog.
-These assemblies provide provenance; the primary requests use the
-operand views in Figures~\ref{fig:color-gt} and~\ref{fig:pairs}.
-The supplement depicts all 24 sources.}
+These assemblies provide provenance. Figures~\ref{fig:complex-repair}--%
+\ref{fig:complex-registration} develop source-backed repair, diagnosis
+and registration problems. The supplement depicts all 24 sources
+and the atomic visual controls.}
 \label{fig:sources}
 \vspace{12pt}
 }]
@@ -50,6 +51,8 @@ accuracy, conditional adaptation, old-answer retention, and format
 validity, with source and author dependence made explicit.
 We provide a study design spanning proprietary and open-weight
 vision--language models and text-only graph baselines.
+Three separate compositional case studies demonstrate minimum repair,
+adaptive fault diagnosis and rigid registration on real subassemblies.
 The resource and deterministic audits are available; human
 qualification and the proposed 15-model study remain pending.
 Experiment tables specify the planned comparisons and leave all
@@ -83,8 +86,8 @@ B0035, identify image-local referents, while source identities remain
 available to the evaluator. Every endpoint has a fixed question,
 option list, image, gold answer, and provenance record.
 
-The primary benchmark has two complementary visual families
-(Figures~\ref{fig:color-gt} and~\ref{fig:pairs}). \textbf{Color} asks about the currently
+The frozen primary benchmark has two atomic visual families.
+\textbf{Color} is an appearance sanity check about the currently
 rendered color of a single labeled part. Its paired intervention
 changes appearance while keeping geometry and pose fixed.
 \textbf{Part-type} asks which labeled candidate matches a target's
@@ -92,6 +95,10 @@ visible geometry. The target stays fixed while two candidate labels
 exchange referents. This tests geometry matching together with
 selection of the correct current label. We report the two families
 separately because their visual requirements differ.
+Beyond these controls, three newly designed examples combine graph
+intervention, conditional inspection and spatial constraints on complete
+source subassemblies. They illustrate richer task contracts and exact
+ground truth, while remaining separate from the frozen visual study.
 
 The evaluation connects three questions. First, is the answer
 well defined in the exact observation? Second, can declared shallow
@@ -185,6 +192,97 @@ contribution. The historical dossier remains searchable and links
 to 3D rotation, zoom, isolation, expansion and given-order replay.
 These richer inspection views are not primary model inputs.
 
+\subsection{Compositional case studies}
+We include three source-backed examples, CX1--CX3, that require
+multiple constraints to be satisfied jointly. They have public input
+records, independently checkable GT and original-geometry renders.
+These three examples are not an evaluated task family or evidence of
+model difficulty. The supplement gives every question, adjacency,
+coordinate and verification certificate.
+
+\paragraph{CX1: multi-fault minimum repair.}
+The 36-part backhoe subassembly of OMR 42004 induces 44 recognized
+connector pairs and nine independent graph cycles.
+Eight specified vertices become unavailable, splitting the supplied
+graph into five components. The task asks for every minimum-cost
+restoration that reconnects four terminal IDs, the final component
+sizes, and whether a budget of two is sufficient.
+It combines path reasoning, competing repairs and an optimality claim.
+Exhaustive evaluation of all 256 subsets yields the unique minimum
+$\{\mathrm{B0160},\mathrm{B0175},\mathrm{B0177}\}$, cost three,
+and one 31-vertex final component. All 37 subsets with cost at most
+two fail. Figure~\ref{fig:complex-repair} contracts only the surviving
+components; the original graph remains the scored input.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/complex-repair.pdf}
+\caption{CX1: an original 36-part LDraw subassembly and a constrained
+minimum-repair problem. Blue boxes summarize surviving components;
+their terminal IDs and sizes are shown. Brown-bordered vertices are
+unavailable candidates, with original incident edges retained in the
+diagram for reasoning about restoration. GT requires a globally
+minimal set, rather than any successful repair. The native 3D view
+shows the intact source: faults are abstract graph interventions,
+not simulated extraction or unsupported physical poses.}
+\label{fig:complex-repair}
+\end{figure*}
+
+\paragraph{CX2: adaptive fault diagnosis.}
+On the same source graph, four candidate worlds each disable three
+vertices. Queries ask whether two IDs remain connected. The answer
+must be a conditional policy that identifies the exact world with
+minimum worst-case cost. Figure~\ref{fig:complex-diagnosis} gives
+the hypotheses and computed policy: query Q3 first, then choose Q1
+or Q2 from its outcome. The worst-case cost is two; no single binary
+query can distinguish four worlds. Correctness is checked on every
+world, not on one successful query sequence.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/complex-diagnosis.pdf}
+\caption{CX2: minimum-cost conditional inspection. Each fault world
+defines a different vertex-unavailability set on CX1's original graph.
+Reachability outcomes are recomputed from that graph, not supplied as
+an answer table. The optimal second query depends on the first result.
+The tree is algorithmic GT; no model policy or physical sensor test
+has been collected.}
+\label{fig:complex-diagnosis}
+\end{figure*}
+
+\paragraph{CX3: correspondence and rigid pose recovery.}
+Two actual 12-part axle assemblies in OMR 42061 instantiate the
+same design at different source transforms.
+Repeated part types admit four type-compatible anchor assignments.
+The solver must determine the unique admissible correspondence,
+fit a proper rigid transform, and transfer a probe's origin and
+oriented local axis. Figure~\ref{fig:complex-registration} includes
+all eight anchor coordinates and the probe.
+Only one assignment admits maximum error below .05\,mm:
+$R=\operatorname{diag}(-1,1,-1)$ and $t=(16,0,120)$\,mm.
+All twelve complete source part transforms verify this result.
+The other assignments violate pairwise-distance bounds, so their
+rejection does not depend on a particular numerical optimizer.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/complex-registration.pdf}
+\caption{CX3: two complete source axle assemblies, duplicated part
+types, four-anchor matching, proper rigid registration and probe
+transfer. Source geometry and all internal poses are preserved.
+Coordinates specify part origins in world millimeters.
+GT includes correspondences, rotation, translation, transformed
+probe location and direction. These source-data constraints go
+beyond choosing one matching part or identifying an appearance.}
+\label{fig:complex-registration}
+\end{figure*}
+
+The examples have no learned-model or human results and are not
+added to the 140 paired visual tests. Their complexity is specified
+by operations and constraints, not inferred from source-scale bands.
+Graph connectivity is an explicit abstraction; the examples make
+no claim about physical removal paths, clutch forces or stability.
+
 \subsection{Source identity and current display reference}
 Let $c=(h,i)$ identify a source instance by source-file hash $h$
 and part ID $i$. Its record $T(c)$ contains the original type,
@@ -225,31 +323,6 @@ review; the present visual benchmark does not resolve those judgments.
 
 \section{Construction and Qualification}
 \subsection{Controlled visual changes}
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/color-question-gt.pdf}
-\caption{Color question and ground truth from the released dataset.
-The question and four options are identical across independent A/B
-requests; the GT changes from D (Blue) to C (Red). The source record
-remains Black. Empty margins are cropped identically for publication;
-all operand pixels and labels are retained. GT annotations are outside
-model input. The shared reference contract appears in the supplement.}
-\label{fig:color-gt}
-\end{figure*}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/type-question-gt.pdf}
-\caption{Part-type question, all candidates and exact GT JSON.
-B0035 is the fixed target. The matching source instance is labeled
-B0036 in A and B0116 in B, changing choice C to D.
-The common crop retains the remote candidate involved in the swap;
-no operand is moved or omitted. Parts are shown at source poses with
-surrounding assembly omitted. Record-level GT is audited against
-part types; human visual answerability remains pending.}
-\label{fig:pairs}
-\end{figure*}
-
 \paragraph{Color.}
 Each of 73 pairs renders one operand and one label. Only the body-color
 parameter changes between two distinct named opaque colors; geometry,
@@ -353,9 +426,8 @@ an observed answer pattern, not evidence of an internal memory mechanism.
 We report valid A, valid B and valid-both rates alongside semantic
 metrics. Stable invalid strings do not count as semantic consistency.
 
-Figures~\ref{fig:color-gt} and~\ref{fig:pairs} make the scoring
-contract concrete. Color's GT token pair is $(D,C)$; Part-type's
-is $(C,D)$. For either example, only matching both tokens earns
+The supplemental Part-type example has GT token pair $(C,D)$.
+Only matching both tokens earns
 Both=1. Returning the A gold on B instead contributes to old-gold
 retention. These statements define the scorer; no displayed GT is
 a claimed model response.
@@ -498,18 +570,6 @@ All measured entries remain empty.}
 \end{table*}
 
 \subsection{Text-graph reasoning and algorithmic controls}
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/graph-question-gt.pdf}
-\caption{An actual strong graph pair with exact question and GT.
-The diagram visualizes the supplied edge lists after deleting B0024:
-one six-cycle versus two triangles. All six surviving node IDs and
-six edges are shown. Equal degree statistics coexist with different
-component-count answers. The model receives text edge lists;
-this explanatory drawing does not assert physical connections.}
-\label{fig:graph-gt}
-\end{figure*}
-
 The supporting task asks for the number of connected components
 after deleting a named node from an explicit undirected graph,
 counting isolated survivors. The natural inventory has 73 questions.
@@ -522,8 +582,10 @@ count. They compare a six-cycle with two triangles, plus identical
 isolates. The other 61 pairs across 23 sources are degree-visible
 controls. Their invariance partners are reported separately.
 These hypothetical edge lists are not newly inferred physical connections.
-Figure~\ref{fig:graph-gt} shows a complete strong example and its
-independently recomputed component-count GT.
+The supplement shows a complete strong example and its independently
+recomputed component-count GT. CX1--CX2 instead use a larger induced
+source graph and require optimization or a conditional policy; those
+examples remain outside the planned graph result matrix.
 
 Deterministic audits already establish the relevance of this partition.
 An isolates-plus-one heuristic solves 72/73 natural questions and

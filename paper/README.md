@@ -3,26 +3,27 @@
 唯一当前写作入口：[main.tex](main.tex) · [main.pdf](main.pdf)；
 科学附录：[supplement.tex](supplement.tex) · [supplement.pdf](supplement.pdf)。
 旧稿及中间审稿材料统一在 [../tem/](../tem/README.md)。
-当前图文版为 9 页正文、1 页参考文献和 8 页附录。
+当前图文版为 10 页正文、1 页参考文献和 10 页附录。
 
 论文主线是：问题动机 → Benchmark 定义 → 数据构建与资格审核 →
 Metrics → 实验设计 → 局限与发布。正文和图注全部使用英文。
 
 ## 真实积木图、题目与 GT
 
-正文有 4 幅图，附录有 4 幅图；其中 7 幅为此次从真实数据重新编排的图，
-另 1 幅保留原始六步 3D 回放。首页直接展示 8 个完整模型。
+正文有 4 幅图：模型总览加三道复杂复合题。颜色案例已撤出论文图示；
+Part-type 和小型图删除控制放在附录。附录共 4 幅图，另有完整输入与 GT 证明表。
+首页直接展示 8 个完整模型。
 
 | 图示 | 内容 |
 |---|---|
 | [Source overview](figures/source-overview.pdf) | 每个 D1–D4 规模带两个真实源模型，附 ID 和零件数 |
-| [Color question + GT](figures/color-question-gt.pdf) | 原文题目、全部选项、A/B 图像、GT JSON、原始颜色与显示颜色的区别 |
-| [Part-type question + GT](figures/type-question-gt.pdf) | 五个操作对象全部保留，包含远端交换候选、匹配零件类型和编号变化 |
-| [Graph question + GT](figures/graph-question-gt.pdf) | 实际图删除题及连通分量 GT：一个六环与两个三角形 |
+| [CX1：多故障最小修复](figures/complex-repair.pdf) | 真实后铲的 36 零件、44 连接、8 个缺失候选；穷举 256 个子集，证明最小恢复集合 |
+| [CX2：自适应故障诊断](figures/complex-diagnosis.pdf) | 4 个故障世界、3 种连接查询；条件决策树与最坏成本证明 |
+| [CX3：位姿与对应关系恢复](figures/complex-registration.pdf) | 两套 12 零件轴组件；同型匹配、刚体旋转/平移、探针位置和方向 GT |
+| [Part-type control](figures/type-question-gt.pdf) | 附录中的基础视觉控制，保留全部对象和 GT |
+| [Graph control](figures/graph-question-gt.pdf) | 附录中的小型匹配图控制 |
 | [Source atlas](figures/source-atlas.pdf) | 完整 24 模型图谱 |
-| [Additional examples](figures/additional-question-gt.pdf) | 另外四个来源的四对题目、图像和 GT |
 | [Position panel + GT](figures/panel-question-gt.pdf) | 完整位置面板、题目、选项和正确候选 |
-| [3D replay](figures/given-order-replay.pdf) | 六步原始位姿回放，附录附每步动作和新增零件 ID |
 
 每张新图同时导出矢量文字 PDF 和 300 dpi PNG。积木部分只使用原始浏览器渲染
 或冻结的观察图；仅裁去空白、按比例排版及必要的印刷降采样。
@@ -30,7 +31,9 @@ GT 标注放在图像之外，不写入模型输入。来源模型保留原始�
 
 [visual-evidence.json](visual-evidence.json) 保存全部图片哈希、裁切框、原文问题、
 选项、GT、观察 ID 和 wire 哈希。所有示例均为数据与 GT，不是模型回答或人审结果。
-验证器重建 13 个视觉观察的答案，并独立计算两个图观察的连通分量。
+新题及完整验证位于 [complex-examples-v1](../benchmark/complex-examples-v1/README.md)：
+256 个修复子集、27 种查询树、4 种同型对应、12 个完整源变换均已独立复算。
+三道复杂题是待审核的设计示例，不混入 display-v3 的固定实验分母。
 
 ## 正文实验表
 
@@ -57,6 +60,7 @@ GT 标注放在图像之外，不写入模型输入。来源模型保留原始�
 
 ```sh
 python3 -m pip install -r paper/requirements.txt
+python3 benchmark/complex-examples-v1/build.py
 python3 paper/build_tables.py
 python3 paper/build_figures.py
 cd paper
@@ -67,6 +71,18 @@ tectonic --keep-logs --keep-intermediates supplement.tex
 本机 Tectonic 位于 `benchmark/.runtime/tectonic`，在 `paper/` 内可用
 `../benchmark/.runtime/tectonic` 替换上面的 `tectonic`。
 旧 publication generator 只属于归档版本，不用于生成当前论文。
+
+现有真实 3D 截图已随仓库保存。需要重新捕获时，先运行 `npm run dev`，
+再在安装 Chrome 的本机运行：
+
+```sh
+npx tsx paper/capture_complex.ts
+python3 paper/build_figures.py
+```
+
+交互查看入口为 `/paper/complex-render.html?model=omr-42004` 和
+`/paper/complex-render.html?model=omr-42061`，支持完整模型及子装配的旋转、缩放。
+`figures/complex-raw/captures.json` 记录截图、渲染器和源文件哈希，以及可见零件 ID。
 
 验证模型覆盖、空值、图表哈希、引用和 PDF：
 
@@ -87,6 +103,7 @@ env -u PYTHONPATH PYTHONNOUSERSITE=1 benchmark/.runtime/mlx-env/bin/python paper
 - `figures/`：真实积木渲染和 3D 回放图。
 - `asset-provenance.json`、`figure-provenance.json`：复制来源、原始观察和哈希。
 - `build_figures.py`、`visual-evidence.json`：新图生成器与完整图像/题目/GT 溯源。
+- `complex_figures.py`：CX1–CX3 组图及附录完整邻接表、分量表和候选拟合表。
 - `verification.json`：本次内容、空表和 PDF 验证结果。
 - [../benchmark/METRICS.md](../benchmark/METRICS.md)：公式和评分函数映射。
 - [../benchmark/DATASETS.md](../benchmark/DATASETS.md)：数据位置及各版本关系。

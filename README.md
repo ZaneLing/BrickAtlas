@@ -40,9 +40,12 @@ Existing algorithmic audits are labeled separately from learned-model results.
 The sealed older three-model protocol remains a separate study.
 
 The illustrated paper opens with eight real assemblies and includes
-complete Color/Part-type question, option and GT examples. The supplement
-adds all 24 source models, more paired examples, the position control and
-action IDs for the 3D replay. [Figure index and provenance](paper/README.md).
+three compositional examples: minimum repair with eight unavailable
+parts, adaptive fault diagnosis, and correspondence plus rigid pose
+recovery for repeated axle assemblies. The supplement provides complete
+inputs, GT certificates, all 24 source models and atomic visual controls.
+These three new examples are separate from the frozen paired study.
+[Figure index and provenance](paper/README.md).
 
 To inspect data, run `npm run dev` and open
 `http://127.0.0.1:5173/benchmark/evidence-v3/index.html`.

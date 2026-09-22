@@ -23,6 +23,10 @@ The primary visual dataset remains \texttt{brickatlas-display-v3};
 subsequent measurement audits do not create a new stimulus version.
 The 15-model experiment design is a proposal, independent of the
 sealed earlier three-model study.
+The separate \texttt{complex-examples-v1} records contain the three
+compositional examples highlighted in the main paper. They have
+algorithmic GT and source renders but no human or learned-model
+results, and do not increase the paired visual counts.
 
 The 24 human-authored LDraw sources contain 15,334 placed parts.
 Source URLs, credits, licenses, original files and hashes are retained.
@@ -74,17 +78,14 @@ envelope therefore establishes the delivered request, not every
 internal transformation.
 
 \subsection{Concrete visual pair}
-For OMR 42004, Color asks for the current color of B0035.
-The displayed answer is Blue in A and Red in B; the original source
-record stores Black. The image-local contract explicitly permits
-edited appearance.
-Part-type retains B0035 as target. Candidate B0036 selects the
+For OMR 42004, Part-type retains B0035 as target.
+Candidate B0036 selects the
 matching source type, 32250, in A. After B0036 and B0116 exchange
 referents, B0116 selects that same geometry in B.
 This is a change in the correct reference, not a change in the
 canonical part's type.
 
-The main figures show the actual PNGs, verbatim questions, complete
+Figure~\ref{fig:atomic-type} shows the actual PNGs, verbatim question, complete
 option lists and GT JSON. Identical crops remove empty margins and
 retain every operand and label. Table~\ref{tab:gt-referents} exposes
 the source-record derivation: only the candidate with part type 32250
@@ -95,7 +96,7 @@ qualification.
 
 \begin{table*}[t]
 \centering\small
-\caption{GT derivation for the main Part-type example. Source instance
+\caption{GT derivation for the supplemental Part-type example. Source instance
 IDs and part types remain constant; the current label of the matching
 candidate changes. Options C and D refer to B0036 and B0116 respectively,
 so the required outputs are \texttt{\{"choiceId":"C"\}} for A and
@@ -107,9 +108,20 @@ so the required outputs are \texttt{\{"choiceId":"C"\}} for A and
 \texttt{visual-evidence.json} binds every new figure to source
 captures or exact observation wires, questions, options, golds and
 crop rectangles. The archived figure provenance remains available
-for the reused replay. Figure~\ref{fig:more-pairs} supplies four
-additional pairs from different sources; selection is illustrative,
-not based on model outputs or certified answerability.
+for historical assets. The main paper uses its figure space for
+the compositional cases; these atomic controls document the frozen
+visual measurement contract.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/type-question-gt.pdf}
+\caption{Atomic Part-type control: fixed target B0035 and all four
+candidates. The matching source instance is labeled B0036 in A and
+B0116 in B, changing choice C to D. The common crop retains the
+remote swapped candidate; no operand is moved or omitted.
+GT is record-derived, with human visual qualification pending.}
+\label{fig:atomic-type}
+\end{figure*}
 
 \subsection{Appearance baseline}
 The legal Color baseline accepts one wire containing only PNG and
@@ -146,6 +158,137 @@ image. Isolated parts are observations, not a proposed freestanding
 assembly. The comparison changes layout and visual access together.}
 \label{fig:panel}
 \end{figure*}
+
+\section{Compositional Examples: Full Inputs and GT}
+\subsection{CX1: minimum restoration of terminal connectivity}
+\begin{quote}\small
+\input{generated/CX1-question.tex}
+\end{quote}
+The source is the OMR 42004 backhoe subassembly
+\texttt{s-629fc43f2db48f6b}, containing B0148--B0183. Its induced
+graph contains 36 vertices and 44 unique undirected recognized
+connector pairs. Table~\ref{tab:complex-adjacency} gives every
+adjacency before intervention. Paths through the remainder of the
+vehicle are excluded by the explicit input boundary.
+
+The unavailable set is \{B0150, B0160, B0164, B0165, B0167, B0173,
+B0175, B0177\}; terminals are \{B0158, B0171, B0179, B0180\}.
+Each reinstated vertex costs one and recovers every original edge
+to a present neighbor. The five initial components are listed in
+Table~\ref{tab:complex-components}; their sizes are 18, 5, 2, 2 and 1.
+Contracting these components preserves the restoration problem.
+The 3D render remains the intact source, avoiding an unsupported
+physical interpretation of the abstract faults.
+
+\begin{table*}[t]
+\centering\small
+\caption{Complete adjacency input for CX1 and CX2. Edges are undirected,
+so each recognized pair appears at both endpoints. Every node corresponds
+to an actual part in the intact source subassembly.}
+\label{tab:complex-adjacency}
+\setlength{\tabcolsep}{7pt}
+\input{generated/complex-adjacency.tex}
+\end{table*}
+
+\begin{table*}[t]
+\centering\small
+\caption{CX1 initial components after all eight specified faults.
+C1--C5 are diagram labels, not additional parts.}
+\label{tab:complex-components}
+\input{generated/complex-components.tex}
+\end{table*}
+
+GT is the single minimum set \{B0160, B0175, B0177\}, with cost three.
+After restoring it, all 31 present vertices lie in one component.
+We enumerate every subset of the eight candidates: all $2^8=256$
+outcomes are retained in \texttt{gold.json}. The 37 subsets of
+cardinality at most two all fail. An independent union-find
+implementation checks every recorded outcome against the builder's
+graph search. This proves minimality under the supplied graph
+semantics; it does not prove physical disassembly or reassembly.
+
+\subsection{CX2: conditional inspection with a worst-case budget}
+\begin{quote}\small
+\input{generated/CX2-question.tex}
+\end{quote}
+CX2 uses CX1's intact graph. Its worlds are:
+W1 disables \{B0150, B0160, B0175\};
+W2 disables \{B0150, B0173, B0175\};
+W3 disables \{B0150, B0164, B0175\}; and
+W4 disables \{B0150, B0164, B0165\}.
+Worlds remain fixed during inspection.
+Each unit-cost query tests reachability from B0158:
+Q1 to B0171, Q2 to B0179, and Q3 to B0180.
+Noiseless query outcomes are derived from graph traversal
+(Table~\ref{tab:complex-outcomes}).
+
+\begin{table}[H]
+\centering\small
+\caption{CX2 evaluator outcomes, independently recomputed from the
+supplied graph and fault worlds. This table is GT, not extra model input.}
+\label{tab:complex-outcomes}
+\input{generated/complex-diagnosis-outcomes.tex}
+\end{table}
+
+The optimal first query is Q3. If it returns no, Q1 distinguishes
+W1 (no) from W2 (yes). If Q3 returns yes, Q2 distinguishes W3 (no)
+from W4 (yes). Every path costs two.
+No one-query policy can identify four worlds from a binary result.
+Checking each possible first query additionally confirms that only
+Q3 permits a depth-two tree. The GT is evaluated on every compatible
+world; returning one action sequence is insufficient.
+The world definitions were selected for branch-dependent diagnosis,
+not sampled as natural hardware failure frequencies.
+
+\subsection{CX3: correspondence, proper registration and probe transfer}
+\begin{quote}\small
+\input{generated/CX3-question.tex}
+\end{quote}
+The two OMR 42061 axle subassemblies each contain twelve placed parts.
+The four A and four B anchor origins and types appear in the main
+figure. The input probe B0030 has origin
+$(43.9924,24.8,120.4212)$\,mm and local x-axis
+$(-.99938684,0,-.03501355)$ in world coordinates.
+These values are extracted from source transforms, not image
+measurements, and origins are not bounding-box or mass centers.
+
+Repeated types permit four assignments before geometry is considered.
+Table~\ref{tab:complex-registration} reports the proper least-squares
+fit for each. Only the assignment
+B0024$\mapsto$B0036, B0025$\mapsto$B0037,
+B0026$\mapsto$B0038 and B0035$\mapsto$B0047 is admissible.
+The least-squares solution is
+\[
+R=\begin{bmatrix}-1&0&0\\0&1&0\\0&0&-1\end{bmatrix},
+\qquad t=\begin{bmatrix}16\\0\\120\end{bmatrix}\mathrm{mm}.
+\]
+It maps B0030 to $(-27.9924,24.8,-.4212)$\,mm and its local x-axis
+to $(.99938684,0,.03501355)$, agreeing with source part B0042.
+
+\begin{table*}[t]
+\centering\small
+\caption{CX3 candidate assignments and proper least-squares maximum
+anchor residual. Source IDs are references, not a supplied correspondence
+rule. Numerical residuals are geometry checks, not model scores.}
+\label{tab:complex-registration}
+\input{generated/complex-registration-candidates.tex}
+\end{table*}
+
+The anchors are affinely independent: six times their tetrahedron
+volume is 2046.72\,mm$^3$. An independent coordinate-basis solve
+recovers the same rotation and translation. For every rejected
+assignment, at least one inter-anchor distance differs by more than
+.1\,mm. The triangle inequality therefore rules out \emph{any}
+rigid fit within .05\,mm per anchor, independent of the optimizer.
+The accepted fit is verified against all twelve complete source
+part transforms. The admissible correspondence and exact
+least-squares solution are unique; the tolerance does not assert
+uniqueness of every approximate transform.
+
+These three designed examples add explicit composition and optimality
+requirements. They do not establish calibrated difficulty or a new
+model ranking. Their human qualification and full study protocol
+remain future work, separate from display-v3's fixed denominator.
 
 \section{Part-type Assignment and Priors}
 Admissible configurations enumerate all four-option permutations
@@ -286,6 +429,17 @@ degree-visible change contains 61 from 23 sources. Each has a
 corresponding invariance partition. Pair endpoints therefore have
 292 appearances across all partitions, but only 219 unique inputs.
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/graph-question-gt.pdf}
+\caption{Small matched graph control from the frozen graph track:
+one six-cycle versus two triangles after deleting B0024.
+The supplied text edge lists determine GT. CX1--CX2 in the main
+paper use the larger 36-vertex source graph for optimization and
+conditional diagnosis; they are a separate set of examples.}
+\label{fig:graph-gt}
+\end{figure*}
+
 \begin{table*}[t]
 \centering\small
 \caption{Completed deterministic algorithm audit. These values are
@@ -332,38 +486,6 @@ to swapping A and B. Wilson intervals for 0/12 and 12/12 are
 approximately $[0,.2425]$ and $[.7575,1]$ under a pair-independence
 approximation that source reuse violates. The single template and
 eight-source coverage limit generalization.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=.78\textwidth]{figures/given-order-replay.pdf}
-\caption{Historical given-order 3D visibility replay for set 42102.
-Parts appear at their saved source transforms. The supplied sequence
-is an inspection control, not a discovered model plan; it does not
-certify an insertion path or gravity stability. Section~5.1 and
-Table~\ref{tab:replay-gt} provide the exact question, action IDs
-and newly visible part IDs.}
-\label{fig:replay}
-\end{figure*}
-
-\subsection{Replay question and action ground truth}
-The historical task \texttt{ld2-omr-42102-source-sequence-1} asks:
-\begin{quote}\small
-\input{generated/replay-question.tex}
-\end{quote}
-Its GT is the ordered action list \texttt{[step-1, step-2, step-3,
-step-4, step-5, step-6]}. Table~\ref{tab:replay-gt} lists the exact
-part IDs revealed by each action in Figure~\ref{fig:replay}. This
-is a supplied-order visibility control, distinct from the primary
-visual pairs and from physically validated assembly planning.
-
-\begin{table}[H]
-\centering\small
-\caption{Historical replay GT. Actions reveal the listed IDs at saved
-poses. Cumulative counts are derived from the recorded source window.}
-\label{tab:replay-gt}
-\setlength{\tabcolsep}{3pt}
-\input{generated/replay-gt.tex}
-\end{table}
 
 \section{Collection and Publication Contract}
 The main paper lists 15 proposed models and 306 empty result cells
@@ -412,14 +534,4 @@ are not substituted for frozen primary model inputs.}
 \label{fig:source-atlas}
 \end{figure*}
 
-\begin{figure*}[p]
-\centering
-\includegraphics[width=\textwidth]{figures/additional-question-gt.pdf}
-\caption{Four further real paired examples with complete question,
-options and GT: two Color and two Part-type parents from four sources.
-Within each pair only shared empty margins are cropped; all operands
-remain in their source poses. Green text is evaluator GT outside
-model input. No generated model responses or human judgments are shown.}
-\label{fig:more-pairs}
-\end{figure*}
 \end{document}

@@ -33,6 +33,17 @@ Color 有 73 对，Part-type（schema 中为 `shape-match`）有 67 对；
 来源 D1–D4 是模型规模带，不是已经验证的认知难度分层。
 隔离视图和三维展开是检查方式，不能当作新的可独立站立装配。
 
+## 复杂复合题示例：complex-examples-v1
+
+[独立目录](complex-examples-v1/README.md) 包含三道新设计题：
+CX1 多故障最小修复、CX2 自适应故障诊断、CX3 重复轴组件的对应与刚体位姿恢复。
+输入分别来自真实 OMR 42004 的 36 顶点/44 边连接记录和 OMR 42061 的两套 12 零件轴组件。
+
+[public.json](complex-examples-v1/public.json) 保存完整输入；
+[gold.json](complex-examples-v1/gold.json) 保存可重算 GT；
+[verification.json](complex-examples-v1/verification.json) 记录独立核验。
+这些是尚未进行人审和模型采集的三个案例，**不增加 display-v3 的 140 对规模**。
+
 ## 版本与存放规则
 
 - 新稿、图表和空实验表：`../paper/`。

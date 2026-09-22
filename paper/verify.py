@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Check blank experiments, evidence counts, references, assets and compiled PDFs."""
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -32,7 +33,9 @@ def visual_evidence(manifest):
                 check_records(child)
     check_records(evidence)
     figures = {f["figure"]: f for f in evidence["figures"]}
-    assert len(figures) == 7
+    assert len(figures) == 8
+    assert "color-question-gt" not in figures and "additional-question-gt" not in figures
+    assert {f.get("complex_case") for f in figures.values() if f.get("complex_case")} == {"CX1", "CX2", "CX3"}
     catalog = load(ROOT / "benchmark/ldraw-v2/catalog.json")
     assert {s["source_id"] for s in figures["source-atlas"]["sources"]} == {m["id"] for m in catalog}
     obs = {o["observation_id"]: o for o in manifest["observations"]}
@@ -70,7 +73,7 @@ def visual_evidence(manifest):
                 assert len(matching) == 1
                 assert o["payload"]["options"][matching[0]]["id"] == o["gold"]["choiceId"], oid
             checked.add(oid)
-    assert len(checked) == 13
+    assert len(checked) == 3
     graph_sources = figures["graph-question-gt"]["sources"]
     for source in graph_sources:
         # Independent union-find reconstruction of component-count GT.
@@ -82,8 +85,14 @@ def visual_evidence(manifest):
         for a, b in source["surviving_edges"]:
             parent[find(a)] = find(b)
         assert len({find(n) for n in parent}) == source["gold"]
-    return {"new_figures": 7, "source_assemblies_shown": 24,
-            "verified_visual_examples": len(checked), "verified_graph_examples": len(graph_sources)}
+    path = ROOT / "benchmark/complex-examples-v1/verify.py"
+    spec = importlib.util.spec_from_file_location("verify_complex_examples", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    complex_report = module.verify()
+    return {"current_figures": 8, "source_assemblies_shown": 24,
+            "verified_visual_examples": len(checked), "verified_graph_examples": len(graph_sources),
+            "complex_examples": complex_report}
 
 
 def main():
@@ -139,9 +148,10 @@ def main():
         assert "??" not in text, f"{stem}: unresolved reference"
         if stem == "main":
             assert len(pdf[0].get_images()) >= 8, "First-page source figure missing"
+            assert "color-question-gt" not in source and "type-question-gt" not in source
+            assert all(f"figures/complex-{name}.pdf" in source for name in ["repair", "diagnosis", "registration"])
             for phrase in ["GPT-6 Astra", "Qwen3.5-27B", "DeepSeek-R1", "Planned Experiments",
-                           "NewAcc", "Old-gold", "Part-type", "B0035", "B0116",
-                           "ld2-10014-graph-removal-2"]:
+                           "NewAcc", "Old-gold", "Part-type", "CX1", "CX2", "CX3", "B0175", "B0030"]:
                 assert phrase in text, phrase
         documents[stem] = {"pages": len(pdf), "sha256": sha(HERE / f"{stem}.pdf"),
                            "text_characters": len(text),

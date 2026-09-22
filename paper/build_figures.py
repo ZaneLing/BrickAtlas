@@ -5,6 +5,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import sys
 import textwrap
 
 import matplotlib
@@ -339,11 +340,11 @@ def gt_table():
 def main():
     sources_figure()
     sources_figure(all_sources=True)
-    question_figure("ld2-omr-42004-color-1", "color-question-gt")
     question_figure("ld2-omr-42004-shape-match-1", "type-question-gt")
     panel_figure()
     graph_figure()
-    gallery()
+    import complex_figures
+    complex_figures.build(sys.modules[__name__])
     gt_table()
     output = {"schema": 1, "builder": record(Path(__file__)), "manifest": record(MANIFEST),
               "renders": record(RENDERS), "source_catalog": record(ROOT / "benchmark/ldraw-v2/catalog.json"),
