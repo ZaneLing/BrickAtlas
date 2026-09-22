@@ -40,16 +40,36 @@ def proposed():
                                       "preserving_both_correct", "structural_both_correct", "factorial_all_correct"]),
         "repair-decomposition": rows(vlms, ["atomic_binding", "no_image_repair", "oracle_binding_repair",
                                             "repair_given_binding", "invalid_rate"]),
+        "repair-interface": rows(vlms, ["joint_failure", "joint_eligible_observations",
+                                      "joint_eligible_groups", "multimodal_minus_oracle_repair",
+                                      "multimodal_minus_atomic_binding"]),
         "repair-text": rows([m for m in models if m not in vlms], ["no_image_repair", "oracle_binding_repair"]),
     }
     return {
-        "schema": 2, "status": "experiment-plan-no-model-results",
+        "schema": 3, "status": "experiment-plan-no-model-results",
         "model_snapshot_date": budget["price_checked_date"],
         "model_source": str(BUDGET.relative_to(ROOT)), "model_source_sha256": digest(BUDGET),
         "dataset": "visual-repair-v1",
         "study_boundary": "New 15-model repair proposal; historical atomic protocols and results stay separate.",
         "result_policy": "All pending results are null and render as empty cells, never zero or fabricated scores.",
         "aggregation": "Equal dependence-group means primary; micro, paired group sensitivity and denominators accompany all metrics.",
+        "interface_contract": {
+            "joint_failure": "P(multimodal exact=0 | atomic binding=1 and oracle exact=1), task aligned.",
+            "contingency": "All eight atomic/oracle/multimodal binary counts accompany the estimates.",
+            "contrasts": "Same-task multimodal-minus-oracle exact repair and multimodal-minus-atomic binding.",
+            "subsets": "Full and construction-qualified reports; common locked eligibility across conditions.",
+            "analysis_schema": "visual-repair-interface-v1",
+            "table_scope": "interface[].full.heldout; repeat with qualified.heldout in the complete report.",
+            "table_fields": {
+                "joint_failure": "joint_failure_given_atomic_oracle.group_macro",
+                "joint_eligible_observations": "joint_failure_given_atomic_oracle.eligible_n",
+                "joint_eligible_groups": "joint_failure_given_atomic_oracle.eligible_groups",
+                "multimodal_minus_oracle_repair": "delta_repair.group_macro",
+                "multimodal_minus_atomic_binding": "delta_binding.group_macro",
+            },
+            "empty_denominator": None,
+            "interpretation": "Operational observed outcomes, not a causal internal-mechanism claim.",
+        },
         "required_before_collection": [
             "Complete native-input qualification and freeze eligible-input lineage.",
             "Pin provider/model revision, precision, adapter and image policy in a separate external run lock.",
@@ -92,6 +112,7 @@ def build(refresh_proposal=False):
     headers = {
         "repair-primary": ["Model", "Exact", "Bind", "V-change", "V-keep", "Fault", "All-six"],
         "repair-decomposition": ["Model", "Atomic", "No-image", "Oracle", r"Repair$|$Bind", "Invalid"],
+        "repair-interface": ["Model", r"$J$", r"$n_{AO}$", r"$G_{AO}$", r"$\Delta$Repair", r"$\Delta$Bind"],
         "repair-text": ["Model", "No-image repair", "Oracle repair"],
     }
     for key, data in config["tables"].items():

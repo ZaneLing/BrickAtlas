@@ -9,7 +9,8 @@ from copy import deepcopy
 from pathlib import Path
 
 from common import HERE, ROOT, VERSION, canonical, digest, filehash, read, reference, write
-from study import analyze, checked_packet, envelope, load_manifest
+from study import analyze, checked_packet, envelope, load_manifest, validate_manifest
+from qualification import validate_eligibility
 
 
 def check_settings(settings):
@@ -29,7 +30,7 @@ def check_settings(settings):
         raise ValueError("Unsupported effort comparison removed from this study")
 
 
-def lock_run(model_id, revision, adapter, settings):
+def lock_run(model_id, revision, adapter, settings, eligibility=None):
     planned = read(HERE / "planned-models.json")["models"]
     model = next((m for m in planned if m["id"] == model_id), None)
     if model is None:
@@ -41,16 +42,24 @@ def lock_run(model_id, revision, adapter, settings):
     if not adapter.is_file() or not adapter.is_relative_to(HERE):
         raise ValueError("Place explicit local adapter in this new benchmark version")
     manifest = deepcopy(load_manifest())
+    eligibility = eligibility if eligibility is not None else read(HERE / "qualification-eligibility.json")
+    validate_eligibility(eligibility, manifest)
     manifest.pop("lock_sha256")
     manifest["base_study_lock_sha256"] = read(HERE / "study-manifest.json")["lock_sha256"]
     manifest["study_id"] = f"{VERSION}-planned-{model_id}-{digest([revision, filehash(adapter)])[:12]}"
     manifest["status"] = "external-model-run-locked-uncollected"
     manifest["adapter"] = reference(adapter)
     manifest["model"] = model
+    manifest["eligibility"] = deepcopy(eligibility)
     manifest["configurations"] = [
         {"id": f"{model_id}-{condition}", "kind": "model", "condition": condition,
-         "revision": revision, "settings": settings, "repeats": 1}
+         "system_id": model_id, "revision": revision, "settings": settings, "repeats": 1}
         for condition in model["conditions"]]
+    manifest["comparison_groups"] = [
+        {"id": f"{model_id}-interface", "system_id": model_id,
+         "config_ids": {c: f"{model_id}-{c}" for c in ("atomic_binding", "oracle_binding", "multimodal")},
+         "interpretation": "Same run-locked model; operational, noncausal interface diagnostic."}
+    ] if "multimodal" in model["conditions"] else []
     manifest["observations"] = [o for o in manifest["observations"] if o["condition"] in model["conditions"]]
     manifest["planned_runs"] = len(manifest["observations"])
     manifest["lock_sha256"] = digest(manifest)
@@ -58,17 +67,36 @@ def lock_run(model_id, revision, adapter, settings):
 
 
 def verify_run_lock(manifest):
-    core = dict(manifest)
-    lock = core.pop("lock_sha256")
-    if digest(core) != lock:
-        raise ValueError("External run lock mismatch")
-    if manifest["base_study_lock_sha256"] != load_manifest()["lock_sha256"]:
+    validate_manifest(manifest)
+    base = load_manifest()
+    if manifest["base_study_lock_sha256"] != base["lock_sha256"]:
         raise ValueError("External lock has stale study")
+    validate_eligibility(manifest["eligibility"], manifest)
     adapter = manifest["adapter"]
     if filehash(ROOT / adapter["path"]) != adapter["sha256"]:
         raise ValueError("Adapter changed after run lock")
     for config in manifest["configurations"]:
         check_settings(config["settings"])
+        if config["system_id"] != manifest["model"]["id"]:
+            raise ValueError("Off-model external configuration")
+    conditions = manifest["model"]["conditions"]
+    if manifest["observations"] != [o for o in base["observations"] if o["condition"] in conditions]:
+        raise ValueError("External lock must retain full planned condition membership")
+    if {c["condition"] for c in manifest["configurations"]} != set(conditions):
+        raise ValueError("Missing external condition configuration")
+
+
+def diagnostics(stdout=None, stderr=None, returncode=None, timeout_seconds=None, exception=None):
+    value = {"schema": "visual-repair-adapter-diagnostics-v1", "returncode": returncode,
+             "timed_out": isinstance(exception, subprocess.TimeoutExpired),
+             "timeout_seconds": timeout_seconds,
+             "exception_type": type(exception).__name__ if exception else None,
+             "exception_message": str(exception) if exception else None}
+    for name, raw in (("stdout", stdout), ("stderr", stderr)):
+        raw = raw.encode("utf8") if isinstance(raw, str) else raw
+        value[name] = raw.decode("utf8", errors="replace") if raw is not None else None
+        value[name + "_base64"] = base64.b64encode(raw).decode("ascii") if raw is not None else None
+    return value
 
 
 def collect(manifest, destination):
@@ -91,6 +119,8 @@ def collect(manifest, destination):
                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                   timeout=config["settings"]["timeout_seconds"], check=False)
             raw = proc.stdout.decode("utf8", errors="replace")
+            diagnostic = diagnostics(proc.stdout, proc.stderr, proc.returncode,
+                                     config["settings"]["timeout_seconds"])
             if proc.returncode:
                 receipts.append(envelope(manifest, config, obs, None, f"adapter_exit_{proc.returncode}"))
             else:
@@ -98,6 +128,9 @@ def collect(manifest, destination):
                 receipts.append(envelope(manifest, config, obs, raw))
         except (OSError, subprocess.TimeoutExpired) as exc:
             receipts.append(envelope(manifest, config, obs, None, type(exc).__name__))
+            diagnostic = diagnostics(getattr(exc, "stdout", None), getattr(exc, "stderr", None),
+                                     timeout_seconds=config["settings"]["timeout_seconds"], exception=exc)
+        receipts[-1]["diagnostics"] = diagnostic
         write(destination, receipts)
     return receipts
 
@@ -112,10 +145,12 @@ if __name__ == "__main__":
     parser.add_argument("--lock", required=True)
     parser.add_argument("--receipts")
     parser.add_argument("--output")
+    parser.add_argument("--eligibility")
     parser.add_argument("--execute-local-adapter", action="store_true")
     args = parser.parse_args()
     if args.command == "lock":
-        write(args.lock, lock_run(args.model, args.revision, args.adapter, read(args.settings)))
+        write(args.lock, lock_run(args.model, args.revision, args.adapter, read(args.settings),
+                                 read(args.eligibility) if args.eligibility else None))
     elif args.command == "collect":
         if not args.execute_local_adapter:
             raise SystemExit("Collection requires explicit --execute-local-adapter; no external collection has been performed.")
@@ -123,5 +158,6 @@ if __name__ == "__main__":
     else:
         manifest = read(args.lock)
         verify_run_lock(manifest)
-        report = analyze(read(args.receipts), manifest=manifest, write_output=False)
+        report = analyze(read(args.receipts), manifest=manifest, write_output=False,
+                         eligibility=read(args.eligibility) if args.eligibility else None)
         write(args.output, report)

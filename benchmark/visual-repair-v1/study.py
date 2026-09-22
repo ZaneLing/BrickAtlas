@@ -11,6 +11,7 @@ import numpy as np
 from baselines import configurations, predict
 from common import ASSETS, CONDITIONS, HERE, ROOT, SEED, VERSION, digest, filehash, read, reference, write
 from evaluate import evaluate
+from joint import CONTRACT, interface_metrics, validate_comparisons
 
 QUESTION = (
     "Match the unlabeled reference geometry to exactly one candidate card; ignore orientation "
@@ -60,15 +61,17 @@ def freeze():
             path = HERE / "native" / condition / (task["id"] + ".json")
             write(path, value)
             observations.append({"task_id": task["id"], "condition": condition,
-                                 "construction_id": task["construction_id"], "split": task["split"],
-                                 "dependence_group": task["dependence_group"], "packet": reference(path)})
+                                 **{k: task[k] for k in ("construction_id", "split", "dependence_group",
+                                                        "replicate", "structural_arm", "visual_arm")},
+                                 "packet": reference(path)})
     config_rows = [{**c, "kind": "algorithmic", "revision": filehash(HERE / "baselines.py"),
+                    "system_id": "public-pixel-plus-exact-reference",
                     "repeats": 1, "settings": {"deterministic": True, "seed": SEED,
                     "tools": "only public packet, permitted PNG bytes, generic font atlas, exact graph solver"}}
                    for c in configurations()]
     sources = [reference(HERE / f) for f in ("public.json", "gold.json", "sampling-ledger.json",
                "render-specs.json", "captures.json", "evaluate.py", "baselines.py", "study.py",
-               "common.py", "portable.py", "qualification.py", "build.py", "verify.py", "review.html")]
+               "common.py", "portable.py", "qualification.py", "joint.py", "build.py", "verify.py", "review.html")]
     roster = read(ROOT / "benchmark/experiment-plans/model-budget-20260920/config.json")
     planned = []
     for m in roster["api_models"] + roster["local_models"]:
@@ -86,6 +89,13 @@ def freeze():
         "version": VERSION, "study_id": "visual-repair-v1-local-algorithms",
         "status": "executable-no-purchase-algorithmic-study",
         "conditions": list(CONDITIONS), "configurations": config_rows,
+        "analysis_contract": CONTRACT,
+        "comparison_groups": [
+            {"id": f"{rule}-interface", "system_id": "public-pixel-plus-exact-reference",
+             "config_ids": {"atomic_binding": f"{rule}-atomic", "oracle_binding": "oracle-repair",
+                            "multimodal": f"{rule}-repair"},
+             "interpretation": "Modular algorithmic reference only; shared exact oracle, not a model experiment."}
+            for rule in ("card_first", "silhouette", "appearance")],
         "observations": observations, "sources": sources,
         "image_policy": "Exact native 1600x900 PNG bytes, one image; no external crop or private source access. Legal baselines may compute on allowed pixels.",
         "failure_policy": "One planned attempt. Missing, refusal, parse failure and transport failure retain denominator; no successful-only retries.",
@@ -101,13 +111,22 @@ def freeze():
            "planned_local_runs": manifest["planned_runs"], "planned_models": len(planned)})
 
 
+def validate_manifest(manifest):
+    core = dict(manifest)
+    lock = core.pop("lock_sha256")
+    if digest(core) != lock or manifest["version"] != VERSION:
+        raise ValueError("Manifest lock/version mismatch")
+    for source in [*manifest["sources"], manifest["font_calibration"]]:
+        if filehash(ROOT / source["path"]) != source["sha256"]:
+            raise ValueError(f"Changed locked source: {source['path']}")
+    if manifest.get("analysis_contract") != CONTRACT:
+        raise ValueError("Unrecognized analysis contract")
+    validate_comparisons(manifest)
+
+
 def load_manifest():
     manifest = read(HERE / "study-manifest.json")
-    lock = manifest.pop("lock_sha256")
-    assert digest(manifest) == lock, "Manifest lock mismatch"
-    manifest["lock_sha256"] = lock
-    for source in [*manifest["sources"], manifest["font_calibration"]]:
-        assert filehash(ROOT / source["path"]) == source["sha256"], source["path"]
+    validate_manifest(manifest)
     return manifest
 
 
@@ -219,8 +238,8 @@ def estimates(rows, field):
                                    for g in values if len(values) > 1]}
 
 
-def metrics(rows):
-    atomic = bool(rows) and rows[0]["condition"] == "atomic_binding"
+def metrics(rows, condition=None):
+    atomic = (condition or (rows[0]["condition"] if rows else None)) == "atomic_binding"
     score = "binding_correct" if atomic else "repair_exact"
     buckets = defaultdict(dict)
     for row in rows:
@@ -239,7 +258,8 @@ def metrics(rows):
     result = {name: estimates(rows, field) for name, field in (
         ("binding_accuracy", "binding_correct"), ("repair_exact", "repair_exact"),
         ("invalid_rate", "invalid"), ("missing_rate", "missing"))}
-    result.update({name: estimates(values, "value") for name, values in pairs.items()})
+    result.update({name: estimates(pairs[name], "value") for name in (
+        "changing_both_correct", "preserving_both_correct", "structural_both_correct", "factorial_all_correct")})
     bound = [r for r in rows if r["binding_correct"]]
     result["repair_given_binding"] = estimates(bound, "repair_exact") if not atomic else None
     result["planned_count"] = len(rows)
@@ -251,12 +271,34 @@ def metrics(rows):
     return result
 
 
-def analyze(receipts, manifest=None, write_output=True):
+def analyze(receipts, manifest=None, write_output=True, eligibility=None):
+    from qualification import validate_eligibility
+
     manifest = manifest or load_manifest()
+    validate_manifest(manifest)
+    if "base_study_lock_sha256" in manifest:
+        from portable import verify_run_lock
+        verify_run_lock(manifest)
+    eligibility = eligibility if eligibility is not None else (
+        manifest.get("eligibility") or read(HERE / "qualification-eligibility.json"))
+    validate_eligibility(eligibility, manifest)
     verify_native_inputs(manifest)
     accepted = validate_receipts(manifest, receipts)
     tasks = {t["id"]: t for t in read(HERE / "public.json")["tasks"]}
     gold = {t["id"]: t["answer"] for t in read(HERE / "gold.json")["tasks"]}
+    observations = {(o["task_id"], o["condition"]): o for o in manifest["observations"]}
+    conditions = {c["condition"] for c in manifest["configurations"]}
+    expected = {(tid, condition) for tid in tasks for condition in conditions}
+    if len(observations) != len(manifest["observations"]) or set(observations) != expected:
+        raise ValueError("Incomplete/duplicate planned task-condition membership")
+    for (tid, _), obs in observations.items():
+        if any(obs[k] != tasks[tid][k] for k in (
+                "construction_id", "split", "dependence_group", "replicate", "structural_arm", "visual_arm")):
+            raise ValueError("Off-construction/cell planned observation")
+    if manifest["planned_runs"] != len(tasks) * len(manifest["configurations"]):
+        raise ValueError("Inconsistent planned denominator")
+    if any(c["repeats"] != 1 for c in manifest["configurations"]):
+        raise ValueError("Only one planned attempt is supported")
     rows = []
     cache = {}
     for config in manifest["configurations"]:
@@ -270,17 +312,43 @@ def analyze(receipts, manifest=None, write_output=True):
             result = cache[key]
             rows.append({**{k: task[k] for k in ("id", "construction_id", "dependence_group", "split", "replicate", "structural_arm", "visual_arm")},
                          "config_id": config["id"], "condition": config["condition"], **result,
+                         "repeat": 0, "binding_correct": result["binding_correct"] and result["valid"],
                          "missing": receipt is None, "invalid": receipt is not None and not result["valid"]})
     reports = []
+    qualified = set(eligibility["sets"]["qualified"])
+
+    def split_metrics(values, condition):
+        return {**{split: metrics([r for r in values if r["split"] == split], condition)
+                   for split in ("dev", "heldout")}, "all": metrics(values, condition)}
+
     for config in manifest["configurations"]:
         cfg = [r for r in rows if r["config_id"] == config["id"]]
-        reports.append({**config, **{split: metrics([r for r in cfg if r["split"] == split])
-                                    for split in ("dev", "heldout")},
-                        "all": metrics(cfg)})
+        reports.append({**config, **split_metrics(cfg, config["condition"]),
+                        "qualified": split_metrics([r for r in cfg if r["construction_id"] in qualified],
+                                                   config["condition"])})
+    interfaces = []
+    for comparison in manifest["comparison_groups"]:
+        sets = {}
+        for name, ids in eligibility["sets"].items():
+            selected = [r for r in rows if r["construction_id"] in set(ids)]
+            sets[name] = {
+                split: interface_metrics([r for r in selected if split == "all" or r["split"] == split],
+                                         comparison["config_ids"])
+                for split in ("dev", "heldout", "all")}
+        interfaces.append({**comparison, **sets})
     shallow = [r for r in reports if r["kind"] == "algorithmic" and r.get("rule") != "oracle" and
                (r["heldout"]["binding_accuracy"]["micro"] or 0) >= manifest["shortcut_threshold"]]
     evidence_kind = "algorithmic-not-model-or-human" if all(c["kind"] == "algorithmic" for c in reports) else "model"
     report = {"version": VERSION, "study_lock_sha256": manifest["lock_sha256"], "kind": evidence_kind,
+              "analysis_schema": CONTRACT["schema"], "analysis_contract": CONTRACT,
+              "eligibility_lock_sha256": eligibility["lock_sha256"],
+              "qualification": eligibility["qualification"],
+              "analysis_sets": {
+                  name: {"construction_ids": ids, "constructions": len(ids),
+                         "task_count": sum(t["construction_id"] in ids for t in tasks.values())}
+                  for name, ids in eligibility["sets"].items()},
+              "interface": interfaces,
+              "interface_status": "available" if interfaces else "not_planned_missing_required_conditions",
               "planned_count": manifest["planned_runs"], "received_count": len(receipts),
               "threshold": manifest["shortcut_threshold"], "threshold_exceeding_configs": [r["id"] for r in shallow],
               "interpretation": ("Shallow-solvable binding stage: no strong perceptual-difficulty claim." if shallow else
@@ -299,10 +367,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("command", choices=("freeze", "run", "analyze", "all"))
     parser.add_argument("--receipts", type=str)
+    parser.add_argument("--eligibility", type=str)
     args = parser.parse_args()
     if args.command in ("freeze", "all"):
         freeze()
     if args.command in ("run", "all"):
         run()
+    if args.command == "all":
+        from qualification import freeze_queue
+        freeze_queue()
     if args.command in ("analyze", "all"):
-        analyze(read(args.receipts or HERE / "algorithmic-receipts.json"))
+        analyze(read(args.receipts or HERE / "algorithmic-receipts.json"),
+                eligibility=read(args.eligibility) if args.eligibility else None)

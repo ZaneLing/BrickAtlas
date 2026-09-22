@@ -125,7 +125,9 @@ def build():
     blank_count = sum(len(row["results"]) for rows in art.load(HERE / "experiments.json")["tables"].values() for row in rows)
     macros = {"VRConstructions": summary["construction_count"], "VRSources": summary["source_count"],
               "VRGroups": summary["dependence_group_count"], "VRObservations": summary["observation_count"],
-              "VRBlankCells": blank_count}
+              "VRBlankCells": blank_count,
+              "VRLowCost": sum(gold[t["id"]]["minimum_cost"] in (2, 3) for t in tasks),
+              "VRSingleOptimum": sum(len(gold[t["id"]]["solutions"]) == 1 for t in tasks)}
     save_tex("repair-numbers.tex", "\n".join(r"\newcommand{\%s}{%s}" % item for item in macros.items()) + "\n")
     inventory = [
         ["Screened candidates", str(summary["candidate_count"])],

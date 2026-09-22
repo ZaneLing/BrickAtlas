@@ -41,6 +41,13 @@ blank.** Human qualification and that model study have not been completed.
 Existing algorithmic audits are labeled separately from learned-model results.
 The historical atomic and three-model protocols remain separate studies.
 
+The analysis joins atomic, oracle and multimodal outcomes on the same task.
+It reports failure among observations solved in both isolated conditions,
+all eight joint outcome counts and paired repair/binding differences.
+Full and construction-qualified sets retain separate denominators; empty
+conditional estimates remain undefined. The paper reserves 212 null result
+fields for this study.
+
 The main figures show actual current task inputs, all optimal solutions,
 and matched interventions. The supplement provides source coverage, semantic
 certificates, condition decompositions and the full source gallery.

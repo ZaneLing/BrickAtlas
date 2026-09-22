@@ -37,7 +37,7 @@ def main():
     config = load(HERE / "experiments.json")
     assert config == proposed() and config["dataset"] == "visual-repair-v1"
     assert len(config["models"]) == 15
-    expected_blank_cells = 13 * 6 + 13 * 5 + 2 * 2
+    expected_blank_cells = 13 * 6 + 13 * 5 + 13 * 5 + 2 * 2
     actual_blank_cells = 0
     for name, rows in config["tables"].items():
         text = (HERE / "generated" / f"{name}.tex").read_text()
@@ -84,6 +84,23 @@ def main():
     baseline = load(DATA / "baseline-report.json")
     assert baseline["kind"] == "algorithmic-not-model-or-human"
     assert baseline["model_results"] is None and baseline["human_results"] is None
+    assert baseline["analysis_schema"] == config["interface_contract"]["analysis_schema"]
+    assert baseline["analysis_sets"]["full"]["task_count"] == len(public)
+    for interface in baseline["interface"]:
+        for subset in ("full", "qualified"):
+            for split in ("dev", "heldout", "all"):
+                stats = interface[subset][split]
+                assert set(stats["contingency"]) == {f"{i:03b}" for i in range(8)}
+                assert sum(stats["contingency"].values()) == stats["planned_count"]
+                for path in config["interface_contract"]["table_fields"].values():
+                    value = stats
+                    for key in path.split("."):
+                        value = value[key]
+                joint = stats["joint_failure_given_atomic_oracle"]
+                assert joint["failure_n"] == stats["contingency"]["110"]
+                assert joint["eligible_n"] == sum(stats["contingency"][k] for k in ("110", "111"))
+                if not joint["eligible_n"]:
+                    assert joint["micro"] is None and joint["group_macro"] is None
     documents = {}
     bibkeys = set(re.findall(r"@\w+\{([^,]+),", (HERE / "references.bib").read_text()))
     for stem in ["main", "supplement"]:

@@ -9,6 +9,7 @@ from common import HERE, ROOT, SEED, VERSION, digest, filehash, read, write
 from study import checked_packet, load_manifest
 
 FLAGS = ("reference_readable", "labels_readable", "unique_geometry_match", "graph_contract_clear")
+ELIGIBILITY_SCHEMA = "visual-repair-construction-eligibility-v1"
 
 
 def freeze_queue():
@@ -57,6 +58,7 @@ def freeze_queue():
     queue["lock_sha256"] = digest(queue)
     write(HERE / "qualification-queue.json", queue)
     validate([], [], write_output=True)
+    write(HERE / "qualification-eligibility.json", build_eligibility([], []))
     print(queue["summary"])
     return queue
 
@@ -137,6 +139,8 @@ def validate(receipts, adjudications, write_output=False):
         expected_hashes = sorted(i["packet"]["sha256"] for i in originals[0]["items"])
         if sorted(adj.get("prompt_sha256s", [])) != expected_hashes:
             raise ValueError("Adjudication prompt hashes mismatch")
+        if all(received[a["assignment_id"]]["passing"] for a in originals):
+            raise ValueError("Adjudication requires a triggered qualification concern")
         decisions[key] = adj["retain"]
     rows = []
     constructions = sorted({a["construction_id"] for a in assignments.values()})
@@ -154,16 +158,57 @@ def validate(receipts, adjudications, write_output=False):
             else:
                 status = "needs_adjudication"
             arms.append({"arm": arm, "status": status})
-        rows.append({"construction_id": cid, "arms": arms,
-                     "qualified": all(a["status"] == "qualified" for a in arms)})
+        statuses = {a["status"] for a in arms}
+        status = next((s for s in ("rejected", "pending", "needs_adjudication") if s in statuses), "qualified")
+        rows.append({"construction_id": cid, "arms": arms, "status": status,
+                     "qualified": status == "qualified"})
     report = {"version": VERSION, "queue_lock_sha256": lock,
+              "study_lock_sha256": manifest["lock_sha256"],
               "received_assignments": len(received), "planned_assignments": len(assignments),
               "qualified_constructions": sum(r["qualified"] for r in rows),
-              "pending_constructions": sum(any(a["status"] == "pending" for a in r["arms"]) for r in rows),
+              "pending_constructions": sum(r["status"] == "pending" for r in rows),
+              "rejected_constructions": sum(r["status"] == "rejected" for r in rows),
+              "needs_adjudication_constructions": sum(r["status"] == "needs_adjudication" for r in rows),
               "rows": rows, "human_results": None if not receipts else "real receipts supplied separately"}
     if write_output:
         write(HERE / "qualification-status.json", report)
     return report
+
+
+def build_eligibility(receipts, adjudications):
+    """Derive membership from validated raw evidence, never from editable flags."""
+    report = validate(receipts, adjudications)
+    artifact = {
+        "schema": ELIGIBILITY_SCHEMA, "version": VERSION,
+        "study_lock_sha256": report["study_lock_sha256"],
+        "queue_lock_sha256": report["queue_lock_sha256"],
+        "policy": "Qualification only, independent of model outcomes; whole constructions common to every condition. Full collection retained.",
+        "evidence": {"receipts": receipts, "adjudications": adjudications},
+        "qualification": report,
+        "sets": {"full": sorted(r["construction_id"] for r in report["rows"]),
+                 "qualified": sorted(r["construction_id"] for r in report["rows"] if r["qualified"])},
+    }
+    artifact["lock_sha256"] = digest(artifact)
+    return artifact
+
+
+def validate_eligibility(artifact, manifest):
+    core = dict(artifact)
+    lock = core.pop("lock_sha256")
+    if digest(core) != lock or artifact.get("schema") != ELIGIBILITY_SCHEMA:
+        raise ValueError("Eligibility lock/schema mismatch")
+    expected_study = manifest.get("base_study_lock_sha256", manifest["lock_sha256"])
+    if artifact["study_lock_sha256"] != expected_study:
+        raise ValueError("Off-study eligibility")
+    if manifest.get("eligibility") is not None and manifest["eligibility"] != artifact:
+        raise ValueError("Cannot change eligibility after external run lock")
+    evidence = artifact["evidence"]
+    if build_eligibility(evidence["receipts"], evidence["adjudications"]) != artifact:
+        raise ValueError("Eligibility does not match validated qualification evidence")
+    full = sorted({t["construction_id"] for t in read(HERE / "public.json")["tasks"]})
+    if artifact["sets"]["full"] != full:
+        raise ValueError("Eligibility lacks complete construction membership")
+    return artifact
 
 
 if __name__ == "__main__":
@@ -171,9 +216,12 @@ if __name__ == "__main__":
     parser.add_argument("command", choices=("queue", "validate"))
     parser.add_argument("--receipts")
     parser.add_argument("--adjudications")
+    parser.add_argument("--eligibility-output", default=str(HERE / "qualification-eligibility.json"))
     args = parser.parse_args()
     if args.command == "queue":
         freeze_queue()
     else:
-        print(validate(read(args.receipts) if args.receipts else [],
-                       read(args.adjudications) if args.adjudications else [], True))
+        receipts = read(args.receipts) if args.receipts else []
+        adjudications = read(args.adjudications) if args.adjudications else []
+        print(validate(receipts, adjudications, True))
+        write(args.eligibility_output, build_eligibility(receipts, adjudications))

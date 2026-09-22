@@ -34,7 +34,9 @@ dependence groups, with \VRObservations{} repair observations.
 Exhaustive certificates and an independent semantic scorer verify
 binding, all optimal solutions, costs and component outcomes.
 Atomic-binding and oracle-binding conditions separate the two
-operations; legal shallow baselines expose avoidable shortcuts.
+operations. Task-aligned joint outcomes measure multimodal failure
+on observations solved in both isolated conditions; legal shallow
+baselines expose avoidable shortcuts.
 We release construction, exclusion and split ledgers, native inputs,
 scoring and a versioned analysis path. Learned-model tables remain
 blank pending collection. The contribution is a controlled test
@@ -80,7 +82,9 @@ terminal and tests structural optimization. The multimodal condition
 requires both, and the no-image condition retains the full graph
 without the terminal binding. Pair and factorial scores then test
 whether correct behavior survives required changes and irrelevant
-edits. The task does not measure inference of hidden connectors
+edits. Joint outcomes distinguish failure on individually solved
+instances from nonoverlapping isolated competence.
+The task does not measure inference of hidden connectors
 from pixels: providing the graph deliberately makes structural
 evidence exact and the remaining visual dependency identifiable.
 
@@ -260,6 +264,10 @@ The final release contains \VRConstructions{} constructions from
 (Table~\ref{tab:inventory}).
 Relevant variation is reported through node/edge ranges, optimal
 costs and numbers of optimal sets, rather than only source labels.
+Most observations remain small: \VRLowCost{}/\VRObservations{}
+have cost two or three, and \VRSingleOptimum{} have one optimum.
+These counts include dependent variants and are not independent
+complexity samples.
 No claim of generalization to all LEGO mechanisms follows from
 this finite collection. Public CAD reuse may permit contamination;
 we do not infer confirmed contamination from availability alone.
@@ -327,12 +335,34 @@ without the binding. These conditions distinguish a missing visual
 dependency from imperfect optimization given a correct binding.
 They do not prove any particular internal reasoning procedure.
 
-We report micro accuracy and equal-dependence-group means, retaining
-all planned observations, including absent or failed calls.
-Paired effects resample shared groups, not individual renderings;
-all conditions use the same construction membership.
-Source/design group counts, leave-one-group-out sensitivity and
-full versus qualified denominators accompany results.
+For the same task, ID replicate and intervention cell $i$, let
+$A_i$ denote atomic binding correctness, $O_i$ oracle exact repair,
+$M_i$ multimodal exact repair, and $B_i$ multimodal binding correctness.
+We retain all eight $(A_i,O_i,M_i)$ contingency counts and define
+\[
+J_{\rm micro}=
+\frac{\sum_i A_iO_i(1-M_i)}{\sum_i A_iO_i}.
+\]
+This is observed joint-condition failure among observations solved
+in both isolated conditions. It is not a causal measure of an
+internal reasoning mechanism. A zero denominator is undefined.
+The primary equal-group $J$ averages the within-group ratios over
+groups with at least one jointly competent observation; the
+eligible observation and group counts accompany it.
+We also report paired differences $M_i-O_i$ in exact repair and
+$B_i-A_i$ in binding. Marginal accuracies cannot recover $J$.
+
+Joins require the same locked model revision, adapter, settings,
+task membership and qualification eligibility across conditions.
+Missing or invalid planned calls contribute zero correctness;
+an unplanned condition makes its contrast unavailable.
+Micro estimates weight observations; group estimates weight
+dependence groups equally. Shared-group resampling retains all
+conditions, images, anchors and ID replicates together.
+The supplement freezes zero-eligibility and resampling details.
+Full-set and construction-wide qualified-set outputs retain
+separate denominators, with pending and rejected counts.
+Group counts and leave-one-group-out sensitivity accompany results.
 These are descriptive finite-resource analyses. A worst-case normal
 half-width target of .20 for independent bounded group means would
 already require 25 groups before small-sample corrections. More
@@ -384,12 +414,18 @@ failure counts and eligible groups accompany the complete records.}
 
 The primary result matrix (Table~\ref{tab:primary}) is interpreted
 together with the atomic, no-image and oracle conditions, reported
-in the supplement. A low multimodal score despite strong oracle
+with the joint-condition matrix in the supplement.
+A low multimodal score despite strong oracle
 performance is compatible with binding failure; it is not by itself
 proof of failed structural reasoning. Likewise, high atomic binding
 with low oracle repair locates a structural limitation without
 requiring a visual explanation. Factorial failures can arise at
 either stage and must be decomposed accordingly.
+In particular, identical condition accuracies can conceal opposite
+joint outcomes: $J$ asks whether isolated successes occur on the
+same observations as multimodal failures. Zero $J$, either sign
+of a paired difference, and no eligible observations are all
+permitted outcomes.
 
 All response slots and revisions must be frozen before real
 collection. The current release provides deterministic construction
@@ -398,7 +434,7 @@ results are not represented by fabricated values. Historical Color,
 Part-type and small graph studies remain separately versioned and
 are not pooled with the new repair family.
 
-\section{Limitations and Release}
+\section{Limitations}
 BrickAtlas isolates one visual-to-symbolic interface. It does not
 recover connectivity from images, model the feasibility of inserting
 a part, certify stable physical assemblies, or evaluate unrestricted
@@ -415,13 +451,6 @@ that all latent similarities were found. Held-out group performance
 supports claims within the declared construction population only.
 Selection requires informative counterfactuals, so the benchmark
 does not estimate natural failure frequency.
-
-We release original-source attribution, candidate and exclusion
-ledgers, native images and public inputs, private evaluator GT,
-dependency certificates, semantic scorers, baseline results and an
-inspection interface. Current figures use actual native observations
-and traceable source geometry. The paper and supplement separate
-verified algorithmic facts from proposed empirical comparisons.
 
 \clearpage
 {\small

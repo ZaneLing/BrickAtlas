@@ -36,9 +36,9 @@ def validate_all():
     assert before == after, "Construction regeneration not byte-identical"
     records.append({"name": "byte_identical_constructor_regeneration", "status": "passed", "sha256": after})
     execute("independent_graph_pixel_source_audit", [sys.executable, HERE / "verify.py"])
-    execute("manifest_local_study_analysis", [sys.executable, HERE / "study.py", "all"])
-    execute("six_reviewer_queue", [sys.executable, HERE / "qualification.py", "queue"])
-    execute("semantic_receipt_qualification_tests", [sys.executable, "-m", "unittest", "-v", "test_visual_repair"], HERE)
+    execute("manifest_local_study_qualification_analysis", [sys.executable, HERE / "study.py", "all"])
+    execute("semantic_receipt_joint_qualification_adapter_tests", [
+        sys.executable, "-m", "unittest", "discover", "-s", HERE, "-p", "test_*.py", "-v"])
     execute("typescript", [node, ROOT / "node_modules/typescript/bin/tsc", "--noEmit",
             "--target", "ES2022", "--module", "ESNext", "--moduleResolution", "Bundler",
             "--resolveJsonModule", "--allowSyntheticDefaultImports", "--skipLibCheck",
@@ -48,7 +48,8 @@ def validate_all():
               "checks": records, "summary": read(HERE / "summary.json"),
               "artifacts": [reference(HERE / f) for f in (*generated, "study-manifest.json",
                   "baseline-report.json", "algorithmic-receipts.json", "algorithmic-scores.json",
-                  "dependency-audit.json", "qualification-queue.json", "qualification-status.json", "ui-verification.json")],
+                  "dependency-audit.json", "qualification-queue.json", "qualification-status.json",
+                  "qualification-eligibility.json", "ui-verification.json")],
               "model_calls": 0, "human_judgments": 0, "paid_calls": 0}
     write(HERE / "validation.json", result)
     print({"status": "passed", "check_count": len(records), "artifact_count": len(result["artifacts"])})

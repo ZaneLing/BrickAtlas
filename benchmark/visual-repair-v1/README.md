@@ -126,7 +126,6 @@ env -u PYTHONPATH PYTHONNOUSERSITE=1 benchmark/.runtime/mlx-env/bin/python bench
 .tools/node-v22.23.2-darwin-arm64/bin/node node_modules/tsx/dist/cli.mjs benchmark/visual-repair-v1/capture.ts
 env -u PYTHONPATH PYTHONNOUSERSITE=1 benchmark/.runtime/mlx-env/bin/python benchmark/visual-repair-v1/verify.py
 env -u PYTHONPATH PYTHONNOUSERSITE=1 benchmark/.runtime/mlx-env/bin/python benchmark/visual-repair-v1/study.py all
-env -u PYTHONPATH PYTHONNOUSERSITE=1 benchmark/.runtime/mlx-env/bin/python benchmark/visual-repair-v1/qualification.py queue
 env -u PYTHONPATH PYTHONNOUSERSITE=1 benchmark/.runtime/mlx-env/bin/python -m unittest discover -s benchmark/visual-repair-v1 -p 'test_*.py' -v
 ```
 
@@ -156,6 +155,12 @@ failure outputs remain in planned denominators. Duplicate, synthetic, and
 off-version receipts are rejected, not silently included. Synthetic unit
 fixtures never write empirical receipt files.
 
+`all` also freezes the pending qualification queue and validated eligibility
+artifact before analysis. Do not use the empty-queue regeneration workflow
+after real human judgments have been collected. The source lock now includes
+the joint estimator; changing locked sources requires refreeze and a real
+algorithm rerun, not manual receipt-hash replacement.
+
 `planned-models.json` retains 15 historical planning model names: 13 multimodal
 models with four native conditions and two text models with only no-image and
 oracle conditions. No backend revision is invented and no effort comparison
@@ -164,13 +169,17 @@ configurations. All model/human results remain null.
 
 `portable.py` supplies the common manifest-to-analysis contract for future
 explicit local adapters. `lock` requires a stable model revision, adapter file
-hash and all settings before collection; `collect` additionally requires
+hash, all settings and validated construction eligibility before collection;
+`collect` additionally requires
 `--execute-local-adapter`. The adapter consumes one JSON object on stdin with
 model/revision/settings, native text and full PNG base64 bytes and emits raw
 model JSON on stdout. No source index or gold is sent. Timeout/nonzero exit and
 malformed stdout remain planned failures. The package contains no vendor SDK,
 credentials, paid call, or fabricated model adapter. Unsupported providers
 remain pending until a real adapter/revision is authorized and locked.
+Versioned `diagnostics` retain stdout/stderr, exact stream bytes in base64,
+return code and partial timeout output, including unsuccessful attempts.
+No successful-only retries are used.
 
 ## Metrics and Observed Baselines
 
@@ -183,6 +192,23 @@ Micro and equal-dependence-group means are separate; intervals resample
 dependence groups, retaining all shared-anchor cells. Atomic binding does not
 receive repair credit. Its duplicated fault packets are not independent visual
 exposures. Failure rates and received/planned counts are always explicit.
+
+The additive `visual-repair-interface-v1` schema joins isolated atomic binding
+(A), oracle exact repair (O), and multimodal exact repair (M) on the **same
+task/cell/ID replicate/attempt** under one compatible run lock. It records all
+eight A/O/M contingency counts, eligible task/group counts, and
+`P(M=0 | A=1,O=1)`, not a product of marginal accuracies. It also implements
+same-task multimodal-minus-oracle repair and multimodal-minus-atomic binding
+contrasts. Equal-group weighting is primary; micro weighting is separate.
+All three readouts use shared whole-group bootstrap draws. Empty eligible
+sets give null estimates. This diagnostic is operational, not proof of an
+internal causal mechanism.
+
+Both full and common construction-qualified sets are emitted. Existing
+full-set configuration keys are retained; qualified counterparts and new
+`interface` records carry denominators. See [ANALYSIS.md](ANALYSIS.md) for
+exact machine fields, eligibility provenance, zero-eligible resampling,
+failure handling, and the paper-table mapping.
 
 The frozen shortcut threshold is **0.80 held-out micro binding OR exact-repair
 accuracy**. Exact repair cannot exceed binding, so the implementation checks
@@ -242,6 +268,14 @@ human-qualified. Machine nonblank/clipping checks and a different part number
 do not prove unique human-visible geometry. Any later qualification exclusion
 must be disclosed at construction level with full-machine and qualified-subset
 denominators. No measured model outcome may determine exclusion.
+
+Validation also produces `qualification-eligibility.json` from the raw
+receipts/adjudications, queue lock and base study lock. It distinguishes
+pending, needs-adjudication, rejected and qualified constructions.
+`study.py analyze --eligibility ...` validates the artifact before producing
+both branches. Portable `lock --eligibility ...` embeds it before collection;
+the full set is still collected, and later analysis cannot replace that
+run's qualification snapshot. Pending constructions are not called rejected.
 
 ## Closest-Work Boundary
 

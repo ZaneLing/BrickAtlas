@@ -204,6 +204,64 @@ Missing, refused or malformed planned calls stay in the denominator.
 When a qualified subset is used, full-set outcomes and exclusions
 remain available rather than being overwritten.
 
+\subsection{Task-aligned joint outcomes}
+For task $i$, define binary outcomes $A_i$ (atomic binding),
+$O_i$ (oracle exact repair), $M_i$ (multimodal exact repair) and
+$B_i$ (multimodal binding). Alignment uses the exact task identity,
+including construction, fault, visual arm and ID replicate.
+Repeated atomic images remain aligned to each planned task; they
+do not supply additional independent evidence.
+The eight contingency cells are
+\[
+n_{aom}=\sum_i[A_i=a,\ O_i=o,\ M_i=m],
+\quad(a,o,m)\in\{0,1\}^3 .
+\]
+The joint failure numerator is $n_{110}$ and the eligible
+denominator is $n_{110}+n_{111}$. We report their ratio as micro
+$J$, as well as the mean of within-group ratios over groups with
+nonzero eligibility. Counts, eligible groups and excluded
+zero-eligibility groups accompany both. An empty eligible set
+produces null estimates, not perfect performance.
+
+For the same planned task set, the paired exact-repair contrast is
+the average of $M_i-O_i$ and the binding contrast the average of
+$B_i-A_i$. They retain their signs. Equal-group contrasts first
+average these differences within each group; micro contrasts
+average over observations. They are matched observed differences,
+not causal effects of disabling an internal model operation.
+
+Marginal condition scores do not determine the joint diagnostic.
+A synthetic regression fixture has two groups with two constructions
+each and twelve cells per construction. Multimodal success occurs on
+the first construction in each group. Placing both isolated successes
+on the first versus second construction leaves every condition's
+accuracy at .5, including its group and intervention metrics, but
+changes joint failure from $0/24$ to $24/24$.
+These values are synthetic tests of the analysis, not model results.
+No product of marginal accuracies is used as an eligibility estimate.
+
+For each comparison, subset and split, 2,000 draws with seed
+20260922 resample the sorted complete dependence groups with
+replacement. The same draw indexes the joint numerator, eligible
+denominator and both contrast vectors. Group intervals recompute
+the mean of defined group values; micro intervals recompute the
+pooled ratio. Groups with zero joint eligibility remain in the
+draws. Draws containing no eligible group are undefined and omitted
+from joint percentiles, with the defined-draw count reported.
+Joint intervals require at least two eligible groups; contrast
+intervals require at least two planned groups. Leave-one-group-out
+estimates preserve null empty cases. These are finite-resource
+sensitivity summaries, not claims of population coverage.
+
+The run lock explicitly declares which atomic, oracle and multimodal
+configurations form one comparison. System identity, evidence kind,
+revision, settings and attempt count must match; the locked adapter
+and exact native input hashes apply throughout. Separately locked
+runs are not silently pooled. An absent receipt in a planned
+condition scores false. A condition not planned for that model
+makes the comparison unavailable; incomplete or mismatched planned
+task membership is rejected. The current protocol uses one attempt.
+
 \subsection{Adversarial and equivalence checks}
 Synthetic fixtures exercise alternative valid serialization and
 solutions, omitted or duplicate optima, nonminimal feasible sets,
@@ -212,6 +270,10 @@ or off-version receipts. Tests never populate empirical tables.
 The full test report accompanies the released evaluator.
 Exact-input hashes distinguish a genuine result for the selected
 observation from a response to a different input or condition.
+Additional fixtures check joint outcomes, absent conditions,
+incompatible locks, empty eligibility, construction-wide exclusion
+and equality of full and qualified estimates when all constructions
+qualify. Adapter failures are exercised with mocked subprocesses.
 
 \subsection{Legal baselines and restricted interpretation}
 The local no-purchase study includes only explicitly defined
@@ -256,6 +318,17 @@ both the anchor and a different visual arm of the construction.
 Adjudication must be independent of the two original reviewers.
 No genuine reviewer records are present in this release.
 
+The construction eligibility artifact binds the study and queue
+locks, raw qualification receipts, adjudications and recomputed
+decisions. Validation reruns the qualification rules instead of
+trusting an editable list of retained IDs. A rejected arm rejects
+its construction; otherwise incomplete reviews remain pending and
+unresolved concerns require adjudication. Only fully qualified
+constructions enter the common qualified subset.
+All twelve observations of a retained construction enter together
+under every condition. The full set remains separately available.
+An empty qualified set currently reflects pending collection.
+
 The local study manifest fixes input/evaluator versions, conditions,
 baseline configurations and planned receipt slots. External models
 require a separate locked provider revision, adapter, precision,
@@ -265,11 +338,19 @@ live endpoint availability. Additional thinking/effort modes are not
 claimed without an executable pinned configuration.
 Neither an empty result table nor a synthetic fixture is accepted
 as an empirical receipt.
+The external lock also embeds validated construction eligibility
+before collection and retains all full-set observation slots.
+Analysis cannot substitute another eligibility artifact after
+outcomes are known. Model payloads exclude qualification evidence.
+Nonzero adapter exits and timeouts preserve stdout, stderr, exit
+status and available partial streams, with exact bytes retained
+alongside readable text. They remain failed attempts without retry.
 
 \section{Planned Learned-Model Matrices}
 The main paper retains the complete model inventory and primary
 multimodal matrix. Tables~\ref{tab:decomposition} and~\ref{tab:text}
-reserve the decomposed conditions. Models compare identical
+reserve the decomposed conditions; Table~\ref{tab:interface} reserves
+the joint and paired readout. Models compare identical
 construction sets and exact native inputs. Percentages, eligible
 group counts, paired differences and missing/invalid outcomes
 must be reported together.
@@ -287,6 +368,18 @@ multimodal invalid-output rate.}
 
 \begin{table*}[t]
 \centering\small
+\caption{Planned task-aligned interface readout; all entries are
+unmeasured. $J$ is the equal-group joint-condition failure percentage;
+$n_{AO}$ and $G_{AO}$ count jointly competent observations and groups.
+$\Delta$Repair is multimodal minus oracle exact repair, and
+$\Delta$Bind is multimodal minus atomic binding, in equal-group
+percentage points. Full and qualified versions, micro estimates,
+all eight contingency counts and shared-group sensitivity intervals
+accompany the complete machine-readable analysis. Empty eligibility
+remains undefined.}
+\label{tab:interface}
+\input{generated/repair-interface.tex}
+\par\medskip
 \caption{Planned text-only model conditions; no image-bearing score
 is imputed. Empty cells are unmeasured values.}
 \label{tab:text}
