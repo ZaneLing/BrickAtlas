@@ -1,14 +1,45 @@
 #!/usr/bin/env python3
 """Validate independent review records and the fixed acceptance gate."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
+import subprocess
+
+from snapshot import ROOT, snapshot as current_research_snapshot
 
 HERE = Path(__file__).resolve().parent
 
 
+def verify_committed_snapshot(expected):
+    current = current_research_snapshot()
+    assert current["sha256"] == expected["sha256"], "Accepted research bytes changed"
+    assert current["files"] == expected["files"], "Accepted research file set changed"
+    assert current["file_count"] == expected["file_count"] == len(expected["files"])
+    tree = subprocess.check_output(["git", "ls-tree", "-rz", "HEAD"], cwd=ROOT)
+    committed = {}
+    for entry in tree.split(b"\0"):
+        if not entry:
+            continue
+        metadata, name = entry.split(b"\t", 1)
+        _, kind, oid = metadata.split()
+        if kind == b"blob":
+            committed[name.decode()] = oid.decode()
+    object_format = subprocess.check_output(
+        ["git", "rev-parse", "--show-object-format"], cwd=ROOT, text=True).strip()
+    for name in expected["files"]:
+        assert name in committed, f"Accepted research file is uncommitted: {name}"
+        data = (ROOT / name).read_bytes()
+        oid = hashlib.new(object_format, b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+        assert oid == committed[name], f"Accepted research differs from HEAD: {name}"
+    return {"status": "passed", "research_sha256": current["sha256"],
+            "file_count": current["file_count"], "committed_research_verified": True,
+            "verified_head": current["base_commit"]}
+
+
 def audit(require_accept=False):
     rounds = []
+    final_snapshot_check = None
     for directory in sorted(HERE.glob("round-*")):
         path = directory / "review.json"
         if not path.exists():
@@ -41,8 +72,11 @@ def audit(require_accept=False):
         assert validation["status"] == "passed"
         assert validation["snapshot_sha256"] == final["snapshot_sha256"]
         assert all((directory / name).exists() for name in ["response.md", "changes.json", "report.md"])
+        final_snapshot_check = verify_committed_snapshot(
+            json.loads((directory / "snapshot.json").read_text()))
     return {"internal_simulation": True, "empirical_completion_is_review_assumption_only": True,
-            "rounds": rounds, "acceptance_gate_passed": bool(require_accept)}
+            "rounds": rounds, "acceptance_gate_passed": bool(require_accept),
+            "final_snapshot_check": final_snapshot_check}
 
 
 if __name__ == "__main__":

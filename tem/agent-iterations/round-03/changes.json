@@ -1,0 +1,249 @@
+{
+  "round": 3,
+  "owner": "research-refiner",
+  "status": "closure-response-complete-pending-main-final-audit",
+  "change_type": "documentation-only-issue-by-issue-closure",
+  "benchmark_version": "visual-repair-v1",
+  "reviewed_base_commit": "39e92789f2b64f34dbcfc118a2feb9e4439c951b",
+  "reviewed_snapshot_sha256": "6a52785ffaaae16e4e14b249289759a36243c15b94f2aa23a1b481230dc355e7",
+  "independent_review": {
+    "sources": [
+      "tem/agent-iterations/round-03/review.md",
+      "tem/agent-iterations/round-03/review.json"
+    ],
+    "verdict": "accept",
+    "score": 7,
+    "confidence": 4,
+    "open_critical": 0,
+    "open_major": 0,
+    "open_minor": 0,
+    "closed_prior": 6,
+    "new_blocking_regressions": 0,
+    "attribution": "Independent reviewer; retained without override.",
+    "official_cvpr_decision": false
+  },
+  "review_assumption": "For review only, assume competent completion of declared model runs and human collection. Actual evidence remains uncollected/null. Do not infer successful qualification, answerability, favorable scores, superiority, ranking reversal, significance or positive joint failure.",
+  "owned_paths": [
+    "tem/agent-iterations/round-03/response.md",
+    "tem/agent-iterations/round-03/changes.json"
+  ],
+  "changed_files": [
+    "tem/agent-iterations/round-03/response.md",
+    "tem/agent-iterations/round-03/changes.json"
+  ],
+  "research_changes": [],
+  "research_files_modified_by_this_run": false,
+  "accepted_research_bytes_preserved_by_this_run": true,
+  "reviewer_verdict_overridden": false,
+  "reviewer_files_modified": false,
+  "protocol_or_rubric_modified": false,
+  "validation_report_or_state_modified_by_this_run": false,
+  "unrelated_e2e_report_modified_by_this_run": false,
+  "git_writes_performed": false,
+  "issues": [
+    {
+      "id": "BA-001",
+      "severity": "major",
+      "status": "closed",
+      "disposition": "Prior independent closure preserved; no new research changes.",
+      "artifacts": [
+        "benchmark/visual-repair-v1/build.py",
+        "benchmark/visual-repair-v1/public.json",
+        "benchmark/visual-repair-v1/gold.json",
+        "benchmark/visual-repair-v1/evaluate.py",
+        "benchmark/visual-repair-v1/dependency-audit.json",
+        "paper/main.tex"
+      ],
+      "tests": [
+        "benchmark/visual-repair-v1/test_visual_repair.py::SemanticTests",
+        "benchmark/visual-repair-v1/verify.py::verify"
+      ],
+      "closure_evidence": "Independent audit reproduced 1008 semantic answers; visual and fault changes affect complete optima. Separate native input and GT, all-optima semantics and equivalent-output tests support the narrow binding/optimization task, not hard vision or physical repair."
+    },
+    {
+      "id": "BA-002",
+      "severity": "major",
+      "status": "closed",
+      "disposition": "Prior independent closure preserved; no new research changes.",
+      "artifacts": [
+        "benchmark/visual-repair-v1/verify.py",
+        "benchmark/visual-repair-v1/baselines.py",
+        "benchmark/visual-repair-v1/baseline-report.json",
+        "benchmark/visual-repair-v1/portable.py",
+        "paper/main.tex"
+      ],
+      "tests": [
+        "benchmark/visual-repair-v1/test_visual_repair.py::StudyTests.test_native_controls_exact_text_and_images",
+        "benchmark/visual-repair-v1/test_visual_repair.py::StudyTests.test_no_private_metadata_in_native",
+        "benchmark/visual-repair-v1/test_visual_repair.py::StudyTests.test_legal_ocr_uses_pixels",
+        "benchmark/visual-repair-v1/verify.py::verify"
+      ],
+      "closure_evidence": "Independent checks preserved matched controls, changing/preserving answers and ID equivariance; 336 unique visual pairs, 2520 card views and 144 mesh files passed. All 15120 algorithm responses replayed from allowed inputs. Silhouette remains 624/684 held-out micro exact repair with the 0.80 gate fired, without reselection."
+    },
+    {
+      "id": "BA-003",
+      "severity": "major",
+      "status": "closed",
+      "disposition": "Prior independent closure preserved; no new research changes.",
+      "artifacts": [
+        "benchmark/visual-repair-v1/build.py",
+        "benchmark/visual-repair-v1/sampling-ledger.json",
+        "benchmark/visual-repair-v1/summary.json",
+        "benchmark/visual-repair-v1/dependency-audit.json",
+        "paper/main.tex",
+        "paper/generated/repair-numbers.tex"
+      ],
+      "tests": [
+        "benchmark/visual-repair-v1/verify.py::verify"
+      ],
+      "closure_evidence": "Census/exclusions, pre-search grouping, induced graphs, disjoint selected instances and split/hash checks passed independently. There are 84 constructions, 17 sources and 15 groups; held-out has 57 constructions in 10 groups. Of 1008 dependent observations, 802 cost two or three restorations and 598 have one optimum. No broad-population inference."
+    },
+    {
+      "id": "BA-004",
+      "severity": "major",
+      "status": "closed",
+      "disposition": "Closed by round03 independent review of the integrated round02 repair; no new research changes.",
+      "artifacts": [
+        "benchmark/visual-repair-v1/joint.py",
+        "benchmark/visual-repair-v1/study.py",
+        "benchmark/visual-repair-v1/qualification.py",
+        "benchmark/visual-repair-v1/qualification-eligibility.json",
+        "benchmark/visual-repair-v1/portable.py",
+        "benchmark/visual-repair-v1/ANALYSIS.md",
+        "benchmark/visual-repair-v1/baseline-report.json",
+        "paper/main.tex",
+        "paper/supplement.tex",
+        "paper/build_tables.py"
+      ],
+      "tests": [
+        "benchmark/visual-repair-v1/test_interface.py::JointTests",
+        "benchmark/visual-repair-v1/test_interface.py::LockedIntegrationTests",
+        "paper/verify.py::main"
+      ],
+      "closure_evidence": [
+        "Task/cell/replicate/attempt-aligned A/O/M events, eight contingency cells, micro J=n110/(n110+n111), equal-group J and eligible task/group counts.",
+        "Same-task signed multimodal-minus-oracle repair and multimodal-minus-atomic binding contrasts without J filtering; shared 2000 whole-group draws, seed 20260922, zero-eligible groups retained, undefined draws counted and empty estimates null.",
+        "Compatible common run locks and exact membership; planned missing/invalid calls remain failures, unplanned conditions unavailable, no independent-run pooling.",
+        "Revalidated raw-evidence qualification with pending/rejected distinction, all twelve observations retained/excluded together, full/qualified branches and eligibility frozen before external collection.",
+        "Independent tests distinguish synthetic 0/24 from 24/24 joint failures with identical marginal reports; all-qualified fixture exactly matches full algorithm analysis; one exclusion preserves 1008 full and 996 qualified slots per condition.",
+        "All 56 tests passed independently, whole baseline-report replay matched, and additional scalar unequal-group bootstrap matched. Paper table paths and contingency arithmetic passed publication validation."
+      ],
+      "remaining_risk": "J is outcome-dependent and noncausal; system-specific eligibility, one attempt and format failures limit interpretation. Closure establishes an executable contract, not favorable experiments or human answerability."
+    },
+    {
+      "id": "BA-005",
+      "severity": "major",
+      "status": "closed",
+      "disposition": "Prior independent closure preserved; no new research changes.",
+      "artifacts": [
+        "paper/repair-figure-provenance.json",
+        "paper/figures/repair-task.pdf",
+        "paper/figures/repair-factorial.pdf",
+        "paper/main.tex",
+        "paper/main.pdf",
+        "paper/supplement.pdf",
+        "paper/experiments.json"
+      ],
+      "tests": [
+        "paper/verify.py::main"
+      ],
+      "closure_evidence": "Independent read-only publication validation passed actual-task provenance, separate input/context/GT, 212 genuinely null planning fields, citations, style and PDF checks. Main has six content pages and references on page seven; supplement has seven pages. Historical tasks are not pooled.",
+      "remaining_risk": "Small factorial print labels remain an optional presentation improvement, not an open tracked issue."
+    },
+    {
+      "id": "BA-006",
+      "severity": "minor",
+      "status": "closed",
+      "disposition": "Closed by round03 independent review of retained diagnostics; no new research changes.",
+      "artifacts": [
+        "benchmark/visual-repair-v1/portable.py",
+        "benchmark/visual-repair-v1/ANALYSIS.md"
+      ],
+      "tests": [
+        "benchmark/visual-repair-v1/test_interface.py::AdapterDiagnosticTests"
+      ],
+      "closure_evidence": "Five mocked tests passed independently for nonzero/non-UTF-8 streams, partial and unavailable timeout streams, launch errors and successful malformed stdout. Versioned diagnostics retain readable and exact base64 bytes, return code, timeout and exceptions. Failed calls stay failed; no retries or successful-only selection.",
+      "remaining_risk": "No real adapter/model ran; mocked diagnostics do not establish provider behavior."
+    }
+  ],
+  "verification_evidence": {
+    "attribution": "Existing independent round03 review; not rerun by this closure refiner and not a replacement for Main's validation.json.",
+    "record": "tem/agent-iterations/round-03/review.json",
+    "independent_tests_passed": 56,
+    "independent_semantic_answers": 1008,
+    "independent_algorithm_responses_replayed": 15120,
+    "distinct_packet_rule_evaluations": 7896,
+    "whole_baseline_report_replay": "exact-equality",
+    "preserved_prior_metric_blocks": 45,
+    "independent_snapshot_files_verified": 24702,
+    "research_tests_run_by_this_pass": 0,
+    "replay_or_regeneration_by_this_pass": false,
+    "builds_or_captures_by_this_pass": false,
+    "final_audit_owner": "Main",
+    "final_audit_claimed_complete_by_refiner": false
+  },
+  "current_evidence": {
+    "source": "benchmark/visual-repair-v1/baseline-report.json",
+    "kind": "algorithmic-not-model-or-human",
+    "algorithmic_receipts": 15120,
+    "model_results": null,
+    "human_results": null,
+    "model_calls": 0,
+    "human_collection_calls": 0,
+    "human_judgments": 0,
+    "paid_calls": 0,
+    "pending_constructions": 84,
+    "qualified_constructions": 0,
+    "rejected_constructions": 0,
+    "needs_adjudication_constructions": 0,
+    "qualified_performance_estimates": null,
+    "planning_models": 15,
+    "null_planning_fields": 212,
+    "silhouette_heldout_modular_reference": {
+      "correct": 624,
+      "planned": 684,
+      "exact_micro": 0.9122807017543859,
+      "exact_group_macro": 0.7829090909090909,
+      "joint_failure_micro": 0.0,
+      "joint_failure_group_macro": 0.0,
+      "eligible_tasks": 624,
+      "eligible_groups": 8,
+      "zero_eligible_groups": 2,
+      "delta_repair_group_macro": -0.21709090909090908,
+      "delta_binding_group_macro": 0.0,
+      "interpretation": "Shared exact-solver modular reference only; zero J is not learned-model/human evidence and [0,0] intervals do not prove zero population error."
+    }
+  },
+  "accepted_locks": {
+    "study_lock_sha256": "d1edb0a10b83abba434dc202a18c17570b89a992706ab2384380e20fc13fddc2",
+    "eligibility_lock_sha256": "2a424617a365608f4d157f10cd91166942158ca75225219de2229fc4cb83507e",
+    "main_pdf_sha256": "a3856a34c135750fc4d3ebcd73344f479ff534201effea31f0e637b075ef9467",
+    "supplement_pdf_sha256": "ca7f2a87607bc0a7750f247bb90966bb016487cdc88c7285167197d8eaf87c8b",
+    "attribution": "Accepted independent review binding; research bytes not edited or regenerated by this pass."
+  },
+  "residual_limitations": [
+    "Shallow silhouette plus exact search reaches 91.23% held-out micro repair and paired/All-six scores; no hard-vision claim.",
+    "Ten held-out groups, gold-conditioned search, small exhaustive graphs and latent design similarity limit generalization. Bootstrap/leave-one-out summaries are finite-resource sensitivity, not calibrated population coverage or the 25-group precision illustration.",
+    "Actual qualification remains pending. Geometry identity and nonblank pixels do not establish human-visible uniqueness. Adverse qualification must narrow the population; an empty credible qualified set supports no human-answerable interface claim.",
+    "J conditions on each system's observed A=O=1 subset and cannot alone rank competence. One attempt, prompting, stochasticity and format failures preclude a causal interpretation; malformed repair loses binding credit. Report eligibility, contingencies, unconditional contrasts and failure rates.",
+    "Future comparisons require actual pinned adapters/revisions and common qualification. Public CAD/gold/provenance retain lookup and contamination risks; hashes authenticate neither closed-book conduct nor human identity.",
+    "Source geometry and supplied-graph certificates do not establish hidden-topology inference, insertion/extraction feasibility, stability, unrestricted planning or physical validation.",
+    "Optional, unapplied presentation improvement: enlarge factorial label insets for print without altering native evidence.",
+    "Optional, unapplied citation improvement: update paper/references.bib and the closest-work comparison from LEGO-Puzzles v3 to v4 planning up to eight steps, as noted by the independent reviewer.",
+    "No favorable future scores, superiority, ranking reversal, human agreement, significance or excess joint failure are assumed. Zero, adverse and undefined outcomes remain valid."
+  ],
+  "handoff": {
+    "genuine_unresolved_blockers_found": [],
+    "further_major_issue_requires_research_revision": false,
+    "conclusion_scope": "Accepted snapshot under the stated experiment-complete review assumption; actual collection remains uncollected.",
+    "main_owns": [
+      "tem/agent-iterations/round-03/validation.json",
+      "tem/agent-iterations/round-03/report.md",
+      "tem/agent-iterations/state.json",
+      "final-snapshot-and-evidence-audit",
+      "git"
+    ],
+    "optional_presentation_edits_applied": false,
+    "purchases_or_external_collection_performed": false
+  }
+}
