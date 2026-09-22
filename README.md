@@ -19,33 +19,33 @@
 | Current paper and supplement | [paper/](paper/README.md) · [main PDF](paper/main.pdf) · [supplement PDF](paper/supplement.pdf) |
 | Benchmark data and version map | [benchmark/DATASETS.md](benchmark/DATASETS.md) |
 | Metrics, formulas and implementations | [benchmark/METRICS.md](benchmark/METRICS.md) |
-| Current visual observations and pair IDs | [benchmark/ldraw-evidence-v3/](benchmark/ldraw-evidence-v3/) |
-| Scoring, QA and inference code | [benchmark/suite/ldraw-evidence-v3/](benchmark/suite/ldraw-evidence-v3/) |
-| Measurement audits and image baseline | [benchmark/ldraw-evidence-v4-draft/](benchmark/ldraw-evidence-v4-draft/) |
+| Current complex repair benchmark | [benchmark/visual-repair-v1/](benchmark/visual-repair-v1/) |
+| Semantic scorer and study runner | [evaluate.py](benchmark/visual-repair-v1/evaluate.py) · [study.py](benchmark/visual-repair-v1/study.py) |
+| Historical atomic observations | [benchmark/ldraw-evidence-v3/](benchmark/ldraw-evidence-v3/) |
 | Proposed models and blank experiment tables | [paper/experiments.json](paper/experiments.json) |
 | Full-study and all-model MVP budgets | [benchmark/experiment-plans/](benchmark/experiment-plans/) |
 | Historical reviews, revision guidance and manuscripts | [tem/](tem/README.md) |
+| Independent reviewer/refiner iterations | [tem/agent-iterations/](tem/agent-iterations/README.md) |
 
-The current visual benchmark has **73 Color pairs and 67 Part-type pairs**,
-plus 67 auxiliary position panels. The supporting text-graph track has
-219 distinct observations. All derive from 24 source assemblies with 15,334
-placed parts. The 617 historical questions are an inspection resource, not
-617 additional primary visual tests.
+The current primary task combines **visual terminal binding and minimum
+graph repair**. A model matches a real rendered reference, identifies its
+current graph ID, and returns every optimal restoration set.
+Visual-changing, visual-preserving and structural interventions are grouped
+with independent ID replicates. Exact counts and held-out coverage are in
+[summary.json](benchmark/visual-repair-v1/summary.json).
 
 The manuscript follows benchmark motivation, task contracts, construction
 and qualification, metrics, then planned experiments. Its 15-model proposal
 contains 13 VLMs and two text-only models. **All planned result cells are
 blank.** Human qualification and that model study have not been completed.
 Existing algorithmic audits are labeled separately from learned-model results.
-The sealed older three-model protocol remains a separate study.
+The historical atomic and three-model protocols remain separate studies.
 
-The illustrated paper opens with eight real assemblies and includes
-three compositional examples: minimum repair with eight unavailable
-parts, adaptive fault diagnosis, and correspondence plus rigid pose
-recovery for repeated axle assemblies. The supplement provides complete
-inputs, GT certificates, all 24 source models and atomic visual controls.
-These three new examples are separate from the frozen paired study.
-[Figure index and provenance](paper/README.md).
+The main figures show actual current task inputs, all optimal solutions,
+and matched interventions. The supplement provides source coverage, semantic
+certificates, condition decompositions and the full source gallery.
+The earlier three complex demonstrations and 140 atomic visual pairs remain
+available as distinct versions. [Figure index and provenance](paper/README.md).
 
 To inspect data, run `npm run dev` and open
 `http://127.0.0.1:5173/benchmark/evidence-v3/index.html`.

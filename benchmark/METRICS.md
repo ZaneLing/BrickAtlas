@@ -1,6 +1,30 @@
 # Metrics 与代码索引
 
-当前视觉评分实现：[analyze.py](suite/ldraw-evidence-v3/analyze.py)；
+## 当前复杂修复：visual-repair-v1
+
+语义评分器：[evaluate.py](visual-repair-v1/evaluate.py)；
+收据检查、条件汇总与分组分析：[study.py](visual-repair-v1/study.py)。
+
+| Metric | 定义 |
+|---|---|
+| `repair_exact` | 绑定终端、全部最优恢复集合、最小成本、预算判定及每个最优解的分量均正确 |
+| `binding_accuracy` | 当前图像匹配候选的图 ID 正确 |
+| `changing_both_correct` | 视觉改变前后均完整正确 |
+| `preserving_both_correct` | 无关视觉改变前后均完整正确；仅回答相同不算成功 |
+| `structural_both_correct` | 同一图像下两种故障状态均完整正确 |
+| `factorial_all_correct` | 同一重编号下 2×3 的全部六个格子正确 |
+| `repair_given_binding` | 在绑定正确的观察中完整修复正确；无合格观察时未定义 |
+| `invalid_rate` / `missing_rate` | 非法响应与未收到响应，均保留在预定分母 |
+
+输出中的集合和解列表不依赖顺序，但遗漏等价最优解、增加非最优解或重复 ID 会失败。
+原子绑定、无图像、oracle 绑定和多模态条件单独报告。
+先在依赖组内平均，再作等组平均；同时报告 micro、实际组数、组重采样敏感性和
+逐组剔除结果。重复渲染、共享 anchor 和重编号不会增加独立组数。
+当前有限来源组不足以满足文中 25 组的粗略精度目标，不声称总体泛化。
+
+## 历史原子视觉指标
+
+历史评分实现：[analyze.py](suite/ldraw-evidence-v3/analyze.py)；
 统计实现：[estimates.py](suite/ldraw-evidence-v3/estimates.py)。
 Color、Part-type、文本图分别报告，不合成总榜单分数。
 
@@ -53,7 +77,8 @@ source-macro 条件率先在各来源内部计算，再对有合格 pair 的来�
 
 当前论文的模型与待填结果定义在 [paper/experiments.json](../paper/experiments.json)。
 该文件的结果值全部为 `null`，生成 LaTeX 时输出真正的空白。
-旧三模型 scorer 的 roster gate 仍有效；新 15 模型研究尚未接入运行器。
+旧三模型 scorer 的 roster gate 仍有效。当前修复版本有可执行本地算法研究，
+15 个模型是待锁定的实验计划，正式接入须固定实际修订、适配器和输入策略。
 
 早期任务的 Part/Edge F1、装配成功等指标位于
 [suite/METRICS.md](suite/METRICS.md)、[suite/v2/METRICS.md](suite/v2/METRICS.md)

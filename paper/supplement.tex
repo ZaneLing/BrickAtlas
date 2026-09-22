@@ -4,534 +4,325 @@
 \usepackage[T1]{fontenc}
 \usepackage{microtype}
 \definecolor{cvprblue}{rgb}{0.15,0.43,0.64}
-\usepackage[breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
+\usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
 \def\paperID{Draft}
 \def\confName{CVPR}
 \def\confYear{2026}
-\title{BrickAtlas: A Benchmark for Visual Evidence Following\\
-Supplementary Material}
+\input{generated/repair-numbers.tex}
+\title{BrickAtlas: Separating Visual Binding and Compositional\\
+Reasoning in Source-Grounded Repair Problems\\Supplementary Material}
 \author{Anonymous submission}
 \begin{document}
 \maketitle
 \raggedbottom
 
-\section{Resource and Observation Inventory}
-This supplement documents the source collection, exact visual
-observations, assignment audits, qualification protocol and supporting
-graph controls. It accompanies the current benchmark manuscript.
-The primary visual dataset remains \texttt{brickatlas-display-v3};
-subsequent measurement audits do not create a new stimulus version.
-The 15-model experiment design is a proposal, independent of the
-sealed earlier three-model study.
-The separate \texttt{complex-examples-v1} records contain the three
-compositional examples highlighted in the main paper. They have
-algorithmic GT and source renders but no human or learned-model
-results, and do not increase the paired visual counts.
+\section{Version and Evidence Boundary}
+The primary version is \texttt{visual-repair-v1}, with one task family:
+visually bound minimum terminal repair. Its release contains
+\VRConstructions{} constructions, \VRObservations{} repair observations
+and \VRGroups{} dependence groups. Twelve views of a construction
+are not twelve independent tasks. The main paper's figures and
+result schemas refer to this version.
 
-The 24 human-authored LDraw sources contain 15,334 placed parts.
-Source URLs, credits, licenses, original files and hashes are retained.
-The 617 historical dossiers preserve questions and inspection actions.
-Only 140 parents contribute primary visual pairs: 73 Color and
-67 Part-type. Table~\ref{tab:sources} lists their source coverage.
-Table~\ref{tab:scale} groups the historical resource by assembly scale.
-The scale bands are not validated cognitive-difficulty levels.
-Figure~\ref{fig:source-atlas} presents every source using the
-original full-assembly renders, with source ID, scale band and part
-count. Together with the main-paper examples, it separates the
-physical source collection from its task-specific observations.
+Earlier artifacts remain available for inspection and comparison:
+the display-v3 atomic study has 73 Color pairs, 67 Part-type pairs
+and 67 position panels; its supporting hypothetical graph study has
+219 distinct observations. The historical dossier has 617 items.
+The later CX1--CX3 illustrations concern symbolic repair, diagnosis
+and registration. These counts and outcomes are not pooled with
+the present family. In particular, a solved symbolic example does
+not establish visual necessity.
+
+No human judgments or learned-model results are claimed for the
+primary version in this workspace. The result tables are deliberately
+blank. Deterministic construction checks, algorithmic baselines and
+synthetic scorer tests are real executable evidence, labeled as such.
+They do not substitute for collection.
+
+\section{Complete Task Contract}
+\subsection{Native input and permitted evidence}
+Each input has a fixed question, an explicit undirected graph,
+unavailable vertex IDs, two fixed terminals, four candidate IDs,
+a budget and an output schema. Native images show an unlabeled
+reference and four labeled candidates with actual source geometry.
+The reference uses a different view. Public graph IDs are independent
+of historical part numbers and source-instance numbering.
+
+Model-facing packets omit source name, construction and split IDs,
+intervention labels, source coordinates, private display mappings
+and GT. Such fields remain in evaluator indexes to preserve provenance
+and paired analysis. Source meshes and their original transforms
+are not extra inputs to the visual condition.
+
+The four conditions have different information boundaries:
 
 \begin{table}[H]
 \centering\small
-\caption{Source scale and historical item counts. These item counts
-must not be interpreted as primary paired observations.}
-\label{tab:scale}
-\input{generated/scale.tex}
+\caption{Condition access. A named correct terminal is privileged
+binding information. Atomic binding receives no structural problem.}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Condition & Image & Graph/faults & True terminal\\
+\midrule
+Multimodal & yes & yes & no\\
+No-image & no & yes & no\\
+Oracle binding & no & yes & yes\\
+Atomic binding & yes & no & no\\
+\bottomrule
+\end{tabular}
 \end{table}
+
+The exact representative question below is copied from a native
+packet, not paraphrased for publication.
+\begin{quote}\small
+\input{generated/repair-example-question.tex}
+\end{quote}
+The source IDs, fault sets, public graph adjacency and evaluator
+answer for that example are recorded in
+\texttt{paper/repair-figure-provenance.json}. Complete packets and
+all other inputs are shipped with the version.
+
+\subsection{Answer semantics}
+The repair output is a JSON object containing a bound terminal,
+minimum cost, budget decision and an array of solutions.
+Each solution contains a restoration set and component sizes.
+The solution array must contain every optimal restoration, exactly
+once. Atomic binding instead returns only the bound terminal.
+\input{generated/repair-example-details.tex}
+
+The scorer treats order within restoration sets, solution arrays and
+component-size multisets as irrelevant. It does not treat a duplicate
+ID as repeated restoration or silently discard an invalid extra
+solution. Unknown vertices, wrong types, nonfinite values and
+malformed structure are failures according to the version's schema.
+No result is inferred from a model's prose rationale.
+
+If a model supplies a correct optimum for the wrong terminal, its
+structural calculation does not rescue exact task correctness.
+Binding and structural components are reported separately so this
+failure can be inspected. Conversely, a correct terminal with a
+feasible but nonminimal repair is not exact success.
+
+\subsection{Factorial and equivariance relationships}
+One construction has two fault states, each with anchor, visual
+change and visual preservation. Two independent ID replicates
+yield twelve repair observations. Fault states exchange one
+unavailable vertex with a present one; graph edges remain the
+recognized source edges. A changed terminal is selected by swapping
+the matching candidate's label with one distractor. Preservation
+swaps two distractor labels. Both edits touch two label regions,
+with all part pixels unchanged.
+
+Admissibility checks complete optimal-solution sets, not one
+arbitrarily chosen solution. Every visual-changing comparison must
+alter those sets, every declared structural comparison must alter
+them with the image fixed, and every preserving comparison must
+keep the complete output invariant. ID replicates are decoded
+through private mappings before semantic comparison.
+Renaming an ID is not a new physical part or topology.
+
+\section{Sampling and Dependence}
+\subsection{Population and exclusion ledger}
+The source population is the finite collection of 24 original
+assemblies containing 15,334 placed LDraw parts. The primary
+constructor enumerates complete non-root subassemblies including
+descendants, with 12--100 parts, connected recognized graphs and
+recorded connector coverage. It excludes candidates with a
+recorded unmatched intersection inside the selected induced set.
+Unrecorded contacts or intersections can still exist; this
+screening does not certify physical buildability.
+
+The sampling ledger records every candidate, source/contributor
+identity, coverage screen, design signature, graph-template signature,
+overlap exclusion and structural search outcome.
+A content-seeded ordering ensures reproducibility.
+Within each source, retained instance sets do not overlap.
+Repeated aligned typed-distance designs are removed; potential
+topological duplicates are conservatively grouped.
 
 \begin{table*}[t]
 \centering\small
-\caption{All 24 source assemblies. Color and Part-type counts are
-parents, each contributing exactly one primary pair. Shared parts,
-authors and derived observations do not increase source count.}
+\caption{Primary construction coverage generated from the actual
+selection ledger. Sources or groups with no admitted construction
+do not reappear as additional independent observations.}
 \label{tab:sources}
-\input{generated/sources.tex}
+\input{generated/repair-sources.tex}
 \end{table*}
 
-\subsection{Exact input boundary}
-An observation binds the complete system and user messages, question,
-options and native 1280$\times$800 image. The internal record retains
-its observation ID, source identity, display mapping, condition and
-gold. The model-visible input does not expose these audit fields.
-All labels resolve inside the current image. The prescribed output
-is exactly one JSON object containing one listed \texttt{choiceId}.
-The exact shared identity contract is:
-\begin{quote}\small
-\input{generated/example-contract.tex}
-\end{quote}
+\subsection{Development and held-out membership}
+Sources linked by contributor, aligned design or graph-template
+signature are combined transitively. Development/held-out assignment
+is fixed at group level before bounded structural search.
+Both ID replicates and every intervention remain in the same
+construction and split. The held-out set tests construction groups
+from this declared finite population, not arbitrary unseen mechanisms.
 
-Changes to text, options, image bytes, dimensions or image policy
-require renewed qualification of affected observations. Provider
-envelopes additionally record requested model revision, adapter,
-generation settings and full request hash. The provider's internal
-image preprocessing is not directly observed. A matching local
-envelope therefore establishes the delivered request, not every
-internal transformation.
+Search attempts are capped and logged. The first proposal satisfying
+the admissibility contract is selected; no learned-model outcome
+or human answer is used to choose it. This produces a challenge
+distribution conditioned on informative counterfactuals. It is not
+an estimate of naturally occurring faults. Search failure and
+exclusion distributions are therefore part of the release.
 
-\subsection{Concrete visual pair}
-For OMR 42004, Part-type retains B0035 as target.
-Candidate B0036 selects the
-matching source type, 32250, in A. After B0036 and B0116 exchange
-referents, B0116 selects that same geometry in B.
-This is a change in the correct reference, not a change in the
-canonical part's type.
+\subsection{Precision and sensitivity}
+Repeated views improve within-construction diagnosis without
+increasing the number of independent groups.
+For a bounded independent group mean, a worst-case normal 95\%
+half-width target of .20 gives
+$\lceil(1.96/.40)^2\rceil=25$ groups before any small-sample correction.
+This is a sensitivity target, not a claim that the available resource
+achieves that precision. Actual eligible group counts accompany
+every score and leave-one-group-out result.
 
-Figure~\ref{fig:atomic-type} shows the actual PNGs, verbatim question, complete
-option lists and GT JSON. Identical crops remove empty margins and
-retain every operand and label. Table~\ref{tab:gt-referents} exposes
-the source-record derivation: only the candidate with part type 32250
-matches the target, and its current label determines the choice ID.
-The source identifier and displayed label must be kept distinct.
-The GT is generated from records, not asserted to have passed human
-qualification.
+Equal-group means first average within each dependence group and then
+across eligible groups. Micro means weight all planned observations.
+Paired comparisons use the same groups in both conditions.
+Group sensitivity does not establish a superpopulation sampling
+distribution, and no collection of random ID permutations repairs
+insufficient construction diversity.
+
+\section{Scoring, Certificates and Tests}
+\subsection{Independent repair oracle}
+The constructor obtains certificates with graph search over restoration
+subsets. The evaluator independently rebuilds connected components
+using union-find. It enumerates candidates from public graph/fault
+records and the evaluator's bound-terminal key, validating every
+minimum set and component output. A precomputed string is not used
+as the semantic criterion.
+
+For binary exact outcomes $c_{rsav}$, visual-change Both and
+visual-preserving Both require both paired endpoints correct.
+Structural Both requires both fault states correct. Factorial
+All-six requires all six cells within one ID replicate correct.
+The second replicate tests equivariance and remains dependent on
+the first. A stable incorrect answer receives no preservation credit.
+
+Binding accuracy, repair given correct binding, exact repair,
+invalid rate, missing rate and received count are all separate fields.
+Conditional metrics with no eligible observations remain undefined.
+Missing, refused or malformed planned calls stay in the denominator.
+When a qualified subset is used, full-set outcomes and exclusions
+remain available rather than being overwritten.
+
+\subsection{Adversarial and equivalence checks}
+Synthetic fixtures exercise alternative valid serialization and
+solutions, omitted or duplicate optima, nonminimal feasible sets,
+wrong terminals, unknown IDs, wrong component outcomes and missing
+or off-version receipts. Tests never populate empirical tables.
+The full test report accompanies the released evaluator.
+Exact-input hashes distinguish a genuine result for the selected
+observation from a response to a different input or condition.
+
+\subsection{Legal baselines and restricted interpretation}
+The local no-purchase study includes only explicitly defined
+algorithmic configurations. Legal baselines use current public
+pixels and text. Coordinate or private mapping access is oracle
+information and cannot be silently included in those baselines.
+Pixel shape/appearance matchers, card-position rules, sorted/numeric
+ID rules and graph heuristics probe different shortcuts.
+
+A modular pixel binding system followed by exact graph optimization
+can legitimately solve the full public task. Its success is reported,
+not treated as forbidden access. If a legal shallow baseline exceeds
+.80 held-out binding or full-repair accuracy, the interpretation must
+explicitly describe a shallow-solvable binding stage. Selection is
+not repeated to conceal that result.
 
 \begin{table*}[t]
 \centering\small
-\caption{GT derivation for the supplemental Part-type example. Source instance
-IDs and part types remain constant; the current label of the matching
-candidate changes. Options C and D refer to B0036 and B0116 respectively,
-so the required outputs are \texttt{\{"choiceId":"C"\}} for A and
-\texttt{\{"choiceId":"D"\}} for B.}
-\label{tab:gt-referents}
-\input{generated/gt-referents.tex}
+\caption{Actual deterministic baseline audit. These are local
+algorithm outcomes; they are separate from the blank learned-model
+tables. Full per-condition denominators and configurations are
+retained in the versioned baseline report.}
+\label{tab:baselines}
+\input{generated/repair-baselines.tex}
 \end{table*}
+\input{generated/repair-baseline-interpretation.tex}
 
-\texttt{visual-evidence.json} binds every new figure to source
-captures or exact observation wires, questions, options, golds and
-crop rectangles. The archived figure provenance remains available
-for historical assets. The main paper uses its figure space for
-the compositional cases; these atomic controls document the frozen
-visual measurement contract.
+\section{Human Qualification and Run Lock}
+Human qualification concerns exact rendered evidence, while the
+optimization certificate concerns the supplied graph.
+Reviewers must be able to identify the reference, read candidate
+IDs, distinguish the unique match and understand the task text.
+Ambiguous or contradictory items are not repaired by changing
+the gold to match a vote. They require stimulus revision and new
+qualification with versioned lineage.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/type-question-gt.pdf}
-\caption{Atomic Part-type control: fixed target B0035 and all four
-candidates. The matching source instance is labeled B0036 in A and
-B0116 in B, changing choice C to D. The common crop retains the
-remote swapped candidate; no operand is moved or omitted.
-GT is record-derived, with human visual qualification pending.}
-\label{fig:atomic-type}
-\end{figure*}
+Six reviewer roles are assigned per construction, two per visual
+arm. Repeated fault packets and ID replicates within that arm may
+be inspected by those same reviewers; they are explicitly dependent
+reviews, not twelve independent judgments. No reviewer receives
+both the anchor and a different visual arm of the construction.
+Adjudication must be independent of the two original reviewers.
+No genuine reviewer records are present in this release.
 
-\subsection{Appearance baseline}
-The legal Color baseline accepts one wire containing only PNG and
-text/options. It runs in a fresh isolated process with an empty working
-directory. The evaluator joins IDs and independently reconstructed
-gold afterward. No private masks, paths, source facts or counterparts
-are supplied to the predictor.
+The local study manifest fixes input/evaluator versions, conditions,
+baseline configurations and planned receipt slots. External models
+require a separate locked provider revision, adapter, precision,
+image policy, output limits and failure policy. The historical
+15-model inventory is a planning list, not a claim of supported
+live endpoint availability. Additional thinking/effort modes are not
+claimed without an executable pinned configuration.
+Neither an empty result table nor a synthetic fixture is accepted
+as an empirical receipt.
 
-RGB channels are normalized to $[0,1]$. Near-white pixels with all
-channels at least .90 are removed. Pixels whose maximum channel
-is at most .30 vote Black. Other pixels require saturation at least
-.35 and hue within $60^\circ$ of the nearest prototype: Red at
-$0^\circ$, Blue at $240^\circ$, or Yellow at $60^\circ$.
-Within each category, four-connected components smaller than the
-greater of 64 pixels and .0005 of image area are removed.
-The winning category requires .55 of retained support; ties and
-empty support abstain. Thresholds were locally committed before
-the corpus run after synthetic tests.
-
-The measured result is 141/146 correct endpoints, five abstentions
-and 68/73 Both (93.15\% micro; 91.875\% equal-source).
-This baseline summarizes rendered appearance across the image;
-it does not locate the target label or validate multi-object
-reference following. Per-observation support and failure records
-are available with the audit.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/panel-question-gt.pdf}
-\caption{Auxiliary position-reference question, complete native image,
-all options and exact GT for OMR 42004. The correct choice is C,
-third from the left. No labels or GT were added inside the native
-image. Isolated parts are observations, not a proposed freestanding
-assembly. The comparison changes layout and visual access together.}
-\label{fig:panel}
-\end{figure*}
-
-\section{Compositional Examples: Full Inputs and GT}
-\subsection{CX1: minimum restoration of terminal connectivity}
-\begin{quote}\small
-\input{generated/CX1-question.tex}
-\end{quote}
-The source is the OMR 42004 backhoe subassembly
-\texttt{s-629fc43f2db48f6b}, containing B0148--B0183. Its induced
-graph contains 36 vertices and 44 unique undirected recognized
-connector pairs. Table~\ref{tab:complex-adjacency} gives every
-adjacency before intervention. Paths through the remainder of the
-vehicle are excluded by the explicit input boundary.
-
-The unavailable set is \{B0150, B0160, B0164, B0165, B0167, B0173,
-B0175, B0177\}; terminals are \{B0158, B0171, B0179, B0180\}.
-Each reinstated vertex costs one and recovers every original edge
-to a present neighbor. The five initial components are listed in
-Table~\ref{tab:complex-components}; their sizes are 18, 5, 2, 2 and 1.
-Contracting these components preserves the restoration problem.
-The 3D render remains the intact source, avoiding an unsupported
-physical interpretation of the abstract faults.
+\section{Planned Learned-Model Matrices}
+The main paper retains the complete model inventory and primary
+multimodal matrix. Tables~\ref{tab:decomposition} and~\ref{tab:text}
+reserve the decomposed conditions. Models compare identical
+construction sets and exact native inputs. Percentages, eligible
+group counts, paired differences and missing/invalid outcomes
+must be reported together.
 
 \begin{table*}[t]
 \centering\small
-\caption{Complete adjacency input for CX1 and CX2. Edges are undirected,
-so each recognized pair appears at both endpoints. Every node corresponds
-to an actual part in the intact source subassembly.}
-\label{tab:complex-adjacency}
-\setlength{\tabcolsep}{7pt}
-\input{generated/complex-adjacency.tex}
+\caption{Planned VLM condition decomposition, with all results blank.
+Atomic is binding-only accuracy; No-image and Oracle are exact repair
+under their respective information conditions. Repair$|$Bind is
+multimodal repair conditional on correct binding. Invalid is the
+multimodal invalid-output rate.}
+\label{tab:decomposition}
+\input{generated/repair-decomposition.tex}
 \end{table*}
 
 \begin{table*}[t]
 \centering\small
-\caption{CX1 initial components after all eight specified faults.
-C1--C5 are diagram labels, not additional parts.}
-\label{tab:complex-components}
-\input{generated/complex-components.tex}
+\caption{Planned text-only model conditions; no image-bearing score
+is imputed. Empty cells are unmeasured values.}
+\label{tab:text}
+\input{generated/repair-text.tex}
 \end{table*}
 
-GT is the single minimum set \{B0160, B0175, B0177\}, with cost three.
-After restoring it, all 31 present vertices lie in one component.
-We enumerate every subset of the eight candidates: all $2^8=256$
-outcomes are retained in \texttt{gold.json}. The 37 subsets of
-cardinality at most two all fail. An independent union-find
-implementation checks every recorded outcome against the builder's
-graph search. This proves minimality under the supplied graph
-semantics; it does not prove physical disassembly or reassembly.
+The table schema has \VRBlankCells{} null-valued result fields.
+They render as genuine empty cells, not zeroes or placeholders
+that could be mistaken for scores. No old atomic result is
+transferred into a new primary input.
 
-\subsection{CX2: conditional inspection with a worst-case budget}
-\begin{quote}\small
-\input{generated/CX2-question.tex}
-\end{quote}
-CX2 uses CX1's intact graph. Its worlds are:
-W1 disables \{B0150, B0160, B0175\};
-W2 disables \{B0150, B0173, B0175\};
-W3 disables \{B0150, B0164, B0175\}; and
-W4 disables \{B0150, B0164, B0165\}.
-Worlds remain fixed during inspection.
-Each unit-cost query tests reachability from B0158:
-Q1 to B0171, Q2 to B0179, and Q3 to B0180.
-Noiseless query outcomes are derived from graph traversal
-(Table~\ref{tab:complex-outcomes}).
+\section{Source Context and Reproducibility}
+The full 24-source gallery is provided for resource inspection
+(Figure~\ref{fig:atlas}). Source scale bands D1--D4 describe assembly
+size, not cognitive task difficulty. Original part transforms
+remain preserved. Isolated reference/candidate cards are views
+of source parts, not new mechanically feasible assemblies.
+Graph faults are abstract unavailable vertices, not physical
+extraction animations.
 
-\begin{table}[H]
-\centering\small
-\caption{CX2 evaluator outcomes, independently recomputed from the
-supplied graph and fault worlds. This table is GT, not extra model input.}
-\label{tab:complex-outcomes}
-\input{generated/complex-diagnosis-outcomes.tex}
-\end{table}
-
-The optimal first query is Q3. If it returns no, Q1 distinguishes
-W1 (no) from W2 (yes). If Q3 returns yes, Q2 distinguishes W3 (no)
-from W4 (yes). Every path costs two.
-No one-query policy can identify four worlds from a binary result.
-Checking each possible first query additionally confirms that only
-Q3 permits a depth-two tree. The GT is evaluated on every compatible
-world; returning one action sequence is insufficient.
-The world definitions were selected for branch-dependent diagnosis,
-not sampled as natural hardware failure frequencies.
-
-\subsection{CX3: correspondence, proper registration and probe transfer}
-\begin{quote}\small
-\input{generated/CX3-question.tex}
-\end{quote}
-The two OMR 42061 axle subassemblies each contain twelve placed parts.
-The four A and four B anchor origins and types appear in the main
-figure. The input probe B0030 has origin
-$(43.9924,24.8,120.4212)$\,mm and local x-axis
-$(-.99938684,0,-.03501355)$ in world coordinates.
-These values are extracted from source transforms, not image
-measurements, and origins are not bounding-box or mass centers.
-
-Repeated types permit four assignments before geometry is considered.
-Table~\ref{tab:complex-registration} reports the proper least-squares
-fit for each. Only the assignment
-B0024$\mapsto$B0036, B0025$\mapsto$B0037,
-B0026$\mapsto$B0038 and B0035$\mapsto$B0047 is admissible.
-The least-squares solution is
-\[
-R=\begin{bmatrix}-1&0&0\\0&1&0\\0&0&-1\end{bmatrix},
-\qquad t=\begin{bmatrix}16\\0\\120\end{bmatrix}\mathrm{mm}.
-\]
-It maps B0030 to $(-27.9924,24.8,-.4212)$\,mm and its local x-axis
-to $(.99938684,0,.03501355)$, agreeing with source part B0042.
-
-\begin{table*}[t]
-\centering\small
-\caption{CX3 candidate assignments and proper least-squares maximum
-anchor residual. Source IDs are references, not a supplied correspondence
-rule. Numerical residuals are geometry checks, not model scores.}
-\label{tab:complex-registration}
-\input{generated/complex-registration-candidates.tex}
-\end{table*}
-
-The anchors are affinely independent: six times their tetrahedron
-volume is 2046.72\,mm$^3$. An independent coordinate-basis solve
-recovers the same rotation and translation. For every rejected
-assignment, at least one inter-anchor distance differs by more than
-.1\,mm. The triangle inequality therefore rules out \emph{any}
-rigid fit within .05\,mm per anchor, independent of the optimizer.
-The accepted fit is verified against all twelve complete source
-part transforms. The admissible correspondence and exact
-least-squares solution are unique; the tolerance does not assert
-uniqueness of every approximate transform.
-
-These three designed examples add explicit composition and optimality
-requirements. They do not establish calibrated difficulty or a new
-model ranking. Their human qualification and full study protocol
-remain future work, separate from display-v3's fixed denominator.
-
-\section{Part-type Assignment and Priors}
-Admissible configurations enumerate all four-option permutations
-and nonmatching swaps with an on-screen anchor and unique source-type
-match. The 4,824 configurations are ordered by parent, option-label
-tuple and swap. Constraint-equivalent choices keep the minimum integer
-hash cost, leaving 2,412 variables.
-One configuration is selected per parent subject to the stated
-option, transition and shortcut bounds.
-The recorded single-thread SciPy 1.17.1/HiGHS solution has objective
-1,007,668 with zero relative gap. The frozen assignment, rather than
-runtime-dependent regeneration, defines the released dataset.
-
-\begin{table}[H]
-\centering\small
-\caption{A-to-B choice transitions. Rows are A gold, columns B gold.
-Left: Color (73 pairs); right: Part-type (67 pairs).
-Balanced semantic colors do not imply balanced option transitions.}
-\input{generated/transitions-color.tex}\hspace{10pt}
-\input{generated/transitions-type.tex}
-\end{table}
-
-\begin{table}[H]
-\centering\small
-\caption{All declared Part-type oracle-A rules: B accuracy (\%).
-A gold is supplied, so B accuracy equals Both. These are privileged
-construction audits; their intervals are descriptive after assignment.}
-\setlength{\tabcolsep}{3pt}
-\input{generated/shortcuts-type.tex}
-\end{table}
-
-Rules use first/last alternative, cyclic option position, alternate
-label-number extrema, distance from target label number, or
-nearest/farthest source center or projected anchor. Ties use
-ascending original numeric labels. Spatial rules use evaluator-side
-geometry. None reads B pixels, and no rule supplies a universal model
-ceiling. Independent reconstruction checks golds and features against
-source records and rendering metadata.
-
-\section{Human Qualification}
-\subsection{Assignment and raw records}
-Six packages contain 115, 116, 114, 115, 115 and 119 judgments.
-Their union covers all 347 observations exactly twice. Reviewers
-must be distinct people, and each sees at most one observation of
-any parent, including the panel control. Three-observation parents
-therefore use all six reviewers. Queues are shuffled and use opaque
-unit IDs without condition or arm labels.
-
-A raw record contains the reviewer pseudonym, timestamp, observation
-hash, visual choice, categorical decision, four structured checks,
-reason, native-size inspection attestation and independence attestation.
-The four checks concern a unique target, unique visual answer,
-sufficient visibility and absence of reference contradictions.
-Decidable judgments require a listed choice and all checks passing.
-Other decisions require an exclusion reason. The interface hides
-gold, source data, counterpart, model output and other reviewers'
-judgments. The coordinator retains unmodified exports.
-
-\subsection{Adjudication and denominators}
-Agreement on decision, choice and checks permits finalization.
-Any disagreement on these fields requires an additional independent
-adjudicator. Up to three adjudicator slots preserve parent-disjoint
-exposure and exclude initial reviewers. The adjudicator sees the
-single observation and its two judgments, but not gold, another
-observation of that parent or model outputs.
-Original records remain intact. A final decidable choice that
-conflicts with generated gold blocks finalization and requires
-stimulus revision and renewed review.
-
-The full primary universe is always 280 endpoints and 140 pairs.
-There are 560 initial primary judgments and 134 auxiliary judgments.
-Actual collected judgments are currently zero. The runner's existing
-full-study gate requires final decisions for every planned endpoint.
-Nondecidable cases remain in full-set scoring; the additional
-qualified subset requires two decidable endpoints per pair.
-A new MVP needs a separate frozen subset with valid review lineage,
-not an override of the full-study gate.
-
-Raw categorical agreement and choice/check agreement use their
-actual eligible denominators. Pooled two-slot Cohen's kappa is
-$(p_o-p_e)/(1-p_e)$ from empirical decision marginals.
-Because assigned people vary across observations, it is not the
-reliability of one fixed reviewer pair. Missing judgments or
-degenerate expected agreement produce undefined kappa.
-Adjudicated agreement cannot replace the raw measure.
-
-\section{Scoring and Dependence}
-The four B outcomes partition every changed-answer pair: correct
-new gold, valid old gold, another valid answer, and invalid output.
-Missing calls are invalid and remain in the fixed denominator.
-AAcc and Both retain information about A correctness.
-Conditional adaptation reports the number of A-correct pairs and
-the sources with at least one eligible pair.
-
-Equal-source estimates average within-source means. The bootstrap
-resamples whole sources 10,000 times using seed 20260920.
-Model contrasts use the same pairs. Qualified-minus-full contrasts
-reuse source weights and recompute means on eligible sources.
-An empty subset or a draw containing no eligible source is
-recorded as undefined.
-No whole-source interval estimates provider randomness across repeats.
-Boundary outcomes can yield degenerate intervals.
-
-The 24 sources form 18 primary-author and 17 contributor-connected
-groups. Contributor groups include credited OMR editors.
-Sensitivity analysis averages within-source outcomes by author,
-resamples whole author groups and omits each author in turn.
-Direction changes under omission limit stability claims.
-The public inventory additionally contains all 276 source-pair
-part-count and part-set Jaccards; these are inventory similarities,
-not spatially aligned geometry overlaps.
-
-\begin{table}[H]
-\centering\small
-\caption{Repeated primary authors. Other primary-author groups
-contain one source each.}
-\input{generated/authors.tex}
-\end{table}
-
-\begin{table}[H]
-\centering\small
-\caption{Largest part-inventory overlaps. Count Jaccard uses summed
-per-type minima divided by summed maxima; set Jaccard ignores counts.}
-\input{generated/overlap.tex}
-\end{table}
-
-\section{Graph Construction and Completed Algorithm Audits}
-Graph questions provide explicit undirected edge lists and a node
-to delete. Repeated edges are deduplicated; surviving isolates count
-as components. Independent BFS and union-find agree on all golds.
-These checks validate the supplied graph operation, not completeness
-of physical connector detection.
-
-The hypothetical collection has 219 distinct observations: an anchor,
-a changed partner and an isomorphic invariant partner for each of
-73 parents. Strong change contains 12 pairs from eight sources;
-degree-visible change contains 61 from 23 sources. Each has a
-corresponding invariance partition. Pair endpoints therefore have
-292 appearances across all partitions, but only 219 unique inputs.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/graph-question-gt.pdf}
-\caption{Small matched graph control from the frozen graph track:
-one six-cycle versus two triangles after deleting B0024.
-The supplied text edge lists determine GT. CX1--CX2 in the main
-paper use the larger 36-vertex source graph for optimization and
-conditional diagnosis; they are a separate set of examples.}
-\label{fig:graph-gt}
-\end{figure*}
-
-\begin{table*}[t]
-\centering\small
-\caption{Completed deterministic algorithm audit. These values are
-computed algorithm outputs, not planned or measured language-model
-results. Natural and hypothetical lookups use separate source-held-out
-fits. Invariance shares anchors with change.}
-\input{generated/graph-main.tex}
-\end{table*}
-
-\begin{table}[H]
-\centering\small
-\caption{All strong changed-answer pairs, with matching surviving
-nodes, edge count, target degree, degree multiset and isolate count.
-BFS and union-find have Both=1 on each.}
-\input{generated/strong-pairs.tex}
-\end{table}
-
-The strong construction compares a six-cycle and two triangles plus
-identical isolated nodes. The weaker construction compares a path
-and a triangle plus isolates. Only the former matches the complete
-degree multiset. Uniform-feature anonymous 1-WL signatures collide
-on every strong pair, so a deterministic signature-only predictor
-cannot answer both different golds correctly.
-Unique node identifiers, positional features, spectral features and
-higher-order models lie outside this restriction.
-
-Feature lookups train only on other sources, choose the most frequent
-answer, break ties toward the smaller integer and abstain on unseen
-features. Abstention is incorrect. Hypothetical fitting includes the
-changed endpoints once and excludes invariant duplicates.
-The isolates-plus-one heuristic predicts the isolate count plus one
-when any nonisolated node remains; it never traverses components.
-
-\begin{table}[H]
-\centering\small
-\caption{Completed invariance algorithm audit. Repeating a wrong
-answer is consistent but fails Both.}
-\input{generated/graph-invariance.tex}
-\end{table}
-
-Strong change has six increases and six decreases in gold component
-count; arm-wise answer histograms need not match. Both is invariant
-to swapping A and B. Wilson intervals for 0/12 and 12/12 are
-approximately $[0,.2425]$ and $[.7575,1]$ under a pair-independence
-approximation that source reuse violates. The single template and
-eight-source coverage limit generalization.
-
-\section{Collection and Publication Contract}
-The main paper lists 15 proposed models and 306 empty result cells
-across primary visual, diagnostic, control, graph and mode tables.
-The model inventory comes from the existing budget snapshot.
-All result values in \texttt{experiments.json} are null and render
-as empty cells. Null represents uncollected results, not measured
-zero or an unspecified model name.
-
-Before collection, the new study must freeze selected IDs, exact
-models and revisions, provider/precision, adapter code, image policy,
-output and effort settings, repeat count, timeouts, inclusion and
-failure policies, and qualification lineage. The MVP proposal keeps
-complete visual pairs and all three observations of each selected
-graph parent. It requires new adapters and a subset qualification
-gate; those implementation steps remain open.
-
-The earlier sealed evaluator fixes three models and nine runs.
-It cannot silently accept the new roster. Its receipt reconstruction,
-failure denominators and source estimators provide implementation
-references, while the new study requires its own versioned manifest.
-No synthetic fixture, dry run, historical response or missing
-receipt can substitute for a genuine observation in empirical tables.
-Real response cases must link to exact requests and retained outputs;
-an absent failure category remains absent.
-
-Current manuscript files are under \texttt{paper/}; code and dataset
-indexes are under \texttt{benchmark/}. Intermediate reviews, guidance
-and manuscripts are physically archived under \texttt{tem/}, with
-compatibility links for historical paths. Git includes data, image
-assets, reviewer packages, code and PDFs. Redundant local recovery
-tarballs and runtimes are excluded; full historical recovery checks
-require those separate bundles. Hashes establish local consistency,
-while genuine human independence and provider origin additionally
-require collection oversight.
+All figure crops, native image hashes, graph inputs, GT and source
+links are stored in the publication provenance manifest.
+The paper generator reads counts, representative examples and
+algorithm outcomes from the current version's generated records.
+Rebuilding a figure does not collect a model response.
+The main PDF validator enforces at most eight content pages before
+references, unmodified source CVPR style and resolved citations.
 
 \clearpage
 \begin{figure*}[p]
 \centering
 \includegraphics[width=\textwidth]{figures/source-atlas.pdf}
-\caption{All 24 source assemblies, retaining original LDraw geometry
-and saved poses. IDs and counts are read from the source catalog;
-the images are hash-verified original browser captures. Scale bands
-describe source size. These views are for resource inspection and
-are not substituted for frozen primary model inputs.}
-\label{fig:source-atlas}
+\caption{The 24 original source assemblies. Images preserve actual
+geometry and source poses. This source inventory is distinct from
+the subset of admitted repair constructions and its dependence
+groups. All assemblies retain source attribution in the release.}
+\label{fig:atlas}
 \end{figure*}
-
 \end{document}

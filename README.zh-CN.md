@@ -19,26 +19,27 @@
 | 当前论文与附录 | [paper/](paper/README.md) · [正文 PDF](paper/main.pdf) · [附录 PDF](paper/supplement.pdf) |
 | Benchmark data、版本及规模 | [benchmark/DATASETS.md](benchmark/DATASETS.md) |
 | Metrics 定义与实现 | [benchmark/METRICS.md](benchmark/METRICS.md) |
-| 当前视觉题、pair ID、原始观察 | [benchmark/ldraw-evidence-v3/](benchmark/ldraw-evidence-v3/) |
-| 评分、人审、运行器代码 | [benchmark/suite/ldraw-evidence-v3/](benchmark/suite/ldraw-evidence-v3/) |
-| 逐观察审计与单图像基线 | [benchmark/ldraw-evidence-v4-draft/](benchmark/ldraw-evidence-v4-draft/) |
+| 当前复杂修复主任务 | [benchmark/visual-repair-v1/](benchmark/visual-repair-v1/) |
+| 语义评分与研究运行器 | [evaluate.py](benchmark/visual-repair-v1/evaluate.py) · [study.py](benchmark/visual-repair-v1/study.py) |
+| 历史原子视觉题 | [benchmark/ldraw-evidence-v3/](benchmark/ldraw-evidence-v3/) |
 | 模型清单及空白实验表 | [paper/experiments.json](paper/experiments.json) |
 | 全量与全模型 MVP 预算 | [benchmark/experiment-plans/](benchmark/experiment-plans/) |
 | 中间审稿、修改指导、旧论文 | [tem/](tem/README.md) |
+| 双 agent 独立审稿与精进 | [tem/agent-iterations/](tem/agent-iterations/README.md) |
 
-当前主要视觉测试为 **73 对 Color、67 对 Part-type**，另有 67 个位置面板；
-文本图辅助测试有 219 条独立观察。底层保留 24 个来源模型、15,334 个零件实例。
-617 道历史题是可检索资源，不叠加计入主要视觉测试数量。
+当前主任务是**视觉绑定＋最小结构修复**：从真实积木图匹配第三个终端，
+再结合连接图求全部最优恢复方案。每个构造包含视觉变化、视觉保持、
+故障变化和独立重编号，规模与分组见 [summary.json](benchmark/visual-repair-v1/summary.json)。
+旧 140 对原子题、219 图观察和 617 历史档案单独保存，不合并计算新任务规模。
 
 论文按“动机 → 任务定义 → 数据构建与人审 → 指标 → 实验设计”组织。
 计划覆盖 **15 个模型：13 个视觉语言模型、2 个纯文本模型**，正文结果单元格全部留空。
 真人资格审核和这轮模型实验尚未完成，现有算法审计与模型成绩分别标注。
 旧版封存的三个 OpenAI 模型协议继续独立保存。
 
-新版论文首页展示 8 个真实积木模型，正文重点展示三道复杂题：
-多故障最小修复、自适应诊断、重复轴组件的对应与位姿恢复。
-颜色案例已撤出图示；基础视觉控制移至附录。附录给出完整输入和 GT 证明，
-详见[图示与溯源索引](paper/README.md)。三道新题单独保存，不混入冻结的视觉测试。
+正文图示直接对应当前主任务：原生图像、结构输入、完整最优 GT 和匹配干预。
+附录给出分组台账、基线、语义证书及条件分解。颜色示例不再占据主图；
+之前三道复杂演示仍作为独立版本保留。详见[图示与溯源索引](paper/README.md)。
 
 运行 `npm run dev` 后，数据检查入口为
 `http://127.0.0.1:5173/benchmark/evidence-v3/index.html`，

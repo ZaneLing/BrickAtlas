@@ -1,0 +1,2549 @@
+{
+  "version": "visual-repair-v1",
+  "builder": {
+    "file": "paper/build_repair_assets.py",
+    "sha256": "a9e8c0e803d115b0bab7fdfc5b107bb174bf76353234b2dfe9c30825c63e4f48"
+  },
+  "source_files": [
+    {
+      "file": "benchmark/visual-repair-v1/public.json",
+      "sha256": "9e3e751de06e9157de75edf171965fb2d60986f7daca8dc57e85843d7c37306c"
+    },
+    {
+      "file": "benchmark/visual-repair-v1/gold.json",
+      "sha256": "1aa19ab6030764282921db2468f3d15f74825f79d855b1c5e9fdbc6b30d4c040"
+    },
+    {
+      "file": "benchmark/visual-repair-v1/summary.json",
+      "sha256": "efe6346d97b9de6ea2fab3381299728e2c378588428ff70c6910a5b5d5329152"
+    },
+    {
+      "file": "benchmark/visual-repair-v1/sampling-ledger.json",
+      "sha256": "9c8b398e53fbe11c04585995eb4eed3cfd69d567eaa04d2fcc48a1f946d4ab67"
+    },
+    {
+      "file": "benchmark/visual-repair-v1/dependency-audit.json",
+      "sha256": "1801b342361b0f9a051e6a66717d254f3728513fa612fdcc3522949ac4e65c21"
+    },
+    {
+      "file": "benchmark/visual-repair-v1/study-manifest.json",
+      "sha256": "031cc49b938608c441a5855d35b23f743dbc030dc413388f654f3cf9a68bc222"
+    },
+    {
+      "file": "paper/build_repair_assets.py",
+      "sha256": "a9e8c0e803d115b0bab7fdfc5b107bb174bf76353234b2dfe9c30825c63e4f48"
+    },
+    {
+      "file": "benchmark/visual-repair-v1/captures.json",
+      "sha256": "c94ad9a47686326450dc51b31ff485b0822cf355677e5f1c852977b0872be98e"
+    },
+    {
+      "file": "benchmark/visual-repair-v1/native/multimodal/task-2c91283849f1952fd89f.json",
+      "sha256": "343e285bd4193e176e58fe7d54b7c431f8264de3fcc96491d55b1fa9118ce8b8"
+    },
+    {
+      "file": "benchmark/visual-repair-v1/baseline-report.json",
+      "sha256": "5fc4889db2959deb04785be27cc1bf6bb633aec98a795c62b0a132727c7793c7"
+    }
+  ],
+  "native_packet": {
+    "version": "visual-repair-v1",
+    "condition": "multimodal",
+    "question": "Match the unlabeled reference geometry to exactly one candidate card; ignore orientation and use its current printed ID as bound_terminal. The graph IDs refer to the current display, not source part identities. Together with fixed_terminals it must lie in one connected component. Only paths inside the supplied undirected graph count. Initially every listed missing vertex and its incident edges is unavailable. Restoring one listed vertex costs 1 and reinstates its original edges to present neighbors. Return every minimum-cost restoration set, its own final component sizes, minimum_cost, and whether budget suffices. Graph unavailability is not a physical removal. Order is irrelevant; duplicate vertices/solutions and unlisted actions are invalid.",
+    "input": {
+      "graph": {
+        "nodes": [
+          "V5885",
+          "V8726",
+          "V3673",
+          "V9801",
+          "V2647",
+          "V5246",
+          "V7052",
+          "V3892",
+          "V9308",
+          "V1470",
+          "V7372",
+          "V6716",
+          "V2353",
+          "V4504"
+        ],
+        "edges": [
+          [
+            "V9801",
+            "V8726"
+          ],
+          [
+            "V3892",
+            "V5885"
+          ],
+          [
+            "V9801",
+            "V3673"
+          ],
+          [
+            "V6716",
+            "V7052"
+          ],
+          [
+            "V4504",
+            "V2353"
+          ],
+          [
+            "V6716",
+            "V5246"
+          ],
+          [
+            "V7052",
+            "V3892"
+          ],
+          [
+            "V6716",
+            "V1470"
+          ],
+          [
+            "V6716",
+            "V7372"
+          ],
+          [
+            "V4504",
+            "V2647"
+          ],
+          [
+            "V9801",
+            "V2353"
+          ],
+          [
+            "V6716",
+            "V9308"
+          ],
+          [
+            "V5246",
+            "V3892"
+          ],
+          [
+            "V4504",
+            "V7372"
+          ],
+          [
+            "V6716",
+            "V2647"
+          ],
+          [
+            "V4504",
+            "V8726"
+          ]
+        ]
+      },
+      "missing": [
+        "V5246",
+        "V7372",
+        "V6716",
+        "V2353",
+        "V3892",
+        "V7052",
+        "V4504"
+      ],
+      "fixed_terminals": [
+        "V1470",
+        "V5885"
+      ],
+      "candidate_ids": [
+        "V2647",
+        "V9801",
+        "V9308",
+        "V3673"
+      ],
+      "budget": 4,
+      "cost_per_vertex": 1
+    },
+    "images": [
+      {
+        "path": "public/benchmark/visual-repair-v1/images/image-c934719659508d474833.png",
+        "sha256": "1283b58b30b497b9115c26e1e551b163dd8a8af2305c88030b2d26d131a1e9a1",
+        "mime_type": "image/png",
+        "width": 1600,
+        "height": 900
+      }
+    ],
+    "output_schema": {
+      "bound_terminal": "one candidate ID string",
+      "minimum_cost": "nonnegative integer",
+      "budget_sufficient": "boolean",
+      "solutions": [
+        {
+          "restored": "array of IDs",
+          "component_sizes": "array of positive integers"
+        }
+      ]
+    }
+  },
+  "figures": [
+    {
+      "figure": "repair-task",
+      "outputs": [
+        {
+          "file": "paper/figures/repair-task.pdf",
+          "sha256": "b4eaf5f2b85a5afd7851c011dfffd681fa964c02dbac0caf201af5529e6a1896"
+        },
+        {
+          "file": "paper/figures/repair-task.png",
+          "sha256": "4196ca9bf852ff2e03ef2a81a9bf33b928ac73f3ab632c65fe822cd1ea64f9a9"
+        }
+      ],
+      "sources": [
+        {
+          "file": "benchmark/visual-repair-v1/public.json",
+          "sha256": "9e3e751de06e9157de75edf171965fb2d60986f7daca8dc57e85843d7c37306c"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/gold.json",
+          "sha256": "1aa19ab6030764282921db2468f3d15f74825f79d855b1c5e9fdbc6b30d4c040"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/summary.json",
+          "sha256": "efe6346d97b9de6ea2fab3381299728e2c378588428ff70c6910a5b5d5329152"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/sampling-ledger.json",
+          "sha256": "9c8b398e53fbe11c04585995eb4eed3cfd69d567eaa04d2fcc48a1f946d4ab67"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/dependency-audit.json",
+          "sha256": "1801b342361b0f9a051e6a66717d254f3728513fa612fdcc3522949ac4e65c21"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/study-manifest.json",
+          "sha256": "031cc49b938608c441a5855d35b23f743dbc030dc413388f654f3cf9a68bc222"
+        },
+        {
+          "file": "paper/build_repair_assets.py",
+          "sha256": "a9e8c0e803d115b0bab7fdfc5b107bb174bf76353234b2dfe9c30825c63e4f48"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/captures.json",
+          "sha256": "c94ad9a47686326450dc51b31ff485b0822cf355677e5f1c852977b0872be98e"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/native/multimodal/task-2c91283849f1952fd89f.json",
+          "sha256": "343e285bd4193e176e58fe7d54b7c431f8264de3fcc96491d55b1fa9118ce8b8"
+        },
+        {
+          "file": "public/benchmark/visual-repair-v1/images/image-c934719659508d474833.png",
+          "sha256": "1283b58b30b497b9115c26e1e551b163dd8a8af2305c88030b2d26d131a1e9a1",
+          "capture": {
+            "id": "image-c934719659508d474833",
+            "file": "public/benchmark/visual-repair-v1/images/image-c934719659508d474833.png",
+            "sha256": "1283b58b30b497b9115c26e1e551b163dd8a8af2305c88030b2d26d131a1e9a1",
+            "construction_id": "construction-2abc703c9a7fd78609b7",
+            "replicate": 0,
+            "arm": "anchor",
+            "source_id": "omr-42020",
+            "source_hash": "03ce9e9f6e5e8fe9b35ec612407be6ac51996d369a341775b5ae80b45d7017a2",
+            "source_poses_preserved": true,
+            "geometry_modified": false,
+            "display_material": "uniform opaque neutral gray, no source color cue",
+            "reference_id": "brick_000123",
+            "reference_box": [
+              20,
+              260,
+              480,
+              300
+            ],
+            "reference_camera": {
+              "position": [
+                -31.13581895682846,
+                7.3086551654627705,
+                142.96298274819415
+              ],
+              "target": [
+                8,
+                -24,
+                96
+              ],
+              "fov": 30,
+              "direction": [
+                -1,
+                0.8,
+                1.2
+              ]
+            },
+            "cards": [
+              {
+                "label": "V9801",
+                "source_id": "brick_000123",
+                "shape_box": [
+                  560,
+                  80,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  690,
+                  387,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    45.03143684252224,
+                    13.03143684252224,
+                    140.43772421102668
+                  ],
+                  "target": [
+                    8,
+                    -24,
+                    96
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V3673",
+                "source_id": "brick_000134",
+                "shape_box": [
+                  1070,
+                  80,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  1200,
+                  387,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    45.03143684252224,
+                    13.03143684252224,
+                    144.43772421102668
+                  ],
+                  "target": [
+                    8,
+                    -24,
+                    100
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V9308",
+                "source_id": "brick_000125",
+                "shape_box": [
+                  560,
+                  480,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  690,
+                  787,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    57.03143684252224,
+                    5.031436842522243,
+                    140.2377242110267
+                  ],
+                  "target": [
+                    20,
+                    -32,
+                    95.80000000000001
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V2647",
+                "source_id": "brick_000129",
+                "shape_box": [
+                  1070,
+                  480,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  1200,
+                  787,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    43.03143684252224,
+                    9.03143684252224,
+                    132.43772421102668
+                  ],
+                  "target": [
+                    6,
+                    -28,
+                    88
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              }
+            ],
+            "width": 1600,
+            "height": 900,
+            "common_camera_radius": 16.16044553841261
+          },
+          "task_id": "task-2c91283849f1952fd89f"
+        },
+        {
+          "file": "public/benchmark/visual-repair-v1/provenance/construction-2abc703c9a7fd78609b7.png",
+          "sha256": "e9c641a8c62bf829a4a3f521831e04cb652dd83d08c7c2a87f8e62bfe552e140",
+          "crop_xyxy": [
+            97,
+            55,
+            359,
+            255
+          ]
+        }
+      ],
+      "model_responses": null,
+      "print_sampling": "Preserve aspect ratio; downsample only above 450 print dpi with LANCZOS.",
+      "version": "visual-repair-v1",
+      "task": {
+        "id": "task-2c91283849f1952fd89f",
+        "construction_id": "construction-2abc703c9a7fd78609b7",
+        "source_id": "omr-42020",
+        "dependence_group": "group-53fb9a1e6860",
+        "split": "dev",
+        "replicate": 0,
+        "visual_arm": "anchor",
+        "structural_arm": "fault_0",
+        "input": {
+          "graph": {
+            "nodes": [
+              "V5885",
+              "V8726",
+              "V3673",
+              "V9801",
+              "V2647",
+              "V5246",
+              "V7052",
+              "V3892",
+              "V9308",
+              "V1470",
+              "V7372",
+              "V6716",
+              "V2353",
+              "V4504"
+            ],
+            "edges": [
+              [
+                "V9801",
+                "V8726"
+              ],
+              [
+                "V3892",
+                "V5885"
+              ],
+              [
+                "V9801",
+                "V3673"
+              ],
+              [
+                "V6716",
+                "V7052"
+              ],
+              [
+                "V4504",
+                "V2353"
+              ],
+              [
+                "V6716",
+                "V5246"
+              ],
+              [
+                "V7052",
+                "V3892"
+              ],
+              [
+                "V6716",
+                "V1470"
+              ],
+              [
+                "V6716",
+                "V7372"
+              ],
+              [
+                "V4504",
+                "V2647"
+              ],
+              [
+                "V9801",
+                "V2353"
+              ],
+              [
+                "V6716",
+                "V9308"
+              ],
+              [
+                "V5246",
+                "V3892"
+              ],
+              [
+                "V4504",
+                "V7372"
+              ],
+              [
+                "V6716",
+                "V2647"
+              ],
+              [
+                "V4504",
+                "V8726"
+              ]
+            ]
+          },
+          "missing": [
+            "V5246",
+            "V7372",
+            "V6716",
+            "V2353",
+            "V3892",
+            "V7052",
+            "V4504"
+          ],
+          "fixed_terminals": [
+            "V1470",
+            "V5885"
+          ],
+          "candidate_ids": [
+            "V2647",
+            "V9801",
+            "V9308",
+            "V3673"
+          ],
+          "budget": 4,
+          "cost_per_vertex": 1
+        },
+        "image": "public/benchmark/visual-repair-v1/images/image-c934719659508d474833.png"
+      },
+      "gt": {
+        "bound_terminal": "V9801",
+        "minimum_cost": 4,
+        "budget_sufficient": true,
+        "solutions": [
+          {
+            "restored": [
+              "V3892",
+              "V4504",
+              "V5246",
+              "V6716"
+            ],
+            "component_sizes": [
+              11
+            ]
+          },
+          {
+            "restored": [
+              "V3892",
+              "V4504",
+              "V6716",
+              "V7052"
+            ],
+            "component_sizes": [
+              11
+            ]
+          }
+        ]
+      },
+      "selection": "Development example with multiple optima; selected without model performance."
+    },
+    {
+      "figure": "repair-factorial",
+      "outputs": [
+        {
+          "file": "paper/figures/repair-factorial.pdf",
+          "sha256": "7a05fc26d3468e650cf1c7479443f6ca042e03a4cdd9fc6bbbc7e4f106ccdf24"
+        },
+        {
+          "file": "paper/figures/repair-factorial.png",
+          "sha256": "ee2898cdeaaf2f2a2155451dc3ee6e369cb469afcdcf1d959eabe8f81e5de714"
+        }
+      ],
+      "sources": [
+        {
+          "file": "benchmark/visual-repair-v1/public.json",
+          "sha256": "9e3e751de06e9157de75edf171965fb2d60986f7daca8dc57e85843d7c37306c"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/gold.json",
+          "sha256": "1aa19ab6030764282921db2468f3d15f74825f79d855b1c5e9fdbc6b30d4c040"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/summary.json",
+          "sha256": "efe6346d97b9de6ea2fab3381299728e2c378588428ff70c6910a5b5d5329152"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/sampling-ledger.json",
+          "sha256": "9c8b398e53fbe11c04585995eb4eed3cfd69d567eaa04d2fcc48a1f946d4ab67"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/dependency-audit.json",
+          "sha256": "1801b342361b0f9a051e6a66717d254f3728513fa612fdcc3522949ac4e65c21"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/study-manifest.json",
+          "sha256": "031cc49b938608c441a5855d35b23f743dbc030dc413388f654f3cf9a68bc222"
+        },
+        {
+          "file": "paper/build_repair_assets.py",
+          "sha256": "a9e8c0e803d115b0bab7fdfc5b107bb174bf76353234b2dfe9c30825c63e4f48"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/captures.json",
+          "sha256": "c94ad9a47686326450dc51b31ff485b0822cf355677e5f1c852977b0872be98e"
+        },
+        {
+          "file": "benchmark/visual-repair-v1/native/multimodal/task-2c91283849f1952fd89f.json",
+          "sha256": "343e285bd4193e176e58fe7d54b7c431f8264de3fcc96491d55b1fa9118ce8b8"
+        },
+        {
+          "file": "public/benchmark/visual-repair-v1/images/image-c934719659508d474833.png",
+          "sha256": "1283b58b30b497b9115c26e1e551b163dd8a8af2305c88030b2d26d131a1e9a1",
+          "capture": {
+            "id": "image-c934719659508d474833",
+            "file": "public/benchmark/visual-repair-v1/images/image-c934719659508d474833.png",
+            "sha256": "1283b58b30b497b9115c26e1e551b163dd8a8af2305c88030b2d26d131a1e9a1",
+            "construction_id": "construction-2abc703c9a7fd78609b7",
+            "replicate": 0,
+            "arm": "anchor",
+            "source_id": "omr-42020",
+            "source_hash": "03ce9e9f6e5e8fe9b35ec612407be6ac51996d369a341775b5ae80b45d7017a2",
+            "source_poses_preserved": true,
+            "geometry_modified": false,
+            "display_material": "uniform opaque neutral gray, no source color cue",
+            "reference_id": "brick_000123",
+            "reference_box": [
+              20,
+              260,
+              480,
+              300
+            ],
+            "reference_camera": {
+              "position": [
+                -31.13581895682846,
+                7.3086551654627705,
+                142.96298274819415
+              ],
+              "target": [
+                8,
+                -24,
+                96
+              ],
+              "fov": 30,
+              "direction": [
+                -1,
+                0.8,
+                1.2
+              ]
+            },
+            "cards": [
+              {
+                "label": "V9801",
+                "source_id": "brick_000123",
+                "shape_box": [
+                  560,
+                  80,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  690,
+                  387,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    45.03143684252224,
+                    13.03143684252224,
+                    140.43772421102668
+                  ],
+                  "target": [
+                    8,
+                    -24,
+                    96
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V3673",
+                "source_id": "brick_000134",
+                "shape_box": [
+                  1070,
+                  80,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  1200,
+                  387,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    45.03143684252224,
+                    13.03143684252224,
+                    144.43772421102668
+                  ],
+                  "target": [
+                    8,
+                    -24,
+                    100
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V9308",
+                "source_id": "brick_000125",
+                "shape_box": [
+                  560,
+                  480,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  690,
+                  787,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    57.03143684252224,
+                    5.031436842522243,
+                    140.2377242110267
+                  ],
+                  "target": [
+                    20,
+                    -32,
+                    95.80000000000001
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V2647",
+                "source_id": "brick_000129",
+                "shape_box": [
+                  1070,
+                  480,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  1200,
+                  787,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    43.03143684252224,
+                    9.03143684252224,
+                    132.43772421102668
+                  ],
+                  "target": [
+                    6,
+                    -28,
+                    88
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              }
+            ],
+            "width": 1600,
+            "height": 900,
+            "common_camera_radius": 16.16044553841261
+          },
+          "task_id": "task-2c91283849f1952fd89f"
+        },
+        {
+          "file": "public/benchmark/visual-repair-v1/images/image-943971cb6a8e566e4668.png",
+          "sha256": "60eab717a26df6089798091a7b8e744b9bbb53944f9e4bd9f550c93e3fd01ad7",
+          "capture": {
+            "id": "image-943971cb6a8e566e4668",
+            "file": "public/benchmark/visual-repair-v1/images/image-943971cb6a8e566e4668.png",
+            "sha256": "60eab717a26df6089798091a7b8e744b9bbb53944f9e4bd9f550c93e3fd01ad7",
+            "construction_id": "construction-2abc703c9a7fd78609b7",
+            "replicate": 0,
+            "arm": "changing",
+            "source_id": "omr-42020",
+            "source_hash": "03ce9e9f6e5e8fe9b35ec612407be6ac51996d369a341775b5ae80b45d7017a2",
+            "source_poses_preserved": true,
+            "geometry_modified": false,
+            "display_material": "uniform opaque neutral gray, no source color cue",
+            "reference_id": "brick_000123",
+            "reference_box": [
+              20,
+              260,
+              480,
+              300
+            ],
+            "reference_camera": {
+              "position": [
+                -31.13581895682846,
+                7.3086551654627705,
+                142.96298274819415
+              ],
+              "target": [
+                8,
+                -24,
+                96
+              ],
+              "fov": 30,
+              "direction": [
+                -1,
+                0.8,
+                1.2
+              ]
+            },
+            "cards": [
+              {
+                "label": "V9308",
+                "source_id": "brick_000123",
+                "shape_box": [
+                  560,
+                  80,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  690,
+                  387,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    45.03143684252224,
+                    13.03143684252224,
+                    140.43772421102668
+                  ],
+                  "target": [
+                    8,
+                    -24,
+                    96
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V3673",
+                "source_id": "brick_000134",
+                "shape_box": [
+                  1070,
+                  80,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  1200,
+                  387,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    45.03143684252224,
+                    13.03143684252224,
+                    144.43772421102668
+                  ],
+                  "target": [
+                    8,
+                    -24,
+                    100
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V9801",
+                "source_id": "brick_000125",
+                "shape_box": [
+                  560,
+                  480,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  690,
+                  787,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    57.03143684252224,
+                    5.031436842522243,
+                    140.2377242110267
+                  ],
+                  "target": [
+                    20,
+                    -32,
+                    95.80000000000001
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V2647",
+                "source_id": "brick_000129",
+                "shape_box": [
+                  1070,
+                  480,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  1200,
+                  787,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    43.03143684252224,
+                    9.03143684252224,
+                    132.43772421102668
+                  ],
+                  "target": [
+                    6,
+                    -28,
+                    88
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              }
+            ],
+            "width": 1600,
+            "height": 900,
+            "common_camera_radius": 16.16044553841261
+          },
+          "task_id": "task-ea155a7bb91c3494f47b"
+        },
+        {
+          "file": "public/benchmark/visual-repair-v1/images/image-3b8ab4992a04e2fef53b.png",
+          "sha256": "80b2da20563d43c4aff4178c77553122f256d7f568dca2ef65f69d213c60b03c",
+          "capture": {
+            "id": "image-3b8ab4992a04e2fef53b",
+            "file": "public/benchmark/visual-repair-v1/images/image-3b8ab4992a04e2fef53b.png",
+            "sha256": "80b2da20563d43c4aff4178c77553122f256d7f568dca2ef65f69d213c60b03c",
+            "construction_id": "construction-2abc703c9a7fd78609b7",
+            "replicate": 0,
+            "arm": "preserving",
+            "source_id": "omr-42020",
+            "source_hash": "03ce9e9f6e5e8fe9b35ec612407be6ac51996d369a341775b5ae80b45d7017a2",
+            "source_poses_preserved": true,
+            "geometry_modified": false,
+            "display_material": "uniform opaque neutral gray, no source color cue",
+            "reference_id": "brick_000123",
+            "reference_box": [
+              20,
+              260,
+              480,
+              300
+            ],
+            "reference_camera": {
+              "position": [
+                -31.13581895682846,
+                7.3086551654627705,
+                142.96298274819415
+              ],
+              "target": [
+                8,
+                -24,
+                96
+              ],
+              "fov": 30,
+              "direction": [
+                -1,
+                0.8,
+                1.2
+              ]
+            },
+            "cards": [
+              {
+                "label": "V9801",
+                "source_id": "brick_000123",
+                "shape_box": [
+                  560,
+                  80,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  690,
+                  387,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    45.03143684252224,
+                    13.03143684252224,
+                    140.43772421102668
+                  ],
+                  "target": [
+                    8,
+                    -24,
+                    96
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V2647",
+                "source_id": "brick_000134",
+                "shape_box": [
+                  1070,
+                  80,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  1200,
+                  387,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    45.03143684252224,
+                    13.03143684252224,
+                    144.43772421102668
+                  ],
+                  "target": [
+                    8,
+                    -24,
+                    100
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V9308",
+                "source_id": "brick_000125",
+                "shape_box": [
+                  560,
+                  480,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  690,
+                  787,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    57.03143684252224,
+                    5.031436842522243,
+                    140.2377242110267
+                  ],
+                  "target": [
+                    20,
+                    -32,
+                    95.80000000000001
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              },
+              {
+                "label": "V3673",
+                "source_id": "brick_000129",
+                "shape_box": [
+                  1070,
+                  480,
+                  480,
+                  300
+                ],
+                "label_box": [
+                  1200,
+                  787,
+                  220,
+                  50
+                ],
+                "camera": {
+                  "position": [
+                    43.03143684252224,
+                    9.03143684252224,
+                    132.43772421102668
+                  ],
+                  "target": [
+                    6,
+                    -28,
+                    88
+                  ],
+                  "fov": 30,
+                  "direction": [
+                    1,
+                    1,
+                    1.2
+                  ]
+                }
+              }
+            ],
+            "width": 1600,
+            "height": 900,
+            "common_camera_radius": 16.16044553841261
+          },
+          "task_id": "task-b8280b627478c16d4d14"
+        }
+      ],
+      "model_responses": null,
+      "print_sampling": "Preserve aspect ratio; downsample only above 450 print dpi with LANCZOS.",
+      "version": "visual-repair-v1",
+      "tasks": [
+        {
+          "id": "task-2c91283849f1952fd89f",
+          "construction_id": "construction-2abc703c9a7fd78609b7",
+          "source_id": "omr-42020",
+          "dependence_group": "group-53fb9a1e6860",
+          "split": "dev",
+          "replicate": 0,
+          "visual_arm": "anchor",
+          "structural_arm": "fault_0",
+          "input": {
+            "graph": {
+              "nodes": [
+                "V5885",
+                "V8726",
+                "V3673",
+                "V9801",
+                "V2647",
+                "V5246",
+                "V7052",
+                "V3892",
+                "V9308",
+                "V1470",
+                "V7372",
+                "V6716",
+                "V2353",
+                "V4504"
+              ],
+              "edges": [
+                [
+                  "V9801",
+                  "V8726"
+                ],
+                [
+                  "V3892",
+                  "V5885"
+                ],
+                [
+                  "V9801",
+                  "V3673"
+                ],
+                [
+                  "V6716",
+                  "V7052"
+                ],
+                [
+                  "V4504",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V5246"
+                ],
+                [
+                  "V7052",
+                  "V3892"
+                ],
+                [
+                  "V6716",
+                  "V1470"
+                ],
+                [
+                  "V6716",
+                  "V7372"
+                ],
+                [
+                  "V4504",
+                  "V2647"
+                ],
+                [
+                  "V9801",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V9308"
+                ],
+                [
+                  "V5246",
+                  "V3892"
+                ],
+                [
+                  "V4504",
+                  "V7372"
+                ],
+                [
+                  "V6716",
+                  "V2647"
+                ],
+                [
+                  "V4504",
+                  "V8726"
+                ]
+              ]
+            },
+            "missing": [
+              "V5246",
+              "V7372",
+              "V6716",
+              "V2353",
+              "V3892",
+              "V7052",
+              "V4504"
+            ],
+            "fixed_terminals": [
+              "V1470",
+              "V5885"
+            ],
+            "candidate_ids": [
+              "V2647",
+              "V9801",
+              "V9308",
+              "V3673"
+            ],
+            "budget": 4,
+            "cost_per_vertex": 1
+          },
+          "image": "public/benchmark/visual-repair-v1/images/image-c934719659508d474833.png"
+        },
+        {
+          "id": "task-fa73a4e3c7d32a39426f",
+          "construction_id": "construction-2abc703c9a7fd78609b7",
+          "source_id": "omr-42020",
+          "dependence_group": "group-53fb9a1e6860",
+          "split": "dev",
+          "replicate": 0,
+          "visual_arm": "anchor",
+          "structural_arm": "fault_1",
+          "input": {
+            "graph": {
+              "nodes": [
+                "V5885",
+                "V8726",
+                "V3673",
+                "V9801",
+                "V2647",
+                "V5246",
+                "V7052",
+                "V3892",
+                "V9308",
+                "V1470",
+                "V7372",
+                "V6716",
+                "V2353",
+                "V4504"
+              ],
+              "edges": [
+                [
+                  "V9801",
+                  "V8726"
+                ],
+                [
+                  "V3892",
+                  "V5885"
+                ],
+                [
+                  "V9801",
+                  "V3673"
+                ],
+                [
+                  "V6716",
+                  "V7052"
+                ],
+                [
+                  "V4504",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V5246"
+                ],
+                [
+                  "V7052",
+                  "V3892"
+                ],
+                [
+                  "V6716",
+                  "V1470"
+                ],
+                [
+                  "V6716",
+                  "V7372"
+                ],
+                [
+                  "V4504",
+                  "V2647"
+                ],
+                [
+                  "V9801",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V9308"
+                ],
+                [
+                  "V5246",
+                  "V3892"
+                ],
+                [
+                  "V4504",
+                  "V7372"
+                ],
+                [
+                  "V6716",
+                  "V2647"
+                ],
+                [
+                  "V4504",
+                  "V8726"
+                ]
+              ]
+            },
+            "missing": [
+              "V5246",
+              "V7372",
+              "V8726",
+              "V2353",
+              "V3892",
+              "V7052",
+              "V4504"
+            ],
+            "fixed_terminals": [
+              "V1470",
+              "V5885"
+            ],
+            "candidate_ids": [
+              "V2647",
+              "V9801",
+              "V9308",
+              "V3673"
+            ],
+            "budget": 4,
+            "cost_per_vertex": 1
+          },
+          "image": "public/benchmark/visual-repair-v1/images/image-c934719659508d474833.png"
+        },
+        {
+          "id": "task-ea155a7bb91c3494f47b",
+          "construction_id": "construction-2abc703c9a7fd78609b7",
+          "source_id": "omr-42020",
+          "dependence_group": "group-53fb9a1e6860",
+          "split": "dev",
+          "replicate": 0,
+          "visual_arm": "changing",
+          "structural_arm": "fault_0",
+          "input": {
+            "graph": {
+              "nodes": [
+                "V5885",
+                "V8726",
+                "V3673",
+                "V9801",
+                "V2647",
+                "V5246",
+                "V7052",
+                "V3892",
+                "V9308",
+                "V1470",
+                "V7372",
+                "V6716",
+                "V2353",
+                "V4504"
+              ],
+              "edges": [
+                [
+                  "V9801",
+                  "V8726"
+                ],
+                [
+                  "V3892",
+                  "V5885"
+                ],
+                [
+                  "V9801",
+                  "V3673"
+                ],
+                [
+                  "V6716",
+                  "V7052"
+                ],
+                [
+                  "V4504",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V5246"
+                ],
+                [
+                  "V7052",
+                  "V3892"
+                ],
+                [
+                  "V6716",
+                  "V1470"
+                ],
+                [
+                  "V6716",
+                  "V7372"
+                ],
+                [
+                  "V4504",
+                  "V2647"
+                ],
+                [
+                  "V9801",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V9308"
+                ],
+                [
+                  "V5246",
+                  "V3892"
+                ],
+                [
+                  "V4504",
+                  "V7372"
+                ],
+                [
+                  "V6716",
+                  "V2647"
+                ],
+                [
+                  "V4504",
+                  "V8726"
+                ]
+              ]
+            },
+            "missing": [
+              "V5246",
+              "V7372",
+              "V6716",
+              "V2353",
+              "V3892",
+              "V7052",
+              "V4504"
+            ],
+            "fixed_terminals": [
+              "V1470",
+              "V5885"
+            ],
+            "candidate_ids": [
+              "V2647",
+              "V9801",
+              "V9308",
+              "V3673"
+            ],
+            "budget": 4,
+            "cost_per_vertex": 1
+          },
+          "image": "public/benchmark/visual-repair-v1/images/image-943971cb6a8e566e4668.png"
+        },
+        {
+          "id": "task-81e506e547117cb55097",
+          "construction_id": "construction-2abc703c9a7fd78609b7",
+          "source_id": "omr-42020",
+          "dependence_group": "group-53fb9a1e6860",
+          "split": "dev",
+          "replicate": 0,
+          "visual_arm": "changing",
+          "structural_arm": "fault_1",
+          "input": {
+            "graph": {
+              "nodes": [
+                "V5885",
+                "V8726",
+                "V3673",
+                "V9801",
+                "V2647",
+                "V5246",
+                "V7052",
+                "V3892",
+                "V9308",
+                "V1470",
+                "V7372",
+                "V6716",
+                "V2353",
+                "V4504"
+              ],
+              "edges": [
+                [
+                  "V9801",
+                  "V8726"
+                ],
+                [
+                  "V3892",
+                  "V5885"
+                ],
+                [
+                  "V9801",
+                  "V3673"
+                ],
+                [
+                  "V6716",
+                  "V7052"
+                ],
+                [
+                  "V4504",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V5246"
+                ],
+                [
+                  "V7052",
+                  "V3892"
+                ],
+                [
+                  "V6716",
+                  "V1470"
+                ],
+                [
+                  "V6716",
+                  "V7372"
+                ],
+                [
+                  "V4504",
+                  "V2647"
+                ],
+                [
+                  "V9801",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V9308"
+                ],
+                [
+                  "V5246",
+                  "V3892"
+                ],
+                [
+                  "V4504",
+                  "V7372"
+                ],
+                [
+                  "V6716",
+                  "V2647"
+                ],
+                [
+                  "V4504",
+                  "V8726"
+                ]
+              ]
+            },
+            "missing": [
+              "V5246",
+              "V7372",
+              "V8726",
+              "V2353",
+              "V3892",
+              "V7052",
+              "V4504"
+            ],
+            "fixed_terminals": [
+              "V1470",
+              "V5885"
+            ],
+            "candidate_ids": [
+              "V2647",
+              "V9801",
+              "V9308",
+              "V3673"
+            ],
+            "budget": 4,
+            "cost_per_vertex": 1
+          },
+          "image": "public/benchmark/visual-repair-v1/images/image-943971cb6a8e566e4668.png"
+        },
+        {
+          "id": "task-b8280b627478c16d4d14",
+          "construction_id": "construction-2abc703c9a7fd78609b7",
+          "source_id": "omr-42020",
+          "dependence_group": "group-53fb9a1e6860",
+          "split": "dev",
+          "replicate": 0,
+          "visual_arm": "preserving",
+          "structural_arm": "fault_0",
+          "input": {
+            "graph": {
+              "nodes": [
+                "V5885",
+                "V8726",
+                "V3673",
+                "V9801",
+                "V2647",
+                "V5246",
+                "V7052",
+                "V3892",
+                "V9308",
+                "V1470",
+                "V7372",
+                "V6716",
+                "V2353",
+                "V4504"
+              ],
+              "edges": [
+                [
+                  "V9801",
+                  "V8726"
+                ],
+                [
+                  "V3892",
+                  "V5885"
+                ],
+                [
+                  "V9801",
+                  "V3673"
+                ],
+                [
+                  "V6716",
+                  "V7052"
+                ],
+                [
+                  "V4504",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V5246"
+                ],
+                [
+                  "V7052",
+                  "V3892"
+                ],
+                [
+                  "V6716",
+                  "V1470"
+                ],
+                [
+                  "V6716",
+                  "V7372"
+                ],
+                [
+                  "V4504",
+                  "V2647"
+                ],
+                [
+                  "V9801",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V9308"
+                ],
+                [
+                  "V5246",
+                  "V3892"
+                ],
+                [
+                  "V4504",
+                  "V7372"
+                ],
+                [
+                  "V6716",
+                  "V2647"
+                ],
+                [
+                  "V4504",
+                  "V8726"
+                ]
+              ]
+            },
+            "missing": [
+              "V5246",
+              "V7372",
+              "V6716",
+              "V2353",
+              "V3892",
+              "V7052",
+              "V4504"
+            ],
+            "fixed_terminals": [
+              "V1470",
+              "V5885"
+            ],
+            "candidate_ids": [
+              "V2647",
+              "V9801",
+              "V9308",
+              "V3673"
+            ],
+            "budget": 4,
+            "cost_per_vertex": 1
+          },
+          "image": "public/benchmark/visual-repair-v1/images/image-3b8ab4992a04e2fef53b.png"
+        },
+        {
+          "id": "task-03ce32b628c8aeb34ee4",
+          "construction_id": "construction-2abc703c9a7fd78609b7",
+          "source_id": "omr-42020",
+          "dependence_group": "group-53fb9a1e6860",
+          "split": "dev",
+          "replicate": 0,
+          "visual_arm": "preserving",
+          "structural_arm": "fault_1",
+          "input": {
+            "graph": {
+              "nodes": [
+                "V5885",
+                "V8726",
+                "V3673",
+                "V9801",
+                "V2647",
+                "V5246",
+                "V7052",
+                "V3892",
+                "V9308",
+                "V1470",
+                "V7372",
+                "V6716",
+                "V2353",
+                "V4504"
+              ],
+              "edges": [
+                [
+                  "V9801",
+                  "V8726"
+                ],
+                [
+                  "V3892",
+                  "V5885"
+                ],
+                [
+                  "V9801",
+                  "V3673"
+                ],
+                [
+                  "V6716",
+                  "V7052"
+                ],
+                [
+                  "V4504",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V5246"
+                ],
+                [
+                  "V7052",
+                  "V3892"
+                ],
+                [
+                  "V6716",
+                  "V1470"
+                ],
+                [
+                  "V6716",
+                  "V7372"
+                ],
+                [
+                  "V4504",
+                  "V2647"
+                ],
+                [
+                  "V9801",
+                  "V2353"
+                ],
+                [
+                  "V6716",
+                  "V9308"
+                ],
+                [
+                  "V5246",
+                  "V3892"
+                ],
+                [
+                  "V4504",
+                  "V7372"
+                ],
+                [
+                  "V6716",
+                  "V2647"
+                ],
+                [
+                  "V4504",
+                  "V8726"
+                ]
+              ]
+            },
+            "missing": [
+              "V5246",
+              "V7372",
+              "V8726",
+              "V2353",
+              "V3892",
+              "V7052",
+              "V4504"
+            ],
+            "fixed_terminals": [
+              "V1470",
+              "V5885"
+            ],
+            "candidate_ids": [
+              "V2647",
+              "V9801",
+              "V9308",
+              "V3673"
+            ],
+            "budget": 4,
+            "cost_per_vertex": 1
+          },
+          "image": "public/benchmark/visual-repair-v1/images/image-3b8ab4992a04e2fef53b.png"
+        }
+      ],
+      "answers": {
+        "task-2c91283849f1952fd89f": {
+          "bound_terminal": "V9801",
+          "minimum_cost": 4,
+          "budget_sufficient": true,
+          "solutions": [
+            {
+              "restored": [
+                "V3892",
+                "V4504",
+                "V5246",
+                "V6716"
+              ],
+              "component_sizes": [
+                11
+              ]
+            },
+            {
+              "restored": [
+                "V3892",
+                "V4504",
+                "V6716",
+                "V7052"
+              ],
+              "component_sizes": [
+                11
+              ]
+            }
+          ]
+        },
+        "task-fa73a4e3c7d32a39426f": {
+          "bound_terminal": "V9801",
+          "minimum_cost": 4,
+          "budget_sufficient": true,
+          "solutions": [
+            {
+              "restored": [
+                "V2353",
+                "V3892",
+                "V4504",
+                "V5246"
+              ],
+              "component_sizes": [
+                11
+              ]
+            },
+            {
+              "restored": [
+                "V2353",
+                "V3892",
+                "V4504",
+                "V7052"
+              ],
+              "component_sizes": [
+                11
+              ]
+            },
+            {
+              "restored": [
+                "V3892",
+                "V4504",
+                "V5246",
+                "V8726"
+              ],
+              "component_sizes": [
+                11
+              ]
+            },
+            {
+              "restored": [
+                "V3892",
+                "V4504",
+                "V7052",
+                "V8726"
+              ],
+              "component_sizes": [
+                11
+              ]
+            }
+          ]
+        },
+        "task-ea155a7bb91c3494f47b": {
+          "bound_terminal": "V9308",
+          "minimum_cost": 3,
+          "budget_sufficient": true,
+          "solutions": [
+            {
+              "restored": [
+                "V3892",
+                "V5246",
+                "V6716"
+              ],
+              "component_sizes": [
+                7,
+                3
+              ]
+            },
+            {
+              "restored": [
+                "V3892",
+                "V6716",
+                "V7052"
+              ],
+              "component_sizes": [
+                7,
+                3
+              ]
+            }
+          ]
+        },
+        "task-81e506e547117cb55097": {
+          "bound_terminal": "V9308",
+          "minimum_cost": 2,
+          "budget_sufficient": true,
+          "solutions": [
+            {
+              "restored": [
+                "V3892",
+                "V5246"
+              ],
+              "component_sizes": [
+                7,
+                2
+              ]
+            },
+            {
+              "restored": [
+                "V3892",
+                "V7052"
+              ],
+              "component_sizes": [
+                7,
+                2
+              ]
+            }
+          ]
+        },
+        "task-b8280b627478c16d4d14": {
+          "bound_terminal": "V9801",
+          "minimum_cost": 4,
+          "budget_sufficient": true,
+          "solutions": [
+            {
+              "restored": [
+                "V3892",
+                "V4504",
+                "V5246",
+                "V6716"
+              ],
+              "component_sizes": [
+                11
+              ]
+            },
+            {
+              "restored": [
+                "V3892",
+                "V4504",
+                "V6716",
+                "V7052"
+              ],
+              "component_sizes": [
+                11
+              ]
+            }
+          ]
+        },
+        "task-03ce32b628c8aeb34ee4": {
+          "bound_terminal": "V9801",
+          "minimum_cost": 4,
+          "budget_sufficient": true,
+          "solutions": [
+            {
+              "restored": [
+                "V2353",
+                "V3892",
+                "V4504",
+                "V5246"
+              ],
+              "component_sizes": [
+                11
+              ]
+            },
+            {
+              "restored": [
+                "V2353",
+                "V3892",
+                "V4504",
+                "V7052"
+              ],
+              "component_sizes": [
+                11
+              ]
+            },
+            {
+              "restored": [
+                "V3892",
+                "V4504",
+                "V5246",
+                "V8726"
+              ],
+              "component_sizes": [
+                11
+              ]
+            },
+            {
+              "restored": [
+                "V3892",
+                "V4504",
+                "V7052",
+                "V8726"
+              ],
+              "component_sizes": [
+                11
+              ]
+            }
+          ]
+        }
+      },
+      "selection": "Same development construction as main example; no model outputs."
+    },
+    {
+      "figure": "source-atlas",
+      "outputs": [
+        {
+          "file": "paper/figures/source-atlas.pdf",
+          "sha256": "a4ba73da42440a41149f675b4c223c68357cd6bd7ed05a48c8969de34246394b"
+        },
+        {
+          "file": "paper/figures/source-atlas.png",
+          "sha256": "672a01a49fd78c3d85e6fb8669300b52b63a1ea5095d253a99ce69684e4070fe"
+        }
+      ],
+      "sources": [
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/31028-iso.png",
+          "sha256": "c639037105c21de2e0209d0b07b30e6433e3cfdd0fc90f284285e71f981f5fc1",
+          "source_id": "31028",
+          "source_hash": "d2619a85e973430a1b256d607fe8e44a865beb05ef63ac8028a5109c228ee97c",
+          "source_band": "D1",
+          "parts": 53,
+          "crop_xyxy": [
+            725,
+            575,
+            2694,
+            2368
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/31027-iso.png",
+          "sha256": "4dc54f1e7b7574d79673178527e7c9f73b1d4501b831a82be61e97a01e04d1c7",
+          "source_id": "31027",
+          "source_hash": "1f1975602ce9a63f2954c8da97f4fc13a473f709afa4a25b1022add33b55cfd1",
+          "source_band": "D1",
+          "parts": 67,
+          "crop_xyxy": [
+            548,
+            710,
+            2785,
+            2282
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/10156-iso.png",
+          "sha256": "9579e00040502ec316de0a6c626ebbaccea59ec4aba3cafea262036686834778",
+          "source_id": "10156",
+          "source_hash": "a58a784e6f6ce9d39999db1a4505941b5db5ebd1798af979bae891bc520a1a45",
+          "source_band": "D1",
+          "parts": 111,
+          "crop_xyxy": [
+            546,
+            522,
+            2205,
+            2454
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-42102-iso.png",
+          "sha256": "ed9483151bdd9c1c085ea6841f24cd7b80c617bfe6d2a8c1693ed6233a2db016",
+          "source_id": "omr-42102",
+          "source_hash": "096deaf98e20c3e65b547c91e972005d853b1b1c3cf7a619910682e6fe2d2deb",
+          "source_band": "D1",
+          "parts": 129,
+          "crop_xyxy": [
+            723,
+            522,
+            3011,
+            2206
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-42020-iso.png",
+          "sha256": "18c0cc9be687fd6463f05bb04adf35139b85f6eb4b3a284ea2ab47b49cbe6a9c",
+          "source_id": "omr-42020",
+          "source_hash": "03ce9e9f6e5e8fe9b35ec612407be6ac51996d369a341775b5ae80b45d7017a2",
+          "source_band": "D1",
+          "parts": 141,
+          "crop_xyxy": [
+            692,
+            726,
+            2783,
+            2277
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/10036-iso.png",
+          "sha256": "b489f28cc6faec002bebdd61af2477099c5d8a8c1a8f0cb6f058625a2f6a0eb9",
+          "source_id": "10036",
+          "source_hash": "bb9eafb3fc283a4b3b28eef58d6f9208528ee3d9b3debe4a7db8bbadc85f63f8",
+          "source_band": "D2",
+          "parts": 166,
+          "crop_xyxy": [
+            461,
+            543,
+            2792,
+            2387
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/10014-iso.png",
+          "sha256": "d9717b635125b27d5661df6544e0d51c20412840479f9eafe64afdb5b103c8cc",
+          "source_id": "10014",
+          "source_hash": "f3aead9fe55512171565803f187f3f7a952fb70515983c39970cffd89431644d",
+          "source_band": "D2",
+          "parts": 170,
+          "crop_xyxy": [
+            694,
+            474,
+            2531,
+            2430
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-31031-iso.png",
+          "sha256": "e6242e9ac7784b35ffdf3d2fe0f841c2f890d5655458162b2490ecd0c1756720",
+          "source_id": "omr-31031",
+          "source_hash": "b5b87230d2fe147aa1135baee5d1604a283f1e586a228b27b351253af5565da7",
+          "source_band": "D2",
+          "parts": 215,
+          "crop_xyxy": [
+            557,
+            712,
+            2777,
+            2059
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-31088-iso.png",
+          "sha256": "2f9d12c4a4baca0a5ef63d5b273f050097e0ddb9587fcdc151003e09ddb266ed",
+          "source_id": "omr-31088",
+          "source_hash": "c5cc0f95664d50244295783163d1ba3c73484f4b9bbfca89ada8bb1de0dbfff5",
+          "source_band": "D2",
+          "parts": 230,
+          "crop_xyxy": [
+            566,
+            851,
+            2941,
+            2180
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-42004-iso.png",
+          "sha256": "1e607421aa3eafb7bc83ab6fd4d952abb82431ede67fe39ae25ee3e81e6ed718",
+          "source_id": "omr-42004",
+          "source_hash": "a32b924f302a1c028c1131f78e438ad2d78e70a041999690a1e4285e851f7dbf",
+          "source_band": "D2",
+          "parts": 246,
+          "crop_xyxy": [
+            744,
+            645,
+            2945,
+            2340
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-42061-iso.png",
+          "sha256": "52ead6e64454fa036ae2aaae2c511a18b0c0b0e392eb3f671bd57875f7b6e5a0",
+          "source_id": "omr-42061",
+          "source_hash": "040a7bd002747abebebca005d7d049c902ffd39d2b102c180458fcfdd94f369c",
+          "source_band": "D2",
+          "parts": 261,
+          "crop_xyxy": [
+            662,
+            652,
+            2931,
+            2279
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/31009-iso.png",
+          "sha256": "58b0702b563ff952be231ae9d68be1b82ab3682d5701df157a9dbcf6f5e6006b",
+          "source_id": "31009",
+          "source_hash": "97b83517b0e843f8071ea3e4e80fbe0c7897685a7f476d3ba83161bb1185333d",
+          "source_band": "D2",
+          "parts": 270,
+          "crop_xyxy": [
+            559,
+            340,
+            2800,
+            2535
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/5867-iso.png",
+          "sha256": "3128cc0e2a818003de2e15b32623ae0b5c3871975f7498e874c93ee5eab6b652",
+          "source_id": "5867",
+          "source_hash": "48082e34b40a6ed5bbf2edabe9d0deb313fac7c20b1128970ba73f722b70216d",
+          "source_band": "D2",
+          "parts": 278,
+          "crop_xyxy": [
+            524,
+            735,
+            2749,
+            2265
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/10128-iso.png",
+          "sha256": "6d3698f6377781a0c949fed27fc505094e7f3ed49b86f49034a14cdd3ffb8669",
+          "source_id": "10128",
+          "source_hash": "7928f4e259455ec49cc02c62acb1653f7a002824c789f099845936d0a2e8a0b9",
+          "source_band": "D2",
+          "parts": 336,
+          "crop_xyxy": [
+            546,
+            622,
+            2885,
+            2343
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/10159-iso.png",
+          "sha256": "feb8ebe7c75522e112db475f527e9165ea0dcf4427f96cf7578ead3a3654420e",
+          "source_id": "10159",
+          "source_hash": "ef0b08af1e69059813e8965d3aa8fdd6a4aadbb04a21d92723cc4f9ae26bc1ec",
+          "source_band": "D3",
+          "parts": 592,
+          "crop_xyxy": [
+            734,
+            717,
+            2835,
+            2205
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/10001-iso.png",
+          "sha256": "0e77316c01b07900ebccdf7e96da6620cba79da5a40e72bf926c0bd2029db4c3",
+          "source_id": "10001",
+          "source_hash": "684a8032488dc2c5cb72a9ef32befb1399914eb32423e5b0cd91b6acfd3ab0e3",
+          "source_band": "D3",
+          "parts": 848,
+          "crop_xyxy": [
+            613,
+            867,
+            2688,
+            1989
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-10269-iso.png",
+          "sha256": "cba0627add0eaff6dd25b197fb6392b7dc778b8a6a78e7372fab4ee075e4a8ca",
+          "source_id": "omr-10269",
+          "source_hash": "777f57f34cc8f4bddcee0ff94d81bfefd615b7ad4e92ab668cedb66d4b29f476",
+          "source_band": "D4",
+          "parts": 1029,
+          "crop_xyxy": [
+            802,
+            386,
+            2758,
+            2314
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-10242-iso.png",
+          "sha256": "62ac3c85ca4e5e2c1c0bc79852f2c9f5d269d2da6cc8de03970d0e8d161d0ef9",
+          "source_id": "omr-10242",
+          "source_hash": "d79fd06503b145cc5ff3c5bcfe71a1c402910dee78424f54077faba9cf402b74",
+          "source_band": "D4",
+          "parts": 1086,
+          "crop_xyxy": [
+            649,
+            597,
+            2881,
+            2295
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-42066-iso.png",
+          "sha256": "6c32d78f61eda1c5db48e7e51776a3a34a4269c0906f30bbee35cff7817056e2",
+          "source_id": "omr-42066",
+          "source_hash": "d1463b1464a83d54a6ed372fba732eabaf79b3857185f4ab60b314e741caa067",
+          "source_band": "D4",
+          "parts": 1244,
+          "crop_xyxy": [
+            539,
+            643,
+            3019,
+            2367
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/10213-iso.png",
+          "sha256": "02435c7fbb353a5cb93912af9247bbbc2623fe4d5d427a321fd3f8f53c597dd9",
+          "source_id": "10213",
+          "source_hash": "e295434c8fc8c067e6cd01c398dccd3059a38799f03a6cecddb9319ecf16d909",
+          "source_band": "D4",
+          "parts": 1254,
+          "crop_xyxy": [
+            861,
+            248,
+            2499,
+            2545
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-10265-iso.png",
+          "sha256": "5af8af2d1db6225d69fd4014e3ed0ace941a5d5cbef6edae9b932fd196aded64",
+          "source_id": "omr-10265",
+          "source_hash": "e9a2eb1b84d343a6faa9861d186159cf5d1fa1e202366eae1e76287df114ea95",
+          "source_band": "D4",
+          "parts": 1357,
+          "crop_xyxy": [
+            636,
+            795,
+            2907,
+            2142
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/10220-iso.png",
+          "sha256": "de000454c8288ebcc62ee347c8a8f9652e8aea8157ea7391456b33f425b6e55a",
+          "source_id": "10220",
+          "source_hash": "ded9a68fc1b569e2965aa67febd225ab9d4b496a5d944247488d64c5d1619373",
+          "source_band": "D4",
+          "parts": 1428,
+          "crop_xyxy": [
+            694,
+            585,
+            2802,
+            2362
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-21309-iso.png",
+          "sha256": "fb8dbb84a185ea4b6ec553af6be062374443cc817570b2efbb2607b05168cce1",
+          "source_id": "omr-21309",
+          "source_hash": "eb56995265201179e0ecbad2865fb62fced524c44f3a4179badc964f844e5ba1",
+          "source_band": "D4",
+          "parts": 1845,
+          "crop_xyxy": [
+            1491,
+            156,
+            1843,
+            2335
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        },
+        {
+          "file": "tem/papers/legacy-tree/figures/ldraw/omr-42054-iso.png",
+          "sha256": "fc2e7a2d8764068417df1e52271f22bd0968a46ef3f81d6a3af297c7ec03507e",
+          "source_id": "omr-42054",
+          "source_hash": "aa2856b77726aaaa74145ba1e40dbd89d1897ff3577ac2eab83237bd6d65b04c",
+          "source_band": "D4",
+          "parts": 1978,
+          "crop_xyxy": [
+            750,
+            535,
+            2980,
+            2474
+          ],
+          "crop_policy": "Empty-margin crop of full source assembly; original poses.",
+          "capture_manifest": "benchmark/ldraw-v1/capture.json"
+        }
+      ],
+      "model_responses": null,
+      "print_sampling": "Preserve aspect ratio; downsample only above 450 print dpi with LANCZOS.",
+      "role": "Complete source assemblies for provenance; not primary model observations.",
+      "selection": "All 24 sources"
+    }
+  ],
+  "example": "task-2c91283849f1952fd89f",
+  "construction_id": "construction-2abc703c9a7fd78609b7",
+  "gt": {
+    "bound_terminal": "V9801",
+    "minimum_cost": 4,
+    "budget_sufficient": true,
+    "solutions": [
+      {
+        "restored": [
+          "V3892",
+          "V4504",
+          "V5246",
+          "V6716"
+        ],
+        "component_sizes": [
+          11
+        ]
+      },
+      {
+        "restored": [
+          "V3892",
+          "V4504",
+          "V6716",
+          "V7052"
+        ],
+        "component_sizes": [
+          11
+        ]
+      }
+    ]
+  },
+  "model_or_human_results": null
+}

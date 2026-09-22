@@ -1,0 +1,285 @@
+{
+  "version": "visual-repair-v1",
+  "condition": "multimodal",
+  "question": "Match the unlabeled reference geometry to exactly one candidate card; ignore orientation and use its current printed ID as bound_terminal. The graph IDs refer to the current display, not source part identities. Together with fixed_terminals it must lie in one connected component. Only paths inside the supplied undirected graph count. Initially every listed missing vertex and its incident edges is unavailable. Restoring one listed vertex costs 1 and reinstates its original edges to present neighbors. Return every minimum-cost restoration set, its own final component sizes, minimum_cost, and whether budget suffices. Graph unavailability is not a physical removal. Order is irrelevant; duplicate vertices/solutions and unlisted actions are invalid.",
+  "input": {
+    "graph": {
+      "nodes": [
+        "V4107",
+        "V8497",
+        "V8848",
+        "V3538",
+        "V6090",
+        "V6793",
+        "V4898",
+        "V6659",
+        "V1219",
+        "V4647",
+        "V2530",
+        "V3611",
+        "V6243",
+        "V8890",
+        "V7396",
+        "V9259",
+        "V2599",
+        "V3594",
+        "V8805",
+        "V1774",
+        "V9168",
+        "V7241",
+        "V6592",
+        "V6025",
+        "V8792",
+        "V7434",
+        "V2815",
+        "V9015",
+        "V7111",
+        "V5805",
+        "V8717",
+        "V4474",
+        "V7249",
+        "V3634"
+      ],
+      "edges": [
+        [
+          "V3538",
+          "V7434"
+        ],
+        [
+          "V6592",
+          "V9168"
+        ],
+        [
+          "V7249",
+          "V1219"
+        ],
+        [
+          "V5805",
+          "V6025"
+        ],
+        [
+          "V8805",
+          "V6090"
+        ],
+        [
+          "V8717",
+          "V8497"
+        ],
+        [
+          "V9015",
+          "V9168"
+        ],
+        [
+          "V3594",
+          "V2530"
+        ],
+        [
+          "V6090",
+          "V7111"
+        ],
+        [
+          "V6659",
+          "V2599"
+        ],
+        [
+          "V6025",
+          "V1774"
+        ],
+        [
+          "V4898",
+          "V4474"
+        ],
+        [
+          "V4474",
+          "V9259"
+        ],
+        [
+          "V4898",
+          "V9259"
+        ],
+        [
+          "V6025",
+          "V8717"
+        ],
+        [
+          "V2599",
+          "V9015"
+        ],
+        [
+          "V4647",
+          "V7249"
+        ],
+        [
+          "V6659",
+          "V5805"
+        ],
+        [
+          "V8717",
+          "V8848"
+        ],
+        [
+          "V6090",
+          "V4647"
+        ],
+        [
+          "V9168",
+          "V3594"
+        ],
+        [
+          "V1219",
+          "V7434"
+        ],
+        [
+          "V6592",
+          "V3611"
+        ],
+        [
+          "V7396",
+          "V3634"
+        ],
+        [
+          "V7241",
+          "V4898"
+        ],
+        [
+          "V6090",
+          "V3634"
+        ],
+        [
+          "V6659",
+          "V9015"
+        ],
+        [
+          "V4647",
+          "V7396"
+        ],
+        [
+          "V6659",
+          "V8805"
+        ],
+        [
+          "V8805",
+          "V7241"
+        ],
+        [
+          "V2599",
+          "V4107"
+        ],
+        [
+          "V7396",
+          "V7111"
+        ],
+        [
+          "V1774",
+          "V6243"
+        ],
+        [
+          "V6025",
+          "V4898"
+        ],
+        [
+          "V8848",
+          "V8497"
+        ],
+        [
+          "V8890",
+          "V6793"
+        ],
+        [
+          "V6659",
+          "V6090"
+        ],
+        [
+          "V4107",
+          "V8717"
+        ],
+        [
+          "V9015",
+          "V3611"
+        ],
+        [
+          "V6793",
+          "V2530"
+        ],
+        [
+          "V6659",
+          "V8717"
+        ],
+        [
+          "V2599",
+          "V6025"
+        ],
+        [
+          "V7111",
+          "V3538"
+        ],
+        [
+          "V5805",
+          "V2815"
+        ],
+        [
+          "V6659",
+          "V4898"
+        ],
+        [
+          "V8792",
+          "V8890"
+        ],
+        [
+          "V8792",
+          "V6592"
+        ],
+        [
+          "V9015",
+          "V8792"
+        ],
+        [
+          "V8805",
+          "V6025"
+        ]
+      ]
+    },
+    "missing": [
+      "V6090",
+      "V1219",
+      "V9015",
+      "V6793",
+      "V9168",
+      "V4898",
+      "V3538",
+      "V8848"
+    ],
+    "fixed_terminals": [
+      "V7396",
+      "V6592"
+    ],
+    "candidate_ids": [
+      "V4474",
+      "V7434",
+      "V6243",
+      "V6659"
+    ],
+    "budget": 3,
+    "cost_per_vertex": 1
+  },
+  "images": [
+    {
+      "path": "public/benchmark/visual-repair-v1/images/image-79b442e6dc6ac5198022.png",
+      "sha256": "0ca0c65267bb1619a58ee246de259a953780abc2ddf7d83e617e21c057934c91",
+      "mime_type": "image/png",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "output_schema": {
+    "bound_terminal": "one candidate ID string",
+    "minimum_cost": "nonnegative integer",
+    "budget_sufficient": "boolean",
+    "solutions": [
+      {
+        "restored": "array of IDs",
+        "component_sizes": "array of positive integers"
+      }
+    ]
+  }
+}

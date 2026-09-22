@@ -1,0 +1,101 @@
+{
+  "version": "visual-repair-v1",
+  "condition": "oracle_binding",
+  "question": "Use the supplied oracle bound_terminal; no visual inference is requested. Together with fixed_terminals it must lie in one connected component. Only paths inside the supplied undirected graph count. Initially every listed missing vertex and its incident edges is unavailable. Restoring one listed vertex costs 1 and reinstates its original edges to present neighbors. Return every minimum-cost restoration set, its own final component sizes, minimum_cost, and whether budget suffices. Graph unavailability is not a physical removal. Order is irrelevant; duplicate vertices/solutions and unlisted actions are invalid.",
+  "input": {
+    "graph": {
+      "nodes": [
+        "V3044",
+        "V3903",
+        "V5734",
+        "V3237",
+        "V1753",
+        "V1354",
+        "V6429",
+        "V1091",
+        "V9992",
+        "V9035",
+        "V2101",
+        "V9703"
+      ],
+      "edges": [
+        [
+          "V5734",
+          "V3237"
+        ],
+        [
+          "V3903",
+          "V6429"
+        ],
+        [
+          "V1091",
+          "V3044"
+        ],
+        [
+          "V5734",
+          "V3903"
+        ],
+        [
+          "V3237",
+          "V2101"
+        ],
+        [
+          "V5734",
+          "V9035"
+        ],
+        [
+          "V6429",
+          "V1354"
+        ],
+        [
+          "V2101",
+          "V1753"
+        ],
+        [
+          "V1091",
+          "V5734"
+        ],
+        [
+          "V9035",
+          "V9992"
+        ],
+        [
+          "V9035",
+          "V9703"
+        ]
+      ]
+    },
+    "missing": [
+      "V9992",
+      "V3237",
+      "V5734",
+      "V6429",
+      "V9035"
+    ],
+    "fixed_terminals": [
+      "V1354",
+      "V3044"
+    ],
+    "candidate_ids": [
+      "V3903",
+      "V1753",
+      "V9703",
+      "V1091"
+    ],
+    "budget": 2,
+    "cost_per_vertex": 1,
+    "bound_terminal": "V9703"
+  },
+  "images": [],
+  "output_schema": {
+    "bound_terminal": "one candidate ID string",
+    "minimum_cost": "nonnegative integer",
+    "budget_sufficient": "boolean",
+    "solutions": [
+      {
+        "restored": "array of IDs",
+        "component_sizes": "array of positive integers"
+      }
+    ]
+  }
+}

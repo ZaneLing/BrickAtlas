@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Visual Repair Qualification</title>
+  <style>
+    body { max-width: 1650px; margin: 24px auto; padding: 0 20px; font: 16px system-ui; color: #183042; }
+    label { display: block; margin: 10px 0; }
+    input, select, textarea, button { padding: 8px; font: inherit; }
+    pre { white-space: pre-wrap; background: #f4f6f8; padding: 20px; }
+    img { width: 100%; height: auto; border: 1px solid #d5dde3; }
+    .flags label { display: inline-block; margin-right: 16px; }
+    textarea { width: 90%; min-height: 60px; }
+    #work { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Visual Repair Qualification</h1>
+  <p>Real reviewers only. No judgments are prefilled. Review only your assigned visual arm for each construction.
+    Both fault packets and both ID replicates repeat related evidence, not independent exposures.</p>
+  <section id="setup">
+    <label>Assigned slot <select id="slot"></select></label>
+    <label>Your stable reviewer pseudonym <input id="person" required></label>
+    <button id="start">Start Assigned Queue</button>
+  </section>
+  <section id="work">
+    <h2 id="progress"></h2>
+    <img id="evidence" alt="Exact native reference and candidate geometry">
+    <pre id="packet"></pre>
+    <label>Reference's current candidate ID <select id="binding"></select></label>
+    <div class="flags" id="flags"></div>
+    <label>Reason for any negative flag, or optional observation <textarea id="comment"></textarea></label>
+    <button id="next">Record Judgment and Continue</button>
+  </section>
+  <p id="status">Loading frozen queue.</p>
+  <button id="export" disabled>Export Completed Assignment Receipts</button>
+  <script type="module">
+    const $ = id => document.getElementById(id);
+    const queue = await (await fetch('./qualification-queue.json')).json();
+    const flags = ['reference_readable', 'labels_readable', 'unique_geometry_match', 'graph_contract_clear'];
+    for (const slot of queue.reviewer_slots) $('slot').add(new Option(slot, slot));
+    for (const flag of flags) {
+      const label = document.createElement('label');
+      const select = document.createElement('select'); select.id = flag;
+      for (const [text, value] of [['Choose', ''], ['Yes', 'true'], ['No', 'false']]) select.add(new Option(text, value));
+      label.append(flag.replaceAll('_', ' ') + ' ', select); $('flags').append(label);
+    }
+    let assignments = [], position = 0, itemPosition = 0, responses = [], receipts = [], person = '';
+    async function show() {
+      const assignment = assignments[position], item = assignment.items[itemPosition];
+      const packet = await (await fetch('/' + item.packet.path)).json();
+      $('evidence').src = '/' + packet.images[0].path.replace(/^public\//, '');
+      $('packet').textContent = JSON.stringify({ question: packet.question, input: packet.input, output_schema: packet.output_schema }, null, 2);
+      $('progress').textContent = `Assignment ${position + 1}/${assignments.length}; packet ${itemPosition + 1}/4`;
+      $('binding').replaceChildren(new Option('Choose ID', ''));
+      for (const id of packet.input.candidate_ids) $('binding').add(new Option(id, id));
+      for (const flag of flags) $(flag).value = '';
+      $('comment').value = '';
+      $('status').textContent = 'Exact native PNG and frozen packet. Do not consult gold or baseline reports.';
+    }
+    $('start').onclick = async () => {
+      person = $('person').value.trim();
+      if (!person) return alert('Enter your real stable reviewer pseudonym.');
+      assignments = queue.assignments.filter(a => a.reviewer_slot === $('slot').value);
+      $('setup').hidden = true; $('work').style.display = 'block';
+      await show();
+    };
+    $('next').onclick = async () => {
+      if (!$('binding').value || flags.some(f => !$(f).value)) return alert('Complete binding and all four flags.');
+      if (flags.some(f => $(f).value === 'false') && !$('comment').value.trim()) return alert('Explain negative flags.');
+      const assignment = assignments[position], item = assignment.items[itemPosition];
+      responses.push({ task_id: item.task_id, prompt_sha256: item.packet.sha256,
+        bound_terminal: $('binding').value, ...Object.fromEntries(flags.map(f => [f, $(f).value === 'true'])),
+        comment: $('comment').value });
+      itemPosition++;
+      if (itemPosition === assignment.items.length) {
+        receipts.push({ kind: 'human', synthetic: false, queue_lock_sha256: queue.lock_sha256,
+          assignment_id: assignment.assignment_id, reviewer_id: person, responses });
+        responses = []; itemPosition = 0; position++; $('export').disabled = false;
+      }
+      if (position === assignments.length) {
+        $('work').style.display = 'none'; $('status').textContent = 'Assigned queue complete. Export receipts for strict validation.';
+      } else await show();
+    };
+    $('export').onclick = () => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(receipts, null, 2)], { type: 'application/json' }));
+      a.download = 'qualification-receipts.json'; a.click(); URL.revokeObjectURL(a.href);
+    };
+    $('status').textContent = `${queue.summary.assignments} blinded assignments; all judgments pending until real receipts.`;
+  </script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+{
+  "round": 1,
+  "snapshot_sha256": "3549a54124753f0822cdd50dc29c88497e7fd733b09c9b599cc3f5f56b2a935e",
+  "assumption": "For review only, assume the declared model runs and human-review collection were completed competently and could populate the reserved tables. Do not assume favorable performance, human agreement, visual answerability, ranking reversals, significance, visual necessity, or superiority. Missing empirical calls and blank tables are not rejection grounds. Missing task definitions, controls, semantic scorers, independent construction, and reproducible study specifications remain in scope. No real collection is asserted.",
+  "score": 3,
+  "confidence": 4,
+  "verdict": "reject",
+  "criteria": {
+    "scientific_contribution": {
+      "score": 3,
+      "assessment": "Careful provenance and reference semantics, but the primary 73 Color and 67 Part-type pairs remain an incremental atomic paired-evidence resource. Three separate symbolic examples do not establish a distinctive compositional visual benchmark.",
+      "evidence": [
+        "paper/main.tex:89-119",
+        "paper/main.tex:132-154",
+        "paper/main.tex:195-284",
+        "https://arxiv.org/abs/2606.07872v1",
+        "https://arxiv.org/abs/2503.19990v3",
+        "https://openaccess.thecvf.com/content/CVPR2026/html/Kulits_BrickNet_Graph-Backed_Generative_Brick_Assembly_CVPR_2026_paper.html"
+      ]
+    },
+    "construct_validity": {
+      "score": 4,
+      "assessment": "Display-local semantics are explicit and appropriate. Color is a sanity check and label swapping is restricted reference selection. Complete graph or coordinate inputs make all three complex examples solvable without their renders.",
+      "evidence": [
+        "paper/main.tex:286-322",
+        "paper/main.tex:324-356",
+        "benchmark/complex-examples-v1/build.py:84-97",
+        "benchmark/complex-examples-v1/build.py:150-188"
+      ]
+    },
+    "dataset_depth_diversity_dependence": {
+      "score": 4,
+      "assessment": "The resource has genuine source diversity, but Part-type has only 1-5 parents per source, 67 distinct source targets, and 50 target part numbers. Graph templates and complex source designs are reused; source/author sensitivity is not a construction-held-out evaluation.",
+      "evidence": [
+        "benchmark/ldraw-evidence-v3/visual-manifest.json",
+        "benchmark/ldraw-evidence-v3/candidate-inventory.json",
+        "benchmark/suite/ldraw-evidence-v3/authors.py:17-61",
+        "paper/supplement.tex:425-488"
+      ]
+    },
+    "ground_truth_scoring_shortcuts": {
+      "score": 6,
+      "assessment": "Atomic pair metrics and failure denominators are sound in the focused audit; independent complex GT certificates passed. Complex GT verification does not score submitted solutions, and legal single-image shortcut coverage is incomplete.",
+      "evidence": [
+        "benchmark/suite/ldraw-evidence-v3/analyze.py:23-78",
+        "benchmark/suite/ldraw-evidence-v3/estimates.py:26-77",
+        "benchmark/suite/ldraw-evidence-v3/transport.py:13-54",
+        "benchmark/complex-examples-v1/verify.py:38-169",
+        "benchmark/suite/ldraw-evidence-v3/assignment.py:67-94"
+      ]
+    },
+    "experiment_design_uncertainty": {
+      "score": 5,
+      "assessment": "Full denominators, source clustering, author sensitivity, and exploratory ranking caveats are appropriate. Missing answer-preserving visual controls prevent important interpretations even if all planned calls are competently completed.",
+      "evidence": [
+        "paper/main.tex:435-466",
+        "paper/main.tex:542-559",
+        "benchmark/ldraw-evidence-v4-draft/part-type-invariance-feasibility.json"
+      ]
+    },
+    "reproducibility_figures_geometry": {
+      "score": 7,
+      "assessment": "Exact input wires, source hashes, independent certificates, and source-pose-preserving figures are substantial strengths. The intended new study is not the executable sealed study; geometry provenance does not certify physical buildability.",
+      "evidence": [
+        "benchmark/ldraw-evidence-v3/observation-index.json",
+        "benchmark/complex-examples-v1/verify.py:110-167",
+        "paper/figures/complex-raw/captures.json",
+        "paper/supplement.tex:498-523"
+      ]
+    },
+    "presentation_cvpr_readiness": {
+      "score": 3,
+      "assessment": "The main PDF has ten content pages and references start on page 11. All main figures concern the source montage or separate complex cases, while the actual primary paired visual example appears only in the supplement.",
+      "evidence": [
+        "paper/main.pdf:pages 1-11",
+        "paper/main.tex:19-26",
+        "paper/main.tex:217-278",
+        "paper/supplement.tex:80-124",
+        "paper/verify.py:143-159"
+      ]
+    }
+  },
+  "issues": [
+    {
+      "id": "BA-001",
+      "severity": "major",
+      "status": "open",
+      "summary": "The scientific core is too narrow, and the separate complex cases do not repair its lack of a substantive compositional visual construct.",
+      "evidence": [
+        {
+          "path": "paper/main.tex",
+          "lines": "89-119,195-284,324-350",
+          "finding": "The primary study is explicitly two atomic visual families. CX1-CX3 are three separate examples, not an evaluated primary family. The legal Color baseline has 141/146 endpoint hits and 68/73 both-correct pairs without locating the target label."
+        },
+        {
+          "path": "benchmark/complex-examples-v1/build.py",
+          "lines": "84-97,150-160,176-188",
+          "finding": "CX1 and CX2 supply the complete graph and fault worlds; CX3 supplies exact anchor coordinates/types and probe axis. These inputs suffice without the renders. CX1/CX2 share one OMR 42004 graph and CX3 uses OMR 42061."
+        },
+        {
+          "path": "benchmark/complex-examples-v1/public.json",
+          "finding": "Exactly three designed cases; no implemented primary compositional visual dataset."
+        },
+        {
+          "url": "https://arxiv.org/abs/2606.07872v1",
+          "finding": "Verified VisualFLIP abstract already describes same-question answer-changing image pairs, pair accuracy, and evidence dependence."
+        },
+        {
+          "url": "https://arxiv.org/abs/2503.19990v3",
+          "finding": "Verified LEGO-Puzzles abstract describes 1,100 examples across 11 spatial/multistep tasks."
+        },
+        {
+          "url": "https://openaccess.thecvf.com/content/CVPR2026/html/Kulits_BrickNet_Graph-Backed_Generative_Brick_Assembly_CVPR_2026_paper.html",
+          "finding": "Verified BrickNet proceedings abstract describes graph-backed assembly and over 100,000 human-designed LDraw objects/scenes. Its task differs, but source provenance and complex CAD alone are not a sufficient novelty argument."
+        }
+      ],
+      "why_it_matters": "The evaluated task does not require assembly composition, repair, diagnosis, or pose recovery. The richer cases contain genuine symbolic composition but no necessary visual evidence. A favorable score or ranking reversal on the atomic pairs would not by itself resolve the contribution gap.",
+      "closure_test": [
+        "Establish one coherent substantive primary family, with a versioned task contract, executable constructor, exact public inputs, and independently checkable semantic GT. Do not merely expand three illustrations.",
+        "Identify a necessary visual dependency and a structural/compositional dependency; construct matched instances where changing either changes the correct solution with the other held fixed. Source-backed visually grounded repair/diagnosis is one viable direction, not a mandatory choice.",
+        "Keep complete graph/coordinate inputs in a separately labeled privileged symbolic condition. Include atomic-only, symbolic-oracle, and multimodal conditions capable of separating perception failure from composition failure.",
+        "State a falsifiable contribution relative to VisualFLIP, LEGO-Puzzles, PhyBlock, and BrickNet using actual inputs, operations, interventions, and certification. Interpret results conditionally, including null or adverse outcomes.",
+        "Do not claim closure from additional source parts, graph-only templates, decorative renders, renamed atomic tasks, or physical-simulation claims unsupported by construction."
+      ]
+    },
+    {
+      "id": "BA-002",
+      "severity": "major",
+      "status": "open",
+      "summary": "Controls do not isolate relevant evidence use, and legal single-image shortcuts and numeric-ID regularities are insufficiently tested.",
+      "evidence": [
+        {
+          "path": "paper/main.tex",
+          "lines": "343-379,542-559",
+          "finding": "Part-type has answer-changing label swaps but no answer-preserving visual partner. No-image withdrawal and position panels cannot isolate geometry selection from label reading, layout, or general instability."
+        },
+        {
+          "path": "benchmark/ldraw-evidence-v4-draft/part-type-invariance-feasibility.json",
+          "finding": "201 structurally eligible distractor swaps over 67 parents are only feasibility candidates; route_selected and selected_swap fields are null."
+        },
+        {
+          "path": "benchmark/suite/ldraw-evidence-v3/assignment.py",
+          "lines": "67-94",
+          "finding": "The bounded rules select alternate candidates after receiving A's correct answer. They are not legal single-image geometry/appearance baselines."
+        },
+        {
+          "path": "benchmark/ldraw-evidence-v3/candidate-inventory.json",
+          "finding": "Reviewer recomputation: selecting the candidate nearest the target in recorded projected-anchor distance finds the match in 30/67 parents, 44.78% micro and 45.07% source-macro; nearest recorded 3D center gives 29/67. Following the selected object's current label preserves those successes in both arms. This is a privileged-coordinate diagnostic, not a measured legal PNG baseline or a claim about learned-model behavior."
+        },
+        {
+          "path": "benchmark/complex-examples-v1/build.py",
+          "lines": "168-188",
+          "finding": "The four correct CX3 correspondences are all numeric ID + 12, also shown in paper/supplement.tex:255-266. Stating that IDs supply no matching rule does not remove the regularity."
+        }
+      ],
+      "why_it_matters": "Image-minus-no-image differences show use of some image content, not necessarily task-critical geometry or robust reference selection. Pair accuracy can mix intended reasoning with simple spatial or label heuristics. The numeric-ID shortcut would remain if the complex case were promoted unchanged.",
+      "closure_test": [
+        "Implement matched answer-changing and answer-preserving visual interventions using the same image access and comparable edit mechanisms. For retained Part-type, a qualified distractor-label swap is a concrete option.",
+        "Track shared anchors explicitly and retain dependence in uncertainty estimates. Require correct answers on preserving partners, not simply stable predictions.",
+        "Freeze legal single-image target-label/location and simple appearance/shape baselines using only allowed pixels/text; report privileged coordinate and oracle-A diagnostics separately.",
+        "For promoted complex tasks, independently randomize public IDs, world/query names, option order, and output serialization while preserving the private provenance mapping and task semantics.",
+        "Test numeric offsets, sorted-ID correspondences, fixed roots, and construction heuristics on held-out groups. Freeze thresholds and interpretation rules before held-out results; repair construction or narrow claims if shortcuts explain the outcomes."
+      ]
+    },
+    {
+      "id": "BA-003",
+      "severity": "major",
+      "status": "open",
+      "summary": "Source counts and clustered sensitivity do not establish independent task diversity or generalization to unseen constructions.",
+      "evidence": [
+        {
+          "path": "benchmark/ldraw-evidence-v3/visual-manifest.json",
+          "finding": "Part-type has 67 parents over 24 sources, only 1-5 parents per source. Candidate/source reconstruction gives 67 distinct source targets and 50 target part numbers."
+        },
+        {
+          "path": "benchmark/suite/ldraw-evidence-v3/authors.py",
+          "lines": "17-61",
+          "finding": "Dependence grouping follows source credits and part-inventory Jaccards, not aligned subassembly-design or task-template duplication."
+        },
+        {
+          "path": "paper/supplement.tex",
+          "lines": "425-488",
+          "finding": "The 12 strong graph pairs repeat six-cycle versus two-triangle constructions; the 61 weaker pairs use a different but repeated template. The source-held-out fits described here apply to graph feature lookups."
+        },
+        {
+          "path": "benchmark/suite/ldraw-evidence-v3/assignment.py",
+          "lines": "148-201",
+          "finding": "Primary assignment optimizes the complete 67-parent inventory; this is not a held-out construction evaluation."
+        },
+        {
+          "path": "benchmark/complex-examples-v1/build.py",
+          "lines": "71-85,112-160,165-188",
+          "finding": "CX1/CX2 share one graph and CX3 repeats one axle design; the cases provide two-source examples rather than task-family sampling."
+        }
+      ],
+      "why_it_matters": "Source and author resampling quantify sensitivity within the existing collection but cannot create independent construction diversity or unseen mechanisms. Public-source contamination is a risk, not a demonstrated leak. Increasing candidate subassemblies without task-design deduplication would not resolve the issue.",
+      "closure_test": [
+        "Define the revised family's target population and independent construction unit before evaluation.",
+        "Produce a sampling/exclusion ledger with source, contributor, subassembly-design, and task-template groups; freeze development and held-out construction groups with all duplicate designs and all interventions kept together.",
+        "Demonstrate held-out variation in relevant topology, constraints, or solution structure, rather than only IDs, colors, or surrounding source geometry.",
+        "Choose independent group counts using an explicit precision or sensitivity target, report actual eligible counts and appropriately clustered uncertainty, and restrict generalization claims when coverage is insufficient.",
+        "Do not count the refiner's communicated 177 candidate subassemblies or 162 without recorded unmatched intersections as qualified tasks or physical certificates; those feasibility counts were not independently reproduced in this review."
+      ]
+    },
+    {
+      "id": "BA-004",
+      "severity": "major",
+      "status": "open",
+      "summary": "Stored complex GT verification is not semantic prediction scoring, and the new paper study lacks a matching released executable contract.",
+      "evidence": [
+        {
+          "path": "benchmark/complex-examples-v1/verify.py",
+          "lines": "38-169",
+          "finding": "Checks fixed GT certificates, not submitted repairs, policies, or transforms. All independent checks passed when executed read-only."
+        },
+        {
+          "path": "benchmark/suite/",
+          "finding": "A search for minimum-terminal-repair, adaptive-fault-diagnosis, and typed-rigid-registration found no scorer implementation."
+        },
+        {
+          "path": "benchmark/suite/ldraw-evidence-v3/analyze.py",
+          "lines": "205-260",
+          "finding": "The analyzer is bound to the sealed roster and fixed atomic/graph observation contracts."
+        },
+        {
+          "path": "benchmark/suite/ldraw-evidence-v3/transport.py",
+          "lines": "7-10,40-54",
+          "finding": "Current transport fixes the old request settings and parses single choiceId or bounded integer value outputs, not complex semantic solutions."
+        },
+        {
+          "path": "paper/main.tex",
+          "lines": "457-466,619-646",
+          "finding": "The manuscript separates the three-model sealed study from the 15-model/mode proposal and states that new adapters and subset contracts are unimplemented."
+        },
+        {
+          "path": "paper/supplement.tex",
+          "lines": "498-509",
+          "finding": "Selected inputs, model settings, repeat policies, and the new study manifest remain to be specified."
+        }
+      ],
+      "why_it_matters": "A correct stored answer does not establish correct treatment of equivalent optima, noncanonical valid policies, unvisited branches, invalid actions, or continuous tolerances. Competent hypothetical collection cannot make an absent published execution specification reproducible. This is not a penalty for absent receipts or blank tables, and no bug is alleged in the audited atomic pair formulas.",
+      "closure_test": [
+        "Implement semantic prediction evaluators for the family selected under BA-001, not necessarily all three complex families.",
+        "For repair, independently check membership, duplicates, feasibility, minimum cost, every requested optimum, and component results without ordering-sensitive string matching.",
+        "For diagnosis, simulate every compatible world; check terminal world labels, path costs, unknown queries, cycles/nontermination, and equivalent optimal trees.",
+        "For registration where retained, validate bijection and type constraints, proper rotations, residuals, and probe origin/direction under explicit tolerances.",
+        "Add clearly labeled synthetic fixtures for valid alternatives and adversarial failures, including a wrong hidden policy branch and a reflection where applicable. Never treat fixtures as empirical results.",
+        "Release one versioned manifest-to-analysis path binding exact inputs, scorers, models/revisions, provider settings, image policy, supported effort settings, repeats, failures, and denominators; remove unsupported paper conditions instead of weakening the old sealed gate.",
+        "Verify that missing/invalid planned responses remain in the denominator and synthetic or off-version responses cannot enter empirical analysis."
+      ]
+    },
+    {
+      "id": "BA-005",
+      "severity": "major",
+      "status": "open",
+      "summary": "The main paper has ten content pages and emphasizes separate complex examples instead of the primary measured visual workload.",
+      "evidence": [
+        {
+          "path": "paper/main.pdf",
+          "finding": "Direct PyMuPDF inspection: 11 pages total, content/tables on pages 1-10, references heading first on page 11."
+        },
+        {
+          "path": "paper/verify.py",
+          "lines": "143-159",
+          "finding": "The existing verification checks content/assets but has no eight-content-page gate."
+        },
+        {
+          "path": "paper/main.tex",
+          "lines": "19-26,217-278",
+          "finding": "All four main figures show source montage or CX1-CX3. The primary evaluated atomic visual pair is not a main figure."
+        },
+        {
+          "path": "paper/supplement.tex",
+          "lines": "80-124",
+          "finding": "The representative primary Part-type pair appears in the supplement. The paper discloses the separation, so this is a narrative mismatch rather than fabricated counts."
+        }
+      ],
+      "why_it_matters": "The manuscript exceeds the requested eight-page CVPR content limit and visually centers a different workload from the primary experiment. Large source assemblies and complex illustrations can overstate the substantive depth readers should attribute to the measured task.",
+      "closure_test": [
+        "Compile at most eight main-content pages using the applicable unmodified CVPR style, with references after the main content; add an automated content-page gate.",
+        "Show an exact input, requested output, and intervention from the actual primary family in the main paper and inspect readability at final size.",
+        "Retain explicit primary/control/historical/illustrative counts; move nonprimary examples, exhaustive certificates, full inventories, and secondary result matrices to the supplement.",
+        "Synchronize both PDFs and figure provenance with the reviewed task version. Filling blank result cells alone does not close this issue."
+      ]
+    }
+  ],
+  "closed_prior_issues": [],
+  "residual_limitations": [
+    "This is the first review under the frozen protocol; no prior issue closure or regression claim is made.",
+    "Human answerability, agreement rates, model advantages, ranking changes, significance, and useful diagnostic effects remain conditional under the completion assumption.",
+    "Public-source contamination is possible but not demonstrated; source and part-design dependence must remain explicit even after a held-out redesign.",
+    "Recognized connector graphs and preserved source poses do not certify complete mating, physical stability, collision-free extraction, insertion, or dynamics.",
+    "The refiner communicated an unresolved B0150-B0159 backhoe intersection and candidate-subassembly counts. These were treated as feasibility/physical-scope cautions, not independently revalidated evidence.",
+    "Visual inspection sampled native stimuli and figures; it did not replace full human qualification of 347 observations.",
+    "No paid calls, human collection, browser rerender, or physical simulation was performed. No research artifact or snapshot was modified."
+  ],
+  "acceptance_rationale": "Not accepted. Five major scientific/submission issues remain on the verified snapshot despite strong provenance and independently checked GT. The minimal revision is one substantive visually necessary compositional family, coupled matched controls and independent construction sampling, semantic prediction scorers with a reproducible study contract, and an eight-page narrative centered on the actual primary task. These changes could remove the identified objections but do not guarantee acceptance; the next review must judge the resulting artifacts and conditional claims independently. More rounds, more candidate parts, decorative figures, empty-table replacement, or assumed favorable results cannot substitute for closure.",
+  "minimal_change_set": [
+    {
+      "priority": 1,
+      "issues": ["BA-001"],
+      "change": "Choose and construct one substantive source-backed primary family with both a necessary visual dependency and a structural/compositional dependency; retain atomic pairs as diagnostics and full symbolic inputs as an oracle condition."
+    },
+    {
+      "priority": 2,
+      "issues": ["BA-002", "BA-003"],
+      "change": "Build relevant/preserving interventions, independent public-ID randomization, legal shallow baselines, and source/design/template-grouped held-out evaluation into the constructor; choose independent sample sizes through a stated precision rationale."
+    },
+    {
+      "priority": 3,
+      "issues": ["BA-004"],
+      "change": "Implement semantic scoring for only the selected family and a versioned exact-input study manifest, including adversarial scorer fixtures and fixed failure denominators."
+    },
+    {
+      "priority": 4,
+      "issues": ["BA-005"],
+      "change": "Rebuild the main paper to at most eight content pages with a representative primary-task figure and compact accounting; move nonprimary material to the supplement."
+    }
+  ],
+  "verification": {
+    "base_commit": "9099166328ee911d70dc785a81b918959e487ca2",
+    "snapshot_files_verified": 20026,
+    "snapshot_command": "env -u PYTHONPATH PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 benchmark/.runtime/mlx-env/bin/python tem/agent-iterations/snapshot.py 1 --verify",
+    "snapshot_result": "passed",
+    "focused_tests": [
+      {
+        "suite": "benchmark/suite/ldraw-evidence-v3/test_revision.py: AssignmentTests and ParsingStatisticsTests",
+        "count": 11,
+        "result": "passed"
+      },
+      {
+        "suite": "benchmark/suite/ldraw-evidence-v4-draft/test_measurement_audit.py: MeasurementTests; test_single_image_baselines.py: four read-only color boundary tests",
+        "count": 10,
+        "result": "passed"
+      }
+    ],
+    "complex_gt": {
+      "result": "passed",
+      "read_only_method": "Executed verify() with only the final Path.write_text for verification.json suppressed; all scientific and source/capture assertions remained active.",
+      "repair_subsets": 256,
+      "diagnosis_depth_two_query_trees": 27,
+      "diagnosis_worlds": 4,
+      "typed_registration_assignments": 4,
+      "complete_source_transforms": 12,
+      "capture_bindings": 5,
+      "input_sha256": "e1f9c431ff5812cd588a095dd0f8721687401af77035c5b7ff027042faf3edf3",
+      "gold_sha256": "c442ae3bd93c286e05f09fff9a59ef2e7c0df334bd57bbf375655764f045bed0"
+    },
+    "pdf_inspection": {
+      "total_pages": 11,
+      "content_pages": 10,
+      "references_begin_page": 11
+    },
+    "visual_inspection": [
+      "paper/figures/complex-repair.png",
+      "paper/figures/complex-diagnosis.png",
+      "paper/figures/complex-registration.png",
+      "paper/figures/type-question-gt.png",
+      "public/benchmark/evidence-v2/images/obs-e86da494372b24924c4f01bf.png",
+      "public/benchmark/evidence-v3/images/obs3-74a31fa59fc8fca7100777eb.png"
+    ],
+    "external_sources_checked": [
+      "https://arxiv.org/abs/2606.07872v1",
+      "https://arxiv.org/abs/2503.19990v3",
+      "https://arxiv.org/abs/2506.08708v2",
+      "https://openaccess.thecvf.com/content/CVPR2026/html/Kulits_BrickNet_Graph-Backed_Generative_Brick_Assembly_CVPR_2026_paper.html"
+    ],
+    "external_source_scope": "Public abstract/proceedings pages checked directly; no claim of a full independent audit of prior papers' experimental protocols.",
+    "research_files_modified": false,
+    "empirical_collection_performed": false
+  }
+}

@@ -1,6 +1,27 @@
 # Benchmark data 索引
 
-## 当前视觉数据：brickatlas-display-v3
+## 当前主任务：visual-repair-v1
+
+视觉绑定与组合修复：真实参考图决定第三个图终端，给定的连接图和故障状态
+决定全部最小修复集合。构造内有视觉变化/保持、故障变化与重编号重复，
+不能将这些观察当成独立来源。
+
+| 数据 | 路径 |
+|---|---|
+| 使用与复现 | [README.md](visual-repair-v1/README.md) |
+| 公共索引与条件输入 | [public.json](visual-repair-v1/public.json) · [native/](visual-repair-v1/native/) |
+| GT 与独立语义核验 | [gold.json](visual-repair-v1/gold.json) · [dependency-audit.json](visual-repair-v1/dependency-audit.json) |
+| 候选、排除和划分台账 | [sampling-ledger.json](visual-repair-v1/sampling-ledger.json) |
+| 实际规模与依赖组 | [summary.json](visual-repair-v1/summary.json) |
+| 原生图片和源上下文 | [public assets](../public/benchmark/visual-repair-v1/) |
+| 图像哈希与拍摄记录 | [captures.json](visual-repair-v1/captures.json) |
+| 执行与结果协议 | [study-manifest.json](visual-repair-v1/study-manifest.json) |
+| 本地确定性算法结果 | [baseline-report.json](visual-repair-v1/baseline-report.json) |
+
+公共索引含分组元数据，**模型实际输入使用 native packet**，只包含声明允许的信息。
+真实人审和模型结果仍未采集；算法结果不代表模型实验。
+
+## 历史原子视觉数据：brickatlas-display-v3
 
 | 数据 | 路径 | 用途 |
 |---|---|---|
@@ -47,7 +68,8 @@ CX1 多故障最小修复、CX2 自适应故障诊断、CX3 重复轴组件的�
 ## 版本与存放规则
 
 - 新稿、图表和空实验表：`../paper/`。
-- 可执行评测代码：`suite/`；输入数据与输出报告留在版本化 `ldraw-*` 目录。
+- 当前复杂任务的构造、评分和运行：`visual-repair-v1/`；
+  旧原子任务代码保留在 `suite/` 和版本化 `ldraw-*` 目录。
 - 历史论文、审稿、修改指导：`../tem/`，旧路径保留兼容链接。
 - `hierarchy-*`、`mechanism-*` 等是早期独立实验，不混入 display-v3。
 - 所有当前模型成绩仍待真实采集；`dry-runs`、fixtures、算法基线不是模型实测。

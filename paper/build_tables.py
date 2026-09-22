@@ -28,38 +28,32 @@ def proposed():
             "category": "Proprietary VLM" if api else "Open-weight VLM" if visual else "Open-weight text LM",
             "modality": "Image + text" if visual else "Text only",
             "planned_identifier": item.get("api_id", item.get("repo")),
-            "tracks": ["visual", "no-image", "graph"] if visual else ["graph"],
+            "tracks": ["multimodal", "no_image", "oracle_binding", "atomic_binding"] if visual else ["no_image", "oracle_binding"],
             "status": "proposed-unfrozen",
         })
-    vlms = [m for m in models if "visual" in m["tracks"]]
+    vlms = [m for m in models if "multimodal" in m["tracks"]]
     def rows(items, metrics):
         return [{"id": m["id"], "label": m["name"],
                  "results": {key: None for key in metrics}} for m in items]
     tables = {
-        "visual": rows(vlms, ["color_A", "color_New", "color_Both", "type_A", "type_New", "type_Both"]),
-        "diagnostics": rows(vlms, ["color_adaptation", "color_retention", "color_valid_both",
-                                  "type_adaptation", "type_retention", "type_valid_both"]),
-        "controls": rows(vlms, ["color_noimage_Both", "type_noimage_Both", "panel_accuracy",
-                               "color_QA_minus_full", "type_QA_minus_full"]),
-        "graph": rows(models, ["strong_change_Both", "degree_visible_change_Both",
-                              "strong_invariance_Both", "degree_visible_invariance_Both", "valid_observations"]),
-        "modes": rows([{"id": "qwen27-mode", "name": "Qwen3.5-27B: thinking on minus off"},
-                       {"id": "gemini-pro-mode", "name": "Gemini 3.1 Pro: higher minus lower effort"}],
-                      ["color_Both_delta", "type_Both_delta", "graph_strong_Both_delta",
-                       "billed_output_tokens", "cost_usd"]),
+        "repair-primary": rows(vlms, ["repair_exact", "binding_accuracy", "changing_both_correct",
+                                      "preserving_both_correct", "structural_both_correct", "factorial_all_correct"]),
+        "repair-decomposition": rows(vlms, ["atomic_binding", "no_image_repair", "oracle_binding_repair",
+                                            "repair_given_binding", "invalid_rate"]),
+        "repair-text": rows([m for m in models if m not in vlms], ["no_image_repair", "oracle_binding_repair"]),
     }
     return {
-        "schema": 1, "status": "experiment-plan-no-model-results",
+        "schema": 2, "status": "experiment-plan-no-model-results",
         "model_snapshot_date": budget["price_checked_date"],
         "model_source": str(BUDGET.relative_to(ROOT)), "model_source_sha256": digest(BUDGET),
-        "dataset": "brickatlas-display-v3",
-        "study_boundary": "New 15-model proposal; does not replace the sealed v3 three-model roster.",
+        "dataset": "visual-repair-v1",
+        "study_boundary": "New 15-model repair proposal; historical atomic protocols and results stay separate.",
         "result_policy": "All pending results are null and render as empty cells, never zero or fabricated scores.",
-        "aggregation": "Visual families separate; equal-source primary, micro and source intervals companion outputs.",
+        "aggregation": "Equal dependence-group means primary; micro, paired group sensitivity and denominators accompany all metrics.",
         "required_before_collection": [
-            "Freeze selected IDs, QA lineage, models, provider revisions and precision.",
-            "Implement and validate new provider adapters and subset QA gate.",
-            "Freeze repeat count, image policy, output/effort budget, failures and inclusion rules.",
+            "Complete native-input qualification and freeze eligible-input lineage.",
+            "Pin provider/model revision, precision, adapter and image policy in a separate external run lock.",
+            "Bind planned slots, supported generation settings and failure rules to the versioned study manifest.",
         ],
         "models": models, "tables": tables,
     }
@@ -79,8 +73,12 @@ def table(headers, rows, spec=None):
     ])
 
 
-def build():
-    if not CONFIG.exists():
+def build(refresh_proposal=False):
+    if refresh_proposal and CONFIG.exists():
+        previous = json.loads(CONFIG.read_text())
+        assert all(value is None for rows in previous["tables"].values()
+                   for row in rows for value in row["results"].values()), "Refuse to overwrite measured results."
+    if not CONFIG.exists() or refresh_proposal:
         CONFIG.write_text(json.dumps(proposed(), indent=2) + "\n")
     config = json.loads(CONFIG.read_text())
     expected = proposed()
@@ -88,21 +86,13 @@ def build():
     generated = HERE / "generated"
     generated.mkdir(exist_ok=True)
     inventory = [[tex(m["name"]), tex(m["category"]),
-                  "Visual / no-image / graph" if "visual" in m["tracks"] else "Graph"]
+                  "All four conditions" if "multimodal" in m["tracks"] else "No-image / oracle"]
                  for m in config["models"]]
-    (generated / "models.tex").write_text(table(["Model", "Model class", "Planned inputs"], inventory, "lll"))
+    (generated / "repair-models.tex").write_text(table(["Model", "Model class", "Planned inputs"], inventory, "lll"))
     headers = {
-        "visual": ["Model", r"\shortstack{Color\\A}", r"\shortstack{Color\\New}", r"\shortstack{Color\\Both}",
-                   r"\shortstack{Part-type\\A}", r"\shortstack{Part-type\\New}", r"\shortstack{Part-type\\Both}"],
-        "diagnostics": ["Model", r"\shortstack{Color\\Adapt.}", r"\shortstack{Color\\Old}", r"\shortstack{Color\\Valid}",
-                        r"\shortstack{Part-type\\Adapt.}", r"\shortstack{Part-type\\Old}", r"\shortstack{Part-type\\Valid}"],
-        "controls": ["Model", r"\shortstack{No-image\\Color Both}", r"\shortstack{No-image\\Type Both}",
-                     r"\shortstack{Panel\\accuracy}", r"\shortstack{Color\\QA--full}", r"\shortstack{Type\\QA--full}"],
-        "graph": ["Model", r"\shortstack{Strong\\change}", r"\shortstack{Degree-visible\\change}",
-                  r"\shortstack{Strong\\invariance}", r"\shortstack{Degree-visible\\invariance}",
-                  r"\shortstack{Format\\valid}"],
-        "modes": ["Configuration contrast", r"$\Delta$ Color", r"$\Delta$ Type", r"$\Delta$ Strong",
-                  r"\shortstack{Output\\tokens}", "USD"],
+        "repair-primary": ["Model", "Exact", "Bind", "V-change", "V-keep", "Fault", "All-six"],
+        "repair-decomposition": ["Model", "Atomic", "No-image", "Oracle", r"Repair$|$Bind", "Invalid"],
+        "repair-text": ["Model", "No-image repair", "Oracle repair"],
     }
     for key, data in config["tables"].items():
         values = [[tex(row["label"])] + ["" for value in row["results"].values()] for row in data]
@@ -128,5 +118,6 @@ def build():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.parse_args()
-    build()
+    parser.add_argument("--refresh-proposal", action="store_true", help="Deliberately replace only the null-valued planning schema.")
+    args = parser.parse_args()
+    build(args.refresh_proposal)

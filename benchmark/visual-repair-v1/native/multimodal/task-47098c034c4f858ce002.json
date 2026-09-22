@@ -1,0 +1,136 @@
+{
+  "version": "visual-repair-v1",
+  "condition": "multimodal",
+  "question": "Match the unlabeled reference geometry to exactly one candidate card; ignore orientation and use its current printed ID as bound_terminal. The graph IDs refer to the current display, not source part identities. Together with fixed_terminals it must lie in one connected component. Only paths inside the supplied undirected graph count. Initially every listed missing vertex and its incident edges is unavailable. Restoring one listed vertex costs 1 and reinstates its original edges to present neighbors. Return every minimum-cost restoration set, its own final component sizes, minimum_cost, and whether budget suffices. Graph unavailability is not a physical removal. Order is irrelevant; duplicate vertices/solutions and unlisted actions are invalid.",
+  "input": {
+    "graph": {
+      "nodes": [
+        "V9994",
+        "V7677",
+        "V1578",
+        "V1080",
+        "V3993",
+        "V4617",
+        "V1330",
+        "V5923",
+        "V3351",
+        "V8069",
+        "V8328",
+        "V8719",
+        "V7415",
+        "V5373",
+        "V3358",
+        "V5200",
+        "V2833"
+      ],
+      "edges": [
+        [
+          "V1080",
+          "V4617"
+        ],
+        [
+          "V8328",
+          "V5923"
+        ],
+        [
+          "V5373",
+          "V3358"
+        ],
+        [
+          "V8719",
+          "V8328"
+        ],
+        [
+          "V1578",
+          "V5373"
+        ],
+        [
+          "V3358",
+          "V3993"
+        ],
+        [
+          "V7415",
+          "V8719"
+        ],
+        [
+          "V8069",
+          "V9994"
+        ],
+        [
+          "V3993",
+          "V2833"
+        ],
+        [
+          "V7677",
+          "V8069"
+        ],
+        [
+          "V2833",
+          "V3351"
+        ],
+        [
+          "V4617",
+          "V1578"
+        ],
+        [
+          "V5923",
+          "V5200"
+        ],
+        [
+          "V1330",
+          "V7677"
+        ],
+        [
+          "V5200",
+          "V1330"
+        ],
+        [
+          "V3351",
+          "V7415"
+        ]
+      ]
+    },
+    "missing": [
+      "V3358",
+      "V4617",
+      "V8328",
+      "V7677",
+      "V8719",
+      "V2833",
+      "V5373",
+      "V1330"
+    ],
+    "fixed_terminals": [
+      "V8069",
+      "V5923"
+    ],
+    "candidate_ids": [
+      "V1080",
+      "V1578",
+      "V9994",
+      "V3351"
+    ],
+    "budget": 3,
+    "cost_per_vertex": 1
+  },
+  "images": [
+    {
+      "path": "public/benchmark/visual-repair-v1/images/image-cd7447fdfdc879196898.png",
+      "sha256": "e3d03bf62d06067b6e4e751484b1f535e7eb12121c30085130ddd18db3643cd1",
+      "mime_type": "image/png",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "output_schema": {
+    "bound_terminal": "one candidate ID string",
+    "minimum_cost": "nonnegative integer",
+    "budget_sufficient": "boolean",
+    "solutions": [
+      {
+        "restored": "array of IDs",
+        "component_sizes": "array of positive integers"
+      }
+    ]
+  }
+}
