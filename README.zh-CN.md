@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/media/brick-atlas-mark.svg" width="760" alt="Brick Atlas 动态积木标识">
+  <img src="web/docs/media/brick-atlas-mark.svg" width="760" alt="Brick Atlas 动态积木标识">
 </p>
 
 <h1 align="center">Brick Atlas</h1>
@@ -17,6 +17,7 @@
 | 内容 | 入口 |
 |---|---|
 | 当前论文与附录 | [paper/](paper/README.md) · [正文 PDF](paper/main.pdf) · [附录 PDF](paper/supplement.pdf) |
+| 网页源码、页面、前端配置与测试 | [web/](web/README.md) |
 | Benchmark data、版本及规模 | [benchmark/DATASETS.md](benchmark/DATASETS.md) |
 | Metrics 定义与实现 | [benchmark/METRICS.md](benchmark/METRICS.md) |
 | 当前复杂修复主任务 | [benchmark/visual-repair-v1/](benchmark/visual-repair-v1/) |
@@ -51,8 +52,9 @@
 三维来源查看器为 `/benchmark`。检查入口包含答案；
 正式人审使用[独立盲审包](benchmark/ldraw-evidence-v3/QA-AND-RUN.md)。
 
-今后修改论文统一进入 `paper/`。旧 `benchmark/paper` 和审稿路径通过兼容链接
-指向 `tem/`，保留历史哈希。代码、数据、图像、审核包和 PDF 纳入 Git；
+论文统一进入 `paper/`，网页统一进入 `web/`，中间产物与历史材料统一进入 `tem/`，
+数据及评估代码保留在 `benchmark/`。根目录旧审稿别名已移除，
+封存数据所需路径保留兼容链接。代码、数据、图像、审核包和 PDF 纳入 Git；
 大型重复恢复压缩包及运行环境保留本地，详见 [tem 说明](tem/README.md)。
 
 ## 功能演示
@@ -99,7 +101,7 @@ https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
 - Create 支持本地内嵌 GLB 导入、取消过期任务、资源释放及积木 JSON 导出。
 - 统一容量边界，保留损坏存档，离开页面立即补写未保存修改。
 
-逐模块实现、验证和功能边界见[全空间升级说明](docs/WORKSPACE_UPGRADE.md)。
+逐模块实现、验证和功能边界见[全空间升级说明](web/docs/WORKSPACE_UPGRADE.md)。
 
 ## 页面
 
@@ -137,7 +139,7 @@ Create 默认使用可匿名调用的公开 TripoSR CPU 服务。官方 ZeroGPU 
 → 积木打包、步骤、BOM 和 LDraw
 ```
 
-用户可以在原始网格和积木结果之间切换，并下载中间 GLB。公开服务不可用时会显示真实错误，不会把本地深度外壳伪装成网格结果。详细说明见 [图片转积木流程](docs/IMAGE_TO_BRICKS.md)。
+用户可以在原始网格和积木结果之间切换，并下载中间 GLB。公开服务不可用时会显示真实错误，不会把本地深度外壳伪装成网格结果。详细说明见 [图片转积木流程](web/docs/IMAGE_TO_BRICKS.md)。
 
 ## 模型与许可
 
@@ -153,4 +155,4 @@ npm run test:e2e -- --project=desktop-chrome
 npm audit
 ```
 
-测试范围和已知限制见 [工程审计](docs/ENGINEERING_AUDIT.md)。
+测试范围和已知限制见 [工程审计](web/docs/ENGINEERING_AUDIT.md)。

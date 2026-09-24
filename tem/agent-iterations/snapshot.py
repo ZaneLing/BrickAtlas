@@ -13,9 +13,9 @@ ROOT = HERE.parents[1]
 def snapshot():
     names = subprocess.check_output(
         ["git", "ls-files", "-c", "-o", "--exclude-standard", "--",
-         "paper", "benchmark", "src/benchmark-v2", "public/benchmark",
+         "paper", "benchmark", "web/src/benchmark-v2", "web/public/benchmark",
          "README.md", "README.zh-CN.md"], cwd=ROOT, text=True).splitlines()
-    names += [str(p.relative_to(ROOT)) for p in (ROOT / "public/models").glob("*/manifest.json")]
+    names += [str(p.relative_to(ROOT)) for p in (ROOT / "web/public/models").glob("*/manifest.json")]
     files = {}
     for name in sorted(set(names)):
         path = ROOT / name

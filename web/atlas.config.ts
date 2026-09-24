@@ -1,0 +1,1 @@
+../atlas.config.ts

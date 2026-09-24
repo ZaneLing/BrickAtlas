@@ -1,1 +1,0 @@
-tem/revisions/CVPR_EVIDENCE_V4_DRAFT_REVIEW.md

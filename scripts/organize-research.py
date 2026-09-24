@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from repository_layout import relocated
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "tem/relocation-manifest.json"
@@ -78,10 +79,13 @@ def verify():
         old, new = ROOT / row["old"], ROOT / row["new"]
         if row["git_policy"] == "local-recovery-only" and not new.exists():
             continue
-        assert old.is_symlink(), row["old"]
-        assert old.resolve() == new.resolve(), row["old"]
+        current = ROOT / relocated(row["old"])
+        assert current.resolve() == new.resolve(), row["old"]
+        if current != new:
+            assert current.is_symlink(), current
         for item in row["files"]:
-            assert sha(ROOT / item["path"]) == item["sha256"], item["path"]
+            suffix = Path(item["path"]).relative_to(row["old"])
+            assert sha(new / suffix if suffix != Path(".") else new) == item["sha256"], item["path"]
             total += 1
     print(f"Verified {len(data['moves'])} relocations, {total} unchanged historical files.")
 

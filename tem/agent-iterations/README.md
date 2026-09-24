@@ -37,3 +37,12 @@ python3 tem/agent-iterations/audit.py --require-accept
 
 最终 `audit.py --require-accept` 会重新计算整份研究快照，并逐文件核对
 当前 Git HEAD 中的内容；未提交或审稿后发生变化的研究文件不能通过验收。
+
+目录整理后，旧快照继续绑定当时的提交，不把移动后的工作区视为重新通过审稿。
+使用以下命令检查封存接受记录和该提交内的全部原始字节：
+
+```sh
+python3 tem/agent-iterations/audit.py --require-accept --archived-commit 39e92789f2b64f34dbcfc118a2feb9e4439c951b
+```
+
+当前目录完整性由 [迁移验证](../repository-layout-20260924/README.md) 单独检查。

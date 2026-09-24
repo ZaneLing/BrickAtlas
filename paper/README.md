@@ -3,7 +3,7 @@
 - [Main PDF](main.pdf) and [supplement PDF](supplement.pdf): English manuscript,
   actual native task images, complete GT, condition analysis and source gallery.
 - [Main source](main.tex), [supplement source](supplement.tex) and
-  [verification](verification.json).
+  [verification](../tem/verification/paper/verification.json).
 - [Model/table schema](experiments.json): 15 planned models, 212 genuinely blank
   result fields. Model and human collection have not occurred for this version.
 - [Figure provenance](repair-figure-provenance.json): exact native PNGs, graph
@@ -26,25 +26,29 @@ explicitly separate from empirical model results.
 
 ## Rebuild
 
-First regenerate and verify the benchmark using its README. Then, from the
-repository root, use the recorded Python environment:
+To compile the checked-in manuscript, run `npm run paper:build` from the
+repository root. Set `TECTONIC` to select a Tectonic executable; the bundled
+local runtime is used when no system executable is found. Compiler files stay
+in `tem/build/paper/`; only the two final PDFs are published into `paper/`.
+
+When deliberately updating publication inputs, use the recorded Python
+environment after verifying the corresponding benchmark version:
 
 ```sh
-env -u PYTHONPATH PYTHONNOUSERSITE=1 benchmark/.runtime/mlx-env/bin/python paper/build_tables.py
-env -u PYTHONPATH PYTHONNOUSERSITE=1 benchmark/.runtime/mlx-env/bin/python paper/build_repair_assets.py
+env -u PYTHONPATH PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 benchmark/.runtime/mlx-env/bin/python paper/build_tables.py
+env -u PYTHONPATH PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 benchmark/.runtime/mlx-env/bin/python paper/build_repair_assets.py
 ```
 
-From `paper/`, compile both documents:
+To check compilation without replacing the published PDFs:
 
 ```sh
-../benchmark/.runtime/tectonic --keep-logs main.tex
-../benchmark/.runtime/tectonic --keep-logs supplement.tex
+python3 paper/build.py --check-only
 ```
 
 From the repository root:
 
 ```sh
-env -u PYTHONPATH PYTHONNOUSERSITE=1 benchmark/.runtime/mlx-env/bin/python paper/verify.py
+env -u PYTHONPATH PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 benchmark/.runtime/mlx-env/bin/python paper/verify.py
 ```
 
 `build_tables.py --refresh-proposal` deliberately updates a changed planning
@@ -55,3 +59,7 @@ unchanged archived CVPR style and at most eight main content pages.
 Historical drafts and intermediate reviews belong in
 [tem/](../tem/README.md). The independent review/refinement history is in
 [tem/agent-iterations/](../tem/agent-iterations/README.md).
+Unused figures, old generated tables, raw captures and retired figure builders
+are in [tem/paper/previous-assets/](../tem/paper/previous-assets/README.md).
+The historical capture page is maintained under [web/paper/](../web/paper/),
+served at the unchanged `/paper/complex-render.html` URL.

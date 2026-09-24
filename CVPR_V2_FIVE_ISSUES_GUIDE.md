@@ -1,1 +1,0 @@
-tem/revisions/CVPR_V2_FIVE_ISSUES_GUIDE.md

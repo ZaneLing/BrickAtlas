@@ -39,11 +39,11 @@ if (!await available(port)) {
   process.exit(1);
 }
 
-mkdirSync(resolve(root, '.tools'), { recursive: true });
-const log = openSync(resolve(root, '.tools/dev-server.log'), 'a');
+mkdirSync(resolve(root, 'tem/local'), { recursive: true });
+const log = openSync(resolve(root, 'tem/local/dev-server.log'), 'a');
 const child = spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], {
   cwd: root, detached: true, stdio: ['ignore', log, log],
 });
 child.unref();
-writeFileSync(resolve(root, '.tools/dev-server.pid'), `${child.pid}\n`);
-console.log(`Brick Atlas: ${url}\nPID: ${child.pid}\nLog: ${root}/.tools/dev-server.log`);
+writeFileSync(resolve(root, 'tem/local/dev-server.pid'), `${child.pid}\n`);
+console.log(`Brick Atlas: ${url}\nPID: ${child.pid}\nLog: ${root}/tem/local/dev-server.log`);

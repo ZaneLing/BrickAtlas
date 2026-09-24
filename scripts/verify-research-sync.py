@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+from repository_layout import historical, relocated
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -27,12 +28,13 @@ def verify():
             assert stage == "0", path
             index[path] = (mode, oid)
     def file(relative, expected):
-        path = (ROOT / relative).resolve()
+        path = (ROOT / historical(relative)).resolve()
         actual = str(path.relative_to(ROOT))
         data = path.read_bytes()
         assert hashlib.sha256(data).hexdigest() == expected, relative
         assert actual in index and index[actual][1] == git_blob(data), actual
     def link(relative, target=None):
+        relative = relocated(relative)
         path = ROOT / relative
         assert path.is_symlink(), relative
         actual = os.readlink(path)
@@ -52,9 +54,12 @@ def verify():
     for move in moves:
         if move["git_policy"] == "local-recovery-only":
             continue
-        link(move["old"])
+        current = relocated(move["old"])
+        if current != move["new"]:
+            link(move["old"])
         for row in move["files"]:
-            file(row["path"], row["sha256"])
+            suffix = Path(row["path"]).relative_to(move["old"])
+            file(str(Path(move["new"]) / suffix), row["sha256"])
     print(json.dumps({"status": "passed", "frozen_index_entries": count,
                       "relocations": len(moves),
                       "local_recovery_archives_excluded": True}, indent=2))

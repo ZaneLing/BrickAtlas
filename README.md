@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/media/brick-atlas-mark.svg" width="760" alt="Brick Atlas animated brick mark">
+  <img src="web/docs/media/brick-atlas-mark.svg" width="760" alt="Brick Atlas animated brick mark">
 </p>
 
 <h1 align="center">Brick Atlas</h1>
@@ -17,6 +17,7 @@
 | What you need | Location |
 |---|---|
 | Current paper and supplement | [paper/](paper/README.md) · [main PDF](paper/main.pdf) · [supplement PDF](paper/supplement.pdf) |
+| Website source, pages, frontend configuration and tests | [web/](web/README.md) |
 | Benchmark data and version map | [benchmark/DATASETS.md](benchmark/DATASETS.md) |
 | Metrics, formulas and implementations | [benchmark/METRICS.md](benchmark/METRICS.md) |
 | Current complex repair benchmark | [benchmark/visual-repair-v1/](benchmark/visual-repair-v1/) |
@@ -60,8 +61,10 @@ The evaluator view exposes answers; blind human review uses the dedicated
 [review packages and protocol](benchmark/ldraw-evidence-v3/QA-AND-RUN.md).
 The source 3D workspace remains at `/benchmark`.
 
-Current writing belongs in `paper/`. `benchmark/paper` and old review paths
-are compatibility links into `tem/`, preserving historical hashes.
+Current writing belongs in `paper/`, website development in `web/`, and
+intermediate output and historical material in `tem/`. Benchmark data and
+evaluators remain in `benchmark/`. Root review aliases have been removed;
+necessary frozen-data paths retain compatibility links.
 Source data, PNGs, review packages, code, PDFs and manifests are versioned.
 Large redundant recovery tarballs and local runtimes stay local; see
 [archive and reproduction boundaries](tem/README.md).
@@ -120,7 +123,7 @@ Desktop browsers retain the three-column workspaces. Phone and tablet layouts pl
 - Local embedded GLB import in Create, with cancellable reconstruction, resource cleanup, and JSON export.
 - Bounded project sizes, protected corrupt saves, and immediate autosave flushing when leaving a page.
 
-See the [module-by-module upgrade report](docs/WORKSPACE_UPGRADE.md) for implementation details, verification, and remaining boundaries.
+See the [module-by-module upgrade report](web/docs/WORKSPACE_UPGRADE.md) for implementation details, verification, and remaining boundaries.
 
 ## Routes
 
@@ -139,9 +142,9 @@ The Compose workspace turns catalog models into reusable components while retain
 
 Catalog components retain their original geometry and transforms. Composition steps currently place whole components; connection strength, stud compatibility and physical buildability are not certified. Procedural character and loose-part previews remain simplified.
 
-Build controls animate only the central model. Guide accordions stay user-controlled and contain clickable parts plus one high-resolution start-to-install diagram. Both information sidebars can collapse to expand the model canvas. See [Build Workspace](docs/BUILD_WORKSPACE.md).
+Build controls animate only the central model. Guide accordions stay user-controlled and contain clickable parts plus one high-resolution start-to-install diagram. Both information sidebars can collapse to expand the model canvas. See [Build Workspace](web/docs/BUILD_WORKSPACE.md).
 
-The separate [Assembly Game](docs/ASSEMBLY_GAME.md) starts from zero, validates
+The separate [Assembly Game](web/docs/ASSEMBLY_GAME.md) starts from zero, validates
 part type, color, quantity, and step order, and persists partial or completed
 models locally.
 
@@ -166,7 +169,7 @@ On macOS, `Start.command` and `npm run start:local` are also available.
 
 ## Image Conversion
 
-The Creator now uses an explicit two-stage workflow by default: a public Hugging Face Space turns the front image into a real GLB triangle mesh, then a Web Worker voxelizes that mesh and packs the occupied volume into supported bricks. The original GLB can be inspected and downloaded before viewing the brick result. Photos are sent to the selected public provider only after the user presses Generate. The local Depth Anything V2 and multi-view silhouette pipeline remains available as an offline fallback and is never labeled as a real mesh reconstruction. See [Image-to-Bricks Pipeline](docs/IMAGE_TO_BRICKS.md) for limitations and implementation details.
+The Creator now uses an explicit two-stage workflow by default: a public Hugging Face Space turns the front image into a real GLB triangle mesh, then a Web Worker voxelizes that mesh and packs the occupied volume into supported bricks. The original GLB can be inspected and downloaded before viewing the brick result. Photos are sent to the selected public provider only after the user presses Generate. The local Depth Anything V2 and multi-view silhouette pipeline remains available as an offline fallback and is never labeled as a real mesh reconstruction. See [Image-to-Bricks Pipeline](web/docs/IMAGE_TO_BRICKS.md) for limitations and implementation details.
 
 ## Models and Licenses
 
@@ -182,4 +185,4 @@ npm run test:e2e -- --project=desktop-chrome
 npm audit
 ```
 
-See [Engineering Audit](docs/ENGINEERING_AUDIT.md) for test coverage, measured performance and remaining limitations.
+See [Engineering Audit](web/docs/ENGINEERING_AUDIT.md) for test coverage, measured performance and remaining limitations.

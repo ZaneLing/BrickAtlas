@@ -11,6 +11,8 @@ from build_tables import proposed
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 DATA = ROOT / "benchmark/visual-repair-v1"
+BUILD = ROOT / "tem/build/paper"
+REPORT = ROOT / "tem/verification/paper/verification.json"
 
 
 def load(path):
@@ -112,7 +114,7 @@ def main():
             assert (HERE / graphics).exists(), graphics
         for included in re.findall(r"\\input\{([^}]+)\}", source):
             assert (HERE / included).exists(), included
-        log = (HERE / f"{stem}.log").read_text()
+        log = (BUILD / f"{stem}.log").read_text()
         assert not re.search(r"Overfull \\[hv]box", log), f"{stem}: overfull box"
         assert "There were undefined" not in log and "Rerun to get cross-references right" not in log
         doc = fitz.open(HERE / f"{stem}.pdf")
@@ -137,7 +139,8 @@ def main():
               "documents": documents, "primary_constructions": summary["construction_count"],
               "primary_observations": len(public), "image_pairs_verified": audit["image_pairs_checked"],
               "human_or_model_collection_performed": False}
-    (HERE / "verification.json").write_text(json.dumps(result, indent=2) + "\n")
+    REPORT.parent.mkdir(parents=True, exist_ok=True)
+    REPORT.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2))
 
 

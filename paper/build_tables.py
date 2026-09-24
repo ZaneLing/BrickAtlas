@@ -128,10 +128,13 @@ def build(refresh_proposal=False):
               "generated/graph-main.tex", "generated/graph-invariance.tex", "generated/families.tex"]
     provenance = []
     for relative in copies:
-        source, target = LEGACY / relative, HERE / relative
+        source = LEGACY / relative
+        current = relative in {"cvpr.sty", "ieeenat_fullname.bst", "references.bib"}
+        target = (HERE if current else ROOT / "tem/paper/previous-assets") / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
-        provenance.append({"source": str(source.relative_to(ROOT)), "target": relative, "sha256": digest(target)})
+        target_relative = relative if current else f"../tem/paper/previous-assets/{relative}"
+        provenance.append({"source": str(source.relative_to(ROOT)), "target": target_relative, "sha256": digest(target)})
     (HERE / "asset-provenance.json").write_text(json.dumps(provenance, indent=2) + "\n")
     count = sum(len(row["results"]) for data in config["tables"].values() for row in data)
     print(f"Generated {len(config['models'])} proposed models; {count} empty result cells.")

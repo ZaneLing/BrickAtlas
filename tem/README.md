@@ -1,6 +1,6 @@
-# 历史研究归档
+# 中间产物与历史归档
 
-此目录集中保存中间审稿、修改指导、阶段验收和旧版论文。
+此目录集中保存中间审稿、修改指导、阶段验收、旧版论文及构建产物。
 **当前论文入口是 [../paper/](../paper/README.md)。**
 
 | 目录 | 内容 |
@@ -8,10 +8,18 @@
 | `papers/legacy-tree/` | 原 `benchmark/paper/` 整棵目录，含 v1/v2/v3/v4-draft 论文、附录、图表、构建说明、截图 |
 | `revisions/` | 原目录结构下的 CODEX 计划、CVPR 审稿、修订契约、回应、阶段报告、工作文件及旧网页论文副本 |
 | `recovery/` | 本地大型恢复 tarball；不提交 Git |
+| `paper/previous-assets/` | 当前论文已弃用的图表、截图原件及历史生成脚本 |
+| `assets-built/` | 既有资产构建报告、性能报告与验收数据 |
+| `build/` | 网页构建、论文编译、TypeScript 和 Vite 缓存；不提交 Git |
+| `verification/` | 验证报告；浏览器运行附件不提交 Git |
+| `local/` | 本地预览、调试、录制和开发服务日志；不提交 Git |
+| [repository-layout-20260924/](repository-layout-20260924/README.md) | 本轮目录整理计划、文件迁移清单及验证记录 |
 | [relocation-manifest.json](relocation-manifest.json) | 旧路径、新路径、每个文件的 SHA-256、大小和同步策略 |
 
 历史数据、评测代码、真实算法输出和操作性人审指南仍在 `benchmark/`。
-旧 `benchmark/paper` 和已归档文件路径保留相对符号链接，方便历史引用及哈希校验。
+旧 `benchmark/paper` 等封存路径保留相对符号链接，方便历史引用及哈希校验。
+根目录 CODEX/CVPR/debug 别名已移除，直接从 `revisions/` 阅读；
+验证器通过显式迁移表检查原始哈希。
 在归档原文中阅读相对链接时，可从旧兼容路径打开；原文不为移动而改写。
 不要运行历史 publication generator 来生成当前论文，应使用 `paper/build_tables.py`。
 
