@@ -28,6 +28,10 @@
 | Historical reviews, revision guidance and manuscripts | [tem/](tem/README.md) |
 | Independent reviewer/refiner iterations | [tem/agent-iterations/](tem/agent-iterations/README.md) |
 
+Links into `paper/` and `tem/` refer to local files excluded from Git.
+Paper builds and historical archive audits require those local directories.
+Their last tracked snapshot is available at commit `8a2eaeb9`.
+
 The current primary task combines **visual terminal binding and minimum
 graph repair**. A model matches a real rendered reference, identifies its
 current graph ID, and returns every optimal restoration set.
@@ -64,10 +68,10 @@ The source 3D workspace remains at `/benchmark`.
 Current writing belongs in `paper/`, website development in `web/`, and
 intermediate output and historical material in `tem/`. Benchmark data and
 evaluators remain in `benchmark/`. Root review aliases have been removed;
-necessary frozen-data paths retain compatibility links.
-Source data, PNGs, review packages, code, PDFs and manifests are versioned.
-Large redundant recovery tarballs and local runtimes stay local; see
-[archive and reproduction boundaries](tem/README.md).
+compatibility links into local paper and intermediate directories are also
+ignored. `paper/` and `tem/` stay on disk and are no longer tracked.
+Website source, benchmark data, native PNGs, review packages and evaluation
+code remain versioned. Local runtimes and recovery tarballs stay local.
 
 ## Feature Videos
 

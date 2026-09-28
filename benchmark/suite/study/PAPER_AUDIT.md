@@ -1,1 +1,0 @@
-../../../tem/revisions/benchmark/suite/study/PAPER_AUDIT.md

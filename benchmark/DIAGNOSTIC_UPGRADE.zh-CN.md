@@ -1,1 +1,0 @@
-../tem/revisions/benchmark/DIAGNOSTIC_UPGRADE.zh-CN.md

@@ -1,1 +1,0 @@
-../../tem/revisions/benchmark/suite/RESEARCH_MASTER_PLAN.zh-CN.md

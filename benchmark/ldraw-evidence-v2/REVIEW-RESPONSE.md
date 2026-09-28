@@ -1,1 +1,0 @@
-../../tem/revisions/benchmark/ldraw-evidence-v2/REVIEW-RESPONSE.md

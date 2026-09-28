@@ -26,6 +26,8 @@ npm run test:e2e -- --project=desktop-chrome
 
 `benchmark/`, `scripts/`, `atlas.config.ts`, `assets-source/` and `assets-built/`
 are relative symlink mounts of shared repository resources, not duplicate data.
+The `assets-built/` mount and public compatibility links into `tem/` are
+local-only and ignored by Git, together with root `paper/` and `tem/`.
 Frozen benchmark packages retain their versioned render/review pages beside
 their native packets and source locks. Vite exposes them through this mount.
 Research review pages are intended for the local dev server; the standard

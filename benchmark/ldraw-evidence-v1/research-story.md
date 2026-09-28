@@ -1,1 +1,0 @@
-../../tem/revisions/benchmark/ldraw-evidence-v1/research-story.md
