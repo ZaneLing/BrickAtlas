@@ -2,6 +2,7 @@
 import argparse
 import base64
 import copy
+import gzip
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -50,6 +51,7 @@ class Arena:
         self.identity, self.seed = config["identity"], config["seed"]
         self.track, self.study = self.identity["condition"], config["study"]
         self.render_images, self.lock = render_images, threading.RLock()
+        self.preview_lock = threading.Lock()
         # Mapping is made from the entire bank, so assignment subsets cannot reveal
         # order, tier or paired membership and do not change IDs.
         self.tasks = {k: v for k, v in public_mapping(
@@ -333,8 +335,15 @@ def handler_for(arena):
             self.send_bytes(json.dumps(value, allow_nan=False).encode(), "application/json", status)
 
         def send_bytes(self, data, mime, status=200, immutable=False):
+            compress = (len(data) > 1024 and "gzip" in self.headers.get("Accept-Encoding", "")
+                        and (mime == "application/json" or mime in ("text/javascript", "application/javascript", "text/css")))
+            if compress:
+                data = gzip.compress(data, compresslevel=3, mtime=0)
             self.send_response(status)
             self.send_header("Content-Type", mime)
+            if compress:
+                self.send_header("Content-Encoding", "gzip")
+                self.send_header("Vary", "Accept-Encoding")
             self.send_header("Cache-Control", "private, max-age=31536000, immutable" if immutable else "no-store")
             self.send_header("X-Content-Type-Options", "nosniff")
             self.send_header("Content-Length", str(len(data)))
@@ -349,9 +358,18 @@ def handler_for(arena):
                     if path == "/download/brickplan-v2.1-release.zip":
                         with arena.lock:
                             file = portable_archive()
-                    self.send_bytes(file.read_bytes(), mimetypes.guess_type(str(file))[0] or "application/octet-stream")
+                    self.send_bytes(file.read_bytes(), mimetypes.guess_type(str(file))[0] or "application/octet-stream",
+                                    immutable=path.startswith("/assets/"))
                 elif path.startswith("/media/"):
                     self.send_bytes(arena.media_file(path).read_bytes(), "image/png", immutable=True)
+                elif not arena.study and re.fullmatch(r"/api/preview/[EQ][0-9]{3}", path):
+                    # Previews create independent sessions. Their CPU work must
+                    # not hold the authoritative action/3D request lock.
+                    with arena.preview_lock:
+                        value = arena.get(path)
+                    self.reply(value)
+                elif not arena.study and re.fullmatch(r"/api/scene/preview/[EQ][0-9]{3}", path):
+                    self.reply(arena.get(path))
                 else:
                     with arena.lock:
                         self.reply(arena.get(path))

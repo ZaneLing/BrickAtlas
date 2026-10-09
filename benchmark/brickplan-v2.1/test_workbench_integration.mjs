@@ -76,7 +76,7 @@ try {
     await page.locator('[class*="families"] > button').nth(i).click();
     await expect(page.locator('[class*="_brief_"]')).toContainText(samples[i].id);
     await expect(page.locator('canvas')).toHaveCount(2);
-    await expect(page.locator('.scene-labels').first()).toContainText('P');
+    await expect(page.locator('[data-scene-ready="true"]')).toHaveCount(2);
   }
   await page.getByRole('button', { name: /模型运行/ }).click();
   await expect(page.getByLabel('Model call timeline').locator('button')).toHaveCount(4);

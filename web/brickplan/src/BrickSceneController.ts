@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { SceneData } from './types';
 
 const palette: Record<string, string> = { '0': '#202326', '1': '#0055bf', '4': '#c91a09', '7': '#9ba19d', '14': '#f2cd37', '15': '#ffffff', '71': '#a0a5a9', '72': '#6c6e68' };
-type Piece = { group: THREE.Group; center: THREE.Vector3; site: number; id: string; label: HTMLSpanElement; materials: THREE.MeshStandardMaterial[] };
+type Piece = { group: THREE.Group; center: THREE.Vector3; site: number; id: string; siteId?: string; partNumber: string; materials: THREE.MeshStandardMaterial[] };
 
 /** Owns every camera update and GPU frame; React only sends semantic changes. */
 export class BrickSceneController {
@@ -13,13 +13,18 @@ export class BrickSceneController {
   private controls: OrbitControls;
   private pieces: Piece[] = [];
   private geometries: THREE.BufferGeometry[] = [];
-  private labels = document.createElement('div');
+  private tooltip = document.createElement('div');
+  private tooltipTitle = document.createElement('strong');
+  private tooltipDetail = document.createElement('span');
+  private ray = new THREE.Raycaster();
+  private pointer?: { x: number; y: number };
+  private hover?: Piece;
+  private hoverPending = false;
   private center = new THREE.Vector3();
   private radius = 1;
   private resize: ResizeObserver;
   private queued = 0;
   private disposed = false;
-  private labelVisible = true;
   private selected = '';
   private start = { x: 0, y: 0 };
   constructor(private host: HTMLDivElement, data: SceneData, private onSelect: (id: string) => void) {
@@ -29,8 +34,12 @@ export class BrickSceneController {
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.domElement.setAttribute('aria-label', 'Interactive LDraw assembly. Drag to orbit, scroll to zoom.');
     this.renderer.domElement.setAttribute('role', 'img');
-    this.labels.className = 'scene-labels';
-    host.append(this.renderer.domElement, this.labels);
+    this.renderer.domElement.tabIndex = 0;
+    this.tooltip.className = 'scene-tooltip';
+    this.tooltip.setAttribute('role', 'tooltip');
+    this.tooltip.hidden = true;
+    this.tooltip.append(this.tooltipTitle, this.tooltipDetail);
+    host.append(this.renderer.domElement, this.tooltip);
     this.scene.add(new THREE.HemisphereLight(0xffffff, 0x8694a5, 2.7));
     const key = new THREE.DirectionalLight(0xffffff, 2.5); key.position.set(120, 300, 200); this.scene.add(key);
     const bounds = new THREE.Box3();
@@ -48,9 +57,9 @@ export class BrickSceneController {
       }
       const box = new THREE.Box3().setFromObject(group); bounds.union(box);
       const site = data.mutable.indexOf(local), id = site >= 0 ? data.partIds[site] : data.fixedIds[local];
-      const label = document.createElement('span'); label.textContent = site >= 0 ? `${id} / ${data.siteIds[site]}` : id;
-      this.labels.append(label); group.userData.pieceId = id;
-      this.pieces.push({ group, center: box.getCenter(new THREE.Vector3()), site, id, label, materials });
+      group.userData.pieceId = id;
+      this.pieces.push({ group, center: box.getCenter(new THREE.Vector3()), site, id,
+        siteId: site >= 0 ? data.siteIds[site] : undefined, partNumber: part.partNumber, materials });
       this.scene.add(group);
     }
     bounds.getCenter(this.center); this.radius = Math.max(1, bounds.getSize(new THREE.Vector3()).length() * .58);
@@ -58,20 +67,74 @@ export class BrickSceneController {
     this.controls.target.copy(this.center); this.controls.enableDamping = false;
     this.controls.minDistance = this.radius * .35; this.controls.maxDistance = this.radius * 12;
     this.controls.addEventListener('change', this.invalidate);
+    this.controls.addEventListener('start', this.clearHover);
     this.renderer.domElement.addEventListener('pointerdown', this.pointerDown);
     this.renderer.domElement.addEventListener('pointerup', this.pointerUp);
+    this.renderer.domElement.addEventListener('pointermove', this.pointerMove);
+    this.renderer.domElement.addEventListener('pointerleave', this.pointerLeave);
+    this.renderer.domElement.addEventListener('pointercancel', this.clearHover);
+    this.renderer.domElement.addEventListener('keydown', this.keyDown);
+    document.addEventListener('pointerdown', this.outsidePointer);
     this.resize = new ResizeObserver(this.onResize); this.resize.observe(host);
-    this.preset('isometric'); this.onResize();
+    this.preset('isometric'); this.onResize(); host.dataset.sceneReady = 'true';
   }
-  private pointerDown = (e: PointerEvent) => { this.start = { x: e.clientX, y: e.clientY }; };
-  private pointerUp = (e: PointerEvent) => {
-    if (Math.hypot(e.clientX - this.start.x, e.clientY - this.start.y) > 5) return;
-    const rect = this.renderer.domElement.getBoundingClientRect();
-    const ray = new THREE.Raycaster();
-    ray.setFromCamera(new THREE.Vector2((e.clientX - rect.left) / rect.width * 2 - 1, -(e.clientY - rect.top) / rect.height * 2 + 1), this.camera);
-    const hit = ray.intersectObjects(this.pieces.filter(p => p.group.visible).map(p => p.group), true)[0];
-    if (hit) { let object: THREE.Object3D | null = hit.object; while (object && !object.userData.pieceId) object = object.parent; if (object) this.onSelect(object.userData.pieceId); }
+  private pointerDown = (e: PointerEvent) => {
+    this.start = { x: e.clientX, y: e.clientY }; this.clearHover();
   };
+  private pointerMove = (e: PointerEvent) => {
+    if (e.buttons || e.pointerType === 'touch') return;
+    this.pointer = { x: e.clientX, y: e.clientY }; this.hoverPending = true; this.invalidate();
+  };
+  private pick(x: number, y: number) {
+    this.scene.updateMatrixWorld(true);
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    this.ray.setFromCamera(new THREE.Vector2((x - rect.left) / rect.width * 2 - 1, -(y - rect.top) / rect.height * 2 + 1), this.camera);
+    const hit = this.ray.intersectObjects(this.pieces.filter(p => p.group.visible).map(p => p.group), true)[0];
+    if (!hit) return;
+    let object: THREE.Object3D | null = hit.object;
+    while (object && !object.userData.pieceId) object = object.parent;
+    return this.pieces.find(p => p.id === object?.userData.pieceId);
+  }
+  private pointerUp = (e: PointerEvent) => {
+    if (e.button !== 0 || Math.hypot(e.clientX - this.start.x, e.clientY - this.start.y) > 5) return;
+    const piece = this.pick(e.clientX, e.clientY);
+    if (piece) this.onSelect(piece.id);
+    this.pointer = { x: e.clientX, y: e.clientY }; this.setHover(piece); this.invalidate();
+  };
+  private clearHover = () => {
+    this.pointer = undefined; this.hoverPending = false; this.setHover(undefined); this.invalidate();
+  };
+  private pointerLeave = (e: PointerEvent) => { if (e.pointerType !== 'touch') this.clearHover(); };
+  private outsidePointer = (e: PointerEvent) => { if (!this.host.contains(e.target as Node)) this.clearHover(); };
+  private keyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') this.clearHover();
+    if (!['ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) return;
+    e.preventDefault();
+    if (e.key === 'Enter') { if (this.hover) this.onSelect(this.hover.id); return; }
+    const visible = this.pieces.filter(p => p.group.visible), index = visible.indexOf(this.hover!);
+    const piece = visible[(index + (e.key === 'ArrowRight' ? 1 : visible.length - 1)) % visible.length];
+    if (!piece) return;
+    const rect = this.host.getBoundingClientRect();
+    this.pointer = { x: rect.left + 15, y: rect.top + 45 }; this.setHover(piece); this.invalidate();
+  };
+  private setHover(piece?: Piece) {
+    if (piece !== this.hover) {
+      this.hover = piece;
+      this.pieces.forEach(p => p.materials.forEach(m => {
+        m.emissive.set(p === piece ? '#397daa' : p.id === this.selected ? '#3669ba' : '#000000');
+        m.emissiveIntensity = p === piece ? .45 : .3;
+      }));
+    }
+    this.tooltip.hidden = !piece;
+    if (piece) {
+      this.tooltip.dataset.pieceId = piece.id;
+      this.tooltipTitle.textContent = `零件 ${piece.id}`;
+      this.tooltipDetail.textContent = `${piece.siteId ? `注册位置 ${piece.siteId}` : '固定基座 · 不可移动'} · LDraw ${piece.partNumber}`;
+      const rect = this.host.getBoundingClientRect(), at = this.pointer || { x: rect.left, y: rect.top };
+      this.tooltip.style.left = `${Math.max(10, Math.min(at.x - rect.left + 14, rect.width - this.tooltip.offsetWidth - 10))}px`;
+      this.tooltip.style.top = `${Math.max(40, Math.min(at.y - rect.top + 14, rect.height - this.tooltip.offsetHeight - 10))}px`;
+    }
+  }
   private onResize = () => {
     const width = this.host.clientWidth, height = this.host.clientHeight;
     if (!width || !height) return;
@@ -81,14 +144,11 @@ export class BrickSceneController {
   private invalidate = () => {
     if (this.queued || this.disposed) return;
     this.queued = requestAnimationFrame(() => {
-      this.queued = 0; this.renderer.render(this.scene, this.camera);
-      for (const p of this.pieces) {
-        const at = p.center.clone().add(p.group.position).project(this.camera);
-        p.label.hidden = !this.labelVisible || !p.group.visible || (p.site < 0 && p.id !== this.selected)
-          || Math.abs(at.x) > .95 || Math.abs(at.y) > .94 || Math.abs(at.z) > 1;
-        p.label.style.left = `${(at.x + 1) * 50}%`; p.label.style.top = `${(1 - at.y) * 50}%`;
-        p.label.dataset.selected = String(p.id === this.selected);
+      this.queued = 0;
+      if (this.hoverPending && this.pointer) {
+        this.hoverPending = false; this.setHover(this.pick(this.pointer.x, this.pointer.y));
       }
+      this.renderer.render(this.scene, this.camera);
     });
   };
   preset(view: string) {
@@ -96,20 +156,26 @@ export class BrickSceneController {
     this.camera.position.copy(this.center).add(new THREE.Vector3(...(directions[view] || directions.isometric)).normalize().multiplyScalar(this.radius * 2.8));
     this.controls.target.copy(this.center); this.controls.update(); this.invalidate();
   }
-  show(mask: number, explode: number, labels: boolean, selected: string) {
-    this.labelVisible = labels; this.selected = selected;
+  show(mask: number, explode: number, selected: string) {
+    this.selected = selected;
     for (const p of this.pieces) {
       p.group.visible = p.site < 0 || Boolean(mask & (1 << p.site));
       p.group.position.copy(p.center).sub(this.center).multiplyScalar(explode * 1.3);
-      p.materials.forEach(m => { m.emissive.set(p.id === selected ? '#3669ba' : '#000000'); m.emissiveIntensity = .3; });
+      p.materials.forEach(m => { m.emissive.set(p === this.hover ? '#397daa' : p.id === selected ? '#3669ba' : '#000000'); m.emissiveIntensity = p === this.hover ? .45 : .3; });
     }
+    if (this.hover && !this.hover.group.visible) this.setHover(undefined);
     this.invalidate();
   }
   dispose() {
     this.disposed = true; cancelAnimationFrame(this.queued); this.resize.disconnect(); this.controls.dispose();
     this.renderer.domElement.removeEventListener('pointerdown', this.pointerDown);
     this.renderer.domElement.removeEventListener('pointerup', this.pointerUp);
+    this.renderer.domElement.removeEventListener('pointermove', this.pointerMove);
+    this.renderer.domElement.removeEventListener('pointerleave', this.pointerLeave);
+    this.renderer.domElement.removeEventListener('pointercancel', this.clearHover);
+    this.renderer.domElement.removeEventListener('keydown', this.keyDown);
+    document.removeEventListener('pointerdown', this.outsidePointer);
     this.geometries.forEach(g => g.dispose()); this.pieces.forEach(p => p.materials.forEach(m => m.dispose()));
-    this.renderer.dispose(); this.renderer.forceContextLoss(); this.host.replaceChildren();
+    this.renderer.dispose(); this.renderer.forceContextLoss(); this.host.replaceChildren(); delete this.host.dataset.sceneReady;
   }
 }

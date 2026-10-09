@@ -13,6 +13,18 @@ export async function read<T>(path: string, payload?: unknown): Promise<T> {
   }
   return response.json();
 }
+const immutable = new Map<string, Promise<unknown>>();
+function cached<T>(path: string): Promise<T> {
+  const hit = immutable.get(path);
+  if (hit) {
+    immutable.delete(path); immutable.set(path, hit);
+    return hit as Promise<T>;
+  }
+  const request = read<T>(path).catch(error => { immutable.delete(path); throw error; });
+  immutable.set(path, request);
+  if (immutable.size > 24) immutable.delete(immutable.keys().next().value!);
+  return request;
+}
 let samples: { id: string; preview: string; scene: string }[] | undefined;
 async function sample(id: string) {
   samples ??= await read('samples.json');
@@ -23,8 +35,8 @@ async function sample(id: string) {
 export const api = {
   info: () => staticMode ? Promise.resolve<TaskInfo>({ study: false, track: 'image-id', tasks: [] }) : read<TaskInfo>('api/tasks'),
   catalogue: () => read<Catalogue>(staticMode ? 'catalogue.json' : 'api/catalogue'),
-  preview: async (id: string) => read<Preview>(staticMode ? (await sample(id)).preview : `api/preview/${id}`),
-  scene: async (id: string) => read<SceneData>(staticMode ? (await sample(id)).scene : `api/scene/preview/${id}`),
+  preview: async (id: string) => cached<Preview>(staticMode ? (await sample(id)).preview : `api/preview/${id}`),
+  scene: async (id: string) => cached<SceneData>(staticMode ? (await sample(id)).scene : `api/scene/preview/${id}`),
   models: () => staticMode ? Promise.resolve<Models>({ providers: [], runs: [], cases: [{ id: 'case-local', title: 'SmolVLM-256M' }] }) : read<Models>('api/models'),
   run: (id: string) => read<ModelRun>(staticMode ? 'cases/local-vlm.json' : `api/model-runs/${id}`),
   runScene: (id: string) => read<SceneData>(staticMode ? 'cases/scene.json' : `api/model-runs/${id}/scene`),

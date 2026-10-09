@@ -37,11 +37,11 @@ try {
   await page.goto(base);
   await expect(page.locator('[class*="families"] > button')).toHaveCount(7);
   await expect(page.locator('canvas')).toHaveCount(2);
-  await expect(page.locator('[class*="scene-labels"]').first()).toContainText('P');
+  await expect(page.locator('[data-scene-ready="true"]')).toHaveCount(2);
+  await expect(page.locator('.scene-tooltip:visible')).toHaveCount(0);
   await page.screenshot({ path: path.join(out, 'workbench-library.png'), fullPage: true });
   check('seven families, complete contracts, two native WebGL2 scenes');
   const canvas = page.locator('canvas').first(), box = await canvas.boundingBox();
-  const labelBefore = await page.locator('.scene-labels').first().getAttribute('style');
   const pixelsBefore = await canvas.screenshot();
   await page.mouse.move(box.x + box.width * .5, box.y + box.height * .5);
   await page.mouse.down(); await page.mouse.move(box.x + box.width * .7, box.y + box.height * .6, { steps: 6 }); await page.mouse.up();
