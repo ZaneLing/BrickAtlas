@@ -2,7 +2,10 @@ import type { Action, Catalogue, ModelRun, Models, Preview, SceneData, TaskInfo 
 
 export const staticMode = document.querySelector('meta[name="brickplan-mode"]')?.getAttribute('content') === 'static';
 const base = new URL('./', location.href);
-export function asset(path: string) { return new URL(path.replace(/^\//, ''), base).href; }
+export function asset(path: string) {
+  const relative = staticMode && path.startsWith('/media/') ? `cases${path}` : path;
+  return new URL(relative.replace(/^\//, ''), base).href;
+}
 export async function read<T>(path: string, payload?: unknown): Promise<T> {
   const response = await fetch(asset(path), payload === undefined ? {} : {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),

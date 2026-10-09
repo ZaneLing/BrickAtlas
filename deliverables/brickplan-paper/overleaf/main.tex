@@ -11,125 +11,124 @@
 \def\confYear{2026}
 \input{generated.tex}
 \title{BrickPlan: Diagnosing Future Action Cost and Error Recovery\\in Visual Assembly Planning}
-\author{Benchmark research release 2.1\\Population model and human studies pending}
+\author{Benchmark research release 2.2\\Population model and human studies pending}
 \begin{document}
+\raggedbottom
 \maketitle
 
 \begin{abstract}
 Visual assembly planning requires predicting how an action changes later
-access, workspace occupancy, and unfinished work. Final-shape accuracy and
-solution length alone do not isolate these abilities. We introduce
-BrickPlan, an executable benchmark with exact future-cost and recovery
-labels under a declared, finite assembly abstraction. Original LDraw
-geometry determines qualified motions and connectivity; a limited rack
-and persistent off-assembly inspection ledger couple decisions over time.
+access, workspace occupancy, and unfinished work. Final-shape accuracy
+alone does not isolate these abilities. We introduce BrickPlan, an
+executable benchmark with exact future-cost and recovery labels under
+a finite assembly abstraction. Original LDraw geometry determines
+qualified motions and connectivity; a limited rack and persistent
+off-assembly inspection ledger couple decisions over time.
 The release contains \EpisodeCount{} interactive episodes and
 \ProbeCount{} diagnostic questions from \SourceCount{} source groups.
-Matched sequence pairs balance early and late conflicts, geometry
-contrasts change future legality while preserving registered pieces and
-plans, and delayed-repair questions exclude the terminal goal from
-recovery credit. We release native-resolution observations, a categorized
-question explorer, exact evaluators, and a real four-call local VLM trace.
+Matched sequences test future legality, fixed-context contrasts test
+geometric dependence, and delayed-repair questions exclude the goal from
+recovery credit. Static diagnostics supply four fixed views; active
+diagnostics charge additional acquisitions. Calibration questions and
+repeated variants receive explicit scoring treatment.
 Structural controls reveal both scope and limits: closure greedy completes
-384 of 435 task-runs but only 266 optimally, while full closure A* solves
-every run with at most 4,372 expansions. A five-step prefix shortcut scores
-66.7\% on the sequence tests. These results validate measurable scheduling
-and diagnostic distinctions, not necessary internal reasoning depth.
-Population VLM and human results remain unmeasured.
+1,061 of 1,131 task-runs but only 873 optimally; an inverse-last-action
+control solves 58.0\% of recovery questions. We release native-resolution
+observations, exact evaluators, a question workbench, and a preserved
+historical model trace. These measurements characterize the instrument;
+population visual-model and human performance remain unmeasured.
 \end{abstract}
 
 \section{Introduction}
-An assembly action can be legal now and expensive later. Removing a part
-may consume the last available holder before a deeper part is accessible;
-reattaching another part may block unfinished work. If a planner notices
-an error only after several more operations, undoing its latest action
-need not restore an efficient completion. Measuring these effects requires
-more than recognizing brick types or comparing a final image.
+An assembly action can be legal now and expensive later. Removing a
+piece may consume the last available holder before a deeper part becomes
+accessible; replacing another may obstruct unfinished inspection work.
+If an agent detects an error after several further actions, reversing
+its latest action need not restore an efficient completion.
+Measuring these effects requires more than recognizing brick types
+or comparing a final image.
 
-BrickPlan asks a specific question: can a visual agent predict the
-\emph{future action cost} of a decision, and recover after that decision
-has propagated? We separate three observable failures: an immediately
-rejected operation, a legal action that increases exact remaining cost,
-and a later failure to return to an optimal completion corridor.
-The geometry and tasks are small enough to label these distinctions
-exhaustively. This deliberate restriction enables exact diagnostics
-at the expense of unrestricted manipulation.
+BrickPlan asks whether an agent can predict the \emph{future action cost}
+of a visible assembly decision and recover after a costly choice has
+propagated. We distinguish immediate rejection, a legal action that
+increases exact remaining cost, and failure to return to an optimal
+completion corridor. Restricting placements to registered original
+sites makes these distinctions exhaustively labelable. This deliberate
+restriction trades manipulation breadth for exact diagnostic targets.
 
-A motivating audit illustrates why such care is necessary. For a preceding
-assembly-only bank, an occupied-blocker closure formula reproduced all
-\OldLabels{} stored state--goal costs. Long solutions in that bank did
-not establish deep planning. Our task adds limited external storage and
-inspection work that persists after reattachment. Static geometric
-relations remain useful, but physical occupancy alone no longer specifies
-the mission state or its exact cost.
+A preceding assembly-only bank illustrates the need for explicit
+controls. An occupied-blocker closure formula reproduced all
+\OldLabels{} stored state--goal costs. Long solutions alone did not
+establish deep planning. BrickPlan adds finite external storage and
+inspection work whose completion persists after reattachment. Static
+relations remain useful, but occupancy alone no longer specifies the
+mission state or exact cost.
 
-We make three contributions. First, we define a visual assembly task with
-certified, state-dependent resource and work obligations, accompanied by
-both interactive episodes and explicit diagnostic question formats.
-Second, we construct sequence, geometry, appearance, and delayed-repair
-controls that expose particular shortcuts and confounds. Third, we release
-the observation, execution, scoring, and publication pipeline together,
-including exact software controls and an authenticated model integration
-case. We distinguish these contributions from empirical claims that await
-a larger model and human study.
+Our contributions are threefold. First, we define an executable visual
+assembly task with resource and work obligations, interactive episodes,
+and explicit checkpoint diagnostics. Second, we construct sequence,
+geometry, appearance, and recovery controls, with separate static and
+active observations and auditable scoring units. Third, we release
+the construction, execution, evaluation, and publication pipeline,
+including strong structural controls. We do not infer a human--model
+gap, required internal reasoning depth, or broad physical competence
+from software verification.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=.95\textwidth]{figures/geometry-contrast.png}
-\caption{An actual answer-changing geometry pair after its shared
-six-operation legal prefix. Registered pieces, original poses, initial
-occupancy, goal, rack, work orders, and proposed plan are matched. The
-fixed context differs by one original source piece. Context 1 permits the
-whole sequence; context 2 rejects operation 7. These are qualified induced
-source assemblies, not edited relation labels. The unequal fixed-part
-counts remain a confound.}
+\includegraphics[width=.96\textwidth]{figures/geometry-contrast.png}
+\caption{An answer-changing geometry pair shown from the \emph{initial
+left view}, supplied before answering in the static condition.
+Registered pieces, original poses, occupancy, target, rack, work orders,
+and proposed plan are matched. The fixed context differs by one original
+source piece. Context 1 permits the whole plan; context 2 rejects
+operation 7 after six shared legal steps. Their initial isometric views
+are identical; the side view reveals the difference. Pixel distinction
+does not by itself certify human or model answerability. The unequal
+fixed-part counts remain a confound.}
 \label{fig:geometry}
 \end{figure*}
 
 \section{Evaluation design}
-\label{sec:design}
 \begin{table}[t]
 \centering\small
-\caption{Experimental conditions. ``Pending'' means no population result
-has been collected; the local trace is a single integration case. Model
-snapshots and provider settings must be fixed before the study.}
-\begin{tabular}{p{.60\columnwidth}p{.29\columnwidth}}
-\toprule Condition & Evidence status\\\midrule
+\caption{Experiment framework. Population results are unmeasured;
+model snapshots and provider settings must be fixed before collection.}
+\begin{tabular}{p{.59\columnwidth}p{.30\columnwidth}}\toprule
+Condition & Evidence status\\\midrule
 Structural policies and exact search & Measured\\
-SmolVLM-256M, image input & One failed case\\
-Open VLMs, image / structured & Pending\\
-Proprietary VLMs, image / structured & Pending\\
-Humans, image + registered IDs & Pending\\
-Stepwise / explicit-plan prompting & Pending\\
-\bottomrule
-\end{tabular}
+SmolVLM-256M, image input & Historical failed case\\
+Open / proprietary VLMs & Pending\\
+Humans, images + registered IDs & Pending\\
+Static / active / structured input & Matched study planned\\
+Stepwise / explicit-plan prompting & Matched study planned\\
+\bottomrule\end{tabular}
 \label{tab:design}
 \end{table}
 
-Table~\ref{tab:design} fixes the reporting structure before empirical
-collection. Primary outcomes are assigned-episode completion, optimal
-completion, and excess operations among successes. Diagnostic accuracies
-are reported by question family; pair scores require both members to be
-correct. Invalid responses and missing assignments remain visible in
-denominators. Software controls with exact relations are separated from
-the public image and structured conditions.
+Table~\ref{tab:design} fixes the reporting framework before empirical
+collection. Primary episode outcomes are completion and optimal
+completion over all assignments, plus excess operations among successes.
+Diagnostic accuracy is reported by family, scoring role, canonical
+problem, and source. Joint pair scores require both members correct.
+Invalid outputs and missing assignments remain in their denominators.
+Privileged structural policies are separate from image-input results.
 
-The proposed study compares matched source groups and identity seeds
-under equal action and observation budgets. For each VLM, both input
-conditions use the same executor and answer syntax. A format/cost pilot
-should precede the full study, with pilot results retained and identified.
-Report model snapshot, provider, prompt, image preprocessing, context
-policy, decoding, token usage, and calls per assignment. Human collection
-requires recorded instructions, training exposure, participant counts,
-and consent procedures before recruitment. No such cohort is claimed here.
+The study compares matched assignments and identity seeds with declared
+action and view budgets. For each VLM, static image and structured
+conditions share the same initial views, executor, and answer syntax;
+active acquisition is reported separately. A format/cost pilot precedes
+the full study. Report snapshot, provider, prompt, image preprocessing,
+context policy, decoding, calls, measured token use, and acquisition
+count. Human collection requires documented instructions, training,
+participant counts, and consent before recruitment.
 
-Repeated identity seeds and paired questions are correlated observations.
-Report per-source results and coverage before a pooled mean. With only
-three newly sampled source groups, uncertainty for transfer is necessarily
-limited; a large number of questions does not create a large number of
-independent assemblies. Stratify errors into parsing, immediate legality,
-future cost, diagnosis, and repair so a format failure is not interpreted
-as evidence of deep planning failure.
+Identity seeds, paired questions, and variants reuse source geometry.
+Per-source results and coverage precede pooled claims. Only eight source
+groups are held out from development, limiting transfer uncertainty.
+More diagnostic rows do not create more independent assemblies.
+Errors are stratified into parsing, immediate legality, future cost,
+diagnosis, and repair.
 
 \section{Related work}
 LTRON's Break and Make evaluates interactive structural understanding
@@ -137,359 +136,345 @@ through disassembly and reconstruction~\cite{ltron}. InstructioNet studies
 construction supported by an agent's own explicit visual
 instructions~\cite{instructionet}. These establish interactive brick
 construction and long sequences; BrickPlan does not claim either as new.
-Its narrower registered-site action space permits exact counterfactual
-completion costs and event-level recovery labels.
+Its registered-site action space permits exact counterfactual completion
+costs and event-level recovery labels.
 
-LEGO-Puzzles organizes spatial understanding and sequential reasoning
-into explicit task families~\cite{lego}. Its revised version includes
-both elementary VQA and a Planning set; it should not be reduced to a
-static recognition benchmark. PhyBlock combines hierarchical assembly
-and physical-understanding questions~\cite{phyblock}.
-Brick-Composer introduces BC-Bench for diverse brick selection and
-pose estimation, and trains models with construction and feedback
-signals~\cite{composer}. BrickPlan instead fixes legal placement sites
-and asks about resource coupling, future legality, and delayed recovery.
-It complements these broader spatial tasks rather than replacing them.
+LEGO-Puzzles includes both elementary visual questions and a Planning
+set~\cite{lego}; it should not be reduced to recognition.
+PhyBlock combines hierarchical assembly and physical-understanding
+questions~\cite{phyblock}. Brick-Composer introduces BC-Bench for diverse
+brick selection and pose estimation~\cite{composer}. BrickPlan fixes
+placement sites and instead measures resource coupling, future legality,
+and delayed corridor return. It complements broader spatial tasks.
 
-Shortest-path search and admissible heuristics are established planning
-tools~\cite{astar}. A failed weak policy does not establish computational
-hardness. We therefore report a strong static relaxation, resource-aware
-dispatch, bounded and full A*, and optimistic shallow-choice bounds.
-The research contribution is an audited visual diagnostic instrument;
-finite racks or A* are not algorithmic novelties.
+Shortest-path search and admissible heuristics are established
+tools~\cite{astar}. Failure of a weak policy does not prove hardness.
+We therefore include a strong static relaxation, capacity-aware dispatch,
+bounded and full A*, and shallow-choice bounds. The contribution is
+an auditable visual diagnostic instrument, not a new planning algorithm.
 
 \section{Task and observation contract}
 \subsection{State, geometry, and actions}
 Let $A\subseteq V$ be occupied registered sites, $G\subseteq V$ the
-target, $J\subseteq V$ the required inspection sites, and $D\subseteq J$
-the completed inspections. The mission state is $x=(A,D)$.
-Each physical piece $P_i$ is registered to exactly one original site
-$S_i$. Detached pieces occupy universal oversized rack holders:
+target, $J\subseteq V$ required inspections, and $D\subseteq J$ completed
+inspections. The mission state is $x=(A,D)$. Each piece $P_i$ belongs
+to one original site $S_i$. Detached pieces occupy universal oversized
+rack holders, subject to
 \begin{equation}
-  r(x)=|V\setminus A|\leq K,
+ r(x)=|V\setminus A|\leq K.
 \end{equation}
-where $K$ is the declared capacity. An \texttt{audit} completes one
-pending job only when its piece is detached; completion persists after
-reattachment. The terminal physical condition is $A=G,\ D=J$.
+An \texttt{audit} completes a pending job only while its piece is detached;
+completion persists after replacement. The terminal condition is
+$A=G,\ D=J$, followed by an explicit \texttt{finish}.
 
-An \texttt{attach} or \texttt{detach} must satisfy source-qualified
-straight translation, collision, stud-connectivity, registration, and
-capacity rules. Fixed pieces form a connected clamped assembly.
-All executable positions are original LDraw poses. Qualification uses
-guarded inset meshes and prescribed paths; it is not force, gravity,
-clutch, hand-access, or arbitrary rigid-body simulation.
-The rack is an explicit resource abstraction, not simulated transfer
-geometry. Exploded displays are marked reference diagrams and never
+An \texttt{attach} or \texttt{detach} must satisfy qualified straight
+translation, collision, stud-connectivity, registration, and capacity
+rules. Fixed pieces form a connected clamped assembly. Executable
+positions preserve original LDraw transforms. Guarded inset meshes and
+prescribed paths define qualification; this is not force, gravity, clutch,
+hand-access, or arbitrary rigid-body simulation. Rack transfer is a
+resource abstraction. Exploded views are reference diagrams, never
 executable states.
 
-Each accepted physical operation or audit costs one operation, as does
-each rejected operation attempt. Valid camera acquisition and diagnosis
-consume their separate budgets; \texttt{finish} explicitly terminates a
-completed task. There are 12 additional views and 12 diagnoses per episode.
-The action budget is fixed in the released task record before collection.
-Source size, work orders, budget, and rack capacity are public constraints.
+Each physical operation or audit costs one operation; so does a rejected
+operation attempt. Camera acquisition and diagnosis have separate budgets.
+Episodes allow 12 additional views and 12 diagnoses. Public operation
+budgets depend on visible problem size and work, not private optimum cost.
 
-\subsection{Matched observation conditions}
-The image condition provides five PNG panels: current assembly, target,
-all-site reference, registered-piece catalog, and rack. Main views are
-rendered at $3840\times2880$ and antialiased to $1920\times1440$; individual
-catalog pieces have $480\times360$ native tiles. Public P/S registration
-and the inspection ledger are textual. Image input omits pose matrices,
-installed-site flags, legal-action lists, relation graphs, and exact costs.
-These omissions preserve a visual inference component, while explicit
-registration and rack inventory simplify correspondence.
+\subsection{Matched observations}
+Five raster panels show the current assembly, target, all-site reference,
+registered-piece catalog, and rack. Main views are supersampled at
+$3840\times2880$ and reduced to native $1920\times1440$; catalog tiles
+are $480\times360$. Text gives P/S registration, rack inventory, and the
+inspection ledger. Image input omits pose matrices, installed-site flags,
+legal-action lists, relation graphs, and exact costs. Explicit
+registration simplifies correspondence without supplying geometric rules.
 
-The structured condition adds original matrices, part identifiers,
-colors, path directions and lengths, and site occupancy. It still omits
-the private blocker/support graph. Structural software controls receive
-that graph and are a separate privileged condition. Additional acquired
-views persist as revision-specific observations. Free 3D orbit and
-explosion are available in the unscored practice workbench, outside study
-and model observations. Human and model policies share the controlled
-observation and submission protocol.
+Static checkpoint diagnostics provide isometric, left, rear, and right
+views at revision zero, with later acquisition disabled. Active image
+diagnostics start with isometric only and charge one acquisition per
+\texttt{inspect}. Structured diagnostics use the same four initial views
+and additionally provide original matrices, colors, part types, path
+directions and lengths, and occupancy. They omit the private
+blocker/support graph; structural software controls receive that graph.
+Interactive episodes retain their common active-view protocol.
+
+Acquired frames persist with their revision. Free 3D orbit, explosion,
+and answer review are available in unscored practice only. Human and
+model policies share the controlled observation and submission contract.
 
 \begin{table*}[t]
 \centering\small
-\caption{Seven question families in the public explorer. Each question
-has a stable ID, complete prompt, state, constraints, answer format, and
-scoring rule. Episode families are mutually exclusive presentation groups.}
-\begin{tabular}{p{.19\textwidth}p{.38\textwidth}p{.33\textwidth}}
-\toprule Family & Question & Response and measurement\\\midrule
-Assembly / reconfiguration & Transform the current assembly into the target. & Action sequence; completion and excess cost\\
-Finite-resource scheduling & Which operations free the holders needed for later work? & Action sequence under a capacity bound\\
-Inspection / persistent state & Complete off-assembly work and restore the target. & Actions plus audits; target and ledger completion\\
-Next-action judgment & Which legal choice minimizes total completion cost? & Candidate index; any optimal candidate accepted\\
-Future-sequence checking & Where does this complete proposed plan first become illegal? & One-based conflict index, or all legal\\
-Visual geometry / appearance & Does a support change alter the answer? Does recoloring preserve it? & First-conflict answer and joint pair correctness\\
-Delayed error recovery & After an error and more actions, which choice repairs most efficiently? & Candidate on a shortest nonterminal corridor-return path\\
-\bottomrule
-\end{tabular}
+\caption{Seven public question families. Episode families are mutually
+exclusive presentation groups. Every entry has an ID, prompt, constraints,
+answer format, and scoring rule.}
+\begin{tabular}{p{.20\textwidth}p{.39\textwidth}p{.31\textwidth}}\toprule
+Family & Question & Response and measurement\\\midrule
+Assembly / reconfiguration & Transform current assembly into target. & Actions; completion and excess cost\\
+Finite-resource scheduling & Free the holders required for later work. & Actions under a capacity bound\\
+Inspection / persistent state & Complete off-assembly work and restore target. & Actions and audits; physical and ledger completion\\
+Next-action judgment & Which legal choice minimizes completion cost? & Index; any optimum accepted\\
+Future-sequence checking & Where is the first illegal operation? & One-based index or \texttt{null}\\
+Geometry / appearance & Does context change, or recoloring preserve, legality? & Conflict answer and joint pair score\\
+Delayed error recovery & Which choice returns to the earlier optimal corridor? & Index on a shortest nonterminal repair\\
+\bottomrule\end{tabular}
 \label{tab:taxonomy}
 \end{table*}
 
-\subsection{Explicit diagnostic formats}
-Table~\ref{tab:taxonomy} distinguishes interaction from frozen-checkpoint
-questions. The 230 next-action questions expose only legal candidates;
-any candidate minimizing exact completion cost is correct. The 144
-continuation questions ask for the first illegal operation in a fully
-specified sequence, with \texttt{null} denoting complete legality.
-Eight geometry and 24 appearance questions use the same answer format.
-The 333 delayed-repair questions include the pre-error checkpoint,
-executed history, current observation, and legal candidates. They ask for
-the next action on a shortest repair path, not a model's hidden reasoning.
+\subsection{Diagnostic formats}
+Table~\ref{tab:taxonomy} separates interactive execution from checkpoint
+questions. There are 653 next-action questions, 288 ordinary sequence
+questions, 20 geometry questions, 48 appearance questions, and 943
+delayed-repair questions. Sequence questions expose the complete proposed
+plan and ask for its first illegal operation, or \texttt{null}.
+Recovery questions expose the pre-error checkpoint, executed history,
+current observation, and legal candidates. They ask for a shortest repair
+step, not hidden model reasoning.
 
 \section{Construction and validity controls}
-\subsection{Source grouping and sampling}
-The release contains \ProfileCount{} qualified geometry profiles from
-\SourceCount{} source kit groups. This profile count includes geometry
-candidates that yield no retained tasks. There are 109 development
-episodes from eight groups and 36 newly sampled episodes from three
-groups: 10014, 10128, and 31031. Alternate builds and geometry variants
-remain within their source group. Roadster and kart, for example, share
-kit 31027 and are never treated as independent sources.
+\subsection{Source groups and sampling}
+The \ProfileCount{} qualified geometry profiles include 17 base
+assemblies and 82 context profiles, including zero-yield candidates.
+They belong to \SourceCount{} source kit groups. Alternate builds and
+context variants remain within one group: roadster and kart both belong
+to 31027. There are 109 development episodes from eight groups and
+268 held-out-source episodes from eight other groups. Of the latter,
+256 follow seeded source sampling and 12 are mechanism-conditioned
+geometry episodes.
 
-Legacy development tasks were selected using mechanism and solver
-evidence. For additional sources, the candidate list and seeded sampling
-plan were recorded before new-source solver evaluation. Initial geometric
-qualification rejected source collisions. We then refined admission to
-remove conflicting source instances in deterministic source order and
-retain a stud-connected component. This is a disclosed geometry-only
-refinement, not an unchanged preregistered algorithm. It moves no bricks.
-After qualification, task admission uses seeded sampling and solvability,
-not measured policy difficulty. Easy new-source cases are retained.
-The initial failures, retained source indices, and exact qualification
-records are released.
+Version 2.2 preserves all 145 earlier episodes and 739 diagnostic
+records, adding 232 episodes and 1,213 questions. Of 11 additional
+frozen candidates, five pass admission: 10036, 10213, 10242, 10265,
+and 10269. Six rejected candidates remain documented. Some admitted
+subassemblies have only two or four registered sites, so source growth
+is not equated with difficult geometry.
 
-``New source'' refers to benchmark construction, not absence from model
-pretraining. The partition is public. The dataset does not support a
-claim of contamination-free evaluation.
+Legacy tasks used mechanism and solver evidence during selection.
+Additional candidates and seeded sampling were recorded before their
+solver evaluation. Initial collision failures motivated a disclosed
+geometry-only admission refinement: remove conflicting instances in
+deterministic source order and retain a stud-connected component.
+It moves no parts. After qualification, admission uses solvability
+and seeded sampling, not observed policy difficulty. Initial failures,
+retained indices, and qualification results are archived. ``New source''
+refers to benchmark construction, not absence from pretraining.
 
 \begin{table}[t]
 \centering\small
-\caption{Operation-length strata and measured descriptors. D1--D4 are
-predetermined length bins (1--8, 9--16, 17--24, 25+), not cognitive-depth
-levels. Gap is exact cost minus the static lower bound.}
+\caption{Fixed operation-length bins: D1 (1--8), D2 (9--16), D3
+(17--24), D4 (25+). They are not cognitive-depth levels.}
 \resizebox{\columnwidth}{!}{\input{tiers.tex}}
 \label{tab:tiers}
 \end{table}
 
-\subsection{Difficulty descriptors and exact labels}
-D1--D4 denote optimal-operation-length bins only
-(Table~\ref{tab:tiers}). We retain separate descriptors for registered
-pieces, capacity, initial occupancy, work orders, heuristic gap, and
-observed search effort. No new tier is assigned using an A* threshold.
-An optimum's length remains a property of the shortest output sequence,
-not proof of required internal model depth.
-
+\subsection{Exact costs and difficulty descriptors}
 For each mission, we enumerate the capacity-constrained physical
-component and its inspection-bit product. Reverse directed shortest
-paths yield $C^*(x)$, the minimum remaining operation count.
-All \OracleCount{} oracle tables are checked against runtime transitions,
-physical inverses, lower bounds, and Bellman equalities.
-Across tables there are \ProductCount{} product-state entries and
-\EdgeCount{} directed-transition entries. These totals repeat physical
-states under different goals and jobs.
+component and inspection-bit product. Reverse shortest paths give
+$C^*(x)$, the minimum remaining operations. The \OracleCount{} tables
+contain \ProductCount{} state entries and \EdgeCount{} directed-transition
+entries, with physical states repeated under different goals and jobs.
+Checks cover runtime transitions, physical inverses, lower bounds, and
+Bellman equalities.
 
-Let $R$ be the occupied blocker closure needed to remove unwanted pieces,
-insert missing target pieces, and detach unfinished inspection pieces.
-A strong static relaxation is
+Let $R$ be occupied blocker closure needed to remove unwanted pieces,
+insert target pieces, and detach unfinished inspection pieces. A static
+relaxation is
 \begin{equation}
  h(x)=|A\triangle G|+2|R\cap A\cap G|+|J\setminus D|.
- \label{eq:bound}
 \end{equation}
-Each mismatch needs an operation; each occupied target piece in the
-required removal closure must be removed and replaced; each unfinished
-audit costs one. Capacity and connectivity may add operations, preserving
-admissibility. The maximum retained gap $C^*-h$ is \MaxGap{}.
+Each mismatch needs an operation, each occupied target piece in the
+required closure needs removal and replacement, and each pending job
+needs an audit. Capacity and connectivity can add operations. The maximum
+retained gap $C^*-h$ is \MaxGap{}. Registered sites, rack size, occupancy,
+jobs, gap, and search effort are separate descriptors; length bins alone
+do not imply planning difficulty.
 
-\subsection{Future-sequence shortcut controls}
-We construct 72 legal/corrupted pairs with identical first and last
-actions, identical action multisets, and identical legal prefixes before
-the corrupted sequence's first conflict. Reordering changes intermediate
-validity. The legal sequence contains no repeated states or no-op padding.
-There are 24 pairs in each first-conflict bin: positions 2--5, 6--10,
-and 11 or later.
+\subsection{Sequence and shallow-choice controls}
+The 144 legal/corrupted sequence pairs match first and last actions,
+action multisets, and prefixes before the first conflict. Legal witnesses
+contain no repeated-state padding. Each conflict bin (2--5, 6--10, 11+)
+has 48 pairs. A prefix-only control executes $k$ operations and otherwise
+answers ``all legal.'' It scores 158/288 at $k=2$ and 192/288 at $k=5$;
+zero-step accuracy is 50\%. This reduces a measured predecessor shortcut
+without establishing immunity to other ones.
 
-A prefix-only control executes the first $k$ operations and otherwise
-answers ``all legal.'' It scores 80/144 at $k=2$ and 96/144 at $k=5$,
-versus 73/98 and 92/98 in frozen version 2.0. Balanced labels give the
-zero-step control 50\%. The revision reduces an observed shortcut;
-it does not establish immunity to other ones. All 230 selected next-action
-checkpoints still include an optimal choice in the depth-one closure
-heuristic's minimizing set. Ambiguous ties, rather than exclusion of every
-correct shallow choice, are the relevant measured phenomenon.
+All 653 next-action checkpoints include an optimal choice in the
+depth-one closure minimizer set. Uniform tie selection yields 94.0\%
+expected accuracy; uniform selection among all candidates yields 36.9\%.
+This strong result uses privileged structural relations. We disclose
+tie sizes, optimistic and pessimistic accuracy, and the matched
+image/structured comparison rather than infer required reasoning depth.
 
-\subsection{Geometry and appearance contrasts}
-Four retained geometry pairs change only the induced fixed support
-context while preserving registered pieces, original poses, initial
-occupancy, goal, capacity, work orders, and proposed sequence.
-Both contexts are independently qualified for meshes and motion paths.
-Their first answer-changing conflict follows a shared legal prefix
-(Figure~\ref{fig:geometry}). This links the question to geometric context
-beyond a text-only capacity rule.
+\subsection{Geometry and appearance}
+Ten answer-changing pairs cover four interventions and three groups
+(31027, 10014, 10036). They match registered pieces and poses, start,
+target, rack, work, and plan; induced fixed contexts are independently
+qualified. Of 41 qualified context pairs, 37 produce no retained
+future contrast under the declared search. Every retained pair has
+unequal fixed-part counts. They are not count-matched counterfactuals.
 
-The scope is narrow: all four pairs come from one development source,
-and their fixed-part counts differ. Equal-count/type contexts from three
-other base profiles were qualified but yielded no retained answer-changing
-sequence. We publish that zero-yield census and do not call the retained
-pairs count-matched visual counterfactuals. Twelve additional pairs use
-original-color and grayscale images of exactly the same state and plan.
-They measure answer invariance to appearance; they are correlated
-diagnostic controls, not new independent structures.
+Native certificates compare all five panels in four initial views.
+Every pair differs in a supplied static view; three pairs have identical
+isometric inputs alone (Figure~\ref{fig:geometry}). This establishes pixel
+distinction, not perceptual sufficiency or successful acquisition by an
+active agent. Twenty-four original/grayscale pairs preserve geometry,
+state, plan, and answer. These measure appearance invariance, not
+additional independent structures.
 
-\subsection{Delayed repair}
-For pre-error state $b$, let $\mathcal C_b^{-}$ be the union of
-\emph{nonterminal} states on all optimal completions from $b$.
-After a legal positive-excess error, the generator executes a distinct-state
-legal history of lag 1, 3, or 5 that remains outside this corridor.
-At delayed checkpoint $z$, exact repair cost is
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/repair-case.png}
+\caption{A certified lag-five case (\texttt{source-10036-35/repair-lag-5}).
+A: the pre-error checkpoint defines an optimal completion corridor.
+B: an error and five further operations leave it. The last history
+action attached P013. Immediately undoing it requires nine operations
+to repair; the optimum takes seven, starting with detaching P002.
+C: that shortest repair reaches a nonterminal corridor state.
+These are oracle replay frames, not model reasoning or a model success.
+Exact states and actions are archived with figure provenance.}
+\label{fig:repair}
+\end{figure*}
+
+\subsection{Delayed repair and calibration}
+For a pre-error checkpoint $b$, let $\mathcal C_b^{-}$ contain all
+nonterminal states on any optimal completion from $b$. After a legal
+positive-excess error, a distinct-state legal history of lag 1, 3, or 5
+remains outside this corridor. At checkpoint $z$, the repair target is
 \begin{equation}
  r_b(z)=\min_{y\in\mathcal C_b^{-}}\operatorname{dist}(z,y).
 \end{equation}
-The 333 questions have minimum repair costs from 1 to 6, verified by
-independent forward BFS. A candidate is correct if it lies on a shortest
-repair path. The goal is excluded: finishing after a costly detour alone
-does not demonstrate that the agent restored an efficient earlier plan.
-The visible checkpoint and history define the reference corridor
-unambiguously.
+The 943 questions have repair costs 1--7, independently verified by
+forward BFS. Any first action on a shortest repair is accepted.
+Finishing after a costly detour does not itself earn repair credit.
 
-\section{Metrics}
-For a legal unit-cost action $a$ with successor $x'$, conditional excess is
+Lag alone does not establish nonlocal repair. Reversing the last public
+action solves 547/943 questions (58.0\%); the inverse is suboptimal on
+368 and unavailable on 28. These cohorts are reported separately.
+All \CalibrationCount{} questions with every candidate optimal remain
+calibration checks and receive no weight in discriminative accuracy.
+
+\section{Metrics and scoring units}
+For a legal unit-cost action with successor $x'$, conditional excess is
 \begin{equation}
  \delta(x,a)=1+C^*(x')-C^*(x)\geq0.
 \end{equation}
-A rejected operation leaves state unchanged and contributes one to total
-excess. Thus legal but costly actions are distinguished from immediate
-invalidity, including when the checkpoint already requires rework.
-For a successful trace of $T$ charged attempts, regret is
-$T-C^*(x_0)$. Primary reporting includes completion and optimal completion
-over \emph{all assigned episodes}; successful mean regret is accompanied
-by its success coverage.
+A rejected attempt leaves state unchanged and contributes one excess
+operation. Thus legal but costly actions remain distinct from immediate
+invalidity even when rework was already mandatory. Successful regret
+is $T-C^*(x_0)$ for $T$ charged attempts. Completion and optimal completion
+use all assignments; mean successful regret accompanies its coverage.
 
-Choice diagnostics distinguish avoidable-cost decisions, loss of
-remaining-budget viability, and genuine unreachability. Each choice rate
-uses checkpoints where the corresponding good and bad legal alternatives
-both exist. The retained physical components are reversible, and completed
-audits never remove physical actions. Consequently, genuine irreversible
-dead ends are absent and their eligible-choice rate is undefined.
+Every legal positive-excess action opens a recovery event. Later errors
+do not overwrite earlier events. Restoration, immediate and lag-specific
+cohorts, and right-censored unfinished trajectories are recorded
+separately. Diagnosis concerns avoidable errors since the last diagnosis;
+mandatory rework is not an error. Suffix effort is compared with exact
+remaining cost at diagnosis. Survival curves preserve the first cost-loss
+event after later recovery, with assigned and unknown counts at each step.
+The reversible physical components and persistent audits contain no
+genuine irreversible dead ends; their eligible-choice rate is undefined.
 
-Every legal positive-excess action opens a separate recovery event.
-Later errors do not overwrite earlier events. The evaluator records
-immediate return and delayed cohorts at lags 1/3/5, detects corridor
-restoration, and preserves right-censored unfinished trajectories.
-Diagnosis asks whether an avoidable legal error occurred since the last
-diagnosis; mandatory rework alone is not an error. Replanning reports
-compare actual suffix effort with the exact remaining cost at the
-diagnosis checkpoint.
-
-Plan-survival curves preserve the first cost-loss event even if recovery
-later occurs. They report the assigned-task denominator at each operation
-index and distinguish missing traces from known outcomes. Joint pair
-correctness requires both assigned members; a missing member earns no
-joint credit. Supplementary definitions specify normalization, censoring,
-and the audit-inclusive regret conservation identity.
+The \ProbeCount{} rows represent \ProblemCount{} canonical diagnostic
+problems; repeated statements and appearance variants account for
+133 excess rows. Canonical identity includes source geometry, state,
+target, work, capacity, and the exact question or history.
+There are \DiscriminativeCount{} discriminative assignments.
+Primary accuracy averages assigned variants within a canonical problem,
+then problems within a source, then sources equally. Missing variants
+receive zero before averaging. Row, problem-macro, source-macro,
+calibration, and recovery-cohort scores remain available. Joint pair
+correctness requires both assigned members; a missing member earns zero.
+The supplement details metric denominators and regret conservation.
 
 \section{Measured evidence}
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/mechanism-evidence.pdf}
-\caption{Measured task and control evidence. Left: exact cost exceeds
-the static bound on some missions; coincident points overlap. Right:
-successful completion and optimal completion differ for greedy policies.
-Length strata do not impose a monotonic ordering of search difficulty.
-These descriptive measurements mix legacy development selection and
-new-source seeded sampling, whose results should also be examined
-separately.}
+\caption{Measured software evidence. Left: exact cost and static lower
+bound, with coincident points overlapping. Right: completed and optimal
+task-runs differ for greedy controls. Length bins do not imply monotonic
+search difficulty. These summaries combine legacy development and
+seeded source samples; partition results are released separately.}
 \label{fig:controls}
 \end{figure*}
 
 \begin{table*}[t]
 \centering\small
-\caption{Structural controls on 145 episodes. The oracle uses one seed;
-all other policies use three tie-order seeds (435 runs). Regret is mean
-excess among successful runs. Relations are privileged, so these are not
-image-track VLM results.}
+\caption{Structural controls on \EpisodeCount{} episodes. The oracle
+uses one seed; other policies use three tie-order seeds (\PolicyRuns{}
+runs). Regret is mean excess among successes. Exact relations are
+privileged inputs, so these are not image-input VLM results.}
 \input{controls-table.tex}
 \label{tab:controls}
 \end{table*}
 
 \subsection{Structural policies}
 Closure greedy minimizes the static successor bound with visited-state
-and randomized site tie breaking. Capacity dispatch prioritizes audits,
-mandatory removals, safe placements, and temporary staging, with escape
-from revisited states. Both are competent no-search controls within this
-abstraction. Greedy completes 384/435 runs, dispatch 367/435, and each
-achieves 266 optimal completions. Completion alone therefore conceals
-substantial avoidable cost (Table~\ref{tab:controls}).
+and randomized site tie-breaking. Capacity dispatch prioritizes audits,
+mandatory removals, safe placements, and temporary staging, with
+revisited-state escape. Greedy completes 1,061/1,131 runs and dispatch
+1,039/1,131; both achieve 873 optimal completions. Completion alone
+therefore conceals avoidable effort (Table~\ref{tab:controls}).
 
-A* uses graph reopening, $(g+h,h)$ priority, and declared expansion
-limits without consulting oracle tables. Caps of 100 and 1,000 expansions
-complete 362 and 404 runs, respectively. Full closure A* completes all 435
-optimally, with median 20 and maximum 4,372 expansions. The weaker
-occupancy-plus-pending-audit heuristic also solves all runs, but uses
-up to 75,454 expansions. This contrast demonstrates how a weak baseline
-can inflate apparent difficulty. The full-information problem remains
-computationally modest.
+A* uses graph reopening, $(g+h,h)$ priority, and declared limits without
+oracle access. Limits of 100 and 1,000 expansions complete 1,008 and
+1,079 runs. Full closure A* completes all 1,131 optimally, with median
+14 and maximum 12,578 expansions. The weaker occupancy-plus-pending-audit
+heuristic is also reported. Strong perfect-information planning remains
+computationally modest; weak controls can inflate apparent difficulty.
 
-Dropping inspection obligations completes only 156 actual missions,
-although its relaxed target is reached in every run. Ignoring the rack
-limit completes 239, with 196 executor rejections. These deliberate
-model-mismatch ablations diagnose omitted constraints rather than
-representing strong planners. Raw actions, final states, rejection codes,
-expansions, timings, and every aggregate are released. Repeated seeds
-reuse source geometry, and local cached timings are not calibrated
-cross-platform comparisons.
+Dropping inspection obligations or ignoring rack limits produces
+failures when relaxed plans execute under the actual rules. These are
+model-mismatch ablations, not strong planners. Raw actions, states,
+rejections, expansions, timings, and every aggregate are released.
+Seeds repeat geometry and tie order; cached local timings are not
+calibrated cross-platform comparisons.
 
-\subsection{Real model integration case}
-The default explorer case runs SmolVLM-256M-Instruct on
-\texttt{kart-deck-08} (public E069, seed 0). It is the first local run on
-that demonstration, with all four calls retained. Each call returns a
-scene description instead of a JSON action; each becomes
-\texttt{INVALID\_ACTION}, consumes one operation, and leaves the physical
-state unchanged. The controller then stops at the four-call limit.
-This failed case verifies the actual model--feedback loop, not planning
-competence or population performance.
+\subsection{Historical model integration case}
+The workbench preserves a version-2.1 SmolVLM-256M-Instruct run on
+\texttt{kart-deck-08} (historical public E069, seed 0). All four calls
+return scene descriptions instead of JSON actions. Each becomes
+\texttt{INVALID\_ACTION}, consumes an operation, and leaves the state
+unchanged. The controller stops at four calls. This is a failed
+integration example, not a planning or population result.
 
-The archive includes exact public prompts and observations, image hashes,
-raw responses, parsed actions, feedback, before/after frames, latency,
-measured MLX token counts, and the weight digest. Native stimuli remain
-1920 pixels wide; this local model's processor resizes the longest edge
-to 512 with image splitting disabled. That preprocessing is explicitly
-recorded. An OpenAI-compatible vision adapter supports further practice
-runs with server-side credentials. Population experiments use a separate
-usage-accounted study runner.
+The original task, bank hash, image bytes, prompts, raw outputs, parsed
+actions, feedback, latency, measured MLX token counts, and weight digest
+are preserved. Native stimuli are 1920 pixels wide; this model's processor
+resizes the longest edge to 512 with splitting disabled. HD display does
+not imply native-HD inference. Historical E069 is not relabeled as a
+version-2.2 experiment. An OpenAI-compatible practice adapter and a
+separate usage-accounted study runner support further collection.
 
-\section{Release, limitations, and outlook}
-The explorer starts with the seven task families, complete question
-previews, and filters for stable ID, source, split, and length bin.
-Users can attempt a question, inspect submitted-answer feedback, watch
-model calls, and export review JSON. A React workbench and isolated
-WebGL2 renderer retain original source geometry in live practice.
+\section{Release and limitations}
+The React workbench exposes seven families, complete previews, ID/source/
+split filters, answer submission, model playback, and review-JSON export.
+Its isolated WebGL2 renderer preserves original geometry, supports free
+practice orbit and explosion, and shows part details on hover.
 Native zoom preserves raster evidence. Dataset cards, public JSONL,
-sample HD observations, evaluator dependencies, and deployment materials
-are packaged together. They are local release artifacts; an external
-hosting URL is not claimed.
+sample HD inputs, evaluator dependencies, and deployment files are
+packaged together. No external hosting URL is claimed.
 
-Software validation replays all 145 optimal episodes and 739 diagnostic
-answers. Additional audits check matched prefixes/action multisets,
-source-group separation, repair BFS labels, budget accounting, overlapping
-errors, missing assignments, and altered transcripts. Protocol and
-browser tests cover persistence, idempotence, observation isolation,
-question clarity, HD zoom, and model feedback. This establishes software
-behavior, not human usability or hardware validity.
+Software validation replays all \EpisodeCount{} optimal episodes and
+\ProbeCount{} answers. Audits check sequence multisets, source separation,
+repair BFS labels, input-pixel differences, budget accounting, missing
+assignments, overlapping errors, and transcript tampering. Protocol and
+browser checks cover persistence, observation isolation, and playback.
+This establishes software behavior, not human usability or real-world
+mechanical validity.
 
-The principal remaining limits are empirical and structural. The public
-bank is small, deterministic, and tractable with perfect relations.
-Registered sites and explicit inventories simplify visual grounding.
-The visual-context evidence is limited to one source and a part-count
-confound. Geometry qualification omits forces, free poses, rotation,
-simultaneous subassembly motion, and real rack transfers. No model
-shortsightedness, human--model gap, or robustness to all shortcuts has
-been measured. The next research step is the preregistered matched
-image/structured study, with independent source replication and
-additional count-matched geometric contrasts. BrickPlan provides
-the executable instrument and falsifiable measurements for that study.
+The principal limits remain structural and empirical. The deterministic
+bank is tractable with perfect relations. Registration and inventories
+simplify grounding. Visual-context evidence spans three sources and has
+a part-count confound; pixel distinction needs empirical answerability
+testing. Geometry excludes forces, arbitrary poses, rotations,
+simultaneous subassembly motion, and real rack transfers. Sixteen sources
+remain below the desired 30--50-source scale. No model shortsightedness,
+human--model gap, or immunity to all shortcuts has been measured.
+The next study must report matched static, active, and structured inputs,
+source-level uncertainty, and count-matched context replication.
 
+\newpage
 {\small
 \bibliographystyle{ieeenat_fullname}
 \bibliography{references}

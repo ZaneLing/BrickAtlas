@@ -1,22 +1,23 @@
 # Benchmark data 索引
 
-## 当前规划任务：BrickPlan 2.1
+## 当前规划任务：BrickPlan 2.2
 
-145 个交互任务、739 道诊断题、98 对匹配题，来自 11 个套装来源组。
+377 个交互任务、1,952 道诊断题、188 对匹配题，来自 16 个套装来源组。
 七类题面覆盖装配、有限资源、检修历史、下一步选择、未来序列、
 视觉几何/外观对照及延迟恢复。D1–D4 仅表示最优操作长度。
+26 道校准题与 1,926 道区分性题目分开评分，诊断题按 1,819 个独立题目定义和来源聚合。
 
 | 数据与入口 | 路径 |
 |---|---|
-| 分类体验页面、启动与验证 | [README](brickplan-v2.1/README.md) |
-| 官方 CVPR 格式论文 | [正文](brickplan-v2.1/paper.pdf) · [补充材料](brickplan-v2.1/supplement.pdf) |
-| 公共题目表及完整运行包 | [JSONL](brickplan-v2.1/release/questions.jsonl) · [ZIP](brickplan-v2.1/release/brickplan-v2.1-release.zip) |
-| 数据卡、Dataset/Space/静态站发布 | [DATASET-CARD](brickplan-v2.1/DATASET-CARD.md) |
-| 真实模型逐步反馈 | [接入说明](brickplan-v2.1/MODEL-INTEGRATION.md) · [完整实录](brickplan-v2.1/cases/local-vlm.json) |
-| 构造有效性、来源与范围 | [VALIDITY](brickplan-v2.1/VALIDITY.md) |
+| 分类体验页面、启动与验证 | [README](brickplan-v2.2/README.md) |
+| 官方 CVPR 格式论文 | [正文](brickplan-v2.2/paper.pdf) · [补充材料](brickplan-v2.2/supplement.pdf) |
+| 公共题目表及完整运行包 | [JSONL](brickplan-v2.2/release/questions.jsonl) · [ZIP](brickplan-v2.2/release/brickplan-v2.2-release.zip) |
+| 数据卡、Dataset/Space/静态站发布 | [DATASET-CARD](brickplan-v2.2/DATASET-CARD.md) |
+| 历史真实模型逐步反馈 | [接入说明](brickplan-v2.2/MODEL-INTEGRATION.md) · [完整实录](brickplan-v2.2/cases/local-vlm.json) |
+| 构造有效性、来源与范围 | [VALIDITY](brickplan-v2.2/VALIDITY.md) |
 
 入口为 `http://127.0.0.1:8769/`，真实模型案例为 `/#case`。
-SmolVLM 的四次真实调用均出现格式失败，原始输出完整保留；它不代表总体模型成绩。
+SmolVLM 的四次真实调用均出现格式失败，2.1 原始任务和输出完整保留；它不代表新版或总体模型成绩。
 发布目录已准备，尚未上传公开平台。冻结的旧 BrickPlan 版本独立保留。
 
 ## 独立视觉修复任务：visual-repair-v1

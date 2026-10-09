@@ -3,18 +3,18 @@ import { ArrowUpRight, Search, ArrowLeft, ArrowRight } from 'lucide-react';
 import type { Catalogue, Preview, SceneData } from './types';
 import { api, staticMode } from './api';
 import { Brief } from './Workcell';
-import { JSONView, Visuals } from './Visuals';
+import { JSONView, SavedViews, Visuals } from './Visuals';
 import s from './Workbench.module.css';
 
 export function Library({ catalogue, id, onSelect, onPlay }: { catalogue: Catalogue; id: string; onSelect: (id: string) => void; onPlay: () => void }) {
   const [family, setFamily] = useState(catalogue.questions.find(q => q.id === id)?.category || 'assembly');
   const [search, setSearch] = useState(''), [tier, setTier] = useState(''), [page, setPage] = useState(0);
-  const [split, setSplit] = useState('');
+  const [split, setSplit] = useState(''), [saved, setSaved] = useState('');
   const [preview, setPreview] = useState<Preview>(), [scene, setScene] = useState<SceneData>(), [error, setError] = useState('');
   const [sampleIds, setSampleIds] = useState<string[]>([]);
   useEffect(() => { api.sampleIds().then(setSampleIds); }, []);
   useEffect(() => {
-    let alive = true; setError(''); setPreview(undefined); setScene(undefined);
+    let alive = true; setError(''); setPreview(undefined); setScene(undefined); setSaved('');
     api.preview(id).then(p => { if (alive) setPreview(p); }).catch(e => { if (alive) setError(e.message); });
     api.scene(id).then(p => { if (alive) setScene(p); }).catch(e => { if (alive) setError(e.message); });
     return () => { alive = false; };
@@ -27,8 +27,8 @@ export function Library({ catalogue, id, onSelect, onPlay }: { catalogue: Catalo
     onSelect((candidates.find(q => sampleIds.includes(q.id)) || candidates[0]).id);
   };
   return <div className={s.library}>
-    <div className={s.pageHeader}><div><div className={s.eyebrow}>BRICKPLAN 2.1 / QUESTION LIBRARY</div><h1>先看懂题目，再开始规划。</h1><p>Inspect the task. Plan the assembly. Trace every decision.</p></div>
-      <div className={s.census}><div><b>{catalogue.counts.episodes}</b><span>交互任务</span></div><div><b>{catalogue.counts.probes}</b><span>诊断题</span></div><div><b>7</b><span>任务类别</span></div></div>
+    <div className={s.pageHeader}><div><div className={s.eyebrow}>BRICKPLAN {catalogue.release} / QUESTION LIBRARY</div><h1>先看懂题目，再开始规划。</h1><p>Inspect the task. Plan the assembly. Trace every decision.</p></div>
+      <div className={s.census}><div><b>{catalogue.counts.episodes}</b><span>交互任务</span></div><div><b>{catalogue.counts.probes}</b><span>诊断题</span></div><div><b>{catalogue.taxonomy.length}</b><span>任务类别</span></div></div>
     </div>
     <div className={s.families}>{catalogue.taxonomy.map(f => <button key={f.id} aria-pressed={family === f.id} onClick={() => selectFamily(f.id)}>
       <span className={s.familyNumber}>{f.number}</span><b>{f.name.zh}</b><span>{f.count} questions</span>
@@ -47,7 +47,9 @@ export function Library({ catalogue, id, onSelect, onPlay }: { catalogue: Catalo
       </section>
       <section className={s.preview}>
         <Brief catalogue={catalogue} id={id} />
-        <Visuals data={scene} images={preview?.observation.images} />
+        {!!preview?.observation.inspectionHistory.length && <div className={s.visualToolbar}><SavedViews observation={preview.observation} value={saved} onChange={setSaved} /></div>}
+        <Visuals data={saved === '' ? scene : undefined} study={saved !== ''}
+          images={saved === '' ? preview?.observation.images : preview?.observation.inspectionHistory[+saved]?.images} />
         <div className={s.previewFooter}><span>{error || (preview ? `${preview.observation.partIds.length} registered pieces · ${preview.observation.workOrders.length} work orders` : '正在加载原始网格与高清图…')}</span>
           <button className={s.primary} onClick={onPlay}>{staticMode ? '查看题目详情' : '进入作答工作区'}<ArrowUpRight size={16} /></button></div>
         {preview?.proposedPlan && <details className={s.details}><summary>完整候选序列 / Full proposed sequence ({preview.proposedPlan.length} steps)</summary><JSONView value={preview.proposedPlan} /></details>}

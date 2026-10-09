@@ -34,16 +34,17 @@ new-source policy results. Both passes and their exact retained source
 indices are archived. No difficulty-based rejection is used for these
 new-source tasks.
 
-Four geometry pairs share registered pieces and original transforms,
+Ten geometry pairs share registered pieces and original transforms,
 start, goal, capacity, jobs, and proposed action sequence. Induced fixed
-contexts are separately qualified. All four answer-changing pairs
-come from the roadster development source and have unequal fixed-part
-counts. Three equal-count/type context candidates yield zero retained
-answer-changing pairs; the full census is in
+contexts are separately qualified. Four context interventions across
+source groups 31027, 10014, and 10036 yield these ten pairs, all with
+unequal fixed-part counts. The remaining 37 qualified context candidates
+yield no retained answer-changing pair under the declared search.
+The full census is in
 \texttt{data/geometry-probe-audit.json}.
 Original/grayscale pairs preserve all geometry and labels.
 
-The 72 interior-order pairs are balanced over conflict bins 2--5,
+The 144 interior-order pairs are balanced over conflict bins 2--5,
 6--10, and 11+. Legal and reordered plans share exact prefixes up to
 the first conflict, endpoints, and action multisets. Legal witnesses
 have no repeated states. The stored audit exposes each conflict position,
@@ -53,22 +54,19 @@ so readers can run other prefix controls.
 \centering\small
 \caption{A prefix-only software control returns the first conflict if
 it appears within $k$ executed operations, otherwise ``all legal.''
-The denominator is all 144 continuation questions.}
-\begin{tabular}{rrrrrrrr}\toprule
-$k$ & 0 & 2 & 3 & 5 & 8 & 11 & 32\\\midrule
-Correct & 72 & 80 & 87 & 96 & 115 & 122 & 144\\
-\bottomrule\end{tabular}
+The denominator is all 288 continuation questions.}
+\input{prefix-controls.tex}
 \end{table}
 
 \section{Shallow choice and control diagnostics}
 \begin{table}[t]
 \centering\small
-\caption{Measured finite-horizon choice sets for all 230 next-action
+\caption{Measured finite-horizon choice sets for all 653 next-action
 questions. Any/all refer to optimistic/pessimistic ties; uniform tie
 correctness is an exact average, not a sampled policy result.}
 \resizebox{\columnwidth}{!}{\input{horizon.tex}}
 \end{table}
-The depth-one minimizing set contains an optimal action at all 230
+The depth-one minimizing set contains an optimal action at all 653
 selected checkpoints. Therefore the diagnostic bank does not demonstrate
 that shallow reasoning necessarily excludes the correct answer.
 Deeper horizons can change tie composition nonmonotonically. The full
@@ -80,7 +78,7 @@ table is retained without redefining difficulty to match its results.
 Each nonoracle policy has three tie-order seeds per episode.}
 \resizebox{\columnwidth}{!}{\input{tier-controls.tex}}
 \end{table}
-All 4,060 raw policy task-run records are archived in
+All \RawPolicyRuns{} raw policy task-run records are archived in
 \texttt{data/software-control-records.json.gz}. They include one oracle
 seed and three seeds for nine other policies, with actions, outcomes,
 expansions, timings, and regrets. The release checker recomputes every
@@ -95,8 +93,8 @@ each traversal is an optimal prefix, and every optimal prefix satisfies
 that equality. Remove the terminal state to obtain the repair target
 $\mathcal C_b^{-}$. The generator's delayed checkpoints remain outside
 this set after an error and lag 1, 3, or 5. Independent forward BFS
-verifies their shortest return distances, which range from 1 to 6.
-The 333 questions comprise 117, 109, and 107 checkpoints at those lags.
+verifies their shortest return distances, which range from 1 to 7.
+The 943 questions comprise 337, 307, and 299 checkpoints at those lags.
 
 Each positive-excess legal action creates its own spontaneous event;
 later actions update every active event. A second error never replaces
@@ -105,6 +103,22 @@ reported separately. Unfinished events are censored; terminal events
 that never restore a nonterminal corridor state are observed failures.
 Reaching a goal after a costly detour earns completion credit, but not
 automatic corridor-repair credit.
+
+The inverse-last-action control uses only the public executed history
+and candidate list. It earns zero when no inverse is offered. It solves
+235/337 lag-one, 162/307 lag-three, and 150/299 lag-five questions.
+The combined 547/943 accuracy is 58.0\%. There are 368 cases with a legal
+but suboptimal inverse and 28 with no offered inverse. Lag is thus an
+experimental descriptor, not proof of necessary nonlocal reasoning.
+
+There are 26 all-correct-choice calibration questions across the
+diagnostic bank. Their correct tie sets are preserved, and the evaluator
+reports calibration separately from the 1,926 discriminative rows.
+The 1,952 rows map to 1,819 canonical problems. Assigned repeated variants
+are averaged before problems and sources; missing responses receive
+zero before this averaging. The evaluator exposes both row and clustered
+scores, plus each inverse-control cohort. None of these private labels
+is included in the policy observation.
 
 An accepted diagnosis concerns legal positive-excess events since the
 last diagnosis or episode start. The first later diagnosis is attached
@@ -147,13 +161,15 @@ True-unreachability choice & No eligible choices in retained components & Undefi
 Recovery bounds & Every eligible legal positive-excess event & Lower bound restored/all; upper adds censored\\
 Diagnosis accuracy & Accepted diagnosis queries & Unqueried intervals are not inferred correct\\
 Joint pair correctness & Fully assigned pairs & Missing member prevents joint credit\\
-Probe accuracy & All assigned questions of that family & Missing or invalid response gets no credit\\
+Discriminative probe accuracy & Assigned noncalibration questions of that family & Missing or invalid response gets no credit\\
+Source macro accuracy & Variants within problem, then problems within source, then sources & Missing variants enter as zero before averaging\\
+Calibration accuracy & Assigned all-correct-choice questions & Report separately; not evidence of discrimination\\
 \bottomrule\end{tabular}
 \end{table*}
 
 \section{Visual stimuli and actual model calls}
 All executable geometry uses original source poses and LDraw triangle
-meshes. The 153 distinct part meshes contain 212,778 triangles.
+meshes. The 214 distinct part meshes contain 290,338 triangles.
 \texttt{ASSET-LICENSES.json} preserves source models, authors, URLs, and
 part-level notices; attribution and licenses remain separate from code.
 Qualification proxies do not replace the displayed shapes.
@@ -168,8 +184,10 @@ is separately declared: the local SmolVLM case resizes to longest edge
 512, with splitting disabled. HD display does not imply native-HD model
 processing.
 
-The first local case contains four actual inference calls on public E069,
-seed 0. All return descriptive prose instead of an executable JSON action.
+The preserved version-2.1 local case contains four actual inference calls
+on historical public E069, seed 0. The original task and bank hash are
+archived; this trace is not relabeled as version-2.2 evaluation.
+All calls return descriptive prose instead of an executable JSON action.
 The executor rejects each, and the controller stops at its four-call limit.
 Every prompt, raw response, image hash, latency, measured token count,
 action, and feedback is archived. No oracle action or fabricated explanation
@@ -178,54 +196,81 @@ neither an estimate of SmolVLM accuracy nor evidence about larger VLMs.
 
 \section{Protocol and reproducibility}
 Study runs bind participant, condition, seed, assignments, and bank hash.
-The evaluator replays every mutation, recomputes outcomes, validates
-view transcripts, and normalizes candidate permutations. Identical
-request retries are idempotent across restart; changed content under a
-used ID or stale revision is rejected. Atomic persistence rolls back
-in-memory mutations on write failure.
+The evaluator replays mutations, validates views, and normalizes candidate
+permutations. Retries are idempotent across restart; changed content or
+stale revisions are rejected. Failed atomic persistence rolls back mutations.
 
 Practice exposes rich catalogs, solution review after submission, and
-live free 3D inspection. Study mode blocks those routes and downloadable
-private evaluator artifacts. The portable public release includes an
-explicit evaluator directory for reproducibility; it must remain on
-the evaluator host during a blind study. A local process working-directory
-convention is not a security sandbox.
+free 3D inspection. Study mode blocks these and private downloads.
+Portable evaluator data must remain on the evaluator host during blind
+studies; a local working-directory convention is not a security sandbox.
 
 The practice model manager supports local MLX and OpenAI-compatible
-vision calls, run/step/stop, durable outputs, and bounded calls.
-Server credentials are not included in browser inputs or exports.
-Stop prevents subsequent actions after an in-flight request returns;
-it cannot undo provider billing. Unknown calls after restart are retained
-as interrupted, never silently retried.
+vision calls, durable outputs, and bounded run/step/stop. Credentials
+never enter browser exports. Stop prevents subsequent actions, not
+in-flight provider billing. Interrupted calls are never silently retried.
 
 The population study runner is distinct. Its reported-usage mode reserves
-declared maximum input/output tokens and cost before each call.
-Adapters must account for images, enforce limits, and attest usage.
-Incomplete usage, timeout, malformed responses, or limit violations stop
-automatic continuation. Unavailable-accounting mode marks tokens and
-currency unavailable. Adapter/provider accounting is a declared trust
-boundary, not a provider-enforced spending quota.
+maximum tokens and cost before calls; adapters account for images and
+attest usage. Missing accounting, timeout, malformed responses, or limit
+violations stop continuation. Unavailable-accounting mode marks tokens
+and currency unavailable. This relies on adapter/provider reports, not
+a provider-enforced spending quota.
 
 The main paper uses the unmodified official CVPR author-kit, pinned to
-commit \texttt{2917585}. The retrieved kit identifies itself as 2026;
-this does not verify a future conference year's kit. The default PDF
-is a public research preprint. Review mode can be compiled separately
-after setting the actual submission year and paper ID.
-No custom margin or body-font compression is applied.
+commit \texttt{2917585}, labeled 2026. A future year's kit is not claimed.
+The PDF uses public preprint mode without margin/font compression.
+Review mode requires the actual year and paper ID.
 
 \clearpage
 \onecolumn
-\section{Source profiles}
-Profiles without episodes are zero-yield qualified geometry candidates,
-not additional benchmark tasks. Registered and movable counts describe
-different quantities; fixed geometry can dominate appearance.
+\section{Base source assemblies}
+The table lists 17 base assemblies from 16 kit groups; roadster and kart
+share kit 31027. An additional 82 qualified context profiles are indexed
+in the machine-readable source census. They are not independent sources.
+Profiles without episodes are zero-yield candidates, not benchmark tasks.
+Registered and movable counts describe different quantities.
 \begin{center}\small
-\resizebox{\textwidth}{!}{\input{sources.tex}}
+\input{sources.tex}
+\end{center}
+\begin{center}\small
+\input{source-controls.tex}
+\end{center}
+Version 2.2 admitted five of eleven additional frozen source candidates.
+The other six remain in the source-plan rejection census. Only source
+geometry and solvability determine this admission; no policy-performance
+threshold is used. All earlier episode and diagnostic definitions are
+preserved. New annotations specify scoring roles and canonical identities.
+
+\section{Static and active view certificates}
+Static diagnostics supply four fixed views at revision zero: isometric,
+left, rear, and right. All five panels are included for each view, and
+later acquisition is disabled. The structured diagnostic condition uses
+the same initial views. Active image diagnostics begin with isometric
+only; each inspect increments the view budget. These are separate
+conditions rather than interchangeable names for one observation.
+
+The native-resolution certificate compares every geometry pair in all
+twenty initial panels. All ten pairs have at least one pixel-distinct
+view; three pairs have identical isometric panels. The certificate is
+bound to the bank hash and identity seed. It demonstrates input
+distinguishability, not human agreement or perceptual answerability.
+Other image-processing pipelines and identity seeds require their own
+checks. Study results must report preprocessing and acquisition counts.
+\clearpage
+\section{Original-source gallery: assemblies 1--6}
+\begin{center}
+\includegraphics[width=.96\textwidth,height=.85\textheight,keepaspectratio]{figures/source-gallery-1.png}
 \end{center}
 \clearpage
-\section{Original-source gallery}
+\section{Original-source gallery: assemblies 7--12}
 \begin{center}
-\includegraphics[width=.97\textwidth,height=.85\textheight,keepaspectratio]{figures/source-gallery.png}
+\includegraphics[width=.96\textwidth,height=.85\textheight,keepaspectratio]{figures/source-gallery-2.png}
+\end{center}
+\clearpage
+\section{Original-source gallery: assemblies 13--17}
+\begin{center}
+\includegraphics[width=.96\textwidth,height=.85\textheight,keepaspectratio]{figures/source-gallery-3.png}
 \end{center}
 
 \clearpage

@@ -1,0 +1,295 @@
+\section{Exact labels and admissible bounds}
+The archived predecessor audit evaluates every stored nonnegative
+state--goal label. Let $R$ be occupied blocker closure for required
+removals and insertions. Without capacity or inspection obligations, the
+formula $|A\triangle G|+2|R\cap A\cap G|$ agrees with all
+\OldLabels{} audited labels. This is a finite-census equality, not a
+general theorem about arbitrary assembly domains or visual perception.
+
+For BrickPlan's lower bound, initially mismatched sites each require an
+operation. Every occupied target site in the required removal closure
+must be detached and reattached. Every unfinished job needs one audit.
+These counts refer to disjoint required operations. Recursively including
+occupied path blockers can only add necessary removals. Ignoring capacity
+scheduling and some connectivity effects relaxes the problem, so
+$h(x)\leq C^*(x)$. The verifier checks this inequality at every oracle node.
+
+For every nonterminal product node, the certificate checks
+$C^*(x)=\min_{a\in A(x)}[1+C^*(T(x,a))]$, with terminal cost zero.
+Physical edges are compared with independent runtime transition
+enumeration and inverse execution; audit edges are replayed as well.
+Every retained product state reaches a terminal. The physical graph is
+reversible within its capacity-constrained component. Audits add a
+persistent bit without removing a physical action, and all admitted jobs
+can be exposed. Consequently, legal successors do not become genuine
+irreversible dead ends. Budget exhaustion and extra cost remain possible.
+
+\section{Construction details}
+The machine-readable source plan distinguishes development and
+new-source groups before new-source solver discovery. Legacy tasks retain
+their earlier selection bias. Additional task generation uses deterministic
+seeds, sampled states and work orders, and solvability admission. Geometric
+pruning was refined after an initial collision-rejecting pass, before
+new-source policy results. Both passes and their exact retained source
+indices are archived. No difficulty-based rejection is used for these
+new-source tasks.
+
+Ten geometry pairs share registered pieces and original transforms,
+start, goal, capacity, jobs, and proposed action sequence. Induced fixed
+contexts are separately qualified. Four context interventions across
+source groups 31027, 10014, and 10036 yield these ten pairs, all with
+unequal fixed-part counts. The remaining 37 qualified context candidates
+yield no retained answer-changing pair under the declared search.
+The full census is in
+\texttt{data/geometry-probe-audit.json}.
+Original/grayscale pairs preserve all geometry and labels.
+
+The 144 interior-order pairs are balanced over conflict bins 2--5,
+6--10, and 11+. Legal and reordered plans share exact prefixes up to
+the first conflict, endpoints, and action multisets. Legal witnesses
+have no repeated states. The stored audit exposes each conflict position,
+so readers can run other prefix controls.
+
+\begin{table}[t]
+\centering\small
+\caption{A prefix-only software control returns the first conflict if
+it appears within $k$ executed operations, otherwise ``all legal.''
+The denominator is all 288 continuation questions.}
+\input{prefix-controls.tex}
+\end{table}
+
+\section{Shallow choice and control diagnostics}
+\begin{table}[t]
+\centering\small
+\caption{Measured finite-horizon choice sets for all 653 next-action
+questions. Any/all refer to optimistic/pessimistic ties; uniform tie
+correctness is an exact average, not a sampled policy result.}
+\resizebox{\columnwidth}{!}{\input{horizon.tex}}
+\end{table}
+The depth-one minimizing set contains an optimal action at all 653
+selected checkpoints. Therefore the diagnostic bank does not demonstrate
+that shallow reasoning necessarily excludes the correct answer.
+Deeper horizons can change tie composition nonmonotonically. The full
+table is retained without redefining difficulty to match its results.
+
+\begin{table}[t]
+\centering\small
+\caption{Structural policy completion by operation-length bin.
+Each nonoracle policy has three tie-order seeds per episode.}
+\resizebox{\columnwidth}{!}{\input{tier-controls.tex}}
+\end{table}
+All \RawPolicyRuns{} raw policy task-run records are archived in
+\texttt{data/software-control-records.json.gz}. They include one oracle
+seed and three seeds for nine other policies, with actions, outcomes,
+expansions, timings, and regrets. The release checker recomputes every
+overall, tier, source, and seed aggregate. The full search cap of
+500,000 is a resource ceiling, not actual expansion usage. Oracle loading
+and cached local timing are not comparable to calibrated online search.
+
+\section{Recovery, diagnosis, and censoring}
+Traverse only edges with $C^*(T(x,a))=C^*(x)-1$ from pre-error state
+$b$. The reached states are exactly the union of optimal completions:
+each traversal is an optimal prefix, and every optimal prefix satisfies
+that equality. Remove the terminal state to obtain the repair target
+$\mathcal C_b^{-}$. The generator's delayed checkpoints remain outside
+this set after an error and lag 1, 3, or 5. Independent forward BFS
+verifies their shortest return distances, which range from 1 to 7.
+The 943 questions comprise 337, 307, and 299 checkpoints at those lags.
+
+Each positive-excess legal action creates its own spontaneous event;
+later actions update every active event. A second error never replaces
+the first. Immediate recovery and lag-specific delayed cohorts are
+reported separately. Unfinished events are censored; terminal events
+that never restore a nonterminal corridor state are observed failures.
+Reaching a goal after a costly detour earns completion credit, but not
+automatic corridor-repair credit.
+
+The inverse-last-action control uses only the public executed history
+and candidate list. It earns zero when no inverse is offered. It solves
+235/337 lag-one, 162/307 lag-three, and 150/299 lag-five questions.
+The combined 547/943 accuracy is 58.0\%. There are 368 cases with a legal
+but suboptimal inverse and 28 with no offered inverse. Lag is thus an
+experimental descriptor, not proof of necessary nonlocal reasoning.
+
+There are 26 all-correct-choice calibration questions across the
+diagnostic bank. Their correct tie sets are preserved, and the evaluator
+reports calibration separately from the 1,926 discriminative rows.
+The 1,952 rows map to 1,819 canonical problems. Assigned repeated variants
+are averaged before problems and sources; missing responses receive
+zero before this averaging. The evaluator exposes both row and clustered
+scores, plus each inverse-control cohort. None of these private labels
+is included in the policy observation.
+
+An accepted diagnosis concerns legal positive-excess events since the
+last diagnosis or episode start. The first later diagnosis is attached
+to each previously undiagnosed event, with its sign and lag. True
+positive diagnosis checkpoints open replanning-suffix records.
+Always-negative or selectively requested diagnoses can yield misleading
+accuracy, so report event detection and query coverage alongside it.
+
+Plan-survival reports retain the first cost loss even after recovery,
+and include explicit eligible/observed/unknown counts per operation index.
+They are descriptive task-budget curves, not Kaplan--Meier population
+estimates. Conditions should use matched assignments and registered
+source strata. Missing episodes must not disappear from denominators.
+
+\subsection{Regret conservation}
+For a successful trace, accepted attaches $A_c$ and detaches $D_c$
+satisfy $A_c-D_c=\Delta$, the target-minus-start occupancy count.
+There are exactly $u$ accepted previously unfinished audits.
+Duplicate audits are rejected. If $N_{\rm invalid}$ is the number of
+charged invalid attempts, then
+\begin{align}
+T &=2D_c+\Delta+u+N_{\rm invalid},\\
+C^*(x_0)&=2D^*+\Delta+u,\\
+T-C^*(x_0)&=2(D_c-D^*)+N_{\rm invalid}.
+\end{align}
+This audit-inclusive identity reconciles detachment regret and total
+excess. Rejected actions consume budget; stale HTTP revisions and malformed
+request envelopes are rejected before mutation and are not action events.
+
+\begin{table*}[t]
+\centering\small
+\caption{Metric denominators and treatment of missing outcomes.}
+\begin{tabular}{p{.22\textwidth}p{.38\textwidth}p{.30\textwidth}}\toprule
+Metric & Eligible denominator & Missing / termination rule\\\midrule
+Completion / optimal completion & All assigned episodes & Unstarted and unfinished are failures\\
+Successful mean regret & Successfully finished episodes & Null for failures; report success coverage\\
+Avoidable-cost choice & Legal decisions with zero- and positive-excess alternatives & Invalid attempts excluded here, charged in total\\
+Budget-loss choice & Viable checkpoints with viable and nonviable legal choices & Other budget losses remain in raw records\\
+True-unreachability choice & No eligible choices in retained components & Undefined, not empirical evidence of zero risk\\
+Recovery bounds & Every eligible legal positive-excess event & Lower bound restored/all; upper adds censored\\
+Diagnosis accuracy & Accepted diagnosis queries & Unqueried intervals are not inferred correct\\
+Joint pair correctness & Fully assigned pairs & Missing member prevents joint credit\\
+Discriminative probe accuracy & Assigned noncalibration questions of that family & Missing or invalid response gets no credit\\
+Source macro accuracy & Variants within problem, then problems within source, then sources & Missing variants enter as zero before averaging\\
+Calibration accuracy & Assigned all-correct-choice questions & Report separately; not evidence of discrimination\\
+\bottomrule\end{tabular}
+\end{table*}
+
+\section{Visual stimuli and actual model calls}
+All executable geometry uses original source poses and LDraw triangle
+meshes. The 214 distinct part meshes contain 290,338 triangles.
+\texttt{ASSET-LICENSES.json} preserves source models, authors, URLs, and
+part-level notices; attribution and licenses remain separate from code.
+Qualification proxies do not replace the displayed shapes.
+Figure provenance records exact states, seeds, bank hash, and image hashes.
+
+The public renderer supersamples by two before Lanczos downsampling to
+native HD. Display canvases account for device-pixel ratio, and native
+zoom avoids CSS-only enlargement of low-resolution pixels.
+Catalog tiles are $480\times360$ and catalogs are 1920 pixels wide.
+Models receive image content, not text describing images. Preprocessing
+is separately declared: the local SmolVLM case resizes to longest edge
+512, with splitting disabled. HD display does not imply native-HD model
+processing.
+
+The preserved version-2.1 local case contains four actual inference calls
+on historical public E069, seed 0. The original task and bank hash are
+archived; this trace is not relabeled as version-2.2 evaluation.
+All calls return descriptive prose instead of an executable JSON action.
+The executor rejects each, and the controller stops at its four-call limit.
+Every prompt, raw response, image hash, latency, measured token count,
+action, and feedback is archived. No oracle action or fabricated explanation
+replaces model output. This is a failed integration example. It supplies
+neither an estimate of SmolVLM accuracy nor evidence about larger VLMs.
+
+\section{Protocol and reproducibility}
+Study runs bind participant, condition, seed, assignments, and bank hash.
+The evaluator replays mutations, validates views, and normalizes candidate
+permutations. Retries are idempotent across restart; changed content or
+stale revisions are rejected. Failed atomic persistence rolls back mutations.
+
+Practice exposes rich catalogs, solution review after submission, and
+free 3D inspection. Study mode blocks these and private downloads.
+Portable evaluator data must remain on the evaluator host during blind
+studies; a local working-directory convention is not a security sandbox.
+
+The practice model manager supports local MLX and OpenAI-compatible
+vision calls, durable outputs, and bounded run/step/stop. Credentials
+never enter browser exports. Stop prevents subsequent actions, not
+in-flight provider billing. Interrupted calls are never silently retried.
+
+The population study runner is distinct. Its reported-usage mode reserves
+maximum tokens and cost before calls; adapters account for images and
+attest usage. Missing accounting, timeout, malformed responses, or limit
+violations stop continuation. Unavailable-accounting mode marks tokens
+and currency unavailable. This relies on adapter/provider reports, not
+a provider-enforced spending quota.
+
+The main paper uses the unmodified official CVPR author-kit, pinned to
+commit \texttt{2917585}, labeled 2026. A future year's kit is not claimed.
+The PDF uses public preprint mode without margin/font compression.
+Review mode requires the actual year and paper ID.
+
+\clearpage
+\onecolumn
+\section{Base source assemblies}
+The table lists 17 base assemblies from 16 kit groups; roadster and kart
+share kit 31027. An additional 82 qualified context profiles are indexed
+in the machine-readable source census. They are not independent sources.
+Profiles without episodes are zero-yield candidates, not benchmark tasks.
+Registered and movable counts describe different quantities.
+\begin{center}\small
+\input{sources.tex}
+\end{center}
+\begin{center}\small
+\input{source-controls.tex}
+\end{center}
+Version 2.2 admitted five of eleven additional frozen source candidates.
+The other six remain in the source-plan rejection census. Only source
+geometry and solvability determine this admission; no policy-performance
+threshold is used. All earlier episode and diagnostic definitions are
+preserved. New annotations specify scoring roles and canonical identities.
+
+\section{Static and active view certificates}
+Static diagnostics supply four fixed views at revision zero: isometric,
+left, rear, and right. All five panels are included for each view, and
+later acquisition is disabled. The structured diagnostic condition uses
+the same initial views. Active image diagnostics begin with isometric
+only; each inspect increments the view budget. These are separate
+conditions rather than interchangeable names for one observation.
+
+The native-resolution certificate compares every geometry pair in all
+twenty initial panels. All ten pairs have at least one pixel-distinct
+view; three pairs have identical isometric panels. The certificate is
+bound to the bank hash and identity seed. It demonstrates input
+distinguishability, not human agreement or perceptual answerability.
+Other image-processing pipelines and identity seeds require their own
+checks. Study results must report preprocessing and acquisition counts.
+\clearpage
+\section{Original-source gallery: assemblies 1--6}
+\begin{center}
+\includegraphics[width=.96\textwidth,height=.85\textheight,keepaspectratio]{figures/source-gallery-1.png}
+\end{center}
+\clearpage
+\section{Original-source gallery: assemblies 7--12}
+\begin{center}
+\includegraphics[width=.96\textwidth,height=.85\textheight,keepaspectratio]{figures/source-gallery-2.png}
+\end{center}
+\clearpage
+\section{Original-source gallery: assemblies 13--17}
+\begin{center}
+\includegraphics[width=.96\textwidth,height=.85\textheight,keepaspectratio]{figures/source-gallery-3.png}
+\end{center}
+
+\clearpage
+\section{A certified optimal resource replay}
+\begin{center}
+\includegraphics[width=.94\textwidth,height=.76\textheight,keepaspectratio]{figures/resource-replay.png}
+\end{center}
+This is an exact software-oracle witness, not a VLM trajectory.
+All displayed states preserve source poses and certified connectivity.
+The figure provenance contains the task ID, seed, occupancy, ledger,
+step indices, and exact remaining cost. Rack holders and off-assembly
+work are explicit abstractions of the task.
+
+\clearpage
+\section{Complete episode census}
+``Jobs'' is the declared inspection count, ``Done'' its initially
+completed subset, and A* expansions use seed 0 with the closure bound.
+D1--D4 are length bins. Internal IDs are evaluator documentation;
+participant IDs are consistently permuted by seed. Exact starts, goals,
+jobs, witnesses, and oracle paths are available in the task bank.
+\small
+\input{census.tex}

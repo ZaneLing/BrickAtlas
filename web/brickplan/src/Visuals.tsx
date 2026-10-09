@@ -1,13 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Maximize2, X, RotateCcw, Box, Image as ImageIcon } from 'lucide-react';
-import type { Images, Raster, SceneData } from './types';
+import type { Images, Observation, Raster, SceneData } from './types';
 import type { BrickSceneController } from './BrickSceneController';
 import { asset, publicJSON } from './api';
 import s from './Workbench.module.css';
 
 export function JSONView({ value, title = '原始 JSON / Raw JSON' }: { value: unknown; title?: string }) {
   return <details className={s.details}><summary>{title}</summary><pre>{publicJSON(value)}</pre></details>;
+}
+export function SavedViews({ observation, value, onChange, disabled = false }: {
+  observation?: Observation; value: string; onChange: (value: string) => void; disabled?: boolean;
+}) {
+  return <label className={s.field}>已提供与已获取视角 / Available views
+    <select aria-label="Saved view" value={value} disabled={disabled} onChange={e => onChange(e.target.value)}>
+      <option value="">当前视角 Live · {observation?.view || 'isometric'}</option>
+      {observation?.inspectionHistory.map((v, i) => <option key={v.frameId} value={i}>
+        {v.view} · revision {v.atRevision} · {v.atRevision === 0 ? 'supplied / no cost' : 'acquired'}
+      </option>)}
+    </select>
+  </label>;
 }
 export function RasterView({ raster, title }: { raster?: Raster; title: string }) {
   const [native, setNative] = useState(false);

@@ -10,11 +10,13 @@ export type Observation = {
   partIds: string[]; siteIds: string[]; registration: { partId: string; siteId: string }[];
   workOrders: { partId: string; completed: boolean; operation: string }[];
   inspectionHistory: { frameId: string; atRevision: number; view: string; images?: Images }[];
+  actions?: Record<string, unknown>;
+  observationProtocol?: { mode: string; initialViews: string[]; acquiredViews: number; acquisitionCostPerView: number; initialViewsCountAsAcquisition: boolean };
   images?: Images; completion: string; identityRule: string; fixture: string; diagnosisQuestion: string;
 };
 export type Question = { id: string; stableId: string; category: string; form: string; kind: string; source: string; profile: string; split: string; tier: string; lengthBin: string };
 export type Family = { id: string; number: string; name: Bi; question: Bi; given: Bi; answer: Bi; score: Bi; count: number };
-export type Catalogue = { questions: Question[]; taxonomy: Family[]; counts: { episodes: number; probes: number; pairs: number; sources: number }; lengthNotice: Bi };
+export type Catalogue = { release: string; bankHash?: string; questions: Question[]; taxonomy: Family[]; counts: { episodes: number; probes: number; pairs: number; sources: number }; lengthNotice: Bi };
 export type Preview = {
   id: string; kind: string; observation: Observation; question: string; revision?: number; answered?: boolean;
   candidates?: Action[]; proposedPlan?: Action[];

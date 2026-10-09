@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BrickPlan 2.1 — Questions, Data, Model Case</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f4ed;color:#17342e;font:16px/1.6 system-ui,sans-serif}main{max-width:1200px;margin:auto;padding:36px 24px}header{border-bottom:1px solid #c6cfc7;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;padding-bottom:20px}a{color:#23684e}nav{display:flex;gap:20px}h1{font-size:clamp(36px,6vw,66px);line-height:1.12;max-width:840px;margin-bottom:24px}h2{margin-top:54px}p{max-width:840px}small,.muted{color:#596a61}button,select{font:inherit;border:1px solid #a0b6a6;border-radius:8px;background:white;color:inherit;padding:10px 16px;cursor:pointer}button[aria-pressed=true]{background:#245c47;color:white}.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}.card{background:white;border:1px solid #d6ded4;border-radius:16px;padding:24px;margin:18px 0}.panels{display:grid;grid-template-columns:1fr 1fr;gap:20px}canvas{width:100%;height:auto;background:#edf1ed;cursor:zoom-in}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eff3ef;padding:16px;font:13px/1.6 ui-monospace,monospace;max-height:420px;overflow:auto}dl{display:grid;grid-template-columns:130px 1fr;gap:8px}dd{margin:0}ol{max-height:340px;overflow:auto}footer{margin:64px 0 20px;border-top:1px solid #cad4c8;padding-top:20px}#message{color:#9a402f}.pill{display:inline-block;background:#e7eee4;padding:4px 10px;margin:4px;border-radius:6px}@media(max-width:650px){.panels{grid-template-columns:1fr}main{padding:24px 16px}.card{padding:16px}dl{display:block}dt{font-weight:600}dd{margin-bottom:12px}}
+nav{flex-wrap:wrap}
+</style>
+<main>
+<header><strong>▦ BRICKPLAN 2.1</strong><nav><a href="#questions">Questions</a><a href="#case">Model case</a><a href="#data">Paper & data</a></nav></header>
+<p class="muted">VISUAL ASSEMBLY / FUTURE ACTION COST / ERROR RECOVERY</p>
+<h1>See the pieces.<br>Plan what comes next.</h1>
+<p>145 interactive episodes · 739 diagnostic questions · 11 source groups. Seven task families, exact evaluators, and native HD observations of original LDraw geometry.</p>
+<p>This static edition presents seven complete examples and the recorded real model case. Download the portable release to attempt all 884 questions or run a model through the interactive server.</p>
+<section id="questions"><h2>What does each task ask?</h2><div class="tabs" id="families"></div><article class="card" id="example"></article></section>
+<section id="case"><h2>A real model, four successive calls</h2><p>SmolVLM-256M-Instruct returned descriptive prose instead of JSON actions. Every response and rejection is preserved. This is a failed integration case, not a population model result.</p><div class="tabs" id="steps"></div><article class="card" id="trace"></article></section>
+<section id="data"><h2>Paper and dataset</h2><div class="card"><nav><a href="paper.pdf">CVPR manuscript</a><a href="supplement.pdf">Supplement</a><a href="brickplan-v2.1-release.zip">Data + evaluator ZIP</a><a href="questions.jsonl">All questions JSONL</a></nav><p>D1–D4 are operation-length bins. The four answer-changing geometry pairs come from one development source and have unequal fixed-part counts. Population VLM and human experiments remain pending. <a href="VALIDITY.md">Read the scope.</a></p></div></section>
+<p id="message" role="status"></p>
+<footer>Original source geometry and attribution: <a href="ASSET-LICENSES.json">asset licenses</a>. Model weights are not redistributed. Dataset/Space upload is a separate publishing step.</footer>
+</main>
+<script type="module">
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function json(path){const r=await fetch(path);if(!r.ok)throw Error(`${path}: HTTP ${r.status}`);return r.json();}
+async function paint(canvas,url){
+  const image=new Image();image.src=url;await image.decode();
+  canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+  canvas.getContext('2d').drawImage(image,0,0);canvas.onclick=()=>window.open(url,'_blank','noopener');
+}
+const action=a=>Object.entries(a).map(([k,v])=>`${k}: ${v}`).join(' · ');
+try {
+  const cat=await json('catalogue.json'),samples=await json('samples.json'),run=await json('cases/local-vlm.json');
+  async function example(family){
+    const meta=samples.find(s=>s.category===family.id),p=await json(meta.preview),o=p.observation;
+    document.querySelectorAll('[data-family]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.family===family.id));
+    $('example').innerHTML=`<span class="pill">${esc(meta.id)}</span><span class="pill">${esc(meta.source)}</span><span class="pill">${esc(meta.tier)} · ${esc(meta.lengthBin)} operations</span><h3>${esc(family.name.en)}</h3><p><strong>${esc(p.question)}</strong></p><dl><dt>Given</dt><dd>${esc(family.given.en)}</dd><dt>Answer</dt><dd>${esc(family.answer.en)}</dd><dt>Score</dt><dd>${esc(family.score.en)}</dd></dl><div class="panels"><div>Current<canvas id="current"></canvas></div><div>Target<canvas id="target"></canvas></div></div><p>Rack: ${o.rack.occupiedHolders}/${o.rack.capacity} · Action budget: ${o.actionBudget}. Click an image for native pixels.</p><p>${o.workOrders.map(w=>`${esc(w.partId)}: ${w.completed?'audit complete':'off-assembly audit pending'}`).join('; ')||'No work orders.'}</p>${p.candidates?`<h4>Candidate actions (answer index starts at 0)</h4><ol start="0">${p.candidates.map(a=>`<li>${esc(action(a))}</li>`).join('')}</ol>`:''}${p.proposedPlan?`<h4>Proposed sequence (conflict index starts at 1)</h4><ol>${p.proposedPlan.map(a=>`<li>${esc(action(a))}</li>`).join('')}</ol>`:''}${p.repairContext?`<h4>Pre-error checkpoint; lag ${p.repairContext.lagAfterError}</h4><canvas id="checkpoint"></canvas><ol>${p.repairContext.executedHistory.map(a=>`<li>${esc(action(a))}</li>`).join('')}</ol>`:''}<details><summary>Full public input, registration and additional images</summary><p id="image-links"></p><pre>${esc(JSON.stringify(p,null,2))}</pre></details><p class="muted">Stable ID: ${esc(meta.stableId)}</p>`;
+    await paint($('current'),o.images.current.url);await paint($('target'),o.images.target.url);
+    if(p.repairContext)await paint($('checkpoint'),p.repairContext.checkpointObservation.images.current.url);
+    for(const [key,value] of Object.entries(o.images)){const a=document.createElement('a');a.href=value.url;a.textContent=`${key} ↗  `;a.target='_blank';$('image-links').append(a);}
+  }
+  for(const family of cat.taxonomy){const b=document.createElement('button');b.dataset.family=family.id;b.textContent=`${family.number} ${family.name.en}`;b.onclick=()=>example(family).catch(e=>$('message').textContent=e.message);$('families').append(b);}
+  async function step(i){
+    const s=run.steps[i],url=v=>'cases'+v.url;
+    document.querySelectorAll('[data-step]').forEach(b=>b.setAttribute('aria-pressed',Number(b.dataset.step)===i));
+    $('trace').innerHTML=`<h3>Call ${i+1} / ${run.steps.length} · ${esc(s.feedback?.code)}</h3><div class="panels"><div>Input state<canvas id="before"></canvas></div><div>After execution<canvas id="after"></canvas></div></div><h4>Actual raw output</h4><pre>${esc(s.rawOutput)}</pre><h4>Parsed action and feedback</h4><pre>${esc(JSON.stringify({action:s.action,feedback:s.feedback,parseError:s.parseError},null,2))}</pre><p>${s.latencySeconds}s · input ${s.usage?.inputTokens} / output ${s.usage?.outputTokens} tokens · $0 local API cost</p><details><summary>Prompt, model preprocessing, public input</summary><pre>${esc(JSON.stringify({systemPrompt:run.systemPrompt,formattedPrompt:s.formattedPrompt,preprocessing:s.preprocessing,input:s.input},null,2))}</pre></details><a href="cases/local-vlm.json">Download every call and frame reference</a>`;
+    await paint($('before'),url(s.input.observation.images.current));await paint($('after'),url(s.after.images.current));
+  }
+  run.steps.forEach((s,i)=>{const b=document.createElement('button');b.dataset.step=i;b.textContent=`Call ${i+1} · ${s.feedback?.code}`;b.onclick=()=>step(i).catch(e=>$('message').textContent=e.message);$('steps').append(b);});
+  await example(cat.taxonomy[0]);await step(0);
+}catch(e){$('message').textContent=`Could not load the release: ${e.message}. Serve this folder over HTTP; local file:// fetch is restricted by browsers.`;}
+</script>
+</html>

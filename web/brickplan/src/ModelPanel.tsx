@@ -52,7 +52,7 @@ export function ModelPanel({ catalogue, runId, onRun }: { catalogue: Catalogue; 
   return <div className={s.modelLayout}>
     <aside className={s.runSidebar}>
       <h3>模型运行 / Model runs</h3>
-      <button className={s.runItem} aria-pressed={recorded} onClick={() => onRun('case-local')}><b>SmolVLM-256M</b><span>真实记录 · 4 calls · failure case</span></button>
+      <button className={s.runItem} aria-pressed={recorded} onClick={() => onRun('case-local')}><b>SmolVLM-256M</b><span>Historical 2.1 · failure case</span></button>
       {models?.runs.map(r => <button className={s.runItem} key={r.id} aria-pressed={runId === r.id} onClick={() => onRun(r.id)}><b>{r.taskId} · {r.model.split('/').at(-1)}</b><span>{r.id === run?.id ? run.status : r.status} · {r.id.slice(0, 8)}</span></button>)}
       <hr /><h4>新建运行 / New run</h4>
       <label className={s.field}>任务<select aria-label="Model task" value={task} onChange={e => setTask(e.target.value)}>{catalogue.questions.filter(q => q.form === 'episode').map(q => <option key={q.id} value={q.id}>{q.id} · {q.tier} · {q.profile}</option>)}</select></label>
@@ -65,7 +65,7 @@ export function ModelPanel({ catalogue, runId, onRun }: { catalogue: Catalogue; 
     <main className={s.modelMain}>
       <div className={s.brief}><div className={s.eyebrow}>MODEL OBSERVATION → RESPONSE → EXECUTOR</div><h2>{recorded ? '逐步案例 / Recorded case study' : '实时模型工作台 / Live model run'}</h2>
         <p>{run?.model} · {run?.taskId} <span className={s.badge}>{run?.status || 'Loading'}</span></p>
-        <p className={s.muted}>{recorded ? '真实本地推理的四次输出均不符合动作协议。保留失败原文，用于展示接口与错误模式；不代表整体模型评测结果。' : run?.scope}</p>
+        <p className={s.muted}>{recorded ? 'Historical BrickPlan 2.1 trace, not a new 2.2 measurement. 原始任务、模型回复与图片字节保持不变；仅展示接口与错误模式，不代表整体模型评测结果。' : run?.scope}</p>
       </div>
       <div className={s.workStatus}>
         <button disabled={recorded || staticMode || busy || run?.status !== 'paused'} onClick={() => control('step')}><SkipForward size={14} /> 单步 Step</button>

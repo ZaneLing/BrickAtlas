@@ -3,7 +3,7 @@ import * as Tabs from '@radix-ui/react-tabs';
 import { Play, Download, CheckCircle2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { api, describe, download, read, staticMode } from './api';
 import type { Action, Catalogue, Event, Observation, Preview, SceneData, Score, TaskInfo } from './types';
-import { JSONView, RasterView, Visuals } from './Visuals';
+import { JSONView, RasterView, SavedViews, Visuals } from './Visuals';
 import s from './Workbench.module.css';
 
 export function Brief({ catalogue, id }: { catalogue?: Catalogue; id: string }) {
@@ -28,12 +28,17 @@ export function Workcell({ id, info, catalogue, resumeId, onSession }: { id: str
   const [frame, setFrame] = useState<number | undefined>(), [frameObs, setFrameObs] = useState<Observation>();
   const [saved, setSaved] = useState(''), [view, setView] = useState('isometric'), [note, setNote] = useState('');
   const gate = useRef(false), epoch = useRef(0);
-  const probe = id.startsWith('Q'), historical = frame !== undefined || saved !== '';
+  const savedRecord = saved !== '' ? obs?.inspectionHistory[+saved] : undefined;
+  const probe = id.startsWith('Q'), historical = frame !== undefined || (savedRecord !== undefined && savedRecord.atRevision > 0);
+  const protocol = obs?.observationProtocol, canInspect = Boolean(obs?.actions?.inspect);
   const active = Boolean(sid || (probe && preview)) && !staticMode;
   const frozen = probe ? preview?.answered : obs?.terminated;
   const canAct = active && !frozen && !historical && !busy;
   const effectiveObs = frameObs || obs;
-  const displayImages = saved !== '' ? obs?.inspectionHistory[+saved]?.images : effectiveObs?.images;
+  const displayImages = savedRecord?.images || effectiveObs?.images;
+  const checkpoint = preview?.repairContext?.checkpointObservation;
+  const checkpointImage = (savedRecord?.atRevision === 0
+    ? checkpoint?.inspectionHistory.find(v => v.view === savedRecord.view)?.images : checkpoint?.images)?.current;
   const select = (part: string) => { setSelected(part); setSite(obs?.registration.find(r => r.partId === part)?.siteId || ''); };
   async function sessionExtras(key: string, observation: Observation) {
     setEvents((await read<{ events: Event[] }>(`api/sessions/${key}/history`)).events);
@@ -117,7 +122,7 @@ export function Workcell({ id, info, catalogue, resumeId, onSession }: { id: str
       </div>
       <Visuals data={saved === '' ? scene : undefined} images={displayImages} frame={frame} selected={selected} onSelect={select} study={info.study || saved !== ''} />
       {preview?.repairContext && <details className={s.details} open><summary>错误前检查点与后续历史 / Repair checkpoint</summary>
-        <div className={s.repair}><RasterView raster={preview.repairContext.checkpointObservation.images?.current} title="Pre-error checkpoint" />
+        <div className={s.repair}><RasterView raster={checkpointImage} title={`Pre-error checkpoint · ${savedRecord?.atRevision === 0 ? savedRecord.view : checkpoint?.view}`} />
           <div><p>{preview.repairContext.rule}</p><ol>{preview.repairContext.executedHistory.map((a, i) => <li key={i}>{describe(a)}</li>)}</ol></div></div>
       </details>}
       <div className={s.status} role="status">{busy ? '正在处理… / Working…' : message}</div>
@@ -125,6 +130,11 @@ export function Workcell({ id, info, catalogue, resumeId, onSession }: { id: str
       <Tabs.Root defaultValue="history" className={s.bottomPanel}>
         <Tabs.List className={s.tabList}><Tabs.Trigger value="history">操作记录 History</Tabs.Trigger><Tabs.Trigger value="observation">公开输入 Observation</Tabs.Trigger><Tabs.Trigger value="feedback">审核反馈 Feedback</Tabs.Trigger></Tabs.List>
         <Tabs.Content value="history">
+          {!!protocol?.initialViews.length && <p className={s.muted}>Initial supplied views · revision 0 · no acquisition cost: {protocol.initialViews.join(', ')}</p>}
+          <ol className={s.history} aria-label="View history">{obs?.inspectionHistory.map((v, i) => <li key={v.frameId}>
+            <span>{v.atRevision}</span><button onClick={() => { setSaved(String(i)); setFrame(undefined); setFrameObs(undefined); }}>{v.view}</button>
+            <code>{v.atRevision === 0 ? 'SUPPLIED / NO COST' : 'ACQUIRED'}</code>
+          </li>)}</ol>
           {!events.length && <p className={s.muted}>尚无操作。每次操作及拒绝原因会按顺序保存在这里。</p>}
           {sid && obs?.terminated && !info.study && <div className={s.inline}><button disabled={busy} onClick={() => replay(Math.max(0, (frame ?? events.length) - 1))}><ArrowLeft size={14} /></button>
             <input aria-label="Replay revision" type="range" min="0" max={events.length} value={frame ?? events.length} disabled={busy} onChange={e => replay(+e.target.value)} />
@@ -134,7 +144,7 @@ export function Workcell({ id, info, catalogue, resumeId, onSession }: { id: str
         </Tabs.Content>
         <Tabs.Content value="observation"><JSONView value={effectiveObs} title="完整公开观察 / Full public observation" />{score && <JSONView value={score} title="完整评分 / Score" />}</Tabs.Content>
         <Tabs.Content value="feedback"><label className={s.field}>质量反馈 / Review note<textarea value={note} onChange={e => setNote(e.target.value)} placeholder="指出具体 ID、步骤与问题…" /></label>
-          <button onClick={() => download(`brickplan-review-${id}.json`, { schema: 'brickplan-review/2.1', questionId: id, sessionId: sid || null, revision: effectiveObs?.revision, frame, selected, note })}><Download size={14} /> 导出反馈 JSON</button></Tabs.Content>
+          <button onClick={() => download(`brickplan-review-${id}.json`, { schema: 'brickplan-review/2.2', bankHash: catalogue?.bankHash, questionId: id, sessionId: sid || null, revision: effectiveObs?.revision, frame, view: savedRecord?.view || effectiveObs?.view, selected, note })}><Download size={14} /> 导出反馈 JSON</button></Tabs.Content>
       </Tabs.Root>
     </div>
     <aside className={s.inspector}>
@@ -165,10 +175,13 @@ export function Workcell({ id, info, catalogue, resumeId, onSession }: { id: str
       <div className={s.capacity}>{Array.from({ length: Math.min(obs?.rack.capacity || 0, 24) }, (_, i) => <span key={i} data-filled={i < (obs?.rack.occupiedHolders || 0)} />)}</div>
       {obs?.workOrders.length ? <ul className={s.orders}>{obs.workOrders.map(w => <li key={w.partId}>{w.completed ? '✓' : '○'} {w.partId} · {w.completed ? '检修完成' : '待离架检修'}</li>)}</ul> : <p className={s.muted}>无检修工单 / No work orders</p>}
       <hr /><h4>评测视角 / Camera acquisition</h4>
-      <label className={s.field}>剩余 {obs?.remainingViews ?? '—'} 次<select aria-label="Acquisition view" value={view} onChange={e => setView(e.target.value)}>{['isometric', 'front', 'rear', 'left', 'right', 'top', 'bottom', 'exploded-reference'].map(v => <option key={v}>{v}</option>)}</select></label>
-      <button disabled={!canAct || !obs?.remainingViews} onClick={() => act({ type: 'inspect', view })}>获取并记录 Acquire</button>
-      <label className={s.field}>已保存视角<select aria-label="Saved view" value={saved} disabled={busy} onChange={e => { setSaved(e.target.value); setFrame(undefined); setFrameObs(undefined); }}>
-        <option value="">当前视角 Live</option>{obs?.inspectionHistory.map((v, i) => <option key={v.frameId} value={i}>{v.view} · revision {v.atRevision}</option>)}</select></label>
+      <p className={s.muted}>{protocol?.mode === 'static-multiview'
+        ? 'Static multiview: supplied at revision 0, no acquisition cost. Additional inspection is disabled.'
+        : `Condition: ${info.track}. Each acquisition uses one view-budget unit.`}</p>
+      {canInspect && <><label className={s.field}>剩余 {obs?.remainingViews ?? '—'} 次<select aria-label="Acquisition view" value={view} onChange={e => setView(e.target.value)}>{['isometric', 'front', 'rear', 'left', 'right', 'top', 'bottom', 'exploded-reference'].map(v => <option key={v}>{v}</option>)}</select></label>
+        <button disabled={!canAct || !obs?.remainingViews} onClick={() => act({ type: 'inspect', view })}>获取并记录 Acquire</button></>}
+      {protocol?.mode === 'active' && <p>Acquired: {protocol.acquiredViews} · cost/view: {protocol.acquisitionCostPerView}</p>}
+      <SavedViews observation={obs} value={saved} disabled={busy} onChange={value => { setSaved(value); setFrame(undefined); setFrameObs(undefined); }} />
       {!probe && <><hr /><h4>自我诊断 / Diagnosis</h4><p className={s.muted}>自上次诊断后，是否有合法操作增加了可避免的未来代价？</p>
         <div className={s.actionGrid}>{[true, false].map(v => <button key={String(v)} disabled={!canAct || !obs?.remainingDiagnoses} onClick={() => act({ type: 'diagnose', avoidableError: v })}>{v ? '有错误 Yes' : '无错误 No'}</button>)}</div></>}
       <hr /><details><summary>零件图层 / Registered pieces</summary><div className={s.layers}>{obs?.registration.map(r => <button aria-pressed={selected === r.partId} key={r.partId} onClick={() => select(r.partId)}>{r.partId}<span>{r.siteId}</span></button>)}</div></details>

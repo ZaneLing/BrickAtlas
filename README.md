@@ -16,10 +16,10 @@
 
 | What you need | Location |
 |---|---|
-| BrickPlan 2.1: current planning paper and supplement | [CVPR main PDF](benchmark/brickplan-v2.1/paper.pdf) · [supplement](benchmark/brickplan-v2.1/supplement.pdf) |
+| BrickPlan 2.2: current planning paper and supplement | [CVPR main PDF](benchmark/brickplan-v2.2/paper.pdf) · [supplement](benchmark/brickplan-v2.2/supplement.pdf) |
 | Independent Overleaf upload | [Paper folder](deliverables/brickplan-paper/) · [source ZIP](deliverables/brickplan-paper/brickplan-cvpr-overleaf.zip) |
 | React 19 / Three.js workbench source | [web/brickplan/](web/brickplan/README.md) |
-| BrickPlan question explorer, real model case and portable data | [Run and browse](benchmark/brickplan-v2.1/README.md) · [model integration](benchmark/brickplan-v2.1/MODEL-INTEGRATION.md) · [dataset card](benchmark/brickplan-v2.1/DATASET-CARD.md) |
+| BrickPlan question explorer, historical model case and portable data | [Run and browse](benchmark/brickplan-v2.2/README.md) · [model integration](benchmark/brickplan-v2.2/MODEL-INTEGRATION.md) · [dataset card](benchmark/brickplan-v2.2/DATASET-CARD.md) |
 | Separate visual-repair paper and supplement | [paper/](paper/README.md) · [main PDF](paper/main.pdf) · [supplement PDF](paper/supplement.pdf) |
 | Website source, pages, frontend configuration and tests | [web/](web/README.md) |
 | Benchmark data and version map | [benchmark/DATASETS.md](benchmark/DATASETS.md) |
@@ -40,11 +40,13 @@ Links into `paper/` and `tem/` refer to local files excluded from Git.
 Paper builds and historical archive audits require those local directories.
 Their last tracked snapshot is available at commit `8a2eaeb9`.
 
-The current planning release is **BrickPlan 2.1**, with 145 interactive
-episodes, 739 diagnostic questions, seven clearly specified task families,
-native HD observations and a real model feedback case. Start its server and
-open `http://127.0.0.1:8769/`; the recorded case is at `/#case`.
-Population VLM and human studies remain pending.
+The current planning release is **BrickPlan 2.2**, with seven clearly specified
+task families and native HD observations. The workbench reads counts directly
+from the current bank; see the [public catalogue](benchmark/brickplan-v2.2/release/catalogue.json).
+Start its server with `--port 8769` and open `http://127.0.0.1:8769/`.
+Static probes supply multiple views; `image-id-active` charges for acquisition.
+The recorded case at `/#case` preserves historical 2.1 inputs and responses,
+not a new 2.2 measurement. Population VLM and human studies remain pending.
 
 The separate visual-repair task combines **visual terminal binding and minimum
 graph repair**. A model matches a real rendered reference, identifies its
@@ -80,7 +82,7 @@ The evaluator view exposes answers; blind human review uses the dedicated
 The source 3D workspace remains at `/benchmark`.
 
 BrickPlan's versioned manuscript and portal live with its independent release
-under `benchmark/brickplan-v2.1/`. Other writing belongs in `paper/`,
+under `benchmark/brickplan-v2.2/`. Other writing belongs in `paper/`,
 website development in `web/`, and
 intermediate output and historical material in `tem/`. Benchmark data and
 evaluators remain in `benchmark/`. Root review aliases have been removed;
