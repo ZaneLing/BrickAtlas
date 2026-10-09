@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BrickPlan 2.0 · Planning workcell</title><link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header><a href="/" class="brand"><span class="mark">▦</span> BrickPlan <small>2.0</small></a>
+    <span class="eyebrow">ASSEMBLY · RESOURCES · INSPECTION</span><span id="track" class="badge"></span></header>
+  <main>
+    <div class="intro"><div><p class="eyebrow">THE PLANNING WORKCELL</p>
+      <h1>Make room for the next move.</h1>
+      <p>Match the target assembly. Complete each work order. Stay within the rack capacity.</p></div>
+      <span class="version">RESEARCH EDITION / 02</span></div>
+    <section class="toolbar">
+      <select id="mode" aria-label="Task mode"><option value="episodes">Interactive episodes</option><option value="probes">Planning probes</option></select>
+      <select id="task-select" aria-label="Task"></select><button id="start" class="primary">Open task</button>
+      <span id="session-label" class="mono"></span>
+    </section>
+    <div id="message" role="status">Loading workcell…</div>
+    <div class="workspace">
+      <div class="visuals">
+        <div class="render-grid">
+          <section class="render"><h2><span>01</span> CURRENT ASSEMBLY <small>P + S IDs</small></h2><canvas id="current" aria-label="Current assembly"></canvas></section>
+          <section class="render"><h2><span>02</span> TARGET ASSEMBLY <small>S IDs</small></h2><canvas id="target" aria-label="Target assembly"></canvas></section>
+        </div>
+        <section class="render"><h2><span>03</span> RACK <small id="rack-count"></small></h2><canvas id="rack" aria-label="Rack pieces"></canvas></section>
+        <details class="reference" open><summary>Placement reference & registered pieces</summary>
+          <div class="render-grid">
+            <section class="render"><h2>ALL ORIGINAL SITES</h2><canvas id="siteReference" aria-label="Site reference"></canvas></section>
+            <section class="render"><h2>REGISTERED P / S CATALOG</h2><canvas id="catalog" aria-label="Part catalog"></canvas></section>
+          </div>
+        </details>
+        <section id="probe-panel" class="panel" hidden>
+          <h2 id="probe-question"></h2><ol id="proposed-plan"></ol>
+          <form id="probe-form"><select id="probe-answer" aria-label="Probe answer"></select>
+            <button id="submit-answer" class="primary">Freeze answer</button></form>
+        </section>
+        <section class="panel">
+          <h2>Inspection history</h2><p class="muted">Revisit a saved view without spending another view.</p>
+          <div class="row"><select id="saved-view" aria-label="Saved view"><option value="">Current live view</option></select>
+            <button id="show-view">Show saved view</button></div>
+          <p id="saved-label" class="mono">Current live view</p>
+        </section>
+        <section class="panel"><h2>Action journal</h2><div id="history" class="mono"></div></section>
+        <section id="review" class="panel" hidden><h2>Practice review</h2><pre id="score"></pre>
+          <label>Replay frame<input id="replay" type="range" min="0" value="0"></label><span id="frame-label" class="mono"></span>
+          <div class="row"><button id="open-3d">Open free 3D review</button><button id="export">Export public trajectory</button></div>
+          <div id="free-review" hidden>
+            <p class="muted">Drag to orbit. Scroll to zoom. This review is outside the scored observation track.</p>
+            <div id="three-stage" aria-label="Interactive 3D source model"></div>
+            <label>Exploded reference<input id="explode" type="range" min="0" max="100" value="0"></label>
+            <p id="explode-note" class="muted">Original source poses</p>
+          </div>
+          <label>Review note<textarea id="feedback" rows="3" placeholder="Record the part ID, frame and issue."></textarea></label>
+          <button id="export-feedback">Export feedback JSON</button>
+        </section>
+      </div>
+      <aside class="panel controls">
+        <div class="row"><h2>Workcell</h2><span id="counts" class="mono"></span></div>
+        <div id="work-orders"></div>
+        <label>Physical piece<select id="part" aria-label="Physical piece"></select></label>
+        <label>Registered placement<select id="site" aria-label="Placement site"></select></label>
+        <p class="muted">Each P piece has one original S site. Rejected operations cost one action.</p>
+        <div class="row"><button id="attach" class="primary">Attach</button><button id="detach">Detach</button><button id="audit">Inspect piece</button></div>
+        <p class="muted">Inspect piece completes a work order only while that piece is in the rack.</p>
+        <div class="divider"></div>
+        <label>Camera<select id="view" aria-label="Camera">
+          <option>isometric</option><option>front</option><option>rear</option><option>left</option>
+          <option>right</option><option>top</option><option>bottom</option><option>exploded-reference</option>
+        </select></label>
+        <button id="inspect">Acquire view</button><p id="inspection-count" class="muted"></p>
+        <p class="muted">Exploded reference separates parts in the reference diagram only.</p>
+        <div class="divider"></div><h3>Self-diagnosis</h3>
+        <p class="muted">Since your last diagnosis (or the start), did a legal operation add avoidable future cost?</p>
+        <div class="row"><button id="error-yes">Yes</button><button id="error-no">No</button></div>
+        <button id="finish" class="finish">Finish episode</button>
+        <details><summary>Workcell rules</summary>
+          <p>All F pieces form a connected clamped base. P pieces move along qualified straight paths and retain their original stud connections.</p>
+          <p>Every detached P piece uses one universal oversized rack holder. Off-assembly inspections persist in the visible work-order ledger.</p>
+          <p>Finish explicitly after matching the target and completing all work orders. Human and API policies share the same view and operation budgets.</p>
+        </details>
+        <details><summary>Public observation</summary><pre id="observation"></pre></details>
+      </aside>
+    </div>
+    <footer><span>Original LDraw source geometry · <a href="/ASSET-LICENSES.json">Attribution</a></span>
+      <span>Diagnostic release · VLM and human measurements pending</span></footer>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

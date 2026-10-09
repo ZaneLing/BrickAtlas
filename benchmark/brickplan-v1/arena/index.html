@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BrickPlan — Assembly Arena</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="importmap">{"imports":{"three":"/vendor/three.module.js"}}</script>
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="/">▦ <strong>BrickPlan</strong><span>1.0</span></a>
+    <span class="eyebrow">ASSEMBLY ARENA</span>
+    <div class="connection"><i></i> Local workcell</div>
+  </header>
+  <main>
+    <div class="intro">
+      <div><p class="eyebrow">BUILD · ANTICIPATE · REPAIR</p><h1>Every move has a next.</h1>
+        <p>Assemble the target. Keep the remaining steps possible.</p></div>
+      <div class="track"><b>Known-pose structured track</b><span>Calibrated sites · original LDraw parts · fixed base</span>
+        <small>Free camera is for practice and review. No vision-only scores.</small></div>
+    </div>
+    <section class="toolbar" aria-label="Task controls">
+      <div class="tabs"><button id="episodes-tab" class="active">Build episodes</button><button id="probes-tab">Planning probes</button></div>
+      <label id="task-label">Task <select id="task-select" aria-label="Task"></select></label>
+      <button id="start" class="primary">Start new episode</button>
+      <span id="session-label" class="mono"></span>
+    </section>
+    <div class="workspace">
+      <section class="stage-column">
+        <div class="scene-grid">
+          <section class="viewport live">
+            <div class="viewport-title"><span><i class="live-dot"></i> CURRENT ASSEMBLY</span><b id="revision">—</b></div>
+            <div id="current-view" class="canvas-host" aria-label="Current assembly 3D view"></div>
+            <div class="scene-footer"><span>Clamped F-base · actual installed parts</span><span>Drag to orbit · scroll to zoom</span></div>
+          </section>
+          <section class="viewport reference">
+            <div class="viewport-title"><span>TARGET REFERENCE</span><b id="goal-count">—</b></div>
+            <div id="goal-view" class="canvas-host" aria-label="Target reference 3D view"></div>
+            <div class="explode"><label for="explode">Explode reference</label><input id="explode" type="range" min="0" max="100" value="0"></div>
+          </section>
+        </div>
+        <div class="viewbar">
+          <label>View <select id="view" aria-label="Inspection view">
+            <option>isometric</option><option>front</option><option>rear</option><option>left</option><option>right</option><option>top</option><option>bottom</option>
+          </select></label>
+          <button id="inspect">Inspect view</button>
+          <label class="check"><input id="labels" type="checkbox"> Show all site IDs</label>
+          <span id="inspection-count"></span>
+        </div>
+        <div id="message" class="message" role="status" aria-live="polite">Loading original part geometry…</div>
+        <section id="probe-panel" class="panel" hidden>
+          <p class="eyebrow" id="probe-kind"></p><h2 id="probe-question"></h2>
+          <ol id="proposed-plan"></ol>
+          <form id="probe-form"><label for="probe-answer" id="answer-label">Response</label>
+            <select id="probe-answer"></select><button class="primary" type="submit">Freeze answer</button></form>
+          <p class="muted">Answers are recorded once. Evaluation remains private until the run is collected.</p>
+        </section>
+        <section class="panel timeline">
+          <div class="panel-title"><h2>Action journal</h2><span id="history-count" class="muted">0 events</span></div>
+          <div id="history" class="history"><p class="muted">Actions appear here in execution order.</p></div>
+        </section>
+        <section id="review" class="panel" hidden>
+          <div class="panel-title"><h2>Episode review</h2><button id="export">Export trajectory</button></div>
+          <div id="score" class="score-grid"></div>
+          <div class="replay-controls"><button id="previous">←</button><input id="replay" aria-label="Replay frame" type="range" min="0" max="0" value="0"><button id="next">→</button><span id="frame-label"></span></div>
+          <label for="feedback">Review note</label><textarea id="feedback" rows="2" placeholder="Describe a geometry, motion, scoring, or usability issue at this frame."></textarea>
+          <div class="feedback-row"><select id="feedback-category" aria-label="Feedback category"><option>geometry</option><option>connector</option><option>support</option><option>motion</option><option>scoring</option><option>leakage</option><option>usability</option></select><button id="export-feedback">Export feedback JSON</button></div>
+        </section>
+      </section>
+      <aside class="panel controls">
+        <div class="panel-title"><h2>Workcell</h2><span id="run-state" class="pill">READY</span></div>
+        <div class="budget"><div><strong id="attempt-count">0</strong><span id="budget-total">/ — actions</span></div><p id="installed-count">— installed</p><div class="meter"><i id="budget-fill"></i></div></div>
+        <label for="site">Placement site</label><select id="site"></select>
+        <div id="site-detail" class="site-detail"></div>
+        <label for="part">Inventory part</label><select id="part"></select>
+        <p class="field-note">All inventory and sites are selectable. A rejected attach or detach still costs one action.</p>
+        <div class="action-row"><button id="attach" class="primary">Attach ↑</button><button id="detach">Detach ↓</button></div>
+        <div class="divider"></div>
+        <h3>Checkpoint diagnosis</h3><p class="field-note">Does this state require removal to finish? Your first diagnosis before a successful structural action is scored.</p>
+        <div class="action-row"><button id="rework-yes">Needs rework</button><button id="rework-no">No rework</button></div>
+        <button id="finish" class="finish">Finish & review</button>
+        <details><summary>Workcell rules</summary><p>Attach and detach use fixed straight paths. Every accepted state stays connected to the clamped F-base. Temporary disconnections and alternative insertion directions are outside this track.</p><p>Exact final occupancy must match the target. No next-step hints or future-feasibility labels are exposed during play.</p></details>
+        <details><summary>Public observation JSON</summary><pre id="observation"></pre></details>
+      </aside>
+    </div>
+    <footer><span>BrickPlan 1.0 · 2 structures · 8 episodes · 26 probe responses · <a href="/ASSET-LICENSES.json" target="_blank" rel="noopener" style="color:inherit">LDraw attribution</a></span><span>Kinematic diagnostic · no measured model or human results</span></footer>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

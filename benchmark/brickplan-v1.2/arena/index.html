@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BrickPlan 1.2 — Planning workcell</title><link rel="stylesheet" href="/style.css">
+  <style>
+    .renders{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .renders section{min-width:0;border:1px solid #48544c;border-radius:12px;overflow:hidden}
+    canvas{width:100%;height:auto;display:block;background:#edf1ed}
+    .renders h2{font-size:12px;padding:12px;margin:0;letter-spacing:.08em}
+    .workspace{display:grid;grid-template-columns:minmax(0,1fr) 300px}
+    .controls{position:sticky;top:12px;align-self:start}
+    .controls select{width:100%} .toolbar{flex-wrap:wrap}
+    #observation{max-height:220px;overflow:auto;font-size:10px}
+    #history{max-height:220px;overflow:auto;font-size:12px;white-space:pre-wrap}
+    .catalog{margin-top:16px} #score{white-space:pre-wrap;font-size:12px}
+    @media(max-width:900px){.workspace{grid-template-columns:1fr}.controls{position:static}.renders{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="masthead"><a class="brand" href="/">▦ <strong>BrickPlan</strong><span>1.2</span></a>
+    <span class="eyebrow">BUILD · ANTICIPATE · REPAIR</span><span id="track"></span></header>
+  <main>
+    <div class="intro"><div><p class="eyebrow">PLANNING WORKCELL</p><h1>Think beyond the next move.</h1>
+      <p>Match the target. Identify parts by P IDs and placement sites by S IDs.</p></div></div>
+    <section class="toolbar">
+      <select id="mode" aria-label="Task mode"><option value="episodes">Build episodes</option><option value="probes">Planning probes</option></select>
+      <select id="task-select" aria-label="Task"></select><button id="start" class="primary">Open task</button>
+      <span id="session-label" class="mono"></span>
+    </section>
+    <div id="message" class="message" role="status">Loading workcell…</div>
+    <div class="workspace">
+      <div>
+        <div class="renders">
+          <section><h2>CURRENT ASSEMBLY · P + S IDs</h2><canvas id="current" aria-label="Current assembly"></canvas></section>
+          <section><h2>TARGET ASSEMBLY · S IDs</h2><canvas id="target" aria-label="Target assembly"></canvas></section>
+          <section><h2>ALL SITE REFERENCE · S IDs</h2><canvas id="siteReference" aria-label="All site reference"></canvas></section>
+          <section><h2>SITE SHAPES + AVAILABLE P INVENTORY</h2><canvas id="catalog" aria-label="Part and site catalog"></canvas></section>
+        </div>
+        <section id="probe-panel" class="panel catalog" hidden>
+          <h2 id="probe-question"></h2><ol id="proposed-plan"></ol>
+          <form id="probe-form"><select id="probe-answer" aria-label="Probe answer"></select>
+            <button class="primary">Freeze answer</button></form>
+        </section>
+        <section class="panel catalog"><h2>Action journal</h2><div id="history"></div></section>
+        <section id="review" class="panel catalog" hidden><h2>Episode review</h2>
+          <pre id="score"></pre><label>Replay <input id="replay" type="range" min="0" value="0" aria-label="Replay frame"></label>
+          <span id="frame-label"></span><button id="export">Export public trajectory</button>
+          <label>Review note<textarea id="feedback" rows="3"></textarea></label>
+          <button id="export-feedback">Export feedback JSON</button>
+        </section>
+      </div>
+      <aside class="panel controls">
+        <h2>Workcell</h2><p id="counts"></p>
+        <label>Placement site<select id="site" aria-label="Placement site"></select></label>
+        <label>Physical piece<select id="part" aria-label="Physical piece"></select></label>
+        <p class="field-note">Choose pieces using the images. Rejected structural actions also cost one action.</p>
+        <div class="action-row"><button id="attach" class="primary">Attach</button><button id="detach">Detach</button></div>
+        <div class="divider"></div>
+        <label>Camera<select id="view" aria-label="Camera">
+          <option>isometric</option><option>front</option><option>rear</option><option>left</option><option>right</option>
+          <option>top</option><option>bottom</option><option>exploded-reference</option>
+        </select></label>
+        <button id="inspect">Inspect (1 view)</button><p id="inspection-count"></p>
+        <p class="field-note">The exploded reference separates parts only in the reference diagram. Current and target assemblies retain their physical poses.</p>
+        <div class="divider"></div><h3>State diagnosis</h3>
+        <p class="field-note">Is temporary rework needed beyond changing each mismatched site once?</p>
+        <button id="rework-yes">Needs rework</button><button id="rework-no">No rework</button>
+        <button id="finish" class="finish">Finish episode</button>
+        <details><summary>Rules</summary><p>All F-base pieces form one clamped rigid assembly. Every successful action preserves connectivity. Attach and detach use fixed straight paths. Use inspect to change the camera; the same view budget applies to human and API agents.</p></details>
+        <details><summary>Public observation</summary><pre id="observation"></pre></details>
+      </aside>
+    </div>
+    <footer><span>Original LDraw geometry · <a href="/ASSET-LICENSES.json">Attribution</a></span>
+      <span>Diagnostic research release · no measured VLM or human results</span></footer>
+  </main><script type="module" src="/app.js"></script>
+</body>
+</html>

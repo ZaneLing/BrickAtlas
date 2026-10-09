@@ -16,10 +16,18 @@
 
 | What you need | Location |
 |---|---|
-| Current paper and supplement | [paper/](paper/README.md) · [main PDF](paper/main.pdf) · [supplement PDF](paper/supplement.pdf) |
+| BrickPlan 2.1: current planning paper and supplement | [CVPR main PDF](benchmark/brickplan-v2.1/paper.pdf) · [supplement](benchmark/brickplan-v2.1/supplement.pdf) |
+| Independent Overleaf upload | [Paper folder](deliverables/brickplan-paper/) · [source ZIP](deliverables/brickplan-paper/brickplan-cvpr-overleaf.zip) |
+| React 19 / Three.js workbench source | [web/brickplan/](web/brickplan/README.md) |
+| BrickPlan question explorer, real model case and portable data | [Run and browse](benchmark/brickplan-v2.1/README.md) · [model integration](benchmark/brickplan-v2.1/MODEL-INTEGRATION.md) · [dataset card](benchmark/brickplan-v2.1/DATASET-CARD.md) |
+| Separate visual-repair paper and supplement | [paper/](paper/README.md) · [main PDF](paper/main.pdf) · [supplement PDF](paper/supplement.pdf) |
 | Website source, pages, frontend configuration and tests | [web/](web/README.md) |
 | Benchmark data and version map | [benchmark/DATASETS.md](benchmark/DATASETS.md) |
 | Metrics, formulas and implementations | [benchmark/METRICS.md](benchmark/METRICS.md) |
+| BrickPlan 2.0: finite-rack inspection planning, 69 episodes, exact controls | [benchmark/brickplan-v2/](benchmark/brickplan-v2/README.md) · [paper + appendix](benchmark/brickplan-v2/paper.pdf) · [revision response](benchmark/brickplan-v2/REVIEW-RESPONSE.md) |
+| BrickPlan 1.2: matched visual tracks, online recovery, shortcut-audited probes | [benchmark/brickplan-v1.2/](benchmark/brickplan-v1.2/README.md) · [paper](benchmark/brickplan-v1.2/paper.pdf) · [review response](benchmark/brickplan-v1.2/REVIEW-RESPONSE.md) |
+| BrickPlan 1.1: three certified structures across two source kits | [benchmark/brickplan-v1.1/](benchmark/brickplan-v1.1/README.md) · [paper](benchmark/brickplan-v1.1/paper.pdf) |
+| BrickPlan 1.0 assembly-order diagnostics and playable Arena | [benchmark/brickplan-v1/](benchmark/brickplan-v1/README.md) |
 | Current complex repair benchmark | [benchmark/visual-repair-v1/](benchmark/visual-repair-v1/) |
 | Semantic scorer and study runner | [evaluate.py](benchmark/visual-repair-v1/evaluate.py) · [study.py](benchmark/visual-repair-v1/study.py) |
 | Historical atomic observations | [benchmark/ldraw-evidence-v3/](benchmark/ldraw-evidence-v3/) |
@@ -32,7 +40,13 @@ Links into `paper/` and `tem/` refer to local files excluded from Git.
 Paper builds and historical archive audits require those local directories.
 Their last tracked snapshot is available at commit `8a2eaeb9`.
 
-The current primary task combines **visual terminal binding and minimum
+The current planning release is **BrickPlan 2.1**, with 145 interactive
+episodes, 739 diagnostic questions, seven clearly specified task families,
+native HD observations and a real model feedback case. Start its server and
+open `http://127.0.0.1:8769/`; the recorded case is at `/#case`.
+Population VLM and human studies remain pending.
+
+The separate visual-repair task combines **visual terminal binding and minimum
 graph repair**. A model matches a real rendered reference, identifies its
 current graph ID, and returns every optimal restoration set.
 Visual-changing, visual-preserving and structural interventions are grouped
@@ -65,7 +79,9 @@ The evaluator view exposes answers; blind human review uses the dedicated
 [review packages and protocol](benchmark/ldraw-evidence-v3/QA-AND-RUN.md).
 The source 3D workspace remains at `/benchmark`.
 
-Current writing belongs in `paper/`, website development in `web/`, and
+BrickPlan's versioned manuscript and portal live with its independent release
+under `benchmark/brickplan-v2.1/`. Other writing belongs in `paper/`,
+website development in `web/`, and
 intermediate output and historical material in `tem/`. Benchmark data and
 evaluators remain in `benchmark/`. Root review aliases have been removed;
 compatibility links into local paper and intermediate directories are also

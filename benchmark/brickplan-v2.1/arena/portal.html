@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BrickPlan 2.1 — Visual Planning Benchmark</title>
+  <link rel="stylesheet" href="/portal.css">
+</head>
+<body>
+  <header>
+    <a class="brand" href="/"><span class="symbol">▦</span> BrickPlan <small>2.1</small></a>
+    <nav aria-label="Main navigation">
+      <a href="#explore" data-zh="题库浏览" data-en="Explore">题库浏览</a>
+      <a href="#case" data-zh="模型实录" data-en="Model case">模型实录</a>
+      <a href="#release" data-zh="论文与数据" data-en="Paper & data">论文与数据</a>
+    </nav>
+    <button id="language" class="quiet">EN / 中文</button>
+  </header>
+  <main>
+    <section id="explore-page">
+      <div class="hero">
+        <div>
+          <p class="eyebrow">VISUAL PLANNING / A RESEARCH BENCHMARK</p>
+          <h1 data-zh="看清这一步，&#10;想明白后几步。" data-en="See the pieces.&#10;Plan what comes next.">看清这一步，<br>想明白后几步。</h1>
+          <p class="lede" data-zh="从真实积木结构出发，评估模型能否预测未来操作代价、安排有限资源，并在错误传播后恢复。先看懂题目，再开始作答。" data-en="A benchmark of future action cost, limited resources and recovery after errors, grounded in real brick geometry. Understand each question before attempting it."></p>
+          <div class="hero-links"><a class="primary button" href="#questions" data-zh="浏览具体题目 ↘" data-en="Explore the questions ↘"></a><a href="#case" data-zh="观看真实模型实录 →" data-en="Watch a real model run →"></a></div>
+          <div id="census" class="census"></div>
+        </div>
+        <div class="hero-visual">
+          <div class="overline"><span>ORIGINAL LDRAW GEOMETRY</span><span>1920 × 1440</span></div>
+          <canvas id="hero-canvas" aria-label="Original brick assembly"></canvas>
+          <div class="hero-caption"><span id="hero-title"></span><span data-zh="点击图像，查看原尺寸 ↗" data-en="Click for native resolution ↗"></span></div>
+        </div>
+      </div>
+      <div class="section-heading"><div><p class="eyebrow">01 / TASK TAXONOMY</p><h2 data-zh="我们到底在问什么？" data-en="What are we asking?"></h2></div><p data-zh="7 类任务 · 每类都有明确的输入、输出与评分" data-en="7 task families · explicit inputs, answers and scoring"></p></div>
+      <div id="taxonomy" class="taxonomy"></div>
+      <section id="questions">
+        <div class="section-heading"><div><p class="eyebrow">02 / QUESTION EXPLORER</p><h2 data-zh="每一道题，都完整展开。" data-en="Every question, fully specified."></h2></div><span id="results-count" class="mono"></span></div>
+        <div class="filters">
+          <input id="search" type="search" placeholder="Search ID / source" aria-label="Search question ID or source">
+          <select id="filter-category" aria-label="Task family"></select>
+          <select id="filter-source" aria-label="Source group"></select>
+          <select id="filter-split" aria-label="Sampling split"></select>
+          <select id="filter-tier" aria-label="Operation length"></select>
+          <button id="reset-filters" data-zh="重置" data-en="Reset"></button>
+        </div>
+        <p id="length-notice" class="note"></p>
+        <div class="explorer">
+          <div class="question-column"><div id="question-list"></div><div class="pagination"><button id="prev">←</button><span id="page-number"></span><button id="next">→</button></div></div>
+          <article id="question-detail" aria-live="polite"><p class="empty" data-zh="从左侧选择一道题，查看完整题面。" data-en="Select a question to read its complete prompt."></p></article>
+        </div>
+      </section>
+    </section>
+    <section id="case-page" hidden>
+      <div class="section-heading"><div><p class="eyebrow">MODEL / EXECUTOR / FEEDBACK</p><h1 data-zh="看模型一步步作答。" data-en="Watch a model work, step by step."></h1></div><a href="#explore" data-zh="返回题库 ↗" data-en="Back to questions ↗"></a></div>
+      <p class="lede" data-zh="每次调用都记录真实输入、原始回答、执行动作与环境反馈。错误回答和失败过程也会保留；这是一份接入案例，不是模型总体成绩。" data-en="Every call preserves the actual input, raw response, action and executor feedback, including failures. This integration case is not a population performance result."></p>
+      <div class="model-toolbar">
+        <label><span data-zh="已保存实录" data-en="Saved runs"></span><select id="case-select" aria-label="Saved model run"></select></label>
+        <button id="load-case" data-zh="打开实录" data-en="Open run"></button>
+        <a href="/MODEL-INTEGRATION.md" data-zh="模型接入说明 ↗" data-en="Provider setup ↗"></a>
+      </div>
+      <div id="run-summary" class="run-summary"></div>
+      <div id="run-controls" class="model-toolbar" hidden><button id="model-step" data-zh="运行一步" data-en="One step"></button><button id="model-run" class="primary" data-zh="连续运行" data-en="Run remaining"></button><button id="model-stop" data-zh="停止" data-en="Stop"></button><button id="export-run" data-zh="导出实录 JSON" data-en="Export trace JSON"></button><a id="run-review" data-zh="打开 3D 复盘 →" data-en="Open 3D review →"></a></div>
+      <div class="case-grid"><aside id="timeline"></aside><article id="step-detail"></article></div>
+    </section>
+    <section id="release-page" hidden>
+      <p class="eyebrow">RESEARCH / REPRODUCIBILITY / RELEASE</p>
+      <h1 data-zh="论文与数据发布。" data-en="Paper and dataset release."></h1>
+      <p class="lede" data-zh="任务、评测器、图像来源和模型实录一起版本化。以下为本地可下载发布材料；公开平台尚未上传。" data-en="Versioned tasks, evaluator, geometry provenance and model traces. These are local release materials; public hosting has not been uploaded yet."></p>
+      <div class="downloads">
+        <a href="/paper.pdf"><span>01 / PAPER</span><strong>CVPR manuscript ↗</strong><p>Official CVPR author-kit · English</p></a>
+        <a href="/supplement.pdf"><span>02 / SUPPLEMENT</span><strong>Methods & audits ↗</strong><p>Construction, controls and protocol</p></a>
+        <a href="/download/brickplan-v2.1-release.zip"><span>03 / DATA + CODE</span><strong>BrickPlan 2.1 release ↓</strong><p>Portable source, evaluator and publishing files</p></a>
+        <a href="/download/questions.jsonl"><span>04 / DATASET VIEWER</span><strong>Question catalogue ↓</strong><p>JSONL · stable question IDs · taxonomy</p></a>
+        <a href="/DATASET-CARD.md"><span>05 / DATA CARD</span><strong>Dataset & publishing ↗</strong><p>Hugging Face Dataset / Space / static site</p></a>
+        <a href="/VALIDITY.md"><span>06 / SCOPE</span><strong>Validity & limitations ↗</strong><p>Geometry contract · splits · empirical limits</p></a>
+      </div>
+    </section>
+    <div id="status" role="status" aria-live="polite"></div>
+    <footer><span>BrickPlan 2.1 · <a href="/ASSET-LICENSES.json">LDraw attribution</a></span><span data-zh="科研预览 · 大规模 VLM 与人类实验待完成" data-en="Research preview · population VLM and human experiments pending"></span></footer>
+  </main>
+  <dialog id="zoom-dialog"><div class="zoom-toolbar"><span id="zoom-label"></span><button id="zoom-fit" data-zh="适应屏幕" data-en="Fit"></button><button id="zoom-native">100%</button><button id="zoom-close" data-zh="关闭 ×" data-en="Close ×"></button></div><div class="zoom-scroll"><canvas id="zoom-canvas"></canvas></div></dialog>
+  <script type="module" src="/portal.js"></script>
+</body>
+</html>

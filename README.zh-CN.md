@@ -16,7 +16,11 @@
 
 | 内容 | 入口 |
 |---|---|
-| 当前论文与附录 | [paper/](paper/README.md) · [正文 PDF](paper/main.pdf) · [附录 PDF](paper/supplement.pdf) |
+| BrickPlan 2.1 当前规划论文 | [CVPR 正文](benchmark/brickplan-v2.1/paper.pdf) · [补充材料](benchmark/brickplan-v2.1/supplement.pdf) |
+| 独立 Overleaf 上传包 | [论文文件夹](deliverables/brickplan-paper/) · [源码 ZIP](deliverables/brickplan-paper/brickplan-cvpr-overleaf.zip) |
+| React 19 / Three.js 工作台源码 | [web/brickplan/](web/brickplan/README.md) |
+| 分类题库、真实模型回放与发布包 | [启动说明](benchmark/brickplan-v2.1/README.md) · [模型接入](benchmark/brickplan-v2.1/MODEL-INTEGRATION.md) · [数据卡](benchmark/brickplan-v2.1/DATASET-CARD.md) |
+| 独立视觉修复论文与附录 | [paper/](paper/README.md) · [正文 PDF](paper/main.pdf) · [附录 PDF](paper/supplement.pdf) |
 | 网页源码、页面、前端配置与测试 | [web/](web/README.md) |
 | Benchmark data、版本及规模 | [benchmark/DATASETS.md](benchmark/DATASETS.md) |
 | Metrics 定义与实现 | [benchmark/METRICS.md](benchmark/METRICS.md) |
@@ -31,7 +35,11 @@
 指向 `paper/` 和 `tem/` 的链接仅适用于本地文件，这两个目录已加入 Git 忽略规则。
 论文构建与历史归档审计需要本地保留这些目录；最后纳入 Git 的版本为 `8a2eaeb9`。
 
-当前主任务是**视觉绑定＋最小结构修复**：从真实积木图匹配第三个终端，
+当前规划版本为 **BrickPlan 2.1**：145 个交互任务、739 道诊断题、
+7 类清晰题面、原生高清图像及真实模型逐步反馈。启动对应服务后访问
+`http://127.0.0.1:8769/`，模型实录为 `/#case`。大规模 VLM 与人类实验仍待进行。
+
+独立视觉修复任务是**视觉绑定＋最小结构修复**：从真实积木图匹配第三个终端，
 再结合连接图求全部最优恢复方案。每个构造包含视觉变化、视觉保持、
 故障变化和独立重编号，规模与分组见 [summary.json](benchmark/visual-repair-v1/summary.json)。
 旧 140 对原子题、219 图观察和 617 历史档案单独保存，不合并计算新任务规模。
@@ -55,7 +63,8 @@
 三维来源查看器为 `/benchmark`。检查入口包含答案；
 正式人审使用[独立盲审包](benchmark/ldraw-evidence-v3/QA-AND-RUN.md)。
 
-论文统一进入 `paper/`，网页统一进入 `web/`，中间产物与历史材料统一进入 `tem/`，
+BrickPlan 的版本化论文与题库门户保留在 `benchmark/brickplan-v2.1/`。
+其他论文进入 `paper/`，网页进入 `web/`，中间产物与历史材料进入 `tem/`，
 数据及评估代码保留在 `benchmark/`。根目录旧审稿别名已移除，
 指向论文和中间产物的兼容链接也一并忽略。`paper/` 和 `tem/` 保留本地文件，
 停止 Git 跟踪。网页源码、Benchmark 数据、原生图像、审核包与评估代码继续纳入 Git；
