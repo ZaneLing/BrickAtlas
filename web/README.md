@@ -4,6 +4,13 @@ The maintained website lives here: React/Three.js source in `src/`, served
 models and versioned evidence in `public/`, HTML entry points, frontend
 configuration, tests and website documentation in `docs/`.
 
+The separate [BrickPlan 2.3 workbench](brickplan/README.md) runs against the
+versioned [planning server](../benchmark/brickplan-v2.3/README.md). It provides
+the question explorer, original-pose 3D replay and exploded inspection,
+historical model case, and paper/data downloads. Its catalogue displays
+current source counts and distinguishes primary matched geometry from
+historical unmatched regressions.
+
 Run commands from the repository root:
 
 ```sh

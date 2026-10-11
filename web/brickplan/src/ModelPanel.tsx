@@ -65,7 +65,7 @@ export function ModelPanel({ catalogue, runId, onRun }: { catalogue: Catalogue; 
     <main className={s.modelMain}>
       <div className={s.brief}><div className={s.eyebrow}>MODEL OBSERVATION → RESPONSE → EXECUTOR</div><h2>{recorded ? '逐步案例 / Recorded case study' : '实时模型工作台 / Live model run'}</h2>
         <p>{run?.model} · {run?.taskId} <span className={s.badge}>{run?.status || 'Loading'}</span></p>
-        <p className={s.muted}>{recorded ? 'Historical BrickPlan 2.1 trace, not a new 2.2 measurement. 原始任务、模型回复与图片字节保持不变；仅展示接口与错误模式，不代表整体模型评测结果。' : run?.scope}</p>
+        <p className={s.muted}>{recorded ? `Historical BrickPlan 2.1 trace, not a new ${catalogue.release} measurement. 原始任务、模型回复与图片字节保持不变；仅展示接口与错误模式，不代表整体模型评测结果。` : run?.scope}</p>
       </div>
       <div className={s.workStatus}>
         <button disabled={recorded || staticMode || busy || run?.status !== 'paused'} onClick={() => control('step')}><SkipForward size={14} /> 单步 Step</button>

@@ -1,12 +1,14 @@
 {
   "name": "brickplan-workbench",
   "private": true,
-  "version": "2.2.0",
+  "version": "2.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:contracts": "env -u PYTHONPATH PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 ../../benchmark/.runtime/mlx-env/bin/python tests/test_release_contracts.py",
+    "test:acceptance": "env -u PYTHONPATH PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 ../../benchmark/.runtime/mlx-env/bin/python tests/verify_v23.py"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

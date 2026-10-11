@@ -28,10 +28,10 @@ function cached<T>(path: string): Promise<T> {
   if (immutable.size > 24) immutable.delete(immutable.keys().next().value!);
   return request;
 }
-let samples: { id: string; preview: string; scene: string }[] | undefined;
+type Sample = { id: string; preview: string; scene: string };
 async function sample(id: string) {
-  samples ??= await read('samples.json');
-  const found = samples!.find(s => s.id === id);
+  const samples = await cached<Sample[]>('samples.json');
+  const found = samples.find(s => s.id === id);
   if (!found) throw new Error('此题需下载完整运行包；静态站提供每类一个可旋转示例。 Download the runtime for this question.');
   return found;
 }
@@ -43,7 +43,7 @@ export const api = {
   models: () => staticMode ? Promise.resolve<Models>({ providers: [], runs: [], cases: [{ id: 'case-local', title: 'SmolVLM-256M' }] }) : read<Models>('api/models'),
   run: (id: string) => read<ModelRun>(staticMode ? 'cases/local-vlm.json' : `api/model-runs/${id}`),
   runScene: (id: string) => read<SceneData>(staticMode ? 'cases/scene.json' : `api/model-runs/${id}/scene`),
-  sampleIds: async () => staticMode ? (await read<{ id: string }[]>('samples.json')).map(s => s.id) : [],
+  sampleIds: async () => staticMode ? (await cached<Sample[]>('samples.json')).map(s => s.id) : [],
 };
 export function describe(a?: Action) {
   if (!a) return 'Initial state';

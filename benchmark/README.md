@@ -3,6 +3,16 @@
 主要入口：[数据目录](DATASETS.md) · [指标与评分代码](METRICS.md) ·
 [当前英文论文](../paper/README.md) · [历史审稿与论文归档](../tem/README.md)。
 
+## 当前规划任务
+
+[BrickPlan 2.3](brickplan-v2.3/README.md) 提供有限料架、检修历史、延迟恢复
+与严格等数量、等型号颜色库存的几何配对。实际来源和题目规模由
+[公开目录](brickplan-v2.3/release/catalogue.json)给出；
+[逐题来源核验](brickplan-v2.3/data/source-question-audit.json)与
+[库存对照](brickplan-v2.3/data/matched-controls.json)绑定对应题库版本。
+正式论文使用 [CVPR 模板正文](brickplan-v2.3/paper.pdf)与
+[补充材料](brickplan-v2.3/supplement.pdf)。冻结的旧规划版本独立保留。
+
 ## 当前研究
 
 本项目评测模型能否根据当前图像中的证据回答问题，并在成对观察改变后继续答对。

@@ -14,9 +14,10 @@ export type Observation = {
   observationProtocol?: { mode: string; initialViews: string[]; acquiredViews: number; acquisitionCostPerView: number; initialViewsCountAsAcquisition: boolean };
   images?: Images; completion: string; identityRule: string; fixture: string; diagnosisQuestion: string;
 };
-export type Question = { id: string; stableId: string; category: string; form: string; kind: string; source: string; profile: string; split: string; tier: string; lengthBin: string };
+export type Question = { id: string; stableId: string; category: string; form: string; kind: string; source: string; profile: string; split: string; tier: string; lengthBin: string; evaluationCohort?: string; provenance?: { introducedVersion: string; sampling: string } };
 export type Family = { id: string; number: string; name: Bi; question: Bi; given: Bi; answer: Bi; score: Bi; count: number };
-export type Catalogue = { release: string; bankHash?: string; questions: Question[]; taxonomy: Family[]; counts: { episodes: number; probes: number; pairs: number; sources: number }; lengthNotice: Bi };
+export type Cohort = { id: string; label: Bi; notice: Bi; probes: number; pairs: number; sources: number; heldoutSources: number };
+export type Catalogue = { release: string; bankHash?: string; questions: Question[]; taxonomy: Family[]; cohorts?: Cohort[]; counts: { episodes: number; probes: number; pairs: number; sources: number }; lengthNotice: Bi };
 export type Preview = {
   id: string; kind: string; observation: Observation; question: string; revision?: number; answered?: boolean;
   candidates?: Action[]; proposedPlan?: Action[];
@@ -45,4 +46,4 @@ export type Models = {
   runs: { id: string; taskId: string; model: string; status: string }[];
   cases: { id: string; title: string }[];
 };
-export type TaskInfo = { study: boolean; track: string; tasks: { id: string; sessions: string[]; tier?: string; profile?: string }[] };
+export type TaskInfo = { release?: string; bankHash?: string; study: boolean; track: string; tasks: { id: string; sessions: string[]; tier?: string; profile?: string }[] };

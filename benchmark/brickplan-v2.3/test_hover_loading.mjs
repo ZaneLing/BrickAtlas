@@ -1,0 +1,68 @@
+import { firefox, expect } from '@playwright/test';
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const out = path.join(root, 'tem/research/20261009-hover-performance');
+const base = process.env.BRICKPLAN_TEST_URL || 'http://127.0.0.1:8771';
+await mkdir(out, { recursive: true });
+const browser = await firefox.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1480, height: 1050 } });
+const errors = [], checks = [], timings = {};
+page.on('pageerror', e => errors.push(e.message));
+try {
+  const previews = [];
+  page.on('request', request => { if (request.url().includes('/api/preview/')) previews.push(request.url()); });
+  await page.goto(base + '/#q=E001');
+  await expect(page.locator('[data-scene-ready="true"]')).toHaveCount(2);
+  await expect(page.locator('.scene-tooltip:visible')).toHaveCount(0);
+  await expect(page.locator('.scene-labels')).toHaveCount(0);
+  const canvas = page.locator('canvas').first(), box = await canvas.boundingBox();
+  await page.mouse.move(box.x + box.width * .5, box.y + box.height * .62);
+  await expect(page.locator('.scene-tooltip:visible')).toHaveCount(1);
+  await expect(page.locator('.scene-tooltip:visible')).toContainText(/零件 [PF]\d{3}/);
+  await expect(page.locator('.scene-tooltip:visible')).toContainText('LDraw');
+  await page.screenshot({ path: path.join(out, 'hover-details.png'), fullPage: true });
+  await page.mouse.move(box.x + 8, box.y + 45);
+  await expect(page.locator('.scene-tooltip:visible')).toHaveCount(0);
+  await canvas.focus(); await page.keyboard.press('ArrowRight');
+  await expect(page.locator('.scene-tooltip:visible')).toHaveCount(1);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.scene-tooltip:visible')).toHaveCount(0);
+  checks.push('No persistent labels; one readable raycast hover card; keyboard inspection and dismissal');
+  console.log('PASS', checks.at(-1));
+  // Wait for the request once, then measure the already-preloaded HD switch.
+  await expect(page.locator('[class*="_previewFooter_"]')).toContainText('registered pieces', { timeout: 15000 });
+  const start = performance.now();
+  await page.getByRole('button', { name: '高清图 HD', exact: true }).click();
+  await expect.poll(() => page.locator('[data-render-mode="raster"] img').evaluateAll(
+    images => images.length === 2 && images.every(img => img.complete && img.naturalWidth === 1920))).toBe(true);
+  timings.hdSwitchMs = Math.round(performance.now() - start);
+  expect(timings.hdSwitchMs).toBeLessThan(1500);
+  await page.getByRole('button', { name: /模型运行/ }).click();
+  await expect(page.getByLabel('Model call timeline').locator('button')).toHaveCount(4);
+  await page.getByRole('button', { name: /题目库/ }).click();
+  await expect(page.locator('[data-scene-ready="true"]')).toHaveCount(2);
+  expect(previews.filter(url => url.endsWith('/E001'))).toHaveLength(1);
+  await page.screenshot({ path: path.join(out, 'clean-assembly.png'), fullPage: true });
+  checks.push('Native HD switch under 1.5s; returning to the same question sends no duplicate preview request');
+  console.log('PASS', checks.at(-1), timings);
+  const touch = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  await touch.goto(base + '/#q=E001');
+  await expect(touch.locator('[data-scene-ready="true"]')).toHaveCount(2);
+  const target = touch.locator('canvas').first();
+  await target.scrollIntoViewIfNeeded();
+  const rect = await target.boundingBox();
+  await touch.touchscreen.tap(rect.x + rect.width * .5, rect.y + rect.height * .62);
+  await expect(touch.locator('.scene-tooltip:visible')).toHaveCount(1);
+  expect(await touch.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await touch.screenshot({ path: path.join(out, 'touch-details.png'), fullPage: true });
+  checks.push('Touch tap reveals a single piece detail card without horizontal overflow');
+  console.log('PASS', checks.at(-1));
+  expect(errors).toEqual([]);
+  await writeFile(path.join(out, 'hover-loading-validation.json'), JSON.stringify({ passed: true, checks, timings, errors }, null, 2));
+} catch (error) {
+  await page.screenshot({ path: path.join(out, 'hover-failure.png'), fullPage: true }).catch(() => {});
+  console.log('FAILED', error.message);
+  process.exitCode = 1;
+} finally { await browser.close(); }

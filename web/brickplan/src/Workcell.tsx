@@ -8,8 +8,11 @@ import s from './Workbench.module.css';
 
 export function Brief({ catalogue, id }: { catalogue?: Catalogue; id: string }) {
   const row = catalogue?.questions.find(q => q.id === id), family = catalogue?.taxonomy.find(f => f.id === row?.category);
+  const cohort = catalogue?.cohorts?.find(c => c.id === row?.evaluationCohort);
   return <div className={s.brief}>
     <div className={s.eyebrow}>{id} {row && ` / ${row.tier} · ${row.form} · ${row.source}`}</div>
+    {cohort && <p data-cohort={cohort.id}><b>{cohort.label.en}</b><br />{cohort.notice.en}</p>}
+    {row?.provenance && <p className={s.muted} data-provenance>Practice provenance · {row.profile} · {row.provenance.introducedVersion} · {row.provenance.sampling}</p>}
     <h2>{family?.question.zh || '完成当前任务'}<small>{family?.question.en || 'Complete the assigned task'}</small></h2>
     {family && <div className={s.contract}><p><b>已知 Given</b>{family.given.zh}</p><p><b>作答 Answer</b>{family.answer.zh}</p><p><b>评分 Score</b>{family.score.zh}</p></div>}
   </div>;
@@ -41,11 +44,11 @@ export function Workcell({ id, info, catalogue, resumeId, onSession }: { id: str
     ? checkpoint?.inspectionHistory.find(v => v.view === savedRecord.view)?.images : checkpoint?.images)?.current;
   const select = (part: string) => { setSelected(part); setSite(obs?.registration.find(r => r.partId === part)?.siteId || ''); };
   async function sessionExtras(key: string, observation: Observation) {
-    setEvents((await read<{ events: Event[] }>(`api/sessions/${key}/history`)).events);
-    if (!info.study) {
-      setScene(await read<SceneData>(`api/sessions/${key}/scene`));
-      if (observation.terminated) setScore(await read<Score>(`api/sessions/${key}/score`));
-    }
+    await Promise.all([
+      read<{ events: Event[] }>(`api/sessions/${key}/history`).then(value => setEvents(value.events)),
+      !info.study && read<SceneData>(`api/sessions/${key}/scene`).then(setScene),
+      !info.study && observation.terminated && read<Score>(`api/sessions/${key}/score`).then(setScore),
+    ]);
   }
   useEffect(() => {
     const generation = ++epoch.current; let alive = true;
@@ -59,15 +62,22 @@ export function Workcell({ id, info, catalogue, resumeId, onSession }: { id: str
         if (!alive) return;
         setSid(resume); onSession(resume); setObs(loaded.observation); await sessionExtras(resume, loaded.observation);
       } else if (probe && !staticMode) {
-        const p = await read<Preview>(`api/probes/${id}`); if (!alive) return;
-        setPreview(p); setObs(p.observation);
-        if (!info.study) {
-          setScene(await api.scene(id));
-          if (p.answered) setReview(await read(`api/probes/${id}/review`));
-        }
+        await Promise.all([
+          read<Preview>(`api/probes/${id}`).then(async p => {
+            if (!alive) return;
+            setPreview(p); setObs(p.observation);
+            if (p.answered && !info.study) {
+              const value = await read(`api/probes/${id}/review`);
+              if (alive) setReview(value);
+            }
+          }),
+          !info.study && api.scene(id).then(value => { if (alive) setScene(value); }),
+        ]);
       } else if (!info.study) {
-        const p = await api.preview(id); if (!alive) return;
-        setPreview(p); setObs(p.observation); setScene(await api.scene(id));
+        await Promise.all([
+          api.preview(id).then(p => { if (alive) { setPreview(p); setObs(p.observation); } }),
+          api.scene(id).then(value => { if (alive) setScene(value); }),
+        ]);
       }
       if (alive) setMessage(staticMode ? '静态预览：下载完整运行包后可作答。' : probe ? '冻结状态诊断题：选择答案后提交。' : '检查目标与工单，然后开始或继续作答。');
     }
@@ -144,7 +154,7 @@ export function Workcell({ id, info, catalogue, resumeId, onSession }: { id: str
         </Tabs.Content>
         <Tabs.Content value="observation"><JSONView value={effectiveObs} title="完整公开观察 / Full public observation" />{score && <JSONView value={score} title="完整评分 / Score" />}</Tabs.Content>
         <Tabs.Content value="feedback"><label className={s.field}>质量反馈 / Review note<textarea value={note} onChange={e => setNote(e.target.value)} placeholder="指出具体 ID、步骤与问题…" /></label>
-          <button onClick={() => download(`brickplan-review-${id}.json`, { schema: 'brickplan-review/2.2', bankHash: catalogue?.bankHash, questionId: id, sessionId: sid || null, revision: effectiveObs?.revision, frame, view: savedRecord?.view || effectiveObs?.view, selected, note })}><Download size={14} /> 导出反馈 JSON</button></Tabs.Content>
+          <button onClick={() => download(`brickplan-review-${id}.json`, { schema: 'brickplan-review/2.3', bankHash: catalogue?.bankHash, questionId: id, sessionId: sid || null, revision: effectiveObs?.revision, frame, view: savedRecord?.view || effectiveObs?.view, selected, note })}><Download size={14} /> 导出反馈 JSON</button></Tabs.Content>
       </Tabs.Root>
     </div>
     <aside className={s.inspector}>

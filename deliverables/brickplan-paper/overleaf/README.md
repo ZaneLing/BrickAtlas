@@ -28,6 +28,6 @@ Asset attribution and upstream provenance: included JSON/README files
 
 This is a snapshot of the benchmark manuscript. Edit these source files
 freely in Overleaf. To regenerate a fresh upload package from the repository,
-run `python benchmark/brickplan-v2.2/export_overleaf.py --check`.
+run `python benchmark/brickplan-v2.3/export_overleaf.py --check`.
 The repository's exporter refreshes its own deliverables folder only;
 it does not modify an existing Overleaf project.

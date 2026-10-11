@@ -1,4 +1,5 @@
 \documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage[T1]{fontenc}
 \ifdefined\reviewcopy
 \usepackage[review]{cvpr}
 \else
@@ -10,8 +11,9 @@
 \def\confName{CVPR}
 \def\confYear{2026}
 \input{generated.tex}
+\input{figure-captions.tex}
 \title{BrickPlan: Diagnosing Future Action Cost and Error Recovery\\in Visual Assembly Planning}
-\author{Benchmark research release 2.2\\Population model and human studies pending}
+\author{Benchmark research release 2.3\\Population model and human studies pending}
 \begin{document}
 \raggedbottom
 \maketitle
@@ -26,14 +28,17 @@ qualified motions and connectivity; a limited rack and persistent
 off-assembly inspection ledger couple decisions over time.
 The release contains \EpisodeCount{} interactive episodes and
 \ProbeCount{} diagnostic questions from \SourceCount{} source groups.
-Matched sequences test future legality, fixed-context contrasts test
-geometric dependence, and delayed-repair questions exclude the goal from
+Matched sequences test future legality, inventory-matched fixed contexts
+test geometric dependence, and delayed-repair questions exclude the goal from
 recovery credit. Static diagnostics supply four fixed views; active
 diagnostics charge additional acquisitions. Calibration questions and
 repeated variants receive explicit scoring treatment.
-Structural controls reveal both scope and limits: closure greedy completes
-1,061 of 1,131 task-runs but only 873 optimally; an inverse-last-action
-control solves 58.0\% of recovery questions. We release native-resolution
+The primary geometry cohort contains \PrimaryPairCount{} pairs from
+\PrimarySourceCount{} sources, with both exact conflict labels required.
+Structural controls reveal scope and limits: closure greedy completes
+\GreedyCompleted{} of \GreedyAssigned{} task-runs, \GreedyOptimal{} optimally;
+an inverse-last-action control solves \InverseAccuracy{} of recovery
+questions. We release native-resolution
 observations, exact evaluators, a question workbench, and a preserved
 historical model trace. These measurements characterize the instrument;
 population visual-model and human performance remain unmeasured.
@@ -77,15 +82,7 @@ from software verification.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=.96\textwidth]{figures/geometry-contrast.png}
-\caption{An answer-changing geometry pair shown from the \emph{initial
-left view}, supplied before answering in the static condition.
-Registered pieces, original poses, occupancy, target, rack, work orders,
-and proposed plan are matched. The fixed context differs by one original
-source piece. Context 1 permits the whole plan; context 2 rejects
-operation 7 after six shared legal steps. Their initial isometric views
-are identical; the side view reveals the difference. Pixel distinction
-does not by itself certify human or model answerability. The unequal
-fixed-part counts remain a confound.}
+\caption{\GeometryCaseCaption}
 \label{fig:geometry}
 \end{figure*}
 
@@ -124,8 +121,9 @@ count. Human collection requires documented instructions, training,
 participant counts, and consent before recruitment.
 
 Identity seeds, paired questions, and variants reuse source geometry.
-Per-source results and coverage precede pooled claims. Only eight source
-groups are held out from development, limiting transfer uncertainty.
+Per-source results and coverage precede pooled claims.
+\HeldoutSourceCount{} source groups are held out from development;
+the primary geometry cohort covers \HeldoutPrimarySourceCount{} of them.
 More diagnostic rows do not create more independent assemblies.
 Errors are stratified into parsing, immediate legality, future cost,
 diagnosis, and repair.
@@ -223,8 +221,10 @@ Delayed error recovery & Which choice returns to the earlier optimal corridor? &
 
 \subsection{Diagnostic formats}
 Table~\ref{tab:taxonomy} separates interactive execution from checkpoint
-questions. There are 653 next-action questions, 288 ordinary sequence
-questions, 20 geometry questions, 48 appearance questions, and 943
+questions. There are \NextActionCount{} next-action questions,
+\ContinuationCount{} ordinary sequence questions,
+\GeometryQuestionCount{} geometry questions,
+\AppearanceQuestionCount{} appearance questions, and \RepairCount{}
 delayed-repair questions. Sequence questions expose the complete proposed
 plan and ask for its first illegal operation, or \texttt{null}.
 Recovery questions expose the pre-error checkpoint, executed history,
@@ -233,37 +233,43 @@ step, not hidden model reasoning.
 
 \section{Construction and validity controls}
 \subsection{Source groups and sampling}
-The \ProfileCount{} qualified geometry profiles include 17 base
-assemblies and 82 context profiles, including zero-yield candidates.
+The \ProfileCount{} qualified geometry profiles include
+\BaseProfileCount{} base assemblies and \ContextProfileCount{} context
+profiles, including zero-yield candidates.
 They belong to \SourceCount{} source kit groups. Alternate builds and
 context variants remain within one group: roadster and kart both belong
-to 31027. There are 109 development episodes from eight groups and
-268 held-out-source episodes from eight other groups. Of the latter,
-256 follow seeded source sampling and 12 are mechanism-conditioned
-geometry episodes.
+to 31027. There are \DevelopmentEpisodeCount{} development episodes from
+\DevelopmentSourceCount{} groups and \HeldoutEpisodeCount{} held-out
+episodes from \HeldoutSourceCount{} disjoint groups.
 
-Version 2.2 preserves all 145 earlier episodes and 739 diagnostic
-records, adding 232 episodes and 1,213 questions. Of 11 additional
-frozen candidates, five pass admission: 10036, 10213, 10242, 10265,
-and 10269. Six rejected candidates remain documented. Some admitted
-subassemblies have only two or four registered sites, so source growth
-is not equated with difficult geometry.
+Version 2.3 preserves the frozen 2.2 definitions and admits
+\AdmittedCount{} of \CandidateCount{} new source candidates; all
+\RejectedCount{} exclusions remain in the census. Candidate identities,
+intake strata, source-group splits, and sampling are frozen before new
+geometry qualification and solver discovery. Every newly admitted base
+has at least eight registered and eight reachable movable sites.
+Small historical domains remain regression cases, not new-source admissions.
+An independent source audit subsequently excludes five candidates whose
+part-only manifests omit direct model geometry and one with a conflicting
+root kit identifier. Original files and preliminary admissions remain
+archived; no replacement candidates are added. Every retained new-source instance
+is bound to its exact original reference chain, identity, color and pose.
 
-Legacy tasks used mechanism and solver evidence during selection.
-Additional candidates and seeded sampling were recorded before their
-solver evaluation. Initial collision failures motivated a disclosed
-geometry-only admission refinement: remove conflicting instances in
-deterministic source order and retain a stud-connected component.
-It moves no parts. After qualification, admission uses solvability
-and seeded sampling, not observed policy difficulty. Initial failures,
-retained indices, and qualification results are archived. ``New source''
-refers to benchmark construction, not absence from pretraining.
+New-source geometry uses deterministic source-order collision pruning and
+a bounded stud-connected component, preserving every retained original
+instance and pose. Each admitted source supplies \GoalsPerSource{} goals,
+\JobSettingsPerSource{} job settings, and \StartsPerMission{} starts per
+mission: \NewSampledEpisodeCount{} seeded episodes in total. Solvability is
+the only oracle-based admission condition; no policy score, cost gap, or
+search effort selects these episodes. Legacy mechanism-conditioned tasks
+and separately constructed geometry diagnostics retain explicit labels.
+``New source'' does not mean absent from pretraining.
 
 \begin{table}[t]
 \centering\small
 \caption{Fixed operation-length bins: D1 (1--8), D2 (9--16), D3
 (17--24), D4 (25+). They are not cognitive-depth levels.}
-\resizebox{\columnwidth}{!}{\input{tiers.tex}}
+\input{tiers.tex}
 \label{tab:tiers}
 \end{table}
 
@@ -290,48 +296,54 @@ jobs, gap, and search effort are separate descriptors; length bins alone
 do not imply planning difficulty.
 
 \subsection{Sequence and shallow-choice controls}
-The 144 legal/corrupted sequence pairs match first and last actions,
+The \SequencePairCount{} legal/corrupted sequence pairs match first and last actions,
 action multisets, and prefixes before the first conflict. Legal witnesses
 contain no repeated-state padding. Each conflict bin (2--5, 6--10, 11+)
-has 48 pairs. A prefix-only control executes $k$ operations and otherwise
-answers ``all legal.'' It scores 158/288 at $k=2$ and 192/288 at $k=5$;
-zero-step accuracy is 50\%. This reduces a measured predecessor shortcut
-without establishing immunity to other ones.
+has \SequencePairsPerBin{} pairs. A prefix-only control executes $k$ operations and otherwise
+answers ``all legal.'' It scores \PrefixTwoCorrect{}/\PrefixTwoTotal{} at $k=2$
+and \PrefixFiveCorrect{}/\PrefixFiveTotal{} at $k=5$;
+zero-step accuracy is \PrefixZeroAccuracy{}. This tests a specific shortcut without
+establishing immunity to other ones.
 
-All 653 next-action checkpoints include an optimal choice in the
-depth-one closure minimizer set. Uniform tie selection yields 94.0\%
-expected accuracy; uniform selection among all candidates yields 36.9\%.
+At \DepthOneContainsOptimal{} of \NextActionCount{} next-action checkpoints,
+the depth-one closure minimizer set includes an optimal choice.
+Uniform tie selection yields \DepthOneUniform{}
+expected accuracy; uniform selection among all candidates yields
+\UniformCandidateAccuracy{}.
 This strong result uses privileged structural relations. We disclose
 tie sizes, optimistic and pessimistic accuracy, and the matched
 image/structured comparison rather than infer required reasoning depth.
 
 \subsection{Geometry and appearance}
-Ten answer-changing pairs cover four interventions and three groups
-(31027, 10014, 10036). They match registered pieces and poses, start,
-target, rack, work, and plan; induced fixed contexts are independently
-qualified. Of 41 qualified context pairs, 37 produce no retained
-future contrast under the declared search. Every retained pair has
-unequal fixed-part counts. They are not count-matched counterfactuals.
+The primary cohort contains \PrimaryPairCount{} answer-changing pairs,
+\PrimaryInterventionCount{} interventions, and \PrimarySourceCount{} source
+groups. Both contexts match total count and the exact part-number/color
+multiset, registered instances and original poses, start, target, rack,
+jobs, and proposed plan. Only subsets of original fixed instances change;
+fixed connectivity, full-assembly support, meshes, and paths are separately
+qualified. No unequal-inventory fallback is allowed.
+All retained primary failures concern stud support; motion-blocker
+relations match between contexts.
+
+Of \QualifiedInterventionCount{} qualified matched interventions,
+\ZeroYieldInterventionCount{} yield no retained future contrast under the
+declared search. Geometry-only context selection precedes answer-change
+testing. Retaining answer-changing plans is mechanism conditioning, not
+representative source sampling. The supplement reports every source,
+intake stratum, candidate stage, zero-yield intervention, and conflict bin.
+The \HistoricalPairCount{} earlier unmatched pairs are historical
+regressions and never enter the primary visual score.
 
 Native certificates compare all five panels in four initial views.
-Every pair differs in a supplied static view; three pairs have identical
-isometric inputs alone (Figure~\ref{fig:geometry}). This establishes pixel
-distinction, not perceptual sufficiency or successful acquisition by an
-active agent. Twenty-four original/grayscale pairs preserve geometry,
-state, plan, and answer. These measure appearance invariance, not
-additional independent structures.
+Pixel distinction (Figure~\ref{fig:geometry}) does not establish perceptual
+sufficiency or successful active acquisition. The
+\AppearancePairCount{} original/grayscale pairs preserve geometry, state,
+plan, and answer; they test appearance invariance, not independent structures.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/repair-case.png}
-\caption{A certified lag-five case (\texttt{source-10036-35/repair-lag-5}).
-A: the pre-error checkpoint defines an optimal completion corridor.
-B: an error and five further operations leave it. The last history
-action attached P013. Immediately undoing it requires nine operations
-to repair; the optimum takes seven, starting with detaching P002.
-C: that shortest repair reaches a nonterminal corridor state.
-These are oracle replay frames, not model reasoning or a model success.
-Exact states and actions are archived with figure provenance.}
+\caption{\RepairCaseCaption}
 \label{fig:repair}
 \end{figure*}
 
@@ -343,13 +355,14 @@ remains outside this corridor. At checkpoint $z$, the repair target is
 \begin{equation}
  r_b(z)=\min_{y\in\mathcal C_b^{-}}\operatorname{dist}(z,y).
 \end{equation}
-The 943 questions have repair costs 1--7, independently verified by
+The \RepairCount{} questions have repair costs \RepairMin{}--\RepairMax{}, independently verified by
 forward BFS. Any first action on a shortest repair is accepted.
 Finishing after a costly detour does not itself earn repair credit.
 
 Lag alone does not establish nonlocal repair. Reversing the last public
-action solves 547/943 questions (58.0\%); the inverse is suboptimal on
-368 and unavailable on 28. These cohorts are reported separately.
+action solves \InverseCorrect{}/\RepairCount{} questions (\InverseAccuracy{});
+the inverse is suboptimal on \InverseSuboptimal{} and unavailable on
+\InverseUnavailable{}. These cohorts are reported separately.
 All \CalibrationCount{} questions with every candidate optimal remain
 calibration checks and receive no weight in discriminative accuracy.
 
@@ -376,28 +389,23 @@ genuine irreversible dead ends; their eligible-choice rate is undefined.
 
 The \ProbeCount{} rows represent \ProblemCount{} canonical diagnostic
 problems; repeated statements and appearance variants account for
-133 excess rows. Canonical identity includes source geometry, state,
+\RepeatedRowCount{} excess rows. Canonical identity includes source geometry, state,
 target, work, capacity, and the exact question or history.
 There are \DiscriminativeCount{} discriminative assignments.
 Primary accuracy averages assigned variants within a canonical problem,
 then problems within a source, then sources equally. Missing variants
 receive zero before averaging. Row, problem-macro, source-macro,
-calibration, and recovery-cohort scores remain available. Joint pair
-correctness requires both assigned members; a missing member earns zero.
+calibration, and recovery-cohort scores remain available. Primary geometry
+correctness requires \emph{both exact first-conflict labels}, not merely
+a predicted answer change. Any assigned member makes a pair eligible;
+a missing partner, absent response, or malformed label earns zero joint
+credit. Wholly unassigned pairs remain census-only. Repeated rows are
+averaged within distinct starts, then interventions, then sources.
+Whole-source bootstrap intervals and leave-one-source-out summaries
+describe sensitivity conditional on retained sources, not population coverage.
 The supplement details metric denominators and regret conservation.
 
 \section{Measured evidence}
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/mechanism-evidence.pdf}
-\caption{Measured software evidence. Left: exact cost and static lower
-bound, with coincident points overlapping. Right: completed and optimal
-task-runs differ for greedy controls. Length bins do not imply monotonic
-search difficulty. These summaries combine legacy development and
-seeded source samples; partition results are released separately.}
-\label{fig:controls}
-\end{figure*}
-
 \begin{table*}[t]
 \centering\small
 \caption{Structural controls on \EpisodeCount{} episodes. The oracle
@@ -412,16 +420,21 @@ privileged inputs, so these are not image-input VLM results.}
 Closure greedy minimizes the static successor bound with visited-state
 and randomized site tie-breaking. Capacity dispatch prioritizes audits,
 mandatory removals, safe placements, and temporary staging, with
-revisited-state escape. Greedy completes 1,061/1,131 runs and dispatch
-1,039/1,131; both achieve 873 optimal completions. Completion alone
+revisited-state escape. Greedy completes \GreedyCompleted{}/\GreedyAssigned{}
+runs, with \GreedyOptimal{} optimal; dispatch completes
+\DispatchCompleted{}/\DispatchAssigned{}, with \DispatchOptimal{} optimal.
+Completion alone
 therefore conceals avoidable effort (Table~\ref{tab:controls}).
 
 A* uses graph reopening, $(g+h,h)$ priority, and declared limits without
-oracle access. Limits of 100 and 1,000 expansions complete 1,008 and
-1,079 runs. Full closure A* completes all 1,131 optimally, with median
-14 and maximum 12,578 expansions. The weaker occupancy-plus-pending-audit
-heuristic is also reported. Strong perfect-information planning remains
-computationally modest; weak controls can inflate apparent difficulty.
+oracle access. Limits of 100 and 1,000 expansions complete
+\BoundedSmallCompleted{} and \BoundedLargeCompleted{} runs.
+Full closure A* completes \FullSearchCompleted{}/\FullSearchAssigned{},
+\FullSearchOptimal{} optimally, with median \FullSearchMedianExpansions{}
+and maximum \FullSearchMaxExpansions{} expansions.
+The weaker occupancy-plus-pending-audit
+heuristic is also reported. These perfect-information measurements
+constrain difficulty claims; weak controls alone can inflate them.
 
 Dropping inspection obligations or ignoring rack limits produces
 failures when relaxed plans execute under the actual rules. These are
@@ -429,6 +442,27 @@ model-mismatch ablations, not strong planners. Raw actions, states,
 rejections, expansions, timings, and every aggregate are released.
 Seeds repeat geometry and tie order; cached local timings are not
 calibrated cross-platform comparisons.
+
+\subsection{Reduced-input geometry controls}
+\begin{table*}[t]
+\centering\small
+\caption{Primary inventory-matched geometry: deterministic software rules,
+not visual performance. Joint correctness requires both exact labels.
+Intervals resample whole source groups; unavailable estimates are marked
+unavailable, never inferred as zero.}
+\input{matched-shortcuts.tex}
+\label{tab:shortcuts}
+\end{table*}
+Count-only, type/color-presence, type/color-count, and sequence-only
+certificates test explicitly restricted representations. Equal inputs with
+unequal labels cannot both be correct for a deterministic single-member
+function of that representation. These label-aware finite-bank ceilings
+are not fitted held-out predictors, and do not cover instance-sensitive
+spatial reasoning or policies using pair position as extra information.
+Separate label-free inventory execution rules and a source-majority
+predictor fitted only on development labels appear in
+Table~\ref{tab:shortcuts}. Exact inventories and named occupancy are
+privileged perception abstractions, not measured visual extraction.
 
 \subsection{Historical model integration case}
 The workbench preserves a version-2.1 SmolVLM-256M-Instruct run on
@@ -443,7 +477,7 @@ actions, feedback, latency, measured MLX token counts, and weight digest
 are preserved. Native stimuli are 1920 pixels wide; this model's processor
 resizes the longest edge to 512 with splitting disabled. HD display does
 not imply native-HD inference. Historical E069 is not relabeled as a
-version-2.2 experiment. An OpenAI-compatible practice adapter and a
+version-2.3 experiment. An OpenAI-compatible practice adapter and a
 separate usage-accounted study runner support further collection.
 
 \section{Release and limitations}
@@ -463,16 +497,18 @@ browser checks cover persistence, observation isolation, and playback.
 This establishes software behavior, not human usability or real-world
 mechanical validity.
 
-The principal limits remain structural and empirical. The deterministic
-bank is tractable with perfect relations. Registration and inventories
-simplify grounding. Visual-context evidence spans three sources and has
-a part-count confound; pixel distinction needs empirical answerability
-testing. Geometry excludes forces, arbitrary poses, rotations,
-simultaneous subassembly motion, and real rack transfers. Sixteen sources
-remain below the desired 30--50-source scale. No model shortsightedness,
+The principal limits remain structural and empirical. Perfect-information
+controls characterize this finite bank, not visual planning competence.
+Registration and inventories simplify grounding. Matched inventories remove
+the former global-count confound, not every instance-level spatial shortcut.
+Pixel distinction still needs empirical answerability testing.
+Geometry excludes forces, arbitrary poses, rotations,
+simultaneous subassembly motion, and real rack transfers. Source scale
+does not eliminate dependence, admission bias, or public-CAD contamination.
+No model shortsightedness,
 human--model gap, or immunity to all shortcuts has been measured.
 The next study must report matched static, active, and structured inputs,
-source-level uncertainty, and count-matched context replication.
+source-level uncertainty, and coverage across retained context interventions.
 
 \newpage
 {\small

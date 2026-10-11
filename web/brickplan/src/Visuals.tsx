@@ -40,6 +40,7 @@ function Scene({ data, mask, selected, onSelect, explode, preset, reset }: {
 }) {
   const host = useRef<HTMLDivElement>(null), controller = useRef<BrickSceneController | null>(null);
   const selection = useRef(onSelect); selection.current = onSelect;
+  const latest = useRef({ mask, explode, selected, preset }); latest.current = { mask, explode, selected, preset };
   const [error, setError] = useState('');
   useEffect(() => {
     let active = true; setError('');
@@ -47,7 +48,9 @@ function Scene({ data, mask, selected, onSelect, explode, preset, reset }: {
       if (!active || !host.current) return;
       try {
         controller.current = new BrickSceneController(host.current, data, id => selection.current(id));
-        controller.current.show(mask, explode, selected);
+        const current = latest.current;
+        controller.current.show(current.mask, current.explode, current.selected);
+        controller.current.preset(current.preset);
       } catch { setError('此环境无法使用 WebGL2，请切换到高清图。 WebGL2 unavailable; use HD images.'); }
     });
     return () => { active = false; controller.current?.dispose(); controller.current = null; };
