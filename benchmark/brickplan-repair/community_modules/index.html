@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LDraw 模块拼装 · 说明书与错误样例</title>
+<style>
+:root{--ink:#183933;--muted:#667871;--green:#147364;--line:#dce4dc;--paper:#f4f5ee;--orange:#d76717}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+header,main{max-width:1440px;margin:auto;padding:28px 40px}header{border-bottom:1px solid var(--line);padding-bottom:22px}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--green);font-weight:700}
+h1{font-size:34px;line-height:1.2;margin:12px 0}h2{font-size:25px;margin:0 0 8px}h3{font-size:18px;margin:0 0 7px}p{margin:6px 0 14px}.sub{color:var(--muted)}a{color:var(--green)}button,select{font:inherit}
+button{cursor:pointer;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);padding:10px 18px;transition:.15s}button:hover{border-color:var(--green)}button:disabled{opacity:.4;cursor:default}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:12px 14px;vertical-align:top}th{background:#e7eee4}td code{display:block;font-size:11px;overflow-wrap:anywhere;color:var(--muted)}.table-scroll{overflow-x:auto;background:white;border:1px solid var(--line);border-radius:12px}.case-section{margin-top:30px}.mini{width:100%;height:88px;object-fit:contain;background:white;border-radius:7px;margin-bottom:8px}button.active,.primary{background:var(--green);color:white;border-color:var(--green)}
+.model-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 24px}.model-tabs button{text-align:left;min-height:90px}.model-tabs span{display:block;font-size:12px;opacity:.8}.summary{display:flex;justify-content:space-between;gap:32px;align-items:center;margin:8px 0 22px}.summary p{max-width:850px}.counts{display:flex;gap:22px;white-space:nowrap}.counts strong{display:block;font-size:30px;line-height:1.2}.counts span{font-size:12px;color:var(--muted)}
+.pair,.triple{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.triple{grid-template-columns:repeat(3,minmax(0,1fr))}.card{background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden}.card figcaption{padding:13px 18px 0;font-weight:650}.card figcaption small{display:block;font-weight:400;color:var(--muted)}figure{margin:0}.scene{width:100%;display:block;aspect-ratio:900/660;object-fit:contain}.overview .scene{max-height:330px}.badge{font-size:12px;padding:4px 9px;border-radius:7px;background:#e6f2e9;color:var(--green)}.overview{margin-bottom:30px}
+.workspace{border-top:1px solid var(--line);padding-top:24px}.toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}.toolbar .spacer{flex:1}.seg{display:flex;gap:6px}.seg button{font-size:14px;padding:8px 13px}.notice{background:#e6eee4;border-left:3px solid var(--green);padding:13px 17px;border-radius:0 9px 9px 0;margin:14px 0 20px}.notice.orange{background:#fff0df;border-color:var(--orange)}.manual-control{display:flex;gap:14px;align-items:center;margin-bottom:16px}.steps{display:flex;flex-wrap:wrap;gap:6px}.steps button{width:39px;padding:6px 0}
+.instruction{display:flex;align-items:center;gap:22px;margin:0 0 17px}.part{width:125px;aspect-ratio:1.3;object-fit:contain;background:white;border:1px solid var(--line);border-radius:10px}.instruction p{margin:0}.legend{color:var(--orange);font-size:13px}.chips{display:flex;gap:8px;flex-wrap:wrap}.chips button{padding:7px 14px;font-size:14px}.timeline{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}.timeline button{min-width:37px;padding:6px 9px}.timeline .incident{box-shadow:inset 0 -3px #ee9a3e}.explain{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}.explain>div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}.explain p{color:var(--muted);font-size:14px}
+details{margin-top:25px;border-top:1px solid var(--line);padding:18px 0}summary{cursor:pointer}footer{font-size:12px;color:var(--muted);padding:22px 0}.hidden{display:none}select{border:1px solid var(--line);padding:8px;border-radius:8px;background:white}.counter{font-variant-numeric:tabular-nums;color:var(--muted)}
+@media(max-width:850px){header,main{padding:22px 16px}h1{font-size:27px}.model-tabs{grid-template-columns:repeat(2,1fr)}.summary{display:block}.counts{margin-top:16px}.pair,.triple,.explain{grid-template-columns:1fr}.overview .scene{max-height:330px}.toolbar .spacer{display:none}.toolbar{gap:8px}.part{width:95px}}
+</style>
+<header>
+ <div class="eyebrow">BRICKPLAN / LDRAW COMMUNITY MODULES</div>
+ <h1>物件已经搭好大半，照说明补完最后一部分</h1>
+ <p class="sub">不用猜内部结构。看完整物件、看当前状态、看剩余步骤；每次只装或拆一块积木。</p>
+ <span class="badge" id="model-count"></span> <span class="badge" id="step-count"></span> <span class="badge" id="case-count"></span> <span class="badge">静态检查 + 动态干扰</span>
+</header>
+<main>
+ <div class="notice"><b>拼装顺序可以不同。</b>说明书只是其中一种拼法。每次装、拆都要真的可行，最后的形状、位置、朝向和颜色正确，就算完成；不要求中间状态照着参考答案走。<br><a href="MODEL-CASE-CATALOG.zh-CN.md">下载详细 Markdown 清单：每个模型、每个 case、错误位置与配图</a></div>
+ <nav id="models" class="model-tabs" aria-label="选择社区模型"></nav>
+ <section class="summary"><div><h2 id="title"></h2><p id="desc"></p></div><div class="counts"><div><strong id="total"></strong><span>原场景零件</span></div><div><strong id="fixed"></strong><span>已装好，不操作</span></div><div><strong id="remaining"></strong><span>剩余步骤</span></div></div></section>
+ <div class="pair overview">
+  <figure class="card"><figcaption>一开始给你的状态<small>主体已经搭好，缺的是下面说明书里的这几块</small></figcaption><img id="initial-full" class="scene" alt="预先搭好的完整场景，任务模块尚未补完"></figure>
+  <figure class="card"><figcaption>所有剩余步骤完成后的样子<small>最终目标保留整个物件，近景只放大本次要做的模块</small></figcaption><img id="final-full" class="scene" alt="完整物件最终目标"></figure>
+ </div>
+ <section class="workspace">
+  <div class="toolbar">
+   <div class="seg" id="modes"><button data-mode="manual" class="active">① 看分步说明</button><button data-mode="static">② 看静态错误</button><button data-mode="dynamic">③ 看动态过程</button></div>
+   <span class="spacer"></span>
+   <label for="view">观察方向</label><select id="view"><option value="isometric">斜前方</option><option value="rear">后方</option><option value="top">正上方</option></select>
+  </div>
+  <div id="manual-panel">
+   <div class="notice">这里的“第 1 步”是<b>剩余模块的第 1 步</b>，不是整个物件从空桌面开始的第 1 步。橙色边框只在说明图中标出本步新装的积木。</div>
+   <div class="manual-control"><button id="prev-step">上一步</button><div class="steps" id="steps"></div><button id="next-step">下一步</button></div>
+   <div class="instruction"><img class="part" id="part" alt="这一步需要的一块积木"><div><h3 id="step-title"></h3><p>拿左边这一块，装到右侧说明图的橙色轮廓处。可切换视角确认位置和朝向。</p><p class="legend">一次只加这一块。主体和已经装好的零件保持原样。</p></div></div>
+   <div class="pair">
+    <figure class="card"><figcaption id="manual-before-title"></figcaption><img class="scene" id="manual-before" alt="装这一步以前的状态"></figure>
+    <figure class="card"><figcaption id="manual-after-title"></figcaption><img class="scene" id="manual-after" alt="这一块正确装入之后的说明图"></figure>
+   </div>
+  </div>
+  <div id="static-panel" class="hidden">
+   <div class="notice"><b>静态题：把左侧状态修成右侧目标。</b>右侧取自参考说明第 <span data-stage></span> 步，只是为了说明验收的样子。修复顺序不限，后面的积木先不装。</div>
+   <div class="chips errors" data-scope="static"></div>
+   <p id="static-explanation" class="sub"></p>
+   <div class="pair">
+    <figure class="card"><figcaption>实际拿到的状态<small>这是需要检查、修复的积木</small></figcaption><img class="scene" id="static-current" alt="静态题当前状态"></figure>
+    <figure class="card"><figcaption>本题验收目标：说明书第 <span data-stage></span> 步<small>达到这个阶段就完成，不要求继续搭完整模块</small></figcaption><img class="scene" id="static-target" alt="说明书指定步骤的正确状态"></figure>
+   </div>
+  </div>
+  <div id="dynamic-panel" class="hidden">
+   <div class="notice"><b>动态题：用任意合法顺序补完模块。</b>每次操作后都能看真实状态。已安装的本模块零件达到 <span data-stage></span> 块后，后台根据当时实际状态，找一处可行的改动；不要求先装哪几块。下面只演示其中一条过程。</div>
+   <div class="chips errors" data-scope="dynamic"></div>
+   <div class="timeline" id="timeline"></div>
+   <div class="toolbar"><button id="prev-frame">上一时刻</button><button id="next-frame" class="primary">下一时刻</button><span id="frame-title"></span></div>
+   <div class="pair">
+    <figure class="card"><figcaption>上一时刻的实际状态<small>固定同一视角，方便比较前后变化</small></figcaption><img class="scene" id="dynamic-before" alt="上一动作后的真实状态"></figure>
+    <figure class="card"><figcaption>现在的实际状态<small>动作和后台改动都发生之后，模型真正看到的画面</small></figcaption><img class="scene" id="dynamic-current" alt="当前真实状态"></figure>
+   </div>
+   <p class="sub" id="dynamic-explanation"></p>
+  </div>
+ </section>
+ <section class="case-section"><h2>这个模型的 8 个 case</h2><p class="sub">点“查看”跳到相应状态。表里写的是这条演示路线的具体错误；换一种拼法，动态干扰会从实际装好的零件中选择。</p><div class="table-scroll"><table><thead><tr><th>类型 / case 编号</th><th>本例发生什么</th><th>验收目标</th><th></th></tr></thead><tbody id="case-rows"></tbody></table></div><div class="notice" id="order-evidence"></div></section>
+ <div class="explain">
+  <div><h3>输入给什么？</h3><p>已经搭好的主体、完整目标、剩余步骤说明、可用零件，以及每次操作后的真实画面。静态题额外提供本题要修到的目标图。</p></div>
+  <div><h3>模型要做什么？</h3><p>每轮选择装一块、拆一块、查看或结束。不能整组替换，也不能直接复制目标状态。完成与否看最终形状、位置、朝向和颜色，合法顺序不限。</p></div>
+  <div><h3>这里演示的是什么？</h3><p>这是设计预览，展示正常过程、已知错误和可行修复路线。标签帮助你看懂；正式模型输入不提供错误名称、发生时刻或修复答案。</p></div>
+ </div>
+ <details><summary>来源、验证范围和目前还缺什么</summary><p id="source"></p><p>画面保留原模型全部零件。每一步安装、干扰和参考修复都检查了连接、碰撞和直线装入／拆出路径。无法使用精细碰撞网格的背景零件没有删掉：用包住它的立方体保守阻挡，碰到就不接受该动作。</p><p>主体作为已经装好的固定物件提供。这里不证明整个套装能从零完成，也不模拟重力、手指、摩擦和卡扣力度。目前有 <span id="scope-count"></span>；还没有真人正确率或模型实测结果。图片差异通过检查不等于人或模型一定看得懂。</p></details>
+ <footer>说明书由本项目按 LDraw 原模型的位置生成，不是 LEGO 官方说明书。场景零件数包含原模型中的配景和人物；另备 <span id="spares"></span> 块用于错误条件的零件，各条件共用同一份零件表，不计入原模型数量。<br>本页面离线可看，不提交答案，不调用模型 API。</footer>
+</main>
+<script src="data.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let modelIndex=0,mode='manual',step=1,view='isometric',family='missing',frame=0;
+const labels={control:'没有干扰（对照）',missing:'少了一块','wrong-color':'换错颜色','extra-layer':'多叠一块'};
+const descriptions={control:'当前状态没有错误。正确做法是不要乱拆。',missing:'前面已经装好的一块不见了，需要重新装回去。','wrong-color':'前面已经装好的一块被换成同形状、不同颜色的零件。先拆下错误颜色，再装回原来的零件。','extra-layer':'前面已经装好的模块上多叠了一块红色小积木。需要拆掉多余的这一块。'};
+const m=()=>MODULES[modelIndex], img=name=>m().images[name].file;
+function scene(id,url){$(id).src=url}
+function render(){
+ history.replaceState(null,'','#'+new URLSearchParams({model:m().id,mode,family}));
+ $('model-count').textContent=`${MODULES.length} 个社区原模型`;
+ $('step-count').textContent=`每个补 ${Math.min(...MODULES.map(x=>x.remaining))}–${Math.max(...MODULES.map(x=>x.remaining))} 块`;
+ $('case-count').textContent=`${MODULES.reduce((n,x)=>n+x.cases.length,0)} 个 case`;
+ $('scope-count').textContent=`${MODULES.length} 个模块、${MODULES.reduce((n,x)=>n+x.cases.length,0)} 个题目条件`;
+ $('spares').textContent=m().inventoryCount-m().remaining;
+ $('models').innerHTML=MODULES.map((x,i)=>`<button class="${i===modelIndex?'active':''}" data-index="${i}"><img class="mini" loading="lazy" src="${x.images['full-final'].file}" alt="">${x.title}<span>原场景 ${x.total} 件 · 剩余 ${x.remaining} 步</span></button>`).join('');
+ $('title').textContent=m().title;$('desc').textContent=m().explanation;
+ document.querySelectorAll('[data-stage]').forEach(e=>e.textContent=m().staticStage);
+ $('total').textContent=m().total;$('fixed').textContent=m().fixed;$('remaining').textContent=m().remaining;
+ scene('initial-full',img('full-initial'));scene('final-full',img('full-final'));
+ document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+ ['manual','static','dynamic'].forEach(x=>$(x+'-panel').classList.toggle('hidden',x!==mode));
+ $('steps').innerHTML=m().manual.map(x=>`<button class="${step===x.step?'active':''}" data-step="${x.step}" aria-label="说明书第 ${x.step} 步">${x.step}</button>`).join('');
+ const s=m().manual[step-1];scene('part',s.partImage);
+ $('step-title').textContent=`第 ${step} / ${m().remaining} 步：只装这一块`;
+ $('manual-before-title').textContent=step===1?'模块起始状态：这一块还没装':`完成第 ${step-1} 步后的状态`;
+ $('manual-after-title').textContent=`正确完成第 ${step} 步：橙色边框是本次新增积木`;
+ scene('manual-before',img(step===1?'initial-'+view:`plain${String(step-1).padStart(2,'0')}-${view}`));
+ scene('manual-after',s.after[view]);$('prev-step').disabled=step===1;$('next-step').disabled=step===m().remaining;
+ document.querySelectorAll('.errors').forEach(e=>e.innerHTML=Object.entries(labels).map(([k,v])=>`<button class="${family===k?'active':''}" data-family="${k}">${v}</button>`).join(''));
+ scene('static-current',img((family==='control'?'checkpoint':family)+'-'+view));scene('static-target',img('checkpoint-'+view));
+ $('static-explanation').textContent='预览说明：'+descriptions[family];
+ const frames=m().timelines[family];frame=Math.min(frame,frames.length-1);
+ $('timeline').innerHTML=frames.map((x,i)=>`<button data-frame="${i}" class="${i===frame?'active ':''}${x.event?'incident':''}" aria-label="查看过程第 ${i} 个时刻">${i}</button>`).join('');
+ scene('dynamic-before',frames[Math.max(0,frame-1)].images[view]);scene('dynamic-current',frames[frame].images[view]);
+ $('frame-title').textContent=`${frame} / ${frames.length-1} · ${frames[frame].label}`;
+ $('prev-frame').disabled=frame===0;$('next-frame').disabled=frame===frames.length-1;
+ $('dynamic-explanation').textContent=frame===0?'还没有上一轮操作，所以两张图相同。此时主体已经搭好，只是剩余模块尚未开始。':frames[frame].event?'预览说明：'+descriptions[family]+' 正式给模型时不会弹出这段提示。':'这是已验证的一条可行过程。过程编号包含拆下、装回等修复动作，所以不等于说明书步数。';
+ $('case-rows').innerHTML=m().cases.map(c=>`<tr><td>${c.mode==='static'?'静态修复':'动态完成'} · ${labels[c.family]}<code>${c.id}</code></td><td>${c.description||descriptions[c.family]}</td><td>${c.mode==='static'?'修成指定阶段目标图':'补完全部模块'}</td><td><a href="#model=${m().id}&mode=${c.mode}&family=${c.family}">查看</a></td></tr>`).join('');
+ const order=m().orderChecks;
+ if(order){const nums=actors=>actors.map(a=>order.referenceOrder.indexOf(a)+1).join(' → ');$('order-evidence').textContent=`已验证两种合法拼法（数字只是说明图编号）：${nums(order.referenceOrder)}；另一种：${nums(order.alternateOrder)}。两种拼法均能完成，并且均能触发、修好三类干扰。其他合法顺序也允许。`;}
+ $('source').innerHTML=`社区作者：${m().author}。<a href="${m().url}" target="_blank" rel="noopener">LDraw OMR 原模型来源</a> · <a href="${m().id}/original.mpd" download>原始 MPD 文件</a>。剩余模块：${m().module}。`;
+}
+$('models').onclick=e=>{const b=e.target.closest('button');if(b){modelIndex=+b.dataset.index;step=1;frame=0;render()}};
+$('modes').onclick=e=>{const b=e.target.closest('button');if(b){mode=b.dataset.mode;render()}};
+$('steps').onclick=e=>{const b=e.target.closest('button');if(b){step=+b.dataset.step;render()}};
+$('timeline').onclick=e=>{const b=e.target.closest('button');if(b){frame=+b.dataset.frame;render()}};
+document.querySelectorAll('.errors').forEach(e=>e.onclick=ev=>{const b=ev.target.closest('button');if(b){family=b.dataset.family;frame=0;render()}});
+$('prev-step').onclick=()=>{step--;render()};$('next-step').onclick=()=>{step++;render()};
+$('prev-frame').onclick=()=>{frame--;render()};$('next-frame').onclick=()=>{frame++;render()};
+$('view').onchange=e=>{view=e.target.value;render()};
+function loadHash(){
+ const params=new URLSearchParams(location.hash.slice(1));
+ const index=MODULES.findIndex(x=>x.id===params.get('model'));
+ if(index>=0)modelIndex=index;
+ if(['manual','static','dynamic'].includes(params.get('mode')))mode=params.get('mode');
+ if(Object.hasOwn(labels,params.get('family')))family=params.get('family');
+ step=1;view='isometric';$('view').value=view;
+ const frames=m().timelines[family];frame=mode==='dynamic'?Math.max(0,frames.findIndex(x=>x.event)):0;
+ render();
+}
+$('case-rows').onclick=e=>{const a=e.target.closest('a');if(a){e.preventDefault();history.replaceState(null,'',a.getAttribute('href'));loadHash();document.querySelector('.workspace').scrollIntoView({block:'start'});}};
+window.addEventListener('hashchange',()=>{loadHash();document.querySelector('.workspace').scrollIntoView({block:'start'});});
+loadHash();
+</script>
+</html>

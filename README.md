@@ -12,11 +12,19 @@
   <strong>English</strong> · <a href="README.zh-CN.md">简体中文</a>
 </p>
 
+## Current assembly and repair paper (21 October 2026)
+
+[Main PDF](paper/brickplan-cvpr/main.pdf) · [Supplement](paper/brickplan-cvpr/supplement.pdf) · [Overleaf source ZIP](paper/brickplan-cvpr/brickplan-cvpr-overleaf.zip) · [Build and evidence](paper/brickplan-cvpr/README.zh-CN.md).
+
+The rewrite covers 12 community objects / 96 module cases, 3,292 static questions, and 1,872 dynamic mechanism episodes as distinct evidence scopes. Eight native high-resolution figures accompany a measured alternative-route diagnostic. Formal current-suite model and human assembly evaluations remain pending; see the [submission readiness note](paper/brickplan-cvpr/SUBMISSION-READINESS.zh-CN.md).
+
+[Community objects and case catalogue](deliverables/brickplan-community-modules/MODEL-CASE-CATALOG.zh-CN.md) · [Dynamic mechanism bank](deliverables/brickplan-dynamic-v6/README.zh-CN.md).
+
 ## Research entry points
 
 | What you need | Location |
 |---|---|
-| BrickPlan 2.3: current planning paper and supplement | [CVPR main PDF](benchmark/brickplan-v2.3/paper.pdf) · [supplement](benchmark/brickplan-v2.3/supplement.pdf) |
+| Historical BrickPlan 2.3 planning paper and supplement | [CVPR main PDF](benchmark/brickplan-v2.3/paper.pdf) · [supplement](benchmark/brickplan-v2.3/supplement.pdf) |
 | Independent Overleaf upload | [Paper folder](deliverables/brickplan-paper/) · [source ZIP](deliverables/brickplan-paper/brickplan-cvpr-overleaf.zip) |
 | React 19 / Three.js workbench source | [web/brickplan/](web/brickplan/README.md) |
 | BrickPlan question explorer, historical model case and portable data | [Run and browse](benchmark/brickplan-v2.3/README.md) · [model integration](benchmark/brickplan-v2.3/MODEL-INTEGRATION.md) · [dataset card](benchmark/brickplan-v2.3/DATASET-CARD.md) |
@@ -37,11 +45,11 @@
 | Historical reviews, revision guidance and manuscripts | [tem/](tem/README.md) |
 | Independent reviewer/refiner iterations | [tem/agent-iterations/](tem/agent-iterations/README.md) |
 
-Links into `paper/` and `tem/` refer to local files excluded from Git.
-Paper builds and historical archive audits require those local directories.
+The current `paper/brickplan-cvpr/` manuscript is versioned. Other historical
+`paper/` and `tem/` links refer to local archives excluded from Git.
 Their last tracked snapshot is available at commit `8a2eaeb9`.
 
-The current planning release is **BrickPlan 2.3**, with seven task families,
+The earlier planning release is **BrickPlan 2.3**, with seven task families,
 native HD observations, expanded original-source coverage, and primary geometry
 pairs matched on exact part-number/color inventory. The workbench reads counts
 directly from the [public catalogue](benchmark/brickplan-v2.3/release/catalogue.json).

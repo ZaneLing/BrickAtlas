@@ -134,6 +134,18 @@ def load_source(model: str, included: list[int]) -> tuple[list[dict], list[dict]
     return parts, edges, provenance
 
 
+@lru_cache(maxsize=None)
+def mesh_components(stem: str):
+    return mm.getAllComponents(mesh_for(stem)[0])
+
+
+def contains_surface_component(a, b, transform, components):
+    # This is called only after proving no surface intersections. Checking each
+    # connected shell avoids a nearest-face normal giving an asymmetric sign
+    # on interlocking, nonconvex LEGO parts.
+    return any(mm.isNonIntersectingInside(mm.MeshPart(a, region), b, transform) for region in components)
+
+
 def endpoint_pair(a: dict, b: dict) -> dict:
     bounds_a, bounds_b = world_bounds(a), world_bounds(b)
     if bounds_separate(bounds_a, bounds_b):
@@ -144,9 +156,9 @@ def endpoint_pair(a: dict, b: dict) -> dict:
     transform = xf(relative)
     if len(mm.findCollidingTriangles(mesh_a, mesh_b, transform, True)):
         return {"status": "BLOCKED", "method": "triangle-intersection"}
-    signed = mm.findSignedDistance(mesh_a, mesh_b, transform)
-    if signed.signedDist < -GUARD_LDU:
-        return {"status": "BLOCKED", "method": "containment", "signedDistance": signed.signedDist}
+    if (contains_surface_component(mesh_a, mesh_b, transform, mesh_components(a["canonical"])) or
+            contains_surface_component(mesh_b, mesh_a, xf(np.linalg.inv(relative)), mesh_components(b["canonical"]))):
+        return {"status": "BLOCKED", "method": "bidirectional-component-containment"}
     distance = math.sqrt(max(0.0, mm.findDistance(mesh_a, mesh_b, transform).distSq))
     return {"status": "CLEAR" if distance > GUARD_LDU else "UNKNOWN",
             "method": "mesh-distance", "distance": distance}

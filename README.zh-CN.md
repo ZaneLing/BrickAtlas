@@ -12,11 +12,19 @@
   <a href="README.md">English</a> · <strong>简体中文</strong>
 </p>
 
+## 当前静态修复与动态拼装论文（2026-10-21）
+
+[英文正文 PDF](paper/brickplan-cvpr/main.pdf) · [补充材料](paper/brickplan-cvpr/supplement.pdf) · [Overleaf 上传包](paper/brickplan-cvpr/brickplan-cvpr-overleaf.zip) · [这版改了什么、如何编译](paper/brickplan-cvpr/README.zh-CN.md)。
+
+已重写为 8 页正文、1 页参考文献和 6 页补充材料，配 8 幅原始几何生成的高清图。社区模块是 12 个物件 / 96 题；另有 3,292 道静态题和 1,872 道动态机制题，各自的检查和实验范围单独报告。目前正式模型与真人操作实验仍待完成，详见[离投稿还差什么](paper/brickplan-cvpr/SUBMISSION-READINESS.zh-CN.md)。
+
+[12 个物件与全部 case 明细](deliverables/brickplan-community-modules/MODEL-CASE-CATALOG.zh-CN.md) · [动态机制题库](deliverables/brickplan-dynamic-v6/README.zh-CN.md)。
+
 ## 仓库导航
 
 | 内容 | 入口 |
 |---|---|
-| BrickPlan 2.3 当前规划论文 | [CVPR 正文](benchmark/brickplan-v2.3/paper.pdf) · [补充材料](benchmark/brickplan-v2.3/supplement.pdf) |
+| BrickPlan 2.3 历史规划论文 | [CVPR 正文](benchmark/brickplan-v2.3/paper.pdf) · [补充材料](benchmark/brickplan-v2.3/supplement.pdf) |
 | 独立 Overleaf 上传包 | [论文文件夹](deliverables/brickplan-paper/) · [源码 ZIP](deliverables/brickplan-paper/brickplan-cvpr-overleaf.zip) |
 | React 19 / Three.js 工作台源码 | [web/brickplan/](web/brickplan/README.md) |
 | 分类题库、历史模型回放与发布包 | [启动说明](benchmark/brickplan-v2.3/README.md) · [模型接入](benchmark/brickplan-v2.3/MODEL-INTEGRATION.md) · [数据卡](benchmark/brickplan-v2.3/DATASET-CARD.md) |
@@ -33,10 +41,9 @@
 | 中间审稿、修改指导、旧论文 | [tem/](tem/README.md) |
 | 双 agent 独立审稿与精进 | [tem/agent-iterations/](tem/agent-iterations/README.md) |
 
-指向 `paper/` 和 `tem/` 的链接仅适用于本地文件，这两个目录已加入 Git 忽略规则。
-论文构建与历史归档审计需要本地保留这些目录；最后纳入 Git 的版本为 `8a2eaeb9`。
+当前 `paper/brickplan-cvpr/` 已纳入 Git。其他 `paper/` 历史稿和 `tem/` 仍为本地归档；这些旧归档最后纳入 Git 的版本为 `8a2eaeb9`。
 
-当前规划版本为 **BrickPlan 2.3**：7 类题面、原生高清图像、扩充的真实来源，
+此前规划版本为 **BrickPlan 2.3**：7 类题面、原生高清图像、扩充的真实来源，
 以及零件总数、型号与颜色库存严格相同的主评估几何配对。工作台从当前题库
 动态读取规模，详见[公开目录](benchmark/brickplan-v2.3/release/catalogue.json)。
 配对评分要求两侧的首次非法操作位置均正确，按来源、干预和起始状态分层统计。

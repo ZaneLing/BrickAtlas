@@ -1,0 +1,479 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage[review]{cvpr}
+\usepackage{times,graphicx,amsmath,amssymb,booktabs,tabularx,xspace}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\definecolor{cvprblue}{rgb}{0.13,0.40,0.67}
+\usepackage[breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
+\def\paperID{Draft}
+\def\confName{CVPR}
+\def\confYear{2027}
+\title{BrickPlan: Visual Assembly and Repair Beyond a Single Build Order\\Supplementary Material}
+\author{Anonymous submission}
+\begin{document}
+\maketitle
+\setcounter{section}{0}
+\renewcommand{\thesection}{\Alph{section}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+
+\section{Artifact Scope and Reproducibility}
+The manuscript describes an evidence snapshot dated 21 October 2026.
+Three banks coexist: the 3,292-question white-baseplate static bank,
+the 1,872-episode dynamic mechanism bank, and the 96-case community
+module suite. Their counts are not independent model populations, and
+their experimental results are not interchangeable. The new route study
+runs on the community module suite, not on the historical six-part car.
+The complete module suite has no formal learned-agent evaluation or
+independent human assembly experiment in this snapshot.
+
+The artifact records original model files, source metadata, certificates,
+cases, reference manuals, intervention witnesses, and order-regression
+checks. Each instruction contains the physical part and the resulting
+scene. Image manifests bind the current benchmark renders to their
+source states. Paper figure provenance separately records source hashes,
+cameras, native render dimensions, and exported figure hashes.
+The deterministic study records the four input files for each object
+and their SHA-256 digests. Re-execution does not require a model API.
+
+The public object gallery is an author-facing inspection tool: it shows
+fault names and correction witnesses. It is not a valid blind agent
+input. Evaluation must use the observation adapter, which exposes the
+permitted images and action handles while retaining certificates,
+intervention labels, event timing, and recovery witnesses privately.
+Publishing such annotations supports reproducibility but also makes
+these public examples unsuitable as an undisclosed held-out test set.
+
+\section{Exact Observation and Action Roles}
+\label{sec:interface}
+Table~\ref{tab:roles} distinguishes the images that define a task from
+those that show its current state. In a static question, the acceptance
+target is an intermediate stage. A full-completion reference is provided
+for context and must not silently replace that stage target. In a
+dynamic episode, the acceptance target is the completed module and
+remains fixed even when a hidden intervention occurs.
+
+\begin{table*}[t]
+\centering\small
+\caption{\textbf{Image roles in the community interface.} A reference image is not a report of current execution. These roles are explicit in the adapter rather than inferred from file order.}
+\label{tab:roles}
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+Role & Content & Interpretation\\
+\midrule
+Scene overview & Full original object, initial and completed views & Establishes the recognizable object and the supplied context.\\
+Module start & Cropped scene before any task manipulation & The initial movable-part state; the context is already assembled.\\
+Full-completion reference & Completed remaining module & Explains the whole module; may differ from a static question's acceptance target.\\
+Acceptance target & Required final state for this episode & Stage target for static repair; completed module for dynamic completion.\\
+Instruction part / after & Isolated part and scene after its reference placement & One executable demonstration; the numbered order is not compulsory.\\
+Inventory card & Shape and color of an available piece & Identifies an action handle without declaring its correct placement.\\
+Before last action & Actual scene before the agent's last action & Temporal evidence; explicitly absent at the first decision.\\
+Current scene & Actual state after execution and any intervention & The authoritative observation of the world now.\\
+Candidate preview & Hypothetical placement of a selected piece & A planning aid; not executed, not a correctness certificate.\\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\paragraph{Views and handles.}
+The module interface provides isometric, rear, and top views at
+$900\times660$ pixels. Part and candidate handles are randomized by
+seed and do not expose target labels. The manual stays accessible
+throughout the episode. Current-state images do not include the
+paper's error boxes or corrective arrows. Explicit request and response
+logs distinguish inspection from manipulation and retain the actual
+view delivered to the agent.
+
+\paragraph{One physical action per turn.}
+An attach action chooses one rack piece and one catalog candidate. A
+detach action removes one installed piece. The executor checks the
+resulting configuration and a straight insertion or extraction path.
+An invalid physical attempt consumes a manipulation attempt, reports a
+legality code, and leaves the world unchanged. Inspection does not
+advance construction or trigger an event. Finish requests termination;
+success additionally requires the exact permitted geometric endpoint.
+The manipulation budget is $4N+12$ for $N$ normal module pieces. The
+outer model runner has a separately configured decision cap so repeated
+inspection cannot run indefinitely. Both limits must be reported in a
+model comparison.
+
+\paragraph{Finite action candidates.}
+The action catalog is part of the task definition. This is not unrestricted
+six-degree-of-freedom pose prediction. Candidate previews and legality
+codes reduce the planning burden and can leak useful physical information,
+even though neither states the correction. They must be held constant
+across compared agents; an ablation can quantify their contribution.
+A symbolic state or expected next-state overlay is privileged information
+and should be reported as a separate condition.
+
+\paragraph{Indistinguishable parts.}
+Terminal comparison uses physical part geometry, color, and pose rather
+than instance identity. Supported rotational equivalences are limited
+to plain rectangular parts with the appropriate geometric symmetry.
+Decorated, directional, and asymmetric pieces are not assumed invariant
+to arbitrary rotations. Identical-part exchanges are tested separately
+from sequence exchanges: changing an identifier alone must not create
+an apparent alternative physical trajectory.
+
+\section{Intervention Selection and Causal Comparisons}
+\paragraph{Deterministic adaptive selection.}
+Each community fault condition names one of three mechanisms and an
+installed-part threshold. After an accepted manipulation reaches the
+threshold, the selector inspects the actual state. For a missing part
+or color replacement, it considers older installed normal pieces,
+retaining the newest piece to avoid merely undoing the last action.
+For an extra layer, it searches compatible exposed positions for the
+spare plate. The control and all three fault conditions share the same
+inventory and candidate catalog.
+
+An event is admitted only if it changes the state through legal
+primitives and has a feasible inverse returning to the pre-event state.
+A replacement uses a same-shape alternative-color spare: the environment
+removes the original piece and attaches the spare between observations.
+These two environment primitives do not allow the agent to submit two
+manipulations in one turn. If no suitable event is available, selection
+is deferred. At most one event is applied in the current module suite.
+The private log records the realized location and its inverse.
+
+\paragraph{What feasibility establishes.}
+A legal inverse is a recovery witness, not a proof that it is the shortest
+recovery or that the error is visually obvious. Every selected normal
+route in the protocol study has a complete replay, so restoring its
+pre-event state permits the remaining route to finish. This guarantee
+does not extend to an arbitrary agent state that was already incorrect
+before the intervention. Likewise, a reference event's RGB check does
+not certify visibility at every location an adaptive selector can reach.
+New trajectories require their own observation-level audit.
+
+\paragraph{Matched-prefix controls.}
+For a causal recovery comparison, execute a normal prefix once, save
+the environment and conversation, and branch it into control and fault
+continuations. The two branches have identical history before the event.
+Keep the target, action vocabulary, inventory, renderer, budgets, and
+model settings fixed. Report both completion and whether the fault
+actually occurred. A run that finishes correctly without encountering
+its scheduled fault is a completion, not a successful repair trial.
+
+A conditional recovery rate excludes untriggered episodes from its
+denominator, so it must be accompanied by exposure coverage and the
+number of stalled prefixes. Even with the same input seed, two fresh
+API runs are not necessarily matched-prefix controls: their actions may
+diverge before the event. Adaptive location selection also creates
+trajectory-dependent fault difficulty. Stratify by the realized edit
+and report the reference-location subset separately when appropriate.
+
+\section{Community Objects and Route Diagnostics}
+Table~\ref{tab:objects} lists all twelve objects. Original instance counts
+include the supplied surrounding scene, figures, and accessories. The
+module count measures the actual task; it does not imply reconstructing
+the entire source object. The full scenes contain 2,135 source instances;
+the bounded modules contain 99 normal placements. Larger source models
+therefore need not be harder tasks.
+
+\begin{table*}[t]
+\centering\small
+\caption{\textbf{Complete community suite.} Every row has four static and four dynamic cases: control, missing piece, wrong color, and extra layer. The threshold is a count of installed normal pieces, not a compulsory reference prefix.}
+\label{tab:objects}
+\begin{tabularx}{\textwidth}{@{}llXrrr@{}}
+\toprule
+Source set & Object & Remaining module & Source parts & Task parts & Threshold\\
+\midrule
+31009 & Cottage & Roof section & 270 & 6 & 3\\
+31027 & Blue racer & Upper cabin & 67 & 11 & 3\\
+31028 & Seaplane & Tail assembly & 53 & 7 & 3\\
+21004 & Guggenheim Museum & Roof section & 208 & 12 & 4\\
+3179 & Repair truck & Cabin top and lights & 128 & 5 & 4\\
+30181 & Orange helicopter & Tail assembly & 52 & 7 & 3\\
+30311 & Police helicopter & Rotor assembly & 59 & 10 & 4\\
+30026 & Panda & Head section & 61 & 6 & 4\\
+6683 & Burger stand & Roof and sign & 79 & 7 & 3\\
+21006 & White House & Chimneys and roof details & 556 & 10 & 4\\
+21007 & Rockefeller Center & Upper crown & 240 & 8 & 7\\
+21011 & Brandenburg Gate & Top crest & 362 & 10 & 6\\
+\midrule
+Total & 12 objects & 96 cases & 2,135 & 99 & ---\\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\paragraph{Selection of the alternative routes.}
+Each reference route is the verified manual. An alternative is obtained
+by testing swaps and retaining a physically legal route with all three
+feasible adaptive faults. When available, the search favors a route
+whose geometry at the threshold differs from the reference checkpoint.
+The study therefore uses selected regression examples, not a random
+sample of all topological orders or an estimate of agent route choice.
+Table~\ref{tab:routes} provides the precise reference-position indices.
+
+\begin{table*}[t]
+\centering\small
+\caption{\textbf{Alternative legal routes used in the deterministic study.} Reference-position numbers identify pieces; the actual executor uses randomized handles. All routes reach the same normal target. The threshold states differ for nine objects.}
+\label{tab:routes}
+\begin{tabularx}{\textwidth}{@{}lXc@{}}
+\toprule
+Object & Alternative route in reference-position indices & Different threshold state\\
+\midrule
+Cottage & 1, 2, 4, 3, 5, 6 & Yes\\
+Racer & 1, 6, 3, 4, 5, 2, 7, 8, 9, 10, 11 & Yes\\
+Seaplane & 1, 6, 3, 4, 5, 2, 7 & Yes\\
+Museum & 1, 2, 3, 5, 4, 6, 7, 8, 9, 10, 11, 12 & Yes\\
+Repair truck & 1, 2, 3, 5, 4 & Yes\\
+Orange helicopter & 1, 3, 2, 4, 5, 6, 7 & No\\
+Police helicopter & 1, 2, 3, 5, 4, 6, 7, 8, 9, 10 & Yes\\
+Panda & 1, 2, 3, 5, 4, 6 & Yes\\
+Burger stand & 2, 1, 3, 4, 5, 6, 7 & No\\
+White House & 1, 2, 3, 5, 4, 6, 7, 8, 9, 10 & Yes\\
+Rockefeller Center & 1, 2, 3, 5, 4, 6, 7, 8 & No\\
+Brandenburg Gate & 1, 2, 3, 4, 5, 7, 6, 8, 9, 10 & Yes\\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\paragraph{Exact-prefix opportunity.}
+The comparison inspects the otherwise normal physical trajectory for
+equality with the reference checkpoint. This avoids confounding trigger
+eligibility with a different repair policy. It yields 36/36 eligible
+reference-route fault trials and 9/36 alternative-route trials. The
+actual-state selector applies an event in all 36 trials in each group.
+A separate comparator requiring every intermediate state to match the
+manual accepts 12/12 reference routes and 0/12 alternatives. The terminal
+comparator accepts all 24 normal routes. These numbers establish
+counterexamples to an overly restrictive contract, not a learned-agent
+performance improvement.
+
+The blind policy follows its normal route after any change. It completes
+24/24 controls and 0/72 fault trials. The privileged policy uses the
+recorded inverse immediately after the event and then continues; it
+completes 96/96 trials. No model API is involved. A privileged repair
+trace tests solvability and logging, not visual detection, reasoning,
+or human-level assembly skill.
+
+\section{Static Migration and Error Coverage}
+The static bank uses an explicit white baseplate and disallows unsupported
+floating states or passage through the board. Its migration ledger
+records the five routes in Table~\ref{tab:migration}. All resulting
+repair witnesses replay under the new executor. Figure~\ref{fig:static}
+shows actual current and target states for three examples.
+
+\begin{table}[t]
+\centering\small
+\caption{\textbf{White-baseplate migration ledger.} Counts refer to questions, not independent objects.}
+\label{tab:migration}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Migration method & Questions\\
+\midrule
+Direct replay & 2,144\\
+Verified dismantle/rebuild & 834\\
+Witness using held components & 37\\
+Corrected board-penetrating initial scene & 10\\
+Replaced incompatible source case & 267\\
+\midrule
+Total certified questions & 3,292\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Of the 267 replacements, 250 source targets were not buildable under
+the new rules, 13 had board-penetrating initial states,
+and four were duplicate states. Replacements preserve their source
+links and substitution reasons. The ledger's 3,025 preserved cases
+include ten repaired initial scenes; ``preserved'' therefore does not
+mean that every initial coordinate was unchanged. The 160 controls
+have a zero-action repair witness.
+
+A complete geometric replay is a necessary check, but does not establish
+that every question has sufficient visual evidence or comprehensible
+wording. The full static RGB package and per-question human readability
+review are still pending. It would be incorrect to interpret the
+3,292/3,292 replay count as a human-validated visual dataset size.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures-v2/legacy-static.pdf}
+\caption{\textbf{Static current/target pairs on the white baseplate.} The examples contain a color error (S01609), rotation error (S00254), and compound error (S00001). Each image is rendered from the corresponding certified state at native high resolution. The lower row is the acceptance target; it is not an automatically suggested action.}
+\label{fig:static}
+\end{figure*}
+
+\section{Dynamic Mechanisms and Visibility}
+The mechanism bank contains 68 structures: 42 simplified recognizable
+objects and 26 smaller structural configurations. Of its 1,872 episodes,
+1,588 use complete-object models and 284 use the remaining configurations.
+There are 160 controls and 1,712 interventions across twelve families
+(Table~\ref{tab:families}). This is broader mechanism coverage than the
+three error families in the community suite, but does not substitute
+for testing those mechanisms on the larger source-preserving modules.
+
+\begin{table}[t]
+\centering\small
+\caption{\textbf{Dynamic mechanism counts.} Each episode belongs to one recorded family, including the explicitly compound family.}
+\label{tab:families}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Condition & Episodes\\
+\midrule
+Normal control & 160\\
+Removed piece & 214\\
+Shifted piece & 246\\
+Cascaded removal & 160\\
+Extra layer & 179\\
+Early cover & 31\\
+Wrong color & 218\\
+Wrong size & 80\\
+Rotated piece & 132\\
+Swapped positions & 23\\
+Wrong part type & 98\\
+Buried color error & 209\\
+Compound fault & 122\\
+\midrule
+Total & 1,872\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Machine visibility screens.}
+Pixel differences use a maximum RGB-channel change of at least 24.
+The reference mechanism audit retains 1,553 interventions as primary
+machine candidates with at least 2,000 contrast pixels in an available
+view. Another 136 interventions are classified as action cancellation,
+and 23 have low contrast; there are no duplicate event states. A visible
+change in pixel space is not proof that a person can identify the
+incorrect part or infer a valid correction. Re-rendering and rechecking
+the realized event is necessary when a different route changes its
+location or occlusion.
+
+The community reference snapshots use a separate minimum of 128 changed
+pixels in at least one fixed module view. All 36 reference fault
+snapshots pass that machine screen. Its lower threshold is an engineering
+admission criterion, not an experimentally calibrated human perceptual
+threshold. The two visual admission rules must not be pooled as one
+validated population.
+
+\paragraph{Splits and difficulty.}
+The mechanism bank groups sources into 43 families for development and
+evaluation separation. Its balanced development subset has 108 faults
+(nine per family) and 42 controls; the evaluation subset has 168 faults
+(fourteen per family) and 72 controls, where ``family'' in these counts
+means an error mechanism. Source-family separation applies within this
+bank, not across every artifact in the repository. The community suite
+is a public development collection and has no undisclosed held-out
+source-object evaluation in the current report.
+
+Part count, prerequisite depth, access obstruction, and the amount of
+reconstruction needed after a fault describe different dimensions of
+difficulty. Neither source-file size nor the labels ``roof'' and ``car''
+justify an easy/medium/hard ranking without performance evidence.
+Figure~\ref{fig:distributions} reports case coverage without making that
+inference.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures-v2/distributions.pdf}
+\caption{\textbf{Coverage of the broader banks.} Static counts include normal controls; dynamic bars show intervention families and exclude 160 controls. Counts describe repeated tasks on shared models, not independent object diversity or measured difficulty.}
+\label{fig:distributions}
+\end{figure*}
+
+\section{Historical Development Evidence}
+\paragraph{Earlier API car pilot.}
+A prior interface version records three completed episodes with the
+provider route named \texttt{google/gemini-4-argon} on a six-part car
+(Table~\ref{tab:pilot}). These were development traces with seed 41 and
+a 40-decision cap. They used a different bank and interface, without
+the community manuals, and cannot populate a result table for the
+current suite. One control response was invalidly formatted; no illegal
+physical action was executed. A normal-run trajectory diverged from the
+fault runs before the intervention, so these traces are not a paired
+causal estimate of repair difficulty.
+
+\begin{table}[t]
+\centering\small
+\caption{\textbf{Archived pilot only.} Costs are the recorded charges for these individual calls, not current prices or a projected experiment budget. All three completed the older car task.}
+\label{tab:pilot}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Condition & Decisions & Legal moves & USD\\
+\midrule
+Control & 18 & 8 & 0.1950043\\
+Extra layer & 14 & 7 & 0.2022685\\
+Removed piece & 14 & 7 & 0.2140114\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Earlier no-progress runs and HTTP 403 provider failures occurred during
+interface development. An API access failure is not evidence of a
+model's assembly ability. There are zero paid model episodes in the
+new community suite and mechanism-v6 release record.
+
+\paragraph{Earlier human check.}
+One recorded participant answered binary change-detection questions
+correctly on eleven selected, unprompted images; a twelfth item had
+already exposed its answer and is excluded. Two further reviewers were
+reported to agree, but have no independent submission records. This is
+not a three-rater study, a timed assembly baseline, or validation of
+all current cases. It supports only a narrow development observation
+about those eleven images.
+
+\section{Experiments Still Required for General Claims}
+The reported executor diagnostics support the stated protocol results.
+A claim about current agent capabilities requires additional empirical
+work, listed here to distinguish proposed measurements from collected
+results.
+
+First, independent participants should complete normal and faulty
+modules using the same manual, camera access, and one-part interface.
+Record completion, fault exposure, recovery, action count, time, and
+ambiguous observations. Validate the realized fault views, not just a
+paper illustration. Second, compare several model families, including
+an accessible open-weight baseline where practical, on a source-disjoint
+test collection. Record exact provider model identifiers, dates, prompts,
+seeds, retry policy, images, decision caps, and token usage. An interface
+smoke test should precede the full run; it must not become a post-hoc
+filter that discards hard cases.
+
+Third, branch common execution prefixes into control and fault trials.
+Measure coverage, overall completion, conditional recovery, illegal
+attempts, inspections, latency, and cost. Aggregate by source object and
+report uncertainty over sources and seeds rather than treating every
+nearly identical snapshot as independent. Distinguish errors already
+present before the intervention from failures caused by the edit.
+
+Fourth, ablate temporal observations, manual availability, candidate
+previews, and legality feedback. A symbolic or expected-state condition
+can diagnose the visual bottleneck, but must remain clearly privileged.
+Evaluate unseen module sources and more obstruction/reconstruction
+mechanisms before making a claim about general human-like assembly.
+Determine the full budget from measured pilot token use under the
+actual chosen model prices and observation size; the archived three-car
+charges are not a valid cost forecast for the new interface.
+
+\section{Rendering, Attribution, and Physical Limits}
+\paragraph{Publication images.}
+All brick scenes in the paper are rendered from original geometry at
+$3200\times2400$ pixels, with $2\times$ supersampling in each dimension
+before downsampling. Composite figure exports use 600 dpi. PDF and SVG
+retain vector labels, arrows, tables, and process boxes. The paper's
+larger renders do not replace the $900\times660$ images received by the
+current community interface. Orange boxes and manual highlights are
+presentation annotations and are disclosed in the relevant captions.
+They are not supplied as automatic fault detections.
+
+\paragraph{Sources and licensing.}
+The original LDraw OMR files retain their author headers, set identifiers,
+source links, and license metadata. Derived figures retain source-file
+provenance. The accompanying source manifest identifies the applicable
+Creative Commons Attribution or LDraw library license metadata rather
+than assigning new authorship to community models. Redistributed model
+and part assets remain subject to those original terms. LEGO is a
+trademark of its owner; the benchmark has no claimed affiliation.
+
+\paragraph{Physical scope.}
+The environment checks rigid geometry, supported connections, and
+straight manipulation paths. Unsupported surrounding parts are retained
+as conservative collision bounds rather than deleted, which can reject
+some motions that a more precise mesh would allow. The preassembled
+context is fixed. The executor does not model deformation, insertion
+force, frictional stability, accidental slipping, articulated mechanics,
+or a robot gripper. Consequently, ``legal'' and ``recoverable'' refer
+to this geometric contract. Neither the protocol study nor its renders
+establish real-robot performance.
+\end{document}
