@@ -4,7 +4,7 @@
 
 The Overleaf ZIP is self-contained for LaTeX compilation: select `main.tex` or
 `supplement.tex`. It includes the official style, bibliography style, BibTeX
-entries, and eight figure PDFs. Compiling these sources does not require the
+entries, and twelve figure PDFs and the complete static inventory table. Compiling these sources does not require the
 geometry engine or any model API.
 
 For the repository build, install Tectonic and the Python packages in
@@ -35,8 +35,8 @@ the benchmark data.
   These paper dependencies are included in this synchronization.
 
 `evidence/runtime-snapshot.json` records installed package versions, relevant
-package/catalog hashes, and the collision meshes needed by the paper examples
-and community study. It does not redistribute third-party binaries. A fresh
+package/catalog hashes, and the collision meshes needed by all S/D/M paper examples
+and the community study. It does not redistribute third-party binaries. A fresh
 machine must install those upstream resources before rerunning geometry; merely
 cloning the repository is sufficient for compiling the supplied figures, but
 not for recreating the geometry environment.
@@ -52,3 +52,8 @@ does not rerun all 3,292 + 1,872 geometry cases on every PDF compilation.
 The historical pilot summary contains aggregate measurements and source trace
 hashes. Raw provider logs and identifiable reviewer records are not bundled.
 No new paid API request was made for this paper rewrite.
+
+`prepare_revision.py` regenerates the full model inventory, corrected plate5 source
+splits, planned case manifest, participant schedules, and empty results template.
+Run it only while preparing the design; it intentionally resets the unmeasured
+result template. Collected results should be saved in a separate run artifact.

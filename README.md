@@ -16,7 +16,7 @@
 
 [Main PDF](paper/brickplan-cvpr/main.pdf) · [Supplement](paper/brickplan-cvpr/supplement.pdf) · [Overleaf source ZIP](paper/brickplan-cvpr/brickplan-cvpr-overleaf.zip) · [Build and evidence](paper/brickplan-cvpr/README.zh-CN.md).
 
-The rewrite covers 12 community objects / 96 module cases, 3,292 static questions, and 1,872 dynamic mechanism episodes as distinct evidence scopes. Eight native high-resolution figures accompany a measured alternative-route diagnostic. Formal current-suite model and human assembly evaluations remain pending; see the [submission readiness note](paper/brickplan-cvpr/SUBMISSION-READINESS.zh-CN.md).
+The rewrite covers all current banks: 160 static configurations / 3,292 questions, 68 dynamic structures (42 complete objects + 26 mechanisms) / 1,872 episodes, and 12 community modules / 96 cases. Earlier objects remain included. Twelve compact native-resolution figures, a complete model inventory, and seven reserved experiment tables accompany the measured route diagnostic. See the [full model list](paper/brickplan-cvpr/ALL-MODELS.zh-CN.md) and [experiment design and budget guide](paper/brickplan-cvpr/EXPERIMENT-PLAN.zh-CN.md). Formal current-suite model and human assembly evaluations remain pending; see the [submission readiness note](paper/brickplan-cvpr/SUBMISSION-READINESS.zh-CN.md).
 
 [Community objects and case catalogue](deliverables/brickplan-community-modules/MODEL-CASE-CATALOG.zh-CN.md) · [Dynamic mechanism bank](deliverables/brickplan-dynamic-v6/README.zh-CN.md).
 

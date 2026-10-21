@@ -26,7 +26,7 @@ def main():
         compiler = str(fallback)
     if not compiler:
         raise SystemExit('Install Tectonic or set TECTONIC to its executable path.')
-    for flag, script in [(args.study,'protocol_study.py'),(args.refresh_figures,'build_figures.py')]:
+    for flag, script in [(args.refresh_figures,'prepare_revision.py'),(args.study,'protocol_study.py'),(args.refresh_figures,'build_figures.py')]:
         if flag:
             subprocess.run([paper_python,str(HERE/script)],cwd=ROOT,check=True)
     (HERE/'build').mkdir(exist_ok=True)
@@ -44,7 +44,7 @@ def main():
     for name in ['main','supplement']:
         shutil.copyfile(HERE/'build'/f'{name}.pdf',HERE/f'{name}.pdf')
     # Portable LaTeX compilation package: no local data paths or private API logs.
-    names = ['main.tex','supplement.tex','references.bib','cvpr.sty',
+    names = ['main.tex','supplement.tex','static-inventory.tex','references.bib','cvpr.sty',
              'ieeenat_fullname.bst','template-provenance.json']
     figures = sorted((HERE/'figures-v2').glob('*.pdf'))
     with zipfile.ZipFile(HERE/'brickplan-cvpr-overleaf.zip','w',zipfile.ZIP_DEFLATED) as z:

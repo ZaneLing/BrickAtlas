@@ -81,7 +81,7 @@ def main():
     check_sources(provenance['sources'])
     assert provenance['renderPixels'] == [3200,2400] and provenance['supersampling'] == 2
     assert provenance['exportDpi'] == 600 and provenance['vectorText']
-    assert len(provenance['figures']) == 8 and len(provenance['renders']) == 44
+    assert len(provenance['figures']) == 12 and len(provenance['renders']) >= 161
     for name, spec in provenance['renders'].items():
         p = figs/name
         assert digest(p) == spec['sha256'], name
@@ -90,7 +90,44 @@ def main():
         assert digest(figs/(name+'.pdf')) == spec['pdfSha256'], name
         for ext in spec['formats']:
             assert (figs/(name+'.'+ext)).exists(), name
-        assert Image.open(figs/(name+'.png')).size[0] == 4200, name
+        assert abs(Image.open(figs/(name+'.png')).size[0] - spec['inches'][0]*600) <= 1, name
+
+    coverage = read(HERE/'evidence/benchmark-coverage.json')
+    check_sources(coverage['sources'])
+    assert coverage['caseRecords'] == sum(r['cases'] for r in coverage['models']) == 5260
+    assert Counter(r['track'] for r in coverage['models']) == {'S':160,'D':68,'M':12}
+    assert coverage['continuity']['retainedStaticConfigurations'] == 127
+    assert coverage['continuity']['retainedDynamicStructures'] == 30
+    plan = read(HERE/'evidence/experiment-design.json')
+    check_sources(plan['sources'])
+    assert plan['status'] == 'PLANNED_NOT_EXECUTED'
+    assert len(plan['primary']['S']['caseIds']) == 467
+    assert len(plan['primary']['D']['faultIds']) == 168
+    assert len(plan['primary']['D']['normalIds']) == 72
+    assert plan['workUnits'] == dict(staticAttempts=7725,dynamicJobs=4320,
+        faultJobsWithTwoContinuations=3060,total=12045,apiCalls=None,
+        additionalWork=['human common panel','ablations','full-bank coverage','visual admission'])
+    assignments = read(static/'splits.json')
+    ss = {c['publicId']:c for c in cases}
+    all_ids = []
+    source_sets = []
+    for name, spec in assignments['splits'].items():
+        all_ids += spec['publicIds'];source_sets.append(set(spec['sourceModels']))
+        assert all(ss[q]['modelId'].split('--')[0] in spec['sourceModels'] for q in spec['publicIds'])
+    assert len(all_ids) == len(set(all_ids)) == 3292 and set(all_ids) == set(ss)
+    assert all(not a & b for i,a in enumerate(source_sets) for b in source_sets[i+1:])
+    assert len(assignments['reassignments']) == 151
+    assert [len(assignments['splits'][k]['publicIds']) for k in ['train','dev','test']] == [2286,539,467]
+    ratings = Counter()
+    for person in plan['human']['schedules']:
+        assert len(person['conditions']) == 36
+        assert len({r['pairId'] for r in person['conditions']}) == 36
+        for row in person['conditions']:
+            ratings[(row['pairId'],row['condition'])] += 1
+    assert len(ratings) == 72 and set(ratings.values()) == {3}
+    template = read(HERE/'evidence/results-template.json')
+    assert template['status'] == 'NOT_RUN'
+    assert all(v is None for r in template['main'] for k,v in r.items() if k != 'model')
 
     style = read(HERE/'template-provenance.json')
     for name, expected in style['files'].items():
@@ -126,8 +163,11 @@ def main():
     result = dict(schema='brickplan-paper-verification/3',status='PASS',
                   snapshotDate='2026-10-21',mainBodyPages=8,pdfs=pdfs,
                   staticRecordedReplays=3292,dynamicRecordedReplays=1872,
+                  totalCurrentCaseRecords=5260,configurationEntries=240,
+                  staticSplitReassignments=151,staticPrimaryTestCases=467,
+                  plannedModelSlots=5,plannedIndependentHumanCompletions=216,
                   communityCases=96,protocolStudyTrials=96,protocolStudyApiCalls=0,
-                  nativeSceneRenders=44,nativeScenePixels=[3200,2400],figureCount=8,
+                  nativeSceneRenders=len(provenance['renders']),nativeScenePixels=[3200,2400],figureCount=12,
                   figureExportDpi=600,sourceHashesVerified=True,
                   formalAgentStudyComplete=False,independentHumanAssemblyStudyComplete=False,
                   scope='Evidence/layout consistency; not a CVPR acceptance or visual-validity certificate.')
