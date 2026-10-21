@@ -431,6 +431,13 @@ inference.
 \end{figure*}
 
 \section{Historical Development Evidence}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures-v2/recovery.pdf}
+\caption{\textbf{Two certified repair examples, eight views in one row.} Left four: replace a wrong-color racer cabin piece and finish the community module. Right four: restore pieces removed by a cascade in the original table object. Each transition summarizes selected stages; any multi-part recovery executes separate one-brick actions. These are geometry witnesses, not model rollouts.}
+\label{fig:witness-recovery}
+\end{figure*}
+
 \paragraph{Earlier API car pilot.}
 A prior interface version records three completed episodes with the
 provider route named \texttt{google/gemini-4-argon} on a six-part car
@@ -441,6 +448,26 @@ current suite. One control response was invalidly formatted; no illegal
 physical action was executed. A normal-run trajectory diverged from the
 fault runs before the intervention, so these traces are not a paired
 causal estimate of repair difficulty.
+
+\paragraph{How to read the GT/model comparison.}
+The main paper's eight-column filmstrip uses the extra-layer and control
+traces from this archive. GT is a feasible reference, not a required
+intermediate trajectory. The extra-layer run completes in fourteen
+decisions with seven accepted physical moves; its first two attachments
+and final two additions have a different order from GT. In the control
+run, P001 is legally placed at C006 rather than its target pose, then
+detached and reattached correctly. Physical legality therefore does
+not imply target correctness. All displayed episodes eventually succeed;
+the red cell marks a transient wrong placement, not final failure.
+
+The figure export checks every saved state hash and feedback code in
+both runs (32 decisions total), and supplies a response-free JSON with
+the original certificate, selected states, source hashes, and actions.
+The plotted states use one shared camera and framing. Inspections are
+omitted; the final control image also follows an unshown last placement.
+The external extra layer is labeled separately from the model's mistake.
+These examples illustrate reporting conventions and cannot establish
+current-bank success rates or an independent effect of interventions.
 
 \begin{table}[t]
 \centering\small
@@ -548,6 +575,24 @@ Compound fault & 14 & --- & --- & --- & --- & ---\\
 \bottomrule
 \end{tabularx}
 \end{table*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures-v2/error-radar.pdf}
+\caption{\textbf{Error-specific recovery profile template.} Each axis is conditional recovery for one D mechanism in Table~\ref{tab:errorresults}. All axes use the same 0--100\% scale. Missing measurements have no curve; an untriggered stratum is undefined, not zero. Report exposure counts and source-clustered intervals in the table.}
+\label{fig:errorradar}
+\end{figure}
+
+\paragraph{Reading the radar profiles.}
+The aggregate profile in the main paper separates tracks and outcomes;
+Figure~\ref{fig:errorradar} separates error families within D. Plot one
+series per model only when all required estimates exist, without filling
+missing values or joining across missing axes. Both templates are bound
+to the same result fields as their tables and currently contain no model
+curves. Rates use source-macro aggregation; their denominators differ
+across tasks, so neither polygon area nor an average of axes is a score.
+Exposure is an opportunity for repair, not evidence that the error was
+recognized. Tables remain the source of counts and uncertainty.
 
 \paragraph{Human comparison without written responses.}
 Select twelve S control/fault pairs from different sources, twelve D

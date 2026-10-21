@@ -81,7 +81,7 @@ def main():
     check_sources(provenance['sources'])
     assert provenance['renderPixels'] == [3200,2400] and provenance['supersampling'] == 2
     assert provenance['exportDpi'] == 600 and provenance['vectorText']
-    assert len(provenance['figures']) == 12 and len(provenance['renders']) >= 161
+    assert len(provenance['figures']) == 15 and len(provenance['renders']) >= 161
     for name, spec in provenance['renders'].items():
         p = figs/name
         assert digest(p) == spec['sha256'], name
@@ -128,6 +128,21 @@ def main():
     template = read(HERE/'evidence/results-template.json')
     assert template['status'] == 'NOT_RUN'
     assert all(v is None for r in template['main'] for k,v in r.items() if k != 'model')
+    assert set(provenance['radars']) == {'evaluation-radar','error-radar'}
+    for spec in provenance['radars'].values():
+        assert spec['plottedSeries'] == [] and not spec['missingImputation']
+        assert spec['sourceStatus'] == 'NOT_RUN'
+    qual = read(HERE/'evidence/repair-comparison.json')
+    assert qual['status']=='REPLAY_VERIFIED' and qual['apiCallsThisExport']==0
+    assert not qual['rawMessagesBundled'] and len(qual['gt'])==8
+    assert sum(t['decisions'] for t in qual['traces'])==32
+    assert all(t['success'] and len(t['selectedIndices'])==8 for t in qual['traces'])
+    assert qual['traces'][1]['frames'][4]['outOfGoalPieces']>0
+    assert qual['traces'][1]['frames'][4]['feedback']=='OK'
+    assert qual['traces'][1]['frames'][8]['outOfGoalPieces']==0
+    for frame in qual['gt']+[f for t in qual['traces'] for f in t['frames']]:
+        expected=hashlib.sha256(json.dumps(frame['state'],sort_keys=True,separators=(',',':')).encode()).hexdigest()
+        assert expected==frame['stateSha256']
 
     style = read(HERE/'template-provenance.json')
     for name, expected in style['files'].items():
@@ -167,7 +182,8 @@ def main():
                   staticSplitReassignments=151,staticPrimaryTestCases=467,
                   plannedModelSlots=5,plannedIndependentHumanCompletions=216,
                   communityCases=96,protocolStudyTrials=96,protocolStudyApiCalls=0,
-                  nativeSceneRenders=len(provenance['renders']),nativeScenePixels=[3200,2400],figureCount=12,
+                  nativeSceneRenders=len(provenance['renders']),nativeScenePixels=[3200,2400],figureCount=15,
+                  archivedModelDecisionsVerified=32,radarProfilesUnmeasured=True,
                   figureExportDpi=600,sourceHashesVerified=True,
                   formalAgentStudyComplete=False,independentHumanAssemblyStudyComplete=False,
                   scope='Evidence/layout consistency; not a CVPR acceptance or visual-validity certificate.')

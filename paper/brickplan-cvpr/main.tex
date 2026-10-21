@@ -227,7 +227,7 @@ not constrain the agent's repair sequence.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures-v2/instructions.pdf}
-\caption{\textbf{A complete five-part reference manual.} The repair truck's cabin is supplied already assembled. Each column shows the next physical part and the state after its placement. This sequence is executable, but the two terminal light pieces can be installed in either order. Orange outlines identify the manual's newly added part; they are absent from ordinary current-state observations.}
+\caption{\textbf{A complete seven-part reference manual.} The seaplane's surrounding assembly is supplied. Each column shows one physical part and the state after placement. This is one executable route; alternative legal orders are accepted. Orange outlines identify the newly added part and are absent from ordinary current-state observations.}
 \label{fig:instructions}
 \end{figure*}
 
@@ -270,6 +270,22 @@ fault difficulty across trajectories.
 \caption{\textbf{Different valid prefixes.} Both roof prefixes contain three pieces. Installing reference piece 4 before piece 3 is legal and reaches the same target. Manual indices identify placements, not compulsory action times.}
 \label{fig:orders}
 \end{figure}
+
+\begin{table*}[t]
+\centering\small
+\caption{\textbf{Dataset overview and task inputs.} Controls are included in case totals. Parts count the task's target pieces, excluding supplied context. M-static and M-dynamic share the same twelve modules. S has eleven non-control category labels, including replacement repair states; these are not eleven distinct error mechanisms. Sources overlap across tracks.}
+\label{tab:banks}
+\begin{tabularx}{\textwidth}{@{}lrrrrrX@{}}
+\toprule
+Track & Models & Cases & Controls & Parts & Errors & Initial state and visual guidance\\
+\midrule
+S: static & 160 & 3,292 & 160 & 7--16 & 11 & Current scene $\to$ stage target; inventory and inspection.\\
+D: dynamic & 68 & 1,872 & 160 & 4--15 & 12 & Empty board $\to$ full target; inventory and temporal views.\\
+M: static & 12 & 48 & 12 & 5--12 & 3 & Supplied current stage $\to$ stage target; full remaining-part manual.\\
+M: dynamic & 12 & 48 & 12 & 5--12 & 3 & Supplied context $\to$ completed module; manual and temporal views.\\
+\bottomrule
+\end{tabularx}
+\end{table*}
 
 \section{Benchmark Construction}
 \subsection{Complete coverage and version continuity}
@@ -330,20 +346,7 @@ history are versioned separately from the new community modules;
 existing template locations do not acquire new visual validation merely
 because an adaptive event is executable.
 
-\begin{table*}[t]
-\centering\small
-\caption{\textbf{Audited data scopes.} ``Validated'' refers to the stated machine check, not independent human verification. Cases share sources; the columns are not interchangeable experimental populations.}
-\label{tab:banks}
-\begin{tabularx}{\textwidth}{@{}lrrrX@{}}
-\toprule
-Bank & Cases & Structures & Controls & What is currently established\\
-\midrule
-S: static repair & 3,292 & 160 configurations & 160 & All repair witnesses replay; full visual admission remains pending.\\
-D: continuous assembly & 1,872 & 68 (42+26) & 160 & 1,872 geometry replays; 1,553 intervention scenes pass the primary temporal image screen.\\
-M: community modules & 96 & 12 source objects & 24 & 48 static + 48 dynamic cases; all reference replays and an alternative dynamic route per object pass.\\
-\bottomrule
-\end{tabularx}
-\end{table*}
+
 
 \paragraph{Track-specific visual information.}
 S supplies the current faulty scene, its acceptance target, inventory,
@@ -367,6 +370,13 @@ a cascade removes several connected pieces, and a compound event combines
 mistakes. These are geometric analogues of assembly errors, not measured
 frequencies of human behavior. D contains all twelve mechanisms; M
 currently contains missing, color-replacement, and extra-plate events.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures-v2/errors.pdf}
+\caption{\textbf{Eight compact fault/target pairs across all tracks.} S: rotation and size; D: shift, premature cover, buried color, and compound error; M: missing roof and extra plate. Within each cell the left image is faulty and the right is the correct stage, using identical framing. Orange boxes explain the figure only. The supplement illustrates all twelve D mechanisms and eight S categories.}
+\label{fig:errors}
+\end{figure*}
 
 \subsection{Geometry and visibility admission}
 Every operated part must have usable collision geometry. Each installation,
@@ -394,12 +404,7 @@ before the action and the next current scene may look identical.
 That tests action-outcome monitoring and should not be silently pooled
 with changes to older completed work.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures-v2/errors.pdf}
-\caption{\textbf{Eight compact fault/target pairs across all tracks.} S: rotation and size; D: shift, premature cover, buried color, and compound error; M: missing roof and extra plate. Within each cell the left image is faulty and the right is the correct stage, using identical framing. Orange boxes explain the figure only. The supplement illustrates all twelve D mechanisms and eight S categories.}
-\label{fig:errors}
-\end{figure*}
+
 
 \section{Evaluation and Diagnostic Experiments}
 \subsection{Completion, exposure, and recovery}
@@ -489,6 +494,13 @@ and premature completion. These checks exercise both sides of the
 contract: freedom to choose a valid sequence does not permit fictitious
 physical actions.
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures-v2/repair-comparison.pdf}
+\caption{\textbf{GT versus actual model repair, eight states per row.} Top: one legal reference witness (GT) for an extra-layer event. Middle: an archived Gemini 4 Argon rollout removes the extra piece and succeeds with a different legal order. Bottom: a separate normal-condition rollout legally places P001 at the wrong pose, removes it, and corrects it. Green: valid partial state or terminal success; orange: external intervention; red: wrong placement. All three finish correctly. $+$/$-$ denote attach/detach; selected views omit inspections and intervening actions (*). These replay-verified v5 examples are development evidence, not current-suite scores or matched-prefix causal pairs.}
+\label{fig:recovery}
+\end{figure*}
+
 \subsection{Are interventions consequential and recoverable?}
 A blind continuation policy attempts the reference or alternative normal
 route without reading the changed state. A privileged recovery policy
@@ -497,7 +509,7 @@ continues that route. The blind policy completes all 24 controls and
 none of the 72 fault trials; privileged recovery completes all 96 trials.
 These controls show that the selected faults alter the endpoint and
 that a legal recovery exists. Neither policy tests visual understanding.
-Figure~\ref{fig:recovery} illustrates two certified recoveries.
+The supplement illustrates certified recoveries in the racer and table.
 
 The broader mechanism bank provides complementary checks: blind
 continuation completes 160/160 controls and 0/1,712 intervention episodes;
@@ -505,12 +517,13 @@ a privileged reset/rebuild witness completes 1,872/1,872. We report these
 within their own bank because event templates, initial states, and
 action histories differ from those of the module suite.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures-v2/recovery.pdf}
-\caption{\textbf{Two recoveries with different demands.} Top: replace a wrong-color cabin piece and finish a community racer. Bottom: restore pieces after a cascade in the original table object. Each transition summarizes selected stages of a certified replay; multi-piece recovery still executes separate one-brick actions. These are geometric witnesses, not model rollouts.}
-\label{fig:recovery}
-\end{figure*}
+
+
+\paragraph{Legality versus correctness in actual trajectories.}
+Figure~\ref{fig:recovery} distinguishes external edits, legal but incorrect
+placements, and valid alternative orders. All 32 decisions in the two
+archived model runs reproduce their saved state hashes and feedback.
+The red intermediate state is a corrected mistake, not a failed episode.
 
 \begin{table}[t]
 \centering\small
@@ -529,32 +542,6 @@ Mechanisms & Privileged / all & 1,872/1,872\\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\subsection{Planned model and human evaluation}
-\label{sec:planned}
-Table~\ref{tab:planned-main} reserves the primary model comparisons.
-Every dash denotes an uncollected measurement. We propose five visual
-models: three commercial families and two open-weight models of different
-sizes. Before execution, record exact provider/checkpoint identifiers,
-revision dates, prompts, image preprocessing, and decoding settings.
-Use three seeds (41--43), identical information and action budgets within
-a track, and report source-macro means with source-clustered 95\% intervals.
-The artifact supplies the case manifest; the supplement provides a human
-comparison panel; no paid evaluation is performed for this design.
-
-\paragraph{Primary and coverage runs.}
-The proposed S evaluation uses the source-corrected 467-question test partition
-from 20 source groups, after visual admission. Migrated questions are
-reassigned by their current source, correcting 151 stale split entries. D uses the published
-balanced evaluation subset: 168 faults (14 per mechanism) and 72 distinct
-normal controls. Each fault is evaluated using its own cloned prefix
-and control/fault continuations; 72 distinct control definitions do not
-mean only 72 control continuations. M reports its 48 static cases and
-36 dynamic fault pairs plus twelve normal episodes as a public-module
-study, without claiming unseen-source generalization. Full-bank coverage
-runs retain all configurations and are reported separately from the
-source-held-out primary tables. Cross-track source overlap must be
-checked before any joint prompt tuning or transfer claim.
 
 \begin{table*}[t]
 \centering\small
@@ -575,29 +562,34 @@ V5: open-weight, larger & --- & --- && --- & --- & --- & --- & --- & ---\\
 \end{tabularx}
 \end{table*}
 
-\paragraph{Human operation and input diagnosis.}
-Use a 72-condition panel: twelve static control/fault pairs, twelve D
-pairs covering all mechanisms, and twelve M pairs. Six independent
-participants complete 36 conditions each, counterbalanced so every
-condition has three observations and no participant sees both members
-of a pair. Run the same panel with all five models. Participants use
-buttons and visual action choices; no written explanation or JSON is
-required. Measure completion, exposure, recovery, false alarms, actions,
-and elapsed time. This between-participant comparison is a human
-performance baseline, not a matched-history causal estimate.
+\subsection{Planned model and human evaluation}
+\label{sec:planned}
+Table~\ref{tab:planned-main} reserves the primary model comparisons.
+Every dash denotes an uncollected measurement. We propose five visual
+models: three commercial families and two open-weight models of different
+sizes. Before execution, record exact provider/checkpoint identifiers,
+revision dates, prompts, image preprocessing, and decoding settings.
+Use three seeds (41--43), identical information and action budgets within
+a track, and report source-macro means with source-clustered 95\% intervals.
+The artifact supplies the case manifest; the supplement provides a human
+comparison panel; no paid evaluation is performed for this design.
 
-\paragraph{Ablations and failure analysis.}
-Table~\ref{tab:ablations} reserves within-track input interventions for
-one commercial and one open-weight model chosen before evaluation.
-Remove previous-state images, candidate previews, or detailed legality
-feedback while retaining task geometry. Remove the manual only in M;
-S and D have no equivalent full manual to remove. A symbolic-state
-condition diagnoses the visual bottleneck and remains privileged.
-Report errors separately as invalid output, rejected physical action,
-untriggered event, incomplete planning, and valid but wrong anomaly
-judgment; final failure alone is not a detection miss. Break down D's
-twelve mechanisms, part-count bands, event stage, and temporary-disassembly
-requirements. Empty strata and conditional denominators remain undefined.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures-v2/evaluation-radar.pdf}
+\caption{\textbf{Evaluation profile template.} Eight axes correspond to Table~\ref{tab:planned-main}: static success, normal construction, intervention exposure, and conditional recovery. All axes use 0--100\%; no model curve is drawn before measurement. Exposure measures protocol coverage, not detection accuracy. Counts and uncertainty remain in tables; polygon area is not an overall score.}
+\label{fig:radar}
+\end{figure}
+
+\paragraph{Primary and coverage runs.}
+S uses 467 test questions from 20 source groups after visual admission;
+current-source reassignment corrects 151 stale migrated split entries.
+D uses 168 faults (14 per mechanism) and 72 normal definitions. Each
+fault receives cloned control/fault continuations; the 72 normal
+definitions are additional controls. M uses 48 static cases, 36 dynamic
+fault pairs, and twelve normal episodes, without an unseen-source claim.
+Full-bank runs are separate from these primary tables. Cross-track
+source overlap must be checked before joint tuning or transfer studies.
 
 \begin{table}[t]
 \centering\small
@@ -617,33 +609,53 @@ Symbolic state (privileged) & --- & --- & ---\\
 \end{tabular}
 \end{table}
 
+\paragraph{Human operation and input diagnosis.}
+Use twelve control/fault pairs each from S, D, and M (72 conditions).
+Six participants complete 36 conditions each; counterbalancing gives
+three observations per condition without exposing both pair members to
+one participant. All five models use this common panel. Humans select
+visual actions without written explanations or JSON. Record completion,
+exposure, recovery, false alarms, actions, and time. This baseline is
+not a matched-history causal estimate.
+
+\paragraph{Ablations and failure analysis.}
+Table~\ref{tab:ablations} reserves within-track input interventions for
+one commercial and one open-weight model chosen before evaluation.
+Remove previous-state images, candidate previews, or detailed legality
+feedback while retaining task geometry. Remove the manual only in M;
+S and D have no equivalent full manual to remove. A symbolic-state
+condition diagnoses the visual bottleneck and remains privileged.
+Report errors separately as invalid output, rejected physical action,
+untriggered event, incomplete planning, and valid but wrong anomaly
+judgment; final failure alone is not a detection miss. Break down D's
+twelve mechanisms, part-count bands, event stage, and temporary-disassembly
+requirements. Empty strata and conditional denominators remain undefined.
+Figure~\ref{fig:radar} specifies the aggregate profile; the supplement
+provides a second radar for recovery across the twelve D error families.
+
+
+
 \paragraph{Efficiency and paired recovery.}
 Record decisions, inspections, accepted/rejected moves, latency, tokens,
-and actual charges. In addition to R, report recovery among exposed pairs
-whose normal branch completes, with that denominator shown explicitly.
-Keep API failures and prefix stalls in the run ledger. Pilot the current
-interface before setting cost caps; archived car costs are not a budget
-forecast. The experimental protocol distinguishes model calls from
-shared-prefix jobs and records both branches, avoiding undercounting.
+and charges, including both continuations and shared prefixes. Also
+report recovery among exposed pairs whose normal branch succeeds, with
+its denominator. Keep service failures and prefix stalls in the ledger;
+budget from a current-interface pilot, not archived car costs.
 
 \section{Discussion and Limitations}
-The benchmark combines breadth of static source configurations, diverse
-dynamic mechanisms, and instruction-assisted community modules. The
-route study establishes a protocol counterexample, and geometry checks
-establish witnessed completions; neither establishes a learned-agent
-ranking. Formal results in the reserved tables, independent human
-operation, and complete static visual admission remain pending. Earlier
-car API traces and binary human judgments are development evidence only
-and are documented with their original scope in the supplement.
+The route study establishes a protocol counterexample, and geometry
+checks establish witnessed completions; neither ranks learned agents.
+Formal model results, independent human operation, and complete static
+visual admission remain pending. Archived car traces and binary human
+judgments are development evidence only (supplement).
 
-The three tracks expose different information and share some sources.
-Accordingly, a combined case count is not an independent sample size,
-and cross-track score differences cannot be attributed solely to
-perception or difficulty. Pixel thresholds do not guarantee human
-readability; adaptive event locations need fresh visibility checks.
-The executor models rigid connectors and straight motion with finite
-pose catalogs, not force stability, finger clearance, deformation, or
-robot execution. Source attribution accompanies the artifact.
+Tracks share sources and expose different information; combined case
+counts are not independent sample sizes, and cross-track differences
+cannot isolate perception or difficulty. Pixel thresholds do not ensure
+human readability, and adaptive event locations need new visibility
+checks. The executor models rigid connectors and straight motion with
+finite pose catalogs, not force stability, finger clearance, deformation,
+or robot execution. Source attribution accompanies the artifact.
 
 \section{Conclusion}
 \ours brings the complete static and dynamic collection into a common,

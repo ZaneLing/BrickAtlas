@@ -4,7 +4,7 @@
 
 The Overleaf ZIP is self-contained for LaTeX compilation: select `main.tex` or
 `supplement.tex`. It includes the official style, bibliography style, BibTeX
-entries, and twelve figure PDFs and the complete static inventory table. Compiling these sources does not require the
+entries, and fifteen figure PDFs and the complete static inventory table. Compiling these sources does not require the
 geometry engine or any model API.
 
 For the repository build, install Tectonic and the Python packages in
@@ -57,3 +57,11 @@ No new paid API request was made for this paper rewrite.
 splits, planned case manifest, participant schedules, and empty results template.
 Run it only while preparing the design; it intentionally resets the unmeasured
 result template. Collected results should be saved in a separate run artifact.
+
+`prepare_case_figures.py` optionally rebuilds the sanitized qualitative export from
+local archived v5 API traces. Those raw logs are not distributed. Normal figure
+regeneration reads the bundled `evidence/repair-comparison.json`, which contains
+the original certificate, verified state/action records, and source hashes, but
+no provider response text. No new API request is needed. The two radar figures
+read `evidence/results-template.json`; all current estimates are null and no
+model series is drawn. `evidence/radar-spec.json` records their axis definitions.
