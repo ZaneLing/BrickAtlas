@@ -66,13 +66,16 @@ for page in range(2):
   out.append(' & '.join(cells)+r'\\')
  out += [r'\bottomrule',r'\end{tabular}',r'\end{table*}']
 (HERE/'static-inventory.tex').write_text('\n'.join(out)+'\n')
-# Blank cells are null, never zero. Runtime provider/model IDs are intentionally unset.
-models=[dict(id=f'V{i}',family=f'Commercial VLM {i}',providerModelId=None) for i in range(1,4)]+[dict(id='V4',family='Open-weight VLM, smaller',providerModelId=None),dict(id='V5',family='Open-weight VLM, larger',providerModelId=None)]
+# Named candidates; all measured cells remain null. No model API is called.
+roster_path=HERE/'evidence/model-roster.json'
+models=read(roster_path)['models']
+diagnostic_ids={'gpt61_sol','gemini4_argon','qwen35_27b'}
+diagnostic_models=[m for m in models if m['id'] in diagnostic_ids]
 metrics=['static_S_success','static_M_success','dynamic_D_control_success','dynamic_D_trigger_coverage','dynamic_D_recovery','dynamic_M_control_success','dynamic_M_trigger_coverage','dynamic_M_recovery','illegal_attempt_rate','decision_count','latency_seconds','cost_usd']
 result=dict(schema='brickplan-planned-results/1',status='NOT_RUN',models=models,seeds=[41,42,43],main=[dict(model=m['id'],**{k:None for k in metrics}) for m in models],human=dict(status='NOT_COLLECTED',**{k:None for k in metrics}),
-            ablations=[dict(variant=v,model=m['id'],D_recovery=None,M_recovery=None,illegal_rate=None) for v in ['full','no_previous_view','no_manual_M_only','no_candidate_preview','legality_success_failure_only','symbolic_state_privileged'] for m in [models[0],models[-1]]],
+            ablations=[dict(variant=v,model=m['id'],D_recovery=None,M_recovery=None,illegal_rate=None) for v in ['full','no_previous_view','no_manual_M_only','no_candidate_preview','legality_success_failure_only','symbolic_state_privileged'] for m in diagnostic_models],
             perError=[dict(error=k,**{m['id']:None for m in models},human=None) for k in sorted({c['kind'] for c in dynamic if c['kind']!='none'})],
-            difficulty=[dict(partsBin=b,stage=s,temporaryDisassembly=t,recovery=None,n=None) for b in ['4-7','8-10','11-15'] for s in ['early','middle','late'] for t in [False,True]])
+            difficulty=[dict(partsBin=b,stage=s,temporaryDisassembly=t,recovery=None,n=None) for b in ['4-7','8-10','11-16'] for s in ['early','middle','late'] for t in [False,True]])
 result['efficiency']=[dict(track=t,model=m['id'],pairedRecovery=None,pairedDenominator=None,decisions=None,inspections=None,legalMoves=None,rejectedMoves=None,seconds=None,inputTokens=None,outputTokens=None,costUSD=None) for t in ['S','D','M'] for m in models]
 result['failureLedger']=[dict(track=t,model=m['id'],serviceFailures=None,invalidOutputs=None,rejectedActions=None,untriggeredFaultJobs=None,wrongFinishOrBudgetEnd=None,controlPassFaultFail=None,wrongAnomalyJudgment=None) for t in ['S','D','M'] for m in models]
 result['humanPanel']=[dict(agent=a,staticSuccess=None,D_control=None,D_trigger=None,D_recovery=None,M_control=None,M_trigger=None,M_recovery=None,staticFalseAlarm=None,medianSeconds=None) for a in ['humans']+[m['id'] for m in models]]
@@ -113,7 +116,7 @@ for a,b in [('train','dev'),('train','test'),('dev','test')]:
  assert not set(split['splits'][a]['sourceModels'])&set(split['splits'][b]['sourceModels'])
 assert len(balanced['interventions'])==168 and len(balanced['controls'])==72
 assert set(balanced['interventions']+balanced['controls'])<=ds.keys()
-cc=[];designsources={str(path.relative_to(ROOT)):sha(path) for path in [splitpath,current_splitpath,balpath,static_path,dynpath]}
+cc=[];designsources={str(path.relative_to(ROOT)):sha(path) for path in [splitpath,current_splitpath,balpath,static_path,dynpath,roster_path]}
 for m in community:
  path=commroot/m['id']/'cases.private.json';cc+=read(path);designsources[str(path.relative_to(ROOT))]=sha(path)
 cs={c['id']:c for c in cc}
@@ -158,8 +161,12 @@ for schedule in schedules:
  assert sum(e['condition']=='fault' for e in schedule['conditions'])==18
 manifest=dict(schema='brickplan-experiment-design/1',status='PLANNED_NOT_EXECUTED',models=models,seeds=[41,42,43],
  primary={'S':{'caseIds':test['publicIds'],'sourceGroups':test['sourceModels'],'visualAdmission':'PENDING'},'D':{'faultIds':balanced['interventions'],'normalIds':balanced['controls'],'pairing':'clone environment and visible conversation at admissible prefix; separate control continuation per fault'},'M':{'staticIds':Mstatic,'faultIds':Mfault,'normalIds':Mnormal,'scope':'Public development panel, not unseen-source evaluation'}},
- workUnits=dict(staticAttempts=7725,dynamicJobs=4320,faultJobsWithTwoContinuations=3060,total=12045,apiCalls=None,additionalWork=['human common panel','ablations','full-bank coverage','visual admission']),
+ workUnits=dict(staticAttempts=(467+48)*len(models)*3,dynamicJobs=(168+72+36+12)*len(models)*3,faultJobsWithTwoContinuations=(168+36)*len(models)*3,total=(467+48+168+72+36+12)*len(models)*3,apiCalls=None,additionalWork=['human common panel','ablations','perception probe','cross-model recovery','strategy and visual robustness','full-bank coverage','visual admission']),
  human=dict(independentParticipants=6,pairs=pairs,conditions=72,completions=216,repeatsPerCondition=3,schedules=schedules,interface='Buttons and graphical actions; no written answer or JSON required',comparison='Between-participant conditions, not matched-history human trajectories'),
  decisionBudget='max(40, 6*N+20) per track; M additionally 4*N+12 manipulation attempts',
  transportRetries=2,sourceBootstrapReplicates=2000,capNote='No paid calls are authorized by this planning artifact alone; execution remains a later task.',sources=designsources)
 dump(HERE/'evidence/experiment-design.json',manifest)
+
+# Add diagnostic designs and generate publication tables from the same roster.
+import subprocess,sys
+subprocess.run([sys.executable,str(HERE/"expand_experiments.py")],check=True)

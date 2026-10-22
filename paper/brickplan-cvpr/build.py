@@ -48,7 +48,7 @@ def main():
              'ieeenat_fullname.bst','template-provenance.json']
     figures = sorted((HERE/'figures-v2').glob('*.pdf'))
     with zipfile.ZipFile(HERE/'brickplan-cvpr-overleaf.zip','w',zipfile.ZIP_DEFLATED) as z:
-        for p in [HERE/n for n in names] + figures:
+        for p in [HERE/n for n in names] + figures + sorted((HERE/'tables').glob('*.tex')):
             z.write(p,str(p.relative_to(HERE)))
         z.writestr('README.txt','Select main.tex or supplement.tex as the root document.\n'
                    'Use pdfLaTeX/BibTeX or Tectonic. Figures are already included.\n'

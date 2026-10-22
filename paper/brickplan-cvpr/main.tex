@@ -71,24 +71,11 @@ module. The manual specifies the pieces and their intended assembly,
 but serves as a reference rather than a compulsory trajectory.
 Figure~\ref{fig:teaser} situates these modules within the full benchmark.
 
-The benchmark retains the previously developed static configurations,
-complete objects, and controlled structural mechanisms. The twelve
-community modules extend this collection with source-preserving context
-and manuals; they do not replace the earlier tasks. Static repair tests
-localization and correction from a supplied state, while the dynamic
-tracks additionally test progress monitoring and recovery during
-construction. Together they cover furniture, vehicles, machines,
-household objects, buildings, and source-derived subassemblies.
-
-We study two complementary tasks. In \emph{static repair}, the agent
-receives a faulty state and an explicit acceptance target. In
-\emph{dynamic completion}, it builds a complete object or a remaining module, observes an unannounced change to
-previous work, and continues toward the original target without being
-restarted. Both expose one-brick attach and detach actions, uniform
-inspection tools, and fresh visual observations. Their shared principle
-is that accepted operations must be executable and the terminal object
-must be correct; intermediate agreement with a chosen reference sequence
-is not a success criterion.
+The collection retains earlier static configurations, complete objects,
+and controlled mechanisms alongside the new modules. Static repair
+starts from a supplied state; dynamic completion adds monitoring and
+recovery during construction. Both expose one-brick actions, inspection,
+and fresh observations, while accepting alternative legal build orders.
 
 Prior work provides important components of this setting: physically
 checked generation~\cite{pun2025brickgpt,kulits2026bricknet}, visual
@@ -192,12 +179,11 @@ endpoint collision, a compatible connection for attachment, and a
 collision-free straight insertion or extraction path. Rejected actions
 leave the state unchanged and return a legality code. These codes can
 assist recovery; they are recorded separately from visual observations.
-The module manipulation budget is $4|P_g|+12$, where $P_g$ denotes the
-normal target pieces; inspections are counted separately. D instead uses
-a decision budget $\max(40,6|P_g|+20)$ that includes inspections and
-invalid outputs. The static reference cost is a feasible repair witness,
-not a claim of globally shortest repair. Comparisons use the same
-track-specific limits for every evaluated model.
+M limits physical manipulations to $4|P_g|+12$ for normal target parts
+$P_g$; D counts inspections and invalid outputs within
+$\max(40,6|P_g|+20)$ decisions. The planned comparison applies the latter
+decision cap to every track while retaining M's manipulation cap.
+Static witnesses are feasible reference costs, not shortest-path claims.
 
 \subsection{Completion without a prescribed trajectory}
 Let $\sig(s)$ be the multiset of installed part geometries, colors, and
@@ -325,15 +311,11 @@ The supplement shows all 42 complete objects, all 26 mechanisms, and
 all twelve modules, and enumerates all 160 static configurations.
 
 \paragraph{S: source-derived static repair.}
-The white-baseplate bank contains 3,292 questions across 160 model
-configurations. Its migration ledger records 2,144 directly replayable
-plans, 834 newly verified dismantle/rebuild witnesses, 37 witnesses using
-held components, and ten corrected initial scenes that had penetrated
-the board. Another 267 incompatible source cases were replaced with
-distinct witnessed repair states, preserving replacement provenance.
-All 3,292 final witnesses replay under the new rules. This establishes
-geometric executability; the complete RGB package and per-question
-human readability review remain unfinished.
+The white-baseplate bank contains 3,292 questions on 160 configurations.
+Migration corrected collisions, rebuilt incompatible repair witnesses,
+and replaced 267 incompatible cases with distinct witnessed states.
+All final witnesses replay; the supplement records migration counts.
+The complete RGB package and human readability review remain unfinished.
 
 \paragraph{D: complete objects and structural mechanisms.}
 The broader bank contains 1,872 episodes on 68 structures, including
@@ -485,14 +467,11 @@ Actual-state intervention triggered & 36/36 & 36/36\\
 \end{tabular}
 \end{table}
 
-The corresponding intermediate-state acceptance rule rejects all twelve
-alternative normal routes, despite their correct endpoints. Terminal
-multiset comparison accepts them all. Separate regression checks exchange
-identical part identities in each of the twelve modules and preserve
-success, while rejecting repeated, floating, and overlapping attachments
-and premature completion. These checks exercise both sides of the
-contract: freedom to choose a valid sequence does not permit fictitious
-physical actions.
+Intermediate-state matching rejects all twelve alternative normal
+routes; terminal comparison accepts them. Regression checks also accept
+identical-part exchanges while rejecting repeated, floating, overlapping,
+and premature-finish actions. Alternative orders do not permit
+fictitious physical operations.
 
 \begin{figure*}[t]
 \centering
@@ -543,36 +522,19 @@ Mechanisms & Privileged / all & 1,872/1,872\\
 \end{tabular}
 \end{table}
 
-\begin{table*}[t]
-\centering\small
-\caption{\textbf{Planned primary model results---not yet measured.} S: 467 static test questions; M-static: 48 public cases; D: 168 fault pairs + 72 normal definitions; M-dynamic: 36 fault pairs + 12 normal episodes. C: normal completion; T: actual intervention coverage; R: recovery conditional on exposure (Eq.~\ref{eq:recover}). Values will be percentages with source-clustered intervals. ``---'' means unmeasured, never zero.}
-\label{tab:planned-main}
-\begin{tabularx}{\textwidth}{@{}Xrrr rrr rrr@{}}
-\toprule
- & \multicolumn{2}{c}{Static success} & & \multicolumn{3}{c}{D: objects/mechanisms} & \multicolumn{3}{c}{M: modules}\\
-\cmidrule(lr){2-3}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
-Model slot & S & M & & C & T & R & C & T & R\\
-\midrule
-V1: commercial family A & --- & --- && --- & --- & --- & --- & --- & ---\\
-V2: commercial family B & --- & --- && --- & --- & --- & --- & --- & ---\\
-V3: commercial family C & --- & --- && --- & --- & --- & --- & --- & ---\\
-V4: open-weight, smaller & --- & --- && --- & --- & --- & --- & --- & ---\\
-V5: open-weight, larger & --- & --- && --- & --- & --- & --- & --- & ---\\
-\bottomrule
-\end{tabularx}
-\end{table*}
+\input{tables/main-models}
 
 \subsection{Planned model and human evaluation}
 \label{sec:planned}
-Table~\ref{tab:planned-main} reserves the primary model comparisons.
-Every dash denotes an uncollected measurement. We propose five visual
-models: three commercial families and two open-weight models of different
-sizes. Before execution, record exact provider/checkpoint identifiers,
-revision dates, prompts, image preprocessing, and decoding settings.
-Use three seeds (41--43), identical information and action budgets within
-a track, and report source-macro means with source-clustered 95\% intervals.
-The artifact supplies the case manifest; the supplement provides a human
-comparison panel; no paid evaluation is performed for this design.
+Table~\ref{tab:planned-main} names twelve candidates: eight commercial
+models and four open-weight models, spanning five families. Official
+catalogs were checked on 22 October 2026; account access and served
+revisions still require verification. Record exact revisions, image
+processing, prompts, and decoding settings. Use three repetitions
+(seeds 41--43), equal information and action budgets within a track, and
+source-macro estimates with source-clustered 95\% intervals. All dashes
+remain unmeasured. The supplement specifies fourteen result tables,
+model IDs, and the common human panel; no API evaluation is run here.
 
 \begin{figure}[t]
 \centering
@@ -591,56 +553,35 @@ fault pairs, and twelve normal episodes, without an unseen-source claim.
 Full-bank runs are separate from these primary tables. Cross-track
 source overlap must be checked before joint tuning or transfer studies.
 
-\begin{table}[t]
-\centering\small
-\caption{\textbf{Planned input ablations.} Unmeasured template, instantiated separately for V1 and V5; geometry, seeds, and cases are paired. R: exposure-conditioned recovery; I: illegal-attempt rate.}
-\label{tab:ablations}
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-Observation / feedback & D R & M R & I\\
-\midrule
-Full visual interface & --- & --- & ---\\
-No previous-state image & --- & --- & ---\\
-No manual (M only) & n/a & --- & ---\\
-No candidate preview & --- & --- & ---\\
-Success/failure feedback only & --- & --- & ---\\
-Symbolic state (privileged) & --- & --- & ---\\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{tables/main-ablations}
 
-\paragraph{Human operation and input diagnosis.}
-Use twelve control/fault pairs each from S, D, and M (72 conditions).
-Six participants complete 36 conditions each; counterbalancing gives
-three observations per condition without exposing both pair members to
-one participant. All five models use this common panel. Humans select
-visual actions without written explanations or JSON. Record completion,
-exposure, recovery, false alarms, actions, and time. This baseline is
-not a matched-history causal estimate.
+\paragraph{Human comparison and input diagnosis.}
+The common panel has twelve control/fault pairs per track: 72 conditions.
+Six humans complete 36 conditions each, yielding three observations per
+condition without seeing both pair members. All twelve models use the
+same panel; humans operate buttons without written answers or JSON.
+Table~\ref{tab:ablations} selects Sol, Argon, and Qwen before evaluation.
+Only M supports manual removal. Symbolic-state input is privileged.
+The supplement separates format, legality, exposure, planning, and
+judgment failures, and stratifies errors, part counts, stages, and
+witnessed temporary removals. Undefined rates remain undefined.
 
-\paragraph{Ablations and failure analysis.}
-Table~\ref{tab:ablations} reserves within-track input interventions for
-one commercial and one open-weight model chosen before evaluation.
-Remove previous-state images, candidate previews, or detailed legality
-feedback while retaining task geometry. Remove the manual only in M;
-S and D have no equivalent full manual to remove. A symbolic-state
-condition diagnoses the visual bottleneck and remains privileged.
-Report errors separately as invalid output, rejected physical action,
-untriggered event, incomplete planning, and valid but wrong anomaly
-judgment; final failure alone is not a detection miss. Break down D's
-twelve mechanisms, part-count bands, event stage, and temporary-disassembly
-requirements. Empty strata and conditional denominators remain undefined.
-Figure~\ref{fig:radar} specifies the aggregate profile; the supplement
-provides a second radar for recovery across the twelve D error families.
+\input{tables/main-paired}
+\paragraph{Experiments informed by prior benchmarks.}
+We adopt task/human breakdowns~\cite{tang2025legopuzzles,ma2025phyblock},
+input ablations~\cite{tupini2026asgard}, correction/damage
+analysis~\cite{wan2024scanet}, and stage/cross-model
+recovery~\cite{li2026roborecover}. The supplement also reserves static
+error, separate detection/localization, resolution, and planning-strategy
+experiments. None is reported as measured.
 
-
-
-\paragraph{Efficiency and paired recovery.}
-Record decisions, inspections, accepted/rejected moves, latency, tokens,
-and charges, including both continuations and shared prefixes. Also
-report recovery among exposed pairs whose normal branch succeeds, with
-its denominator. Keep service failures and prefix stalls in the ledger;
-budget from a current-interface pilot, not archived car costs.
+\paragraph{Paired effect and efficiency.}
+Table~\ref{tab:paired} measures the completion drop caused by an edit
+from the same realized prefix. Report both-success, control-only,
+fault-only, and neither-success counts. Record decisions, inspections,
+rejections, time, tokens, and charges for both branches and shared
+prefixes. Budget from a current-interface pilot; retain service failures
+and unreached prefixes in the ledger.
 
 \section{Discussion and Limitations}
 The route study establishes a protocol counterexample, and geometry
@@ -658,14 +599,12 @@ finite pose catalogs, not force stability, finger clearance, deformation,
 or robot execution. Source attribution accompanies the artifact.
 
 \section{Conclusion}
-\ours brings the complete static and dynamic collection into a common,
-source-linked evaluation framework while retaining each track's input
-contract. Its 5,260 case records cover earlier objects and mechanisms as
-well as the new community modules. Terminal geometric scoring permits
-alternative legal routes, and actual-state interventions preserve testing
-opportunities that reference-prefix triggers can miss. The executable
-diagnostics and explicit model/human experiment design support a
-reproducible study of visual assembly, error monitoring, and recovery.
+\ours unifies 5,260 static and dynamic case records with explicit
+track-specific inputs. Terminal geometric scoring accepts alternative
+legal routes; actual-state interventions retain opportunities missed by
+reference-prefix triggers. The diagnostics, twelve-model roster, human
+panel, and fourteen planned analyses specify a reproducible study of
+visual assembly and recovery.
 
 \clearpage
 {\small

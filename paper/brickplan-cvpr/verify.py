@@ -104,9 +104,9 @@ def main():
     assert len(plan['primary']['S']['caseIds']) == 467
     assert len(plan['primary']['D']['faultIds']) == 168
     assert len(plan['primary']['D']['normalIds']) == 72
-    assert plan['workUnits'] == dict(staticAttempts=7725,dynamicJobs=4320,
-        faultJobsWithTwoContinuations=3060,total=12045,apiCalls=None,
-        additionalWork=['human common panel','ablations','full-bank coverage','visual admission'])
+    assert plan['workUnits'] == dict(staticAttempts=18540,dynamicJobs=10368,
+        faultJobsWithTwoContinuations=7344,total=28908,apiCalls=None,
+        additionalWork=['human common panel','ablations','perception probe','cross-model recovery','strategy and visual robustness','full-bank coverage','visual admission'])
     assignments = read(static/'splits.json')
     ss = {c['publicId']:c for c in cases}
     all_ids = []
@@ -127,6 +127,22 @@ def main():
     assert len(ratings) == 72 and set(ratings.values()) == {3}
     template = read(HERE/'evidence/results-template.json')
     assert template['status'] == 'NOT_RUN'
+    roster = read(HERE/'evidence/model-roster.json')
+    assert len(roster['models']) == 12 and roster['apiCalls'] == 0
+    assert len({m['id'] for m in roster['models']}) == 12
+    assert roster['models'] == plan['models'] == template['models']
+    assert all(m['visionDocumented'] and not m['accountAccessVerified'] and m['servedRevision'] is None for m in roster['models'])
+    assert len(template['tableMap']) == len(plan['experiments']) == 14
+    assert plan['modelRosterSha256'] == digest(HERE/'evidence/model-roster.json')
+    for spec in template['tableMap'].values():
+        assert (HERE/'tables'/spec['file']).exists()
+        assert spec['field'] in template
+    metadata={'model','track','category','assignedDefinitions','source','recoverer','condition','variant','error','partsBin','stage','temporaryDisassembly','agent'}
+    for field in ['pairedOutcomes','staticErrors','repairQuality','perceptionProbe','crossRecovery','visualRobustness','strategyBudget','ablations','efficiency','humanPanel','failureLedger','difficulty']:
+        assert all(v is None for row in template[field] for k,v in row.items() if k not in metadata), field
+    assert {row['track'] for row in template['repairQuality']} == {'S','M-static'}
+    assert plan['additionalDesign']['crossRecovery']['implementation'].startswith('PLANNED')
+
     assert all(v is None for r in template['main'] for k,v in r.items() if k != 'model')
     assert set(provenance['radars']) == {'evaluation-radar','error-radar'}
     for spec in provenance['radars'].values():
@@ -157,6 +173,8 @@ def main():
         text = '\n'.join(p.get_text() for p in document)
         assert not re.search(r'\b(?:TODO|TBD|PLACEHOLDER)\b',text), name
         assert '3,292' in text and '1,872' in text and '9/36' in text, name
+        normalized = re.sub(r'\s+', ' ', text)
+        assert all(m['name'] in normalized for m in roster['models']), name
         ppis, fonts = [], set()
         for page in document:
             assert abs(page.rect.width-612) < .1 and abs(page.rect.height-792) < .1
@@ -176,11 +194,11 @@ def main():
         pdfs[name] = dict(pages=len(document),sha256=digest(path),
                           minimumEmbeddedImagePpi=round(min(ppis)),embeddedFonts=len(fonts))
     result = dict(schema='brickplan-paper-verification/3',status='PASS',
-                  snapshotDate='2026-10-21',mainBodyPages=8,pdfs=pdfs,
+                  snapshotDate='2026-10-22',mainBodyPages=8,pdfs=pdfs,
                   staticRecordedReplays=3292,dynamicRecordedReplays=1872,
                   totalCurrentCaseRecords=5260,configurationEntries=240,
                   staticSplitReassignments=151,staticPrimaryTestCases=467,
-                  plannedModelSlots=5,plannedIndependentHumanCompletions=216,
+                  plannedModelSlots=12,plannedResultTables=14,plannedIndependentHumanCompletions=216,
                   communityCases=96,protocolStudyTrials=96,protocolStudyApiCalls=0,
                   nativeSceneRenders=len(provenance['renders']),nativeScenePixels=[3200,2400],figureCount=15,
                   archivedModelDecisionsVerified=32,radarProfilesUnmeasured=True,

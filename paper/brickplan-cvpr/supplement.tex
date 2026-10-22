@@ -500,18 +500,43 @@ about those eleven images.
 
 \section{Planned Experiments and Reserved Result Tables}
 \label{sec:plans}
-All dashes in Tables~\ref{tab:errorresults}--\ref{tab:efficiencyresults} are
+All dashes in the fourteen planned result tables (E1--E14) are
 uncollected measurements. They are neither zero scores nor executor
 results. The artifact contains machine-readable case assignments,
 participant schedules, and a results template whose empty values are
 \texttt{null}. These define the planned experiment; they are not an
 implementation claim for the paired API runner or human study.
 
+\input{tables/model-roster}
+
+\begin{table*}[t]
+\centering\small
+\caption{\textbf{Related experimental designs and our adaptations.} These works motivate controls and analyses; their original tasks, agents, and scores are not directly comparable to BrickPlan. E1--E14 identify our planned result tables.}
+\label{tab:experimentreferences}
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+Work & Experimental element & BrickPlan adaptation\\
+\midrule
+LEGO-Puzzles~\cite{tang2025legopuzzles} & Task-wise model and human comparison & Named candidates, common human panel, difficulty (E1/E5/E6)\\
+PhyBlock~\cite{ma2025phyblock} & Complexity levels and part precision/recall & Complexity and secondary part F1 (E6/E10)\\
+AsgardBench~\cite{tupini2026asgard} & Observation, history, and feedback ablations & Input controls and failure ledger (E3/E7/E13)\\
+SCANet~\cite{wan2024scanet} & Correction versus new misplacement & Terminal repair quality and collateral damage (E10)\\
+RoboRecover~\cite{li2026roborecover} & Recovery by stage and source/recovery policy & Same-prefix effect, stage, same-state recovery (E2/E6/E12)\\
+BrickBench~\cite{kulits2026brickbench} & Validity, semantic quality, human judgment, cost & Separate legality, exact goal, human results, and cost (E1/E5/E8)\\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
 \paragraph{Models and primary samples.}
-Use three commercial visual-model families (V1--V3) and two accessible
-open-weight sizes (V4--V5). Record exact checkpoint/provider identifiers,
-revision/date, image budget, prompt, and decoding settings before
-execution. Apply seeds 41, 42, and 43 to handle randomization and repeated
+Table~\ref{tab:roster} names twelve candidates from five families: eight
+commercial APIs and four open-weight checkpoints. Official provider
+catalogs and model cards document image inputs; account access is not
+tested. Open-weight sizes support within-family comparisons, not a
+claim that size alone explains performance. The machine-readable roster
+links every row to its official source. Before execution, record the
+returned API revision or checkpoint commit, engine, precision, image
+processing, and native reasoning/decoding settings. Do not silently
+replace an unavailable candidate; report it as not run. Apply seeds 41, 42, and 43 to handle randomization and repeated
 runs; a provider seed is recorded only when supported. The S test list
 contains 467 question IDs from 20 source groups. Migration changed the
 source of some questions; 151 stale assignments are repaired while
@@ -546,35 +571,14 @@ additional construction controls; each of its 168 fault jobs still needs
 its own cloned control continuation. Keep scheduled faults with no
 admissible prefix in the exposure denominator, and report their stopping
 reasons. Count every API call in both continuations. The base plan has
-7,725 static attempts and 4,320 dynamic shared-prefix or normal jobs
-across five models and three seeds (12,045 work units, not API calls).
-There are 3,060 fault jobs, each requiring two continuations when the
-prefix is reached. Ablations, the human-comparison panel, visual
-admission, and full-bank coverage are additional work.
+18,540 static attempts and 10,368 dynamic shared-prefix or normal jobs
+across twelve models and three repetitions (28,908 work units, not API calls).
+There are 7,344 fault jobs, each requiring two continuations when the
+prefix is reached. Ablations, the human-comparison panel, detection probes, cross-model
+recovery, strategy/visual tests, admission, and full-bank coverage are
+additional work. Overlapping identical runs are reused, not counted twice.
 
-\begin{table*}[t]
-\centering\small
-\caption{\textbf{Reserved D mechanism results.} Report exposed/assigned counts and exposure-conditioned recovery with source-clustered 95\% intervals. The primary design has fourteen fault definitions per row and three seeds per model. Human measurements belong to the separate common panel, not these denominators.}
-\label{tab:errorresults}
-\begin{tabularx}{\textwidth}{@{}Xrrrrrr@{}}
-\toprule
-Mechanism & Definitions & V1 R & V2 R & V3 R & V4 R & V5 R\\
-\midrule
-Removed piece & 14 & --- & --- & --- & --- & ---\\
-Shifted piece & 14 & --- & --- & --- & --- & ---\\
-Cascaded removal & 14 & --- & --- & --- & --- & ---\\
-Extra layer & 14 & --- & --- & --- & --- & ---\\
-Early cover & 14 & --- & --- & --- & --- & ---\\
-Wrong color & 14 & --- & --- & --- & --- & ---\\
-Wrong size & 14 & --- & --- & --- & --- & ---\\
-Rotation & 14 & --- & --- & --- & --- & ---\\
-Swapped positions & 14 & --- & --- & --- & --- & ---\\
-Wrong part type & 14 & --- & --- & --- & --- & ---\\
-Buried color error & 14 & --- & --- & --- & --- & ---\\
-Compound fault & 14 & --- & --- & --- & --- & ---\\
-\bottomrule
-\end{tabularx}
-\end{table*}
+\input{tables/dynamic-errors}
 
 \begin{figure}[t]
 \centering
@@ -606,32 +610,14 @@ participants. The exact schedule is saved before collection. Train on
 separate practice scenes. Record completion, exposure, actions, time,
 and an optional ``cannot see / cannot operate'' button. This is not
 three independent records when only one person submits an answer.
-The same panel is evaluated with V1--V5 under the same views, action
+The same panel is evaluated with all twelve models under the same views, action
 limits, and seeds. Human estimates additionally cluster by participant.
 
-\begin{table*}[t]
-\centering\small
-\caption{\textbf{Reserved human/model common-panel results.} All agents use the same 72 conditions. Human cells aggregate three independent observations per condition; model cells use three runs. S: static completion; C/T/R: dynamic normal completion, intervention coverage, and recovery; FA: unnecessary modification of a normal control; time is median active seconds. Report D and M separately.}
-\label{tab:humanpanel}
-\begin{tabularx}{\textwidth}{@{}Xrrrrrrrrr@{}}
-\toprule
- & S & \multicolumn{3}{c}{D panel} & \multicolumn{3}{c}{M panel} & &\\
-\cmidrule(lr){3-5}\cmidrule(lr){6-8}
-Agent & Success & C & T & R & C & T & R & S FA & Time\\
-\midrule
-Independent humans & --- & --- & --- & --- & --- & --- & --- & --- & ---\\
-V1 & --- & --- & --- & --- & --- & --- & --- & --- & ---\\
-V2 & --- & --- & --- & --- & --- & --- & --- & --- & ---\\
-V3 & --- & --- & --- & --- & --- & --- & --- & --- & ---\\
-V4 & --- & --- & --- & --- & --- & --- & --- & --- & ---\\
-V5 & --- & --- & --- & --- & --- & --- & --- & --- & ---\\
-\bottomrule
-\end{tabularx}
-\end{table*}
+\input{tables/human-panel}
 
 \paragraph{Ablations and analysis units.}
-Instantiate each main-paper ablation independently for V1 and V5,
-chosen by model slot before viewing outcomes. Apply no-manual only to
+Use GPT-6.1 Sol, Gemini 4 Argon, and Qwen3.5-27B for diagnostic
+experiments, selected before viewing outcomes. Apply no-manual only to
 M, no-previous-view only to dynamic tracks, and keep all other inputs
 and cases fixed. The privileged symbolic condition may expose actual
 part poses but must not silently provide intervention labels or recovery
@@ -642,61 +628,11 @@ undefined stratum rates as zero. Use 2,000 bootstrap replicates clustered
 by source, retaining seeds and case variants together; paired differences
 resample the same sources. Sparse categories remain descriptive.
 
-\begin{table}[t]
-\centering\small
-\caption{\textbf{Reserved difficulty breakdown.} Instantiate by track and model. Bands describe planned stratification, not a validated easy/hard ranking. Stage is installed target-piece count divided by target size at the realized event. Temporary removals use the recorded recovery witness.}
-\label{tab:difficultyresults}
-\begin{tabularx}{\linewidth}{@{}Xrrr@{}}
-\toprule
-Stratum & Assigned & Exposed & Recovery\\
-\midrule
-4--7 target parts & --- & --- & ---\\
-8--10 target parts & --- & --- & ---\\
-11--15 target parts & --- & --- & ---\\
-Early stage ($q\le1/3$) & --- & --- & ---\\
-Middle ($1/3<q\le2/3$) & --- & --- & ---\\
-Late stage ($q>2/3$) & --- & --- & ---\\
-No temporary removal & --- & --- & ---\\
-Temporary correct-part removal & --- & --- & ---\\
-\bottomrule
-\end{tabularx}
-\end{table}
+\input{tables/difficulty}
 
-\begin{table}[t]
-\centering\small
-\caption{\textbf{Reserved failure ledger.} Counts are measured separately by track and model. Physical rejection and format errors are attempt-level counters and may co-occur within an episode; they are not an additive partition of all failures.}
-\label{tab:failureledger}
-\begin{tabular}{@{}lrr@{}}
-\toprule
-Observed event & Count & Denominator\\
-\midrule
-Provider / transport failure & --- & requests\\
-Invalid action format & --- & decisions\\
-Rejected physical action & --- & move attempts\\
-Scheduled fault never exposed & --- & fault jobs\\
-Wrong finish / exhausted budget & --- & episodes\\
-Control completed, fault failed & --- & exposed pairs\\
-Explicit wrong anomaly judgment & --- & valid judgments\\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{tables/failures}
 
-\begin{table*}[t]
-\centering\small
-\caption{\textbf{Reserved efficiency and paired-outcome results.} Instantiate separately for S, D, and M; paired recovery is not applicable to S. Paired R is recovery among exposed pairs whose normal branch succeeds, with its denominator shown. Tokens and charges include shared prefixes, both continuations, and billed retries.}
-\label{tab:efficiencyresults}
-\begin{tabularx}{\textwidth}{@{}Xrrrrrrrr@{}}
-\toprule
-Model & Paired R & Denom. & Decisions & Inspections & Legal moves & Rejected & Seconds & USD\\
-\midrule
-V1 & --- & --- & --- & --- & --- & --- & --- & ---\\
-V2 & --- & --- & --- & --- & --- & --- & --- & ---\\
-V3 & --- & --- & --- & --- & --- & --- & --- & ---\\
-V4 & --- & --- & --- & --- & --- & --- & --- & ---\\
-V5 & --- & --- & --- & --- & --- & --- & --- & ---\\
-\bottomrule
-\end{tabularx}
-\end{table*}
+\input{tables/efficiency}
 
 
 
@@ -710,6 +646,102 @@ Estimate money from a small current-interface pilot for each selected
 model. Old car charges are archived observations, not current price
 quotes. The experiment guide specifies caps and a cost formula; no paid
 calls are made in this revision.
+
+\subsection{Additional questions and reserved analyses}
+\paragraph{Paired intervention effect (E2).}
+For each exposed pair, let $c,f\in\{0,1\}$ denote control and fault
+completion. Save $n_{11},n_{10},n_{01},n_{00}$, including cases where an
+edit helps rather than harms. The within-source difference is
+$\Delta=C_c-C_f$; average source differences and bootstrap sources
+jointly for its interval. Unexposed jobs remain in the exposure report
+and do not enter this conditional effect. Raw pooled counts and
+source-macro rates are both reported; the latter need not equal pooled
+ratios. Recovery conditional on control success is
+$n_{11}/(n_{11}+n_{10})$ within a source; retain its denominator.
+
+\input{tables/static-errors}
+\input{tables/repair-quality}
+\paragraph{Static correction quality (E9--E10).}
+The error breakdown uses the actual 467-question S test assignments,
+including controls and migrated replacement states. Report M-static
+separately. Let $G$ be the target multiset of part type, color, and pose;
+$A_0,A_T$ the initial and terminal multisets, excluding locked context.
+Define $d(A,G)=|A\setminus G|+|G\setminus A|$. Defect reduction is
+$[d(A_0,G)-d(A_T,G)]/d(A_0,G)$ and may be negative. It is undefined for
+an initially correct control. Part F1 is $2|A_T\cap G|/(|A_T|+|G|)$;
+exact completion and physical legality remain the primary criteria.
+For initially correct placements $H=A_0\cap G$, terminal collateral
+damage is $|H\setminus A_T|/|H|$, undefined when $H$ is empty.
+Temporary removal followed by correct replacement causes no terminal
+damage. Count accepted state-changing edits on normal controls as
+unnecessary edits. These multiset metrics adapt SCANet's
+correction/damage distinction; they are not its original component-wise
+scores. Dynamic completion uses E1/E2, avoiding confusion between
+unfinished construction and a repair defect.
+
+\input{tables/perception-probe}
+\paragraph{Detection independent of assembly (E11).}
+Use certified fixed checkpoints from the twelve D and twelve M
+control/fault pairs in the human panel: 48 conditions with both changed
+and unchanged scenes. Every model sees the same before/after images,
+target, and public part/slot handles. Ask for change/no-change and a
+selection of affected handles; humans use buttons. Score change
+balanced accuracy, anomaly recall, false alarms, and affected-slot F1.
+No-change is not a fault label, and removed pieces remain identifiable
+through previous-state slots. Three independent human ratings per
+condition also mark visibility and interface usability; ambiguous
+snapshots are reported and revised before a new version is evaluated.
+API validity is recorded separately. This probe is a separate task:
+it neither interrupts nor diagnoses an individual assembly trajectory
+with certainty. Its adapter and independent ratings remain to be built
+and collected.
+
+\input{tables/cross-recovery}
+\paragraph{Same-state cross-model repair (E12).}
+Use the normal siblings of the twelve D and twelve M panel pairs,
+with no external edit during source collection. For each source model,
+save its first accepted attachment adding a placement outside the target
+multiset, then seek a legal recovery witness. This is an off-target
+state, not proof the original episode would fail; a temporary placement
+could still be corrected. If no such state
+arises or no witness can be found, retain the non-admission reason;
+do not substitute a later error from that run.
+Do not choose states for how well a recoverer performs. Each recoverer
+starts the identical state with the same target, remaining inventory,
+visible observations, and fresh context; source identity is hidden.
+Separate D/M panels and source-model rows reveal dependence on who
+created the failure. A diagonal restart differs from the original
+uninterrupted self-repair, which is reported separately. The state bank
+does not yet exist; admission counts and this selected-state scope must
+accompany every rate. This design follows cross-policy recovery analysis,
+without borrowing the physical claims of a robot benchmark.
+
+\input{tables/visual-robustness}
+\paragraph{Observation robustness (E13).}
+Use the same 48-condition D/M panel for three diagnostic models.
+Change one input factor at a time: current image only, one fixed camera,
+or half/double image resolution. One-view removes alternate views from
+inspection as well as the initial prompt. Keep scene geometry and
+camera poses fixed for resolution tests; verify provider preprocessing
+and record actual delivered image sizes and token use. E3 already
+covers manual, candidate-preview, feedback, and privileged-state
+conditions; reuse identical baseline runs. Recheck visibility under
+each condition and report results for all assigned items and the
+jointly readable subset. These tests change available evidence; they
+cannot automatically be described as changes in reasoning ability.
+
+\input{tables/strategy-budget}
+\paragraph{Planning and computation (E14).}
+Compare the standard one-action closed loop to a single generated action
+script with no intermediate observation returned, an explicit visual
+checking instruction using the same public images/history, and twice
+the decision allowance. All scripts execute one brick at a time through
+the same legality checks; use deterministic part/pose references, never
+a hidden reference plan. Keep the manipulation cap fixed in the doubled
+condition. State which native reasoning effort is supported and record
+actual tokens, time, and charges; equal action limits do not imply equal
+provider computation. No private reasoning trace is scored. The script
+adapter and observation variants are planned, not implemented results.
 
 \section{Rendering, Attribution, and Physical Limits}
 \paragraph{Publication images.}
@@ -742,4 +774,9 @@ or a robot gripper. Consequently, ``legal'' and ``recoverable'' refer
 to this geometric contract. Neither the protocol study nor its renders
 establish real-robot performance.
 \input{static-inventory}
+\clearpage
+{\small
+\bibliographystyle{ieeenat_fullname}
+\bibliography{references}
+}
 \end{document}

@@ -4,7 +4,7 @@
 
 The Overleaf ZIP is self-contained for LaTeX compilation: select `main.tex` or
 `supplement.tex`. It includes the official style, bibliography style, BibTeX
-entries, and fifteen figure PDFs and the complete static inventory table. Compiling these sources does not require the
+entries, fifteen figure PDFs, the complete static inventory, and all generated `tables/*.tex`. Compiling these sources does not require the
 geometry engine or any model API.
 
 For the repository build, install Tectonic and the Python packages in
@@ -65,3 +65,10 @@ the original certificate, verified state/action records, and source hashes, but
 no provider response text. No new API request is needed. The two radar figures
 read `evidence/results-template.json`; all current estimates are null and no
 model series is drawn. `evidence/radar-spec.json` records their axis definitions.
+
+`evidence/model-roster.json` lists twelve official-documentation-checked candidates.
+It does not verify account access or served revisions. `expand_experiments.py`,
+called by `prepare_revision.py`, generates fourteen unmeasured result tables and
+the model roster table. The paired API runner, perception probe adapter,
+observation/strategy variants, and cross-model recovery state bank remain planned.
+No source file in this paper build invokes a model API.
