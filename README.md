@@ -12,6 +12,12 @@
   <strong>English</strong> · <a href="README.zh-CN.md">简体中文</a>
 </p>
 
+## Complete objects and named completion modules (23 October 2026)
+
+Three complete LDraw objects now build from an empty white baseplate: a 12-piece ship, a 13-piece sea helicopter, and a 9-piece helicopter. No original source instance is dropped. Twelve existing completion modules are redisplayed with the full body, completed object, and highlighted remaining parts. The new collection has 46 verified conditions (25 static, 21 dynamic), kept separate from the historical deduplicated total below. Arbitrary spatial crops are excluded from this object-assembly selection. Previous complete furniture, vehicles, and machines remain benchmark content.
+
+[Illustrated catalogue](deliverables/brickplan-recognizable-models/README.zh-CN.md) · [Selection rules](deliverables/brickplan-recognizable-models/选模型的规则.zh-CN.md) · [Program checks](deliverables/brickplan-recognizable-models/audit.json). Launch `打开完整物件看图.command` or open <http://127.0.0.1:8799/objects/index.html> after starting the preview. Human readability review is pending; no paid model calls were made.
+
 ## Assembly and repair extension (23 October 2026)
 
 The user-approved scope contains **5,793 physical tasks**: 5,100 retained baseline tasks and 693 additions. The 776 extension conditions include 83 adapters of existing tasks, which are not counted again. Five 21–32-piece objects, three community sources and 47 repeated-incident conditions remain. H01–H11 and H13 are approved; H12 and H14–H17 are excluded; H18 is deferred.

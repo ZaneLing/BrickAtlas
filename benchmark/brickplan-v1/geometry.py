@@ -50,18 +50,19 @@ def mesh_for(stem: str):
     # Reflection changes handedness. Preserve outward normals for containment.
     if mesh.volume() < 0:
         mesh.topology.flipOrientation()
-    if stem == "3022" and not mesh.topology.isClosed():
+    if stem in ("3022", "3003") and not mesh.topology.isClosed():
         holes = mesh.topology.findHoleRepresentiveEdges()
         if len(holes) != 1:
-            raise ValueError("3022 repair contract changed: expected one triangular hole")
+            raise ValueError(f"{stem} repair contract changed: expected one triangular hole")
         ring = mesh.topology.getLeftRing(holes[0])
         points = [mesh.points[mesh.topology.org(edge)] for edge in ring]
         # Upstream has one missing triangle within the solid stud at (-10, 10).
-        # Original 3022.dat -> stud.dat -> 4-4disc.dat explicitly closes this top.
+        # Original 3022.dat and 3003.dat -> s/3003s02.dat -> stug-2x2.dat
+        # reference stud.dat -> 4-4disc.dat, explicitly closing this top.
         # All three inset vertices must lie on y=-3.75 and inside radius 5.8.
         if len(points) != 3 or any(abs(p.y + 3.75) > 0.001
                                   or math.hypot(p.x + 10, p.z - 10) > 5.8 for p in points):
-            raise ValueError("3022 hole differs from the source-verified stud-cap defect")
+            raise ValueError(f"{stem} hole differs from the source-verified stud-cap defect")
         mm.fillHole(mesh, holes[0])
     if not mesh.topology.isClosed():
         raise ValueError(f"Open collision mesh cannot be qualified: {stem}")
@@ -245,12 +246,15 @@ def qualify(parts: list[dict], mutable_sources: list[int], output: Path,
     result = {
         "schema": "brickplan-geometry/1.0", "guardLDU": GUARD_LDU,
         "insetPerSurfaceLDU": 0.25, "scope": "Straight translations over versioned inset meshes.",
-        "proxyRepairs": [{
-            "part": "3022", "operation": "Fill one verified triangular stud-top face; no vertex changes.",
-            "sourceEvidence": ["parts/3022.dat", "p/stud.dat", "p/4-4disc.dat"],
-            "sourceEvidenceHashes": [sha256(ROOT / "assets-source/ldraw-library/locked" / name)
-                                     for name in ("parts/3022.dat", "p/stud.dat", "p/4-4disc.dat")],
-        }],
+        "proxyRepairs": [dict(
+            part=stem, operation="Fill one verified triangular stud-top face; no vertex changes.",
+            sourceEvidence=names,
+            sourceEvidenceHashes=[sha256(ROOT / "assets-source/ldraw-library/locked" / name) for name in names],
+        ) for stem, names in {
+            "3022": ["parts/3022.dat", "p/stud.dat", "p/4-4disc.dat"],
+            "3003": ["parts/3003.dat", "parts/s/3003s01.dat", "parts/s/3003s02.dat",
+                     "p/stug-2x2.dat", "p/stud.dat", "p/4-4disc.dat"],
+        }.items() if any(p["canonical"] == stem for p in parts)],
         "parts": parts, "mutable": mutable, "endpoints": endpoints, "paths": paths,
     }
     output.parent.mkdir(parents=True, exist_ok=True)
