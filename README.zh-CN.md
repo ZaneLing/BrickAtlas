@@ -12,13 +12,21 @@
   <a href="README.md">English</a> · <strong>简体中文</strong>
 </p>
 
+## 当前统一题单与评估方案（2026-10-23）
+
+本轮重新执行 **5,922 个保留运行条件，全部通过**。统一整理5,839条记录，去除119条同任务重复后为 **5,720题**；其中主候选5,452题（静态3,697、动态1,755），历史动态结构／裁切诊断268题单列。动态主组有63种操作配置：50个完整物件配置、13个明确收尾配置。
+
+[先看：题库组成、错误、等级、题型与GT图例](deliverables/brickplan-benchmark-spec/README.zh-CN.md) · [再看：静态／动态评估指标和分母](deliverables/brickplan-benchmark-spec/EVALUATION.zh-CN.md) · [63种配置配图列表](deliverables/brickplan-benchmark-spec/MODEL-LIST.zh-CN.md) · [逐题CSV](deliverables/brickplan-benchmark-spec/questions.csv)。当前规范题单在此目录，下文旧轮次统计保留作历史资料；新统计尚未回填旧论文或旧模型成绩。
+
+7个基本错误标签、过程标签、B/R/T结构分组和G1–G3排题等级已整理；等级尚未经过真人／模型成功率验证。10项计分回归检查通过。没有调用付费模型，逐题真人可读性、新来源社区测试和独立中途修复题仍待完善。
+
 ## 完整物件与有明确用途的收尾部分（2026-10-23）
 
 新增 3 个完整 LDraw 小物件：12 块小船、13 块海上直升机、9 块迷你直升机；原文件零件无删减，全部从空白底板开始。12 个已有收尾模块重新展示完整主体、完整目标和本次待补位置。新增完整物件保存 46 个已验证条件（静态25、动态21），尚未并入下面的历史去重总数。任意空间裁切不再作为这组物件动态任务的选材方式；原有完整家具、车辆和机器仍保留。
 
 [完整图文清单](deliverables/brickplan-recognizable-models/README.zh-CN.md) · [以后怎么选模型](deliverables/brickplan-recognizable-models/选模型的规则.zh-CN.md) · [程序检查记录](deliverables/brickplan-recognizable-models/audit.json)。双击 `打开完整物件看图.command`，或访问启动后的 <http://127.0.0.1:8799/objects/index.html>。真人可读性待审查，付费模型调用为0。
 
-## 拼装与修复题库扩展（2026-10-23）
+## 历史拼装与修复题库扩展（2026-10-23）
 
 按用户确认的范围，目前共 **5,793 道物理任务**：原题当前范围5,100道，扩展新增693道。扩展保存776条运行条件，其中83条复用旧题，不重复计数。保留5个需拼21–32块的新物件、3个新社区来源和47条多次干扰条件。调研整理18种情况，当前做H01–H11、H13；H12、H14–H17不做，H18待定。
 

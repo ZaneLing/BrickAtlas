@@ -208,7 +208,11 @@ class Episode(BaseEpisode):
         obs.update(protocol=PROTOCOL, decisionsUsed=len(self.decisions), decisionBudget=self.decision_budget)
         if self.cert.get('environmentMode') == 'white-baseplate':
             obs['contextIsLocked'] = False
-            obs['task'] = '从空白色底板开始，逐件完成 TARGET。参考说明是一种可行顺序，允许其他合法顺序。每轮可查看实际状态，一次只装或拆一块；完成后 finish。过程中可能有未提示的变化。'
+            if self.case['mode']=='static':
+                step=self.case['completedInstructionStep']
+                obs['task'] = f'修复当前场景，使其符合 TARGET（说明第 {step} 步的阶段目标）。从当前状态开始，不是从空白底板重搭。后续成品仅供参考，允许其他合法修复顺序；一次只装或拆一块，完成后 finish。'
+            else:
+                obs['task'] = '从空白色底板开始，逐件完成 TARGET。参考说明是一种可行顺序，允许其他合法顺序。每轮可查看实际状态，一次只装或拆一块；完成后 finish。过程中可能有未提示的变化。'
         return obs
 
     def step(self, action):

@@ -1,5 +1,7 @@
 # Brick Atlas 题库公开展示预览
 
+这是5,793条旧目录的展示快照。当前统一题单、去重统计与评估方案请看[新版总览](../brickplan-benchmark-spec/README.zh-CN.md)和[评估方案](../brickplan-benchmark-spec/EVALUATION.zh-CN.md)，不要把旧目录条数当成新版独立题数。
+
 这是本机数据浏览页，尚未上传Hugging Face，也不是隐藏测试集发布包。原有题目的状态、参考答案和动作接口保留；新增物件页及保留完整背景的运行入口单独提供，没有调用付费模型。
 
 ## 打开

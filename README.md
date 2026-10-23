@@ -12,13 +12,19 @@
   <strong>English</strong> · <a href="README.zh-CN.md">简体中文</a>
 </p>
 
+## Current task organization and evaluation specification (23 October 2026)
+
+All **5,922 retained execution conditions** passed a fresh reference replay. The unified catalogue contains 5,839 records and **5,720 distinct task records** after 119 within-contract aliases are removed. Main candidates comprise 3,697 static and 1,755 dynamic tasks; 268 historical dynamic mechanism/crop diagnostics remain separate. The object-dynamic selection covers 63 operation configurations: 50 complete-object configurations and 13 named completion configurations.
+
+[Illustrated organization and GT guide](deliverables/brickplan-benchmark-spec/README.zh-CN.md) · [Evaluation metrics and denominators](deliverables/brickplan-benchmark-spec/EVALUATION.zh-CN.md) · [63 illustrated configurations](deliverables/brickplan-benchmark-spec/MODEL-LIST.zh-CN.md) · [Canonical task CSV](deliverables/brickplan-benchmark-spec/questions.csv). This is the current task view; older counts below describe historical versions and do not extend old measured results. Seven basic fault labels, process tags, B/R/T descriptors and provisional G1–G3 planning grades are recorded. Ten metric regressions pass. Human readability, held-out community sources and standalone checkpoint tasks remain pending. No paid model calls were made.
+
 ## Complete objects and named completion modules (23 October 2026)
 
 Three complete LDraw objects now build from an empty white baseplate: a 12-piece ship, a 13-piece sea helicopter, and a 9-piece helicopter. No original source instance is dropped. Twelve existing completion modules are redisplayed with the full body, completed object, and highlighted remaining parts. The new collection has 46 verified conditions (25 static, 21 dynamic), kept separate from the historical deduplicated total below. Arbitrary spatial crops are excluded from this object-assembly selection. Previous complete furniture, vehicles, and machines remain benchmark content.
 
 [Illustrated catalogue](deliverables/brickplan-recognizable-models/README.zh-CN.md) · [Selection rules](deliverables/brickplan-recognizable-models/选模型的规则.zh-CN.md) · [Program checks](deliverables/brickplan-recognizable-models/audit.json). Launch `打开完整物件看图.command` or open <http://127.0.0.1:8799/objects/index.html> after starting the preview. Human readability review is pending; no paid model calls were made.
 
-## Assembly and repair extension (23 October 2026)
+## Historical assembly and repair extension (23 October 2026)
 
 The user-approved scope contains **5,793 physical tasks**: 5,100 retained baseline tasks and 693 additions. The 776 extension conditions include 83 adapters of existing tasks, which are not counted again. Five 21–32-piece objects, three community sources and 47 repeated-incident conditions remain. H01–H11 and H13 are approved; H12 and H14–H17 are excluded; H18 is deferred.
 

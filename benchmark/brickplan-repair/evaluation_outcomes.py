@@ -28,17 +28,24 @@ def service_error(error):
     return dict(category=category,httpStatus=status)
 
 
+def event_triggered(event):
+    if type(event.get('appliedEvents')) is int:return event['appliedEvents']>0
+    return bool(event.get('eventTriggered',event.get('eventApplied',False)))
+
+
 def pair_assessment(control,event,control_status,intervention_status,*,shared_prefix=True,visibility_gate=False):
-    triggered=bool(event.get('eventTriggered',event.get('eventApplied')))
+    triggered=event_triggered(event)
     returned=control_status=='complete' and intervention_status=='complete'
     control_ok=bool(control.get('success',control.get('completionSuccess')))
-    eligible=bool(shared_prefix and returned and control_ok and triggered)
+    all_events=(event.get('appliedEvents')==event['scheduledEvents']) if 'scheduledEvents' in event else True
+    eligible=bool(shared_prefix and returned and control_ok and triggered and all_events)
     declared=event.get('reportedAtEvent')
     detection_eligible=eligible and visibility_gate and type(declared) is bool and not control.get('preEventFalseAlarms',0)
     reason=('untriggered' if not triggered else 'run_interrupted' if not returned else
-            'control_failed' if not control_ok else 'unmatched_prefix' if not shared_prefix else 'eligible')
+            'control_failed' if not control_ok else 'unmatched_prefix' if not shared_prefix else
+            'not_all_events_triggered' if not all_events else 'eligible')
     return dict(recoveryPairEligible=eligible,repairEligibilityReason=reason,
-        repairSuccess=bool(event.get('success')) if eligible else None,
+        repairSuccess=bool(event.get('success',event.get('completionSuccess'))) if eligible else None,
         detectionPairMachineEligible=detection_eligible,
         detectionMiss=(not declared) if detection_eligible else None,
         humanValidated=False,paperDetectionClaimEligible=False)
@@ -55,11 +62,14 @@ def assess_run(trace):
     if not errors and trace.get('status')=='api_error':errors=[trace.get('error','API error')]
     service=Counter(service_error(e)['category'] for e in errors)
     status=trace.get('status','unknown')
-    interrupted=bool(errors) or status in ('api_error','reservation_budget_stop','cost_budget','interface_update_stop','incomplete') or status.startswith('adapter_error')
+    unrecovered=[e for e in errors if not (isinstance(e,dict) and e.get('recovered') is True)]
+    interrupted=bool(unrecovered) or status in ('api_error','reservation_budget_stop','cost_budget','interface_update_stop','incomplete') or status.startswith('adapter_error')
     score=trace.get('moduleScore') or trace.get('replayScore') or trace.get('episode',trace.get('prefixEpisode',{})).get('score',{})
-    dynamic=trace.get('track') in ('D','M-D','D-checkpoint') or 'controlCaseId' in trace
-    scheduled=trace.get('eventScheduled',not trace.get('caseId','').endswith(('--control','-dynamic-control')))
-    triggered=bool(score.get('eventApplied',score.get('eventTriggered',False)))
+    dynamic=trace.get('track') in ('D','M-D','D-checkpoint','E7-D','O-D') or 'controlCaseId' in trace
+    cid=trace.get('caseId','')
+    normal=cid.endswith(('--control','-dynamic-control')) or '::dynamic::control::' in cid
+    scheduled=trace.get('eventScheduled',bool(score['scheduledEvents']) if 'scheduledEvents' in score else not normal)
+    triggered=event_triggered(score)
     completion=score.get('success') if not interrupted else None
     out=dict(serviceErrors=dict(service),serviceErrorCount=sum(service.values()),formatErrorResponses=format_count,
         actionSchemaErrorResponses=schema_count,physicalActionRejections=dict(physical_rejections),
@@ -74,7 +84,7 @@ def assess_run(trace):
         pair=pair_assessment(c.get('episode',{}).get('score',{}),event,c.get('status'),b.get('status'),
                              shared_prefix=trace.get('sharedPrefixVerified',trace.get('branchStateVerified',False)),
                              visibility_gate=trace.get('attribution',{}).get('visibilityGate',False))
-        out.update(pair);out['eventTriggered']=bool(event.get('eventTriggered'))
+        out.update(pair);out['eventTriggered']=event_triggered(event)
         if interrupted:
             out.update(recoveryPairEligible=False,repairSuccess=None,detectionMiss=None,
                        detectionPairMachineEligible=False,repairEligibilityReason='run_interrupted')
