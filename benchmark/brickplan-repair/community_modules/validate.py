@@ -14,6 +14,18 @@ b=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(b)
 
 
+def check_inspect_timing(cert,cases):
+    case=next(c for c in cases if c['mode']=='static' and c['family']=='missing')
+    ep=b.Episode(cert,case,seed=41)
+    ep.step(b.public_action(ep,case['referenceActions'][0]))
+    current=dict(ep.state)
+    assert ep.previous!=current
+    ep.step(dict(type='inspect',view='isometric'))
+    assert ep.previous==current and ep.state==current
+    ep.step(dict(type='inspect',view='top'))
+    assert ep.previous==current and ep.state==current
+
+
 def main():
     started=time.time()
     audit=json.loads((b.OUT/'audit.json').read_text())
@@ -24,6 +36,7 @@ def main():
         d=b.OUT/m['id']
         cert=json.loads((d/'certificate.private.json').read_text())
         cases=json.loads((d/'cases.private.json').read_text())
+        check_inspect_timing(cert,cases)
         normal=json.loads((d/'manual.private.json').read_text())['actions']
         evidence=b.order_checks(cert,cases,normal)
         m['orderChecks']=evidence

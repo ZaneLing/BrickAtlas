@@ -14,13 +14,35 @@ from dynamic_v6.interface import packet,renderer_for,SYSTEM
 from dynamic_v5.run_api import request,call,parse as legacy_parse
 from dynamic_v5.build import write
 
-def parse(content):
+def decode_one_object(content):
+    """Accept one explicit JSON object, optionally surrounded by prose/fences.
+
+    Never invent, repair, merge, or select between multiple action objects.
+    Native JSON arrays remain invalid, even if they contain only one object.
+    """
     try:
         obj=json.loads(content)
+    except (ValueError,TypeError):
+        if not isinstance(content,str):raise ValueError('Expected text')
+        decoder=json.JSONDecoder();objects=[];position=0
+        while position<len(content):
+            start=content.find('{',position)
+            if start<0:break
+            try:obj,end=decoder.raw_decode(content,start)
+            except ValueError:position=start+1;continue
+            objects.append(obj);position=end
+        if len(objects)!=1:raise ValueError('Exactly one explicit JSON object is required')
+        obj=objects[0]
+    if not isinstance(obj,dict):raise ValueError('Expected one object')
+    return obj
+
+def parse(content):
+    try:
+        obj=decode_one_object(content)
         if not isinstance(obj,dict) or not set(obj)<={'action','unexpectedChange','note'}:
             raise ValueError('One action object is required')
     except (ValueError,TypeError):return {'type':'invalid'},'format_error',None
-    return legacy_parse(content)
+    return legacy_parse(json.dumps(obj))
 
 def run(case_id,model,seed=41,execute=False,max_cost=None):
     cert,case=load_case(case_id)

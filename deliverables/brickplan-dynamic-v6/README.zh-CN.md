@@ -48,3 +48,7 @@ benchmark/.runtime/mlx-env/bin/python benchmark/brickplan-repair/dynamic_v6/test
 benchmark/.runtime/mlx-env/bin/python benchmark/brickplan-repair/dynamic_v6/test_runner.py
 benchmark/.runtime/mlx-env/bin/python benchmark/brickplan-repair/dynamic_v6/build_report.py
 ```
+
+## 2026-10-23 开发试跑更新
+
+本次对当前题库做了小规模真实 API 试跑，原文中的“API 为 0”指构建发布时的状态。正式模型主表仍未收集完成。实测逐题费用、接口问题和本轮修复见 [10 美元试跑报告](../brickplan-budget-pilot-2026-10-23/README.zh-CN.md)。模块版已修正查看操作之后的上一状态图片；付费旧记录保留原样，修复后只做了免费回归检查。

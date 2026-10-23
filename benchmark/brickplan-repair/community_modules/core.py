@@ -284,6 +284,10 @@ class Episode:
                 raise ValueError("Unknown candidate")
             if "partId" in action and action["partId"] not in self.actors:
                 raise ValueError("Unknown part")
+            # Inspection is still an action in the observation timeline. The
+            # next BEFORE image must show the scene immediately before this
+            # inspection, rather than retaining an older manipulation/event.
+            self.previous = dict(self.state)
             self.inspections += 1
             self.feedback = dict(code="INSPECT", **{k: v for k, v in action.items() if k != "type"})
             return self.observe()
