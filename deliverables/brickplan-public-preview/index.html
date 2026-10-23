@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Brick Atlas 题库浏览：查看真实输入图、操作格式、参考修复与公开数据的组织方式。">
+  <title>Brick Atlas · 题库浏览</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23136f66'/%3E%3Cpath d='M8 12h16v13H8zM11 7h4v5h-4zM18 7h4v5h-4z' fill='white'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#browse"><span class="brick-mark" aria-hidden="true">▦</span><strong>BRICK ATLAS</strong><span class="brand-sub">BENCHMARK</span></a>
+    <span class="local-label">本机预览 · 尚未上传公共平台</span>
+  </header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">DATASET EXPLORER / 数据集浏览</p><h1>一道题，究竟给什么、做什么？</h1>
+      <p class="lead">直接看模型收到的图、它能执行的动作，以及怎样判断拼对。静态修复和动态拼装，都用真实题目展示。</p></div>
+      <div class="stats" aria-label="当前题库规模"><div><b id="total">—</b><span>当前任务</span></div><div><b id="static-count">—</b><span>静态任务</span></div><div><b id="dynamic-count">—</b><span>动态任务</span></div><div><b>95</b><span>完整配图例子</span></div></div>
+    </section>
+    <nav class="main-tabs" aria-label="页面内容">
+      <button data-page="browse" class="active">01　浏览我们的题目</button>
+      <button data-page="peers">02　别人怎么存、怎么展示</button>
+      <button data-page="design">03　位置编号，还是坐标？</button>
+    </nav>
+    <section id="browse" class="page">
+      <div class="scope-note"><strong>这次能看到什么：</strong>全部 5,793 题的目录，以及 95 个已有完整图片、原始输入和参考动作的例子。其他题目暂只展示目录，未声称已经导出全量图包。本页含答案，供审题使用。</div>
+      <div class="featured" aria-label="快速查看例子"><span>先看一题</span><button data-example="Q084">赛车 · 静态偏移</button><button data-example="Q038">赛车 · 动态错色</button><button data-example="Q057">连续三次干扰</button><button data-example="Q039">本来就正确</button></div>
+      <div class="workspace">
+        <aside class="catalogue">
+          <div class="catalogue-title"><h2>题目目录</h2><a href="catalogue.jsonl" download>下载全部目录 ↓</a></div>
+          <label class="sr-only" for="search">搜索物件、题号或类别</label><input id="search" type="search" placeholder="搜索物件、题号、错误类别…">
+          <div class="filter-grid">
+            <label>浏览范围<select id="coverage"><option value="examples">95个完整图例</option><option value="all">全部5,793题</option></select></label>
+            <label>任务<select id="mode"><option value="">静态 + 动态</option><option value="static">静态修复</option><option value="dynamic">动态拼装</option></select></label>
+            <label>题库<select id="bank"><option value="">所有题库</option><option value="S">原静态 S</option><option value="D">原动态 D</option><option value="M">社区模块 M</option><option value="E7">本轮扩展 E7</option></select></label>
+            <label>难度组<select id="level"><option value="">所有难度</option><option>L1</option><option>L2</option><option>L3</option></select></label>
+          </div>
+          <p class="micro">L1–L3是暂定结构分组，尚未用真人／模型成功率校准。</p>
+          <div class="result-count" id="result-count" aria-live="polite"></div>
+          <div class="row-list" id="rows"></div>
+          <div class="pagination"><button id="previous">← 上页</button><span id="pagination-label"></span><button id="next">下页 →</button></div>
+        </aside>
+        <article id="sample-panel" class="sample-panel" aria-live="polite"><p class="loading">正在读取已有题目…</p></article>
+      </div>
+    </section>
+    <section id="peers" class="page" hidden>
+      <div class="section-heading"><p class="eyebrow">VERIFIED PUBLIC RELEASES</p><h2>公开数据文件和展示网页，承担不同的事。</h2><p>核对了作者的代码、Hugging Face 数据页和项目页面。下面的文件格式来自实际发布；中文解释是转述。</p></div>
+      <div id="peer-list"></div>
+      <section class="paper-panel"><h3>我们的发布包怎么组织？</h3><div class="two-columns"><div><p>建议分成“数据下载”和“图文浏览”两层。静态题可以一行一题；动态题还需要环境、每步观察与动作记录。</p><p>这次已实际导出全部目录、95个输入图包，以及分开的参考答案。它是本地展示包，尚未完成平台上传验证，也不是隐藏测试集发布包。</p><a href="metadata.jsonl" download>下载95个图例的索引 JSONL ↓</a></div><pre class="file-tree">brickplan-public-preview/
+├── index.html              图文浏览入口
+├── catalogue.jsonl         全部5,793题目录
+├── metadata.jsonl          95个配图样例索引
+├── assets/                 原始PNG图片
+└── samples/Q084/
+    ├── initial.model-input.json
+    ├── sample.json         浏览用信息
+    └── reference.answer.json
+
+动态例子另有 observation-N.model-input.json
+参考动作只代表一种可行拼法。</pre></div><p class="micro">Hugging Face 支持图片配合 metadata.jsonl、Parquet 等方式；展示页可显示图片和字段。正式上传时需检查图片列识别、数据分组与实际可加载性。<a href="https://huggingface.co/docs/hub/datasets-image" target="_blank" rel="noopener">官方图片数据说明 ↗</a></p></section>
+    </section>
+    <section id="design" class="page" hidden>
+      <div class="section-heading"><p class="eyebrow">ACTION DESIGN</p><h2>主评测保留位置编号，坐标另设一组。</h2><p>两种方式测到的能力不同。先把观察、发现错误、修复规划测清楚，再单独考精确定位。</p></div>
+      <div class="comparison-table"><table><thead><tr><th>方式</th><th>模型需要决定什么</th><th>适合测什么</th><th>我们目前的状态</th></tr></thead><tbody>
+        <tr><td><strong>位置编号</strong><br>A07 → C12</td><td>选零件、选一个明确的位置与朝向</td><td>看图判断、选位置、修复顺序与持续检查</td><td><span class="pill">当前模型接口</span></td></tr>
+        <tr><td><strong>坐标与朝向</strong><br>位置 + 旋转</td><td>自己算位置和方向；还需明确单位与允许误差</td><td>空间定位、姿态估计、精确安装</td><td>底层有姿态能力；当前视觉API没有统一开放这条评测路线</td></tr>
+        <tr><td><strong>接点配对</strong><br>A07.a → B03.p</td><td>选连接双方，必要时补角度或深度</td><td>特殊接口与机械连接关系</td><td>已有底层连接器；统一公开接点标记尚待补齐</td></tr>
+        <tr><td><strong>自然语言说明</strong><br>“把圆弧装到车头”</td><td>文字解释意图，但仍可能缺少唯一位置</td><td>解释与沟通；执行需要额外解析规则</td><td>不作为当前动作评分依据</td></tr>
+      </tbody></table></div>
+      <div class="paper-panel"><h3>现在到底算选择题，还是自由回答？</h3><p><strong>整道题是交互操作任务，每一步的位置选择是有限选项。</strong> 模型自由决定看什么、装哪块、拆哪块，以及什么时候结束；动作通过结构化字段提交。它不用从整道题的A/B/C答案里选一个，也不靠一段自由文本解释得分。</p><p>位置编号已经绑定了精确位置和朝向，但编号不标“正确”。最终结构正确、每步合法即可；不要求照参考动作走。</p><p>候选位置减少了自己求精确坐标的工作量。这是当前任务边界，不能据此声称已评估任意连续定位。若加入坐标组，两组成绩应分别报告。</p></div>
+    </section>
+    <footer><span>Brick Atlas · 当前范围 2026-10-23</span><span>H12、H14–H17已排除；H18待定。展示内容不等于模型实测成绩。</span></footer>
+  </main>
+  <dialog id="zoom"><div class="zoom-bar"><span>原始图片 · 可滚动查看</span><button id="close-zoom">关闭 ×</button></div><img alt="原始分辨率图片"></dialog>
+  <div id="toast" role="status"></div>
+</body>
+</html>

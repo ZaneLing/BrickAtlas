@@ -1,0 +1,94 @@
+[
+  {
+    "name": "LEGO-Puzzles",
+    "kind": "看图答题 · TSV数据表",
+    "summary": "公开页面可以逐行看题目、选项和答案。它的VQA任务包含选择题与排序题，不是每答一步就改变积木场景。",
+    "storage": "TSV包含题号、类别、问题、选项、答案及图片信息。作者的Hugging Face页面展示这些列；其中image在该发布中还是编码字符串。",
+    "display": "Hugging Face题目表 + 项目页的图文例子。图片编码字段存在，不等于页面一定会自动把它显示成图片。",
+    "output": "选答案字母；排序任务返回字母顺序。另有图像生成扩展任务。",
+    "image": "references/lego-puzzles-rotation.png",
+    "imageCaption": "作者公开的旋转任务示例图，原图未修改；不是我们的题目。",
+    "links": [
+      {
+        "title": "实际数据页",
+        "url": "https://huggingface.co/datasets/KexianTang/LEGO-Puzzles"
+      },
+      {
+        "title": "数据与评测代码",
+        "url": "https://github.com/Tangkexian/LEGO-Puzzles"
+      }
+    ],
+    "fileExample": "实际字段（仅列结构）：\n\nindex / category\nquestion / question_type\nA / B / C / D / E\nanswer\nimage_path / image\n\n一行对应一道题。\n图片可为编码内容；评测程序负责解码。"
+  },
+  {
+    "name": "PhyBlock",
+    "kind": "积木拼装 · 图片与结构JSON",
+    "summary": "作者把目标图、候选图和结构文件分开存储。项目代码页还用GIF展示模型拼装过程。",
+    "storage": "目标结构JSON保存零件类型、颜色、位置、旋转、层次与依赖；另有候选JSON及PNG图片。官方Hugging Face发布提供图片浏览。",
+    "display": "Hugging Face图片预览 + GitHub过程GIF；网页展示和后台验收结构并不是同一份输入。",
+    "output": "逐步模式返回Move(候选编号)或Done。所查执行器从任务记录读取落点，不能直接等同于我们自己选安装位置的动作。",
+    "image": "references/phyblock-example.png",
+    "imageCaption": "作者第000号目标／候选原图：目标在左，候选在右。",
+    "links": [
+      {
+        "title": "官方数据页",
+        "url": "https://huggingface.co/datasets/PhyBlock/PhyBlock_Benchmark"
+      },
+      {
+        "title": "目标JSON原文件",
+        "url": "https://github.com/PhyBlock/PhyBlock/blob/da81ed9cad8184509aadb6f01af83d53e5c9d6fa/data/SCENEs_400_Goal_Jsons/000.json"
+      },
+      {
+        "title": "执行器代码",
+        "url": "https://github.com/PhyBlock/PhyBlock/blob/da81ed9cad8184509aadb6f01af83d53e5c9d6fa/step_by_step_inference/block_env.py"
+      }
+    ],
+    "fileExample": "实际文件组织（节选路径）：\n\nSCENEs_400_Goal_Jsons/000.json\nSCENEs_400_Cand_Jsons/000_16_cand.json\nSCENEs_400_Goal_and_Cand_Imgs_resized/000.png\n\n结构字段：\nshape_name → blocks[]\n  type / color / position / euler\n  layer / depend / order\n\n这些结构字段不能全部当作模型已知输入。"
+  },
+  {
+    "name": "BrickBench / BrickAgent",
+    "kind": "文字设计需求 · 代码作品与三维画廊",
+    "summary": "每个任务是一个设计要求，模型用工具构建作品。项目页展示成品，并链接可旋转查看的作品画廊。",
+    "storage": "benchmark中按设置保存tasks.json；每条有任务id、prompt和用于评价的questions依赖图。提交作品包括build.py与model.mpd。",
+    "display": "项目介绍 + 可筛选的三维作品画廊 + GitHub数据和评测代码。",
+    "output": "生成构建代码和LDraw模型；不是每轮从A/B/C里选一个，也不是我们的一块一动作外部干扰任务。",
+    "links": [
+      {
+        "title": "项目与画廊入口",
+        "url": "https://brickben.ch/"
+      },
+      {
+        "title": "实际任务JSON",
+        "url": "https://github.com/kulits/BrickAgent/blob/b3df55e36c669b22ef089b13db1ee841907d09b3/benchmark/model/tasks.json"
+      },
+      {
+        "title": "作品画廊",
+        "url": "https://gallery.brickben.ch/"
+      }
+    ],
+    "fileExample": "实际任务字段（仅列结构）：\n\nid\nprompt\nquestions[]\n  key / question\n  kind / subtype / dependencies\n\n代理提交的文件：\nbuild.py\nmodel.mpd\n\nquestions是评价结构，不能当作交互动作列表。"
+  },
+  {
+    "name": "EmbodiedBench · 操作轨迹发布",
+    "kind": "逐步交互 · 轨迹JSON与图片归档",
+    "summary": "动态任务的公开资料不仅有题目，还保存模型每一步动作、动作后的画面和环境反馈。项目页展示成功与失败过程。",
+    "storage": "所查EB-Manipulation轨迹发布使用JSON文件和images.zip。每条轨迹有任务说明、模型名称、结果，以及逐步动作与图像路径。",
+    "display": "Hugging Face下载文件 + 项目页过程视频、案例和结果。它不是只有一个固定答案的题目表。",
+    "output": "这份轨迹记录的是离散的7维操作动作；EmbodiedBench其他环境的动作接口不同。",
+    "links": [
+      {
+        "title": "实际轨迹说明",
+        "url": "https://huggingface.co/datasets/EmbodiedBench/EB-Man_trajectory_dataset/blob/main/README.md"
+      },
+      {
+        "title": "任务数据文件",
+        "url": "https://huggingface.co/datasets/EmbodiedBench/EB-Manipulation/tree/main"
+      },
+      {
+        "title": "项目过程展示",
+        "url": "https://embodiedbench.github.io/"
+      }
+    ],
+    "fileExample": "轨迹字段（结构节选）：\n\nepisode_id / instruction\nmodel_name / eval_set / success\ntrajectory[]\n  executable_plan[]\n    step_id / img_path\n    action / action_success / env_feedback\n\n图像文件另存 images.zip。\n模型产生的轨迹，不是唯一参考答案。"
+  }
+]

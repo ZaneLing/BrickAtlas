@@ -20,6 +20,8 @@
 
 [全类别、全难度组题目图解：输入、输出与GT](deliverables/brickplan-question-showcase/README.zh-CN.md)：95个配图例子，覆盖全部92种现有组合，另附3个特殊诊断例子。[错误范围与H18库存核查](deliverables/brickplan-expansion-v7/HUMAN-ERROR-SCOPE.zh-CN.md)：目前显示全部零件目录，不是实时剩件清单。
 
+[题库公开展示预览](deliverables/brickplan-public-preview/README.zh-CN.md)：全部5,793题目录、95个完整图包、原生动作格式、独立参考答案及同行发布方式对照。双击`打开题库公开展示.command`，或访问启动后的 <http://127.0.0.1:8799/>。尚未上传公共平台。
+
 扩展条件已通过程序物理重放；可见性为机器检查，难度仍待真人／模型实测。本轮 API 花费为 0，扩展统计尚未回填下列 10 月 21 日论文，不能混用旧实验结果。
 
 ## 当前静态修复与动态拼装论文（2026-10-21）

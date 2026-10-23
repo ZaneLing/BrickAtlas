@@ -20,6 +20,8 @@ The user-approved scope contains **5,793 physical tasks**: 5,100 retained baseli
 
 [Illustrated inputs, outputs and GT](deliverables/brickplan-question-showcase/README.zh-CN.md): 95 examples covering all 92 current cells plus three diagnostics. [Scope and H18 inventory audit](deliverables/brickplan-expansion-v7/HUMAN-ERROR-SCOPE.zh-CN.md): inventory images show the full catalogue, not live remaining pieces.
 
+[Dataset browser preview](deliverables/brickplan-public-preview/README.zh-CN.md): all 5,793 catalogue entries, 95 native image/input/reference examples, action formats, and comparisons with public benchmark releases. Launch `打开题库公开展示.command` and open <http://127.0.0.1:8799/>. This is a local preview, not a public-platform upload.
+
 The 776 retained extension conditions are an unchanged subset of the 798 previously replayed conditions. Visibility checks are machine evidence; human readability and empirical difficulty remain pending. No paid model calls were made. These counts have not been inserted into the 21 October manuscript below, and do not extend its measured results.
 
 ## Current assembly and repair paper (21 October 2026)
