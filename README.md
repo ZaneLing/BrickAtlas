@@ -18,6 +18,8 @@ The additive extension admits **715 new physical tasks**, bringing the original 
 
 [Report and local gallery](deliverables/brickplan-expansion-v7/README.zh-CN.md) · [All models, cases and images](deliverables/brickplan-expansion-v7/MODEL-CASE-CATALOG.zh-CN.md) · [Human error evidence and exclusions](deliverables/brickplan-expansion-v7/human-error-research/README.zh-CN.md).
 
+[Illustrated inputs, outputs and GT across every populated category/difficulty group](deliverables/brickplan-question-showcase/README.zh-CN.md): 99 examples covering all 96 current bank/mode/category/structural-level cells plus three diagnostics, with complete reference actions and native observations.
+
 All 798 reference conditions pass physical replay. Visibility checks are machine evidence; human readability and empirical difficulty remain pending. No paid model calls were made. These counts have not been inserted into the 21 October manuscript below, and do not extend its measured results.
 
 ## Current assembly and repair paper (21 October 2026)

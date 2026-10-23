@@ -18,6 +18,8 @@
 
 [完成报告与启动方法](deliverables/brickplan-expansion-v7/README.zh-CN.md) · [逐物件、逐题配图清单](deliverables/brickplan-expansion-v7/MODEL-CASE-CATALOG.zh-CN.md) · [人类错误来源与取舍](deliverables/brickplan-expansion-v7/human-error-research/README.zh-CN.md)。
 
+[全类别、全难度组题目图解：输入、输出与GT](deliverables/brickplan-question-showcase/README.zh-CN.md)：99个配图例子，覆盖全部96种现有类别／难度组合，另附3个特殊诊断例子、完整参考操作和原生观察包。
+
 扩展条件已通过程序物理重放；可见性为机器检查，难度仍待真人／模型实测。本轮 API 花费为 0，扩展统计尚未回填下列 10 月 21 日论文，不能混用旧实验结果。
 
 ## 当前静态修复与动态拼装论文（2026-10-21）
