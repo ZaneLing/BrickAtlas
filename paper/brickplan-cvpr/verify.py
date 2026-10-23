@@ -104,8 +104,8 @@ def main():
     assert len(plan['primary']['S']['caseIds']) == 467
     assert len(plan['primary']['D']['faultIds']) == 168
     assert len(plan['primary']['D']['normalIds']) == 72
-    assert plan['workUnits'] == dict(staticAttempts=18540,dynamicJobs=10368,
-        faultJobsWithTwoContinuations=7344,total=28908,apiCalls=None,
+    assert plan['workUnits'] == dict(staticAttempts=5150,dynamicJobs=2880,
+        faultJobsWithTwoContinuations=2040,total=8030,apiCalls=None,
         additionalWork=['human common panel','ablations','perception probe','cross-model recovery','strategy and visual robustness','full-bank coverage','visual admission'])
     assignments = read(static/'splits.json')
     ss = {c['publicId']:c for c in cases}
@@ -128,9 +128,13 @@ def main():
     template = read(HERE/'evidence/results-template.json')
     assert template['status'] == 'NOT_RUN'
     roster = read(HERE/'evidence/model-roster.json')
-    assert len(roster['models']) == 12 and roster['apiCalls'] == 0
-    assert len({m['id'] for m in roster['models']}) == 12
+    assert len(roster['models']) == 10 and roster['apiCalls'] == 0
+    assert len({m['id'] for m in roster['models']}) == 10
     assert roster['models'] == plan['models'] == template['models']
+    assert roster['seeds'] == plan['seeds'] == template['seeds'] == [41]
+    assert roster['repetitions'] == plan['repetitions'] == template['repetitions'] == 1
+    assert not {'gpt6_astra','claude_opus55','gemini4_argon'} & {m['id'] for m in roster['models']}
+    assert set(plan['diagnosticModels']) <= {m['id'] for m in roster['models']}
     assert all(m['visionDocumented'] and not m['accountAccessVerified'] and m['servedRevision'] is None for m in roster['models'])
     assert len(template['tableMap']) == len(plan['experiments']) == 14
     assert plan['modelRosterSha256'] == digest(HERE/'evidence/model-roster.json')
@@ -142,6 +146,19 @@ def main():
         assert all(v is None for row in template[field] for k,v in row.items() if k not in metadata), field
     assert {row['track'] for row in template['repairQuality']} == {'S','M-static'}
     assert plan['additionalDesign']['crossRecovery']['implementation'].startswith('PLANNED')
+    budget=read(HERE/'evidence/budget-single-run.json')
+    assert budget['repetitions']==1 and budget['modelCount']==len(roster['models'])
+    assert budget['workUnits']==plan['workUnits']['total']==8030 and budget['apiCallsExecuted']==0
+    assert budget['diagnosticModelIds']==plan['diagnosticModels']
+    a=budget['assumptions']
+    calls=515*a['staticDecisions']+84*a['normalDynamicDecisions']+204*a['pairedDynamicDecisions']
+    assert calls==a['decisionsPerModel']==14750
+    for price in budget['prices']:
+        expected=round(calls*(a['inputTokensPerDecision']*price['inputPerMillion']+a['billableOutputTokensPerDecision']*price['outputPerMillion'])/1e6,2)
+        assert expected==price['estimatedPrimaryUSD']
+    assert abs(sum(row['estimatedPrimaryUSD'] for row in budget['prices'])-budget['primaryAPI'])<.01
+    assert {row['model'] for row in budget['prices']}=={m['id'] for m in roster['models'] if m['access']=='API'}
+
 
     assert all(v is None for r in template['main'] for k,v in r.items() if k != 'model')
     assert set(provenance['radars']) == {'evaluation-radar','error-radar'}
@@ -194,11 +211,11 @@ def main():
         pdfs[name] = dict(pages=len(document),sha256=digest(path),
                           minimumEmbeddedImagePpi=round(min(ppis)),embeddedFonts=len(fonts))
     result = dict(schema='brickplan-paper-verification/3',status='PASS',
-                  snapshotDate='2026-10-22',mainBodyPages=8,pdfs=pdfs,
+                  snapshotDate='2026-10-23',mainBodyPages=8,pdfs=pdfs,
                   staticRecordedReplays=3292,dynamicRecordedReplays=1872,
                   totalCurrentCaseRecords=5260,configurationEntries=240,
                   staticSplitReassignments=151,staticPrimaryTestCases=467,
-                  plannedModelSlots=12,plannedResultTables=14,plannedIndependentHumanCompletions=216,
+                  plannedModelSlots=10,plannedRunsPerCase=1,plannedResultTables=14,plannedIndependentHumanCompletions=216,
                   communityCases=96,protocolStudyTrials=96,protocolStudyApiCalls=0,
                   nativeSceneRenders=len(provenance['renders']),nativeScenePixels=[3200,2400],figureCount=15,
                   archivedModelDecisionsVerified=32,radarProfilesUnmeasured=True,

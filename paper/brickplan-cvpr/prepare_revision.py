@@ -68,11 +68,13 @@ for page in range(2):
 (HERE/'static-inventory.tex').write_text('\n'.join(out)+'\n')
 # Named candidates; all measured cells remain null. No model API is called.
 roster_path=HERE/'evidence/model-roster.json'
-models=read(roster_path)['models']
-diagnostic_ids={'gpt61_sol','gemini4_argon','qwen35_27b'}
+roster=read(roster_path)
+models=roster['models'];seeds=roster['seeds'];repeats=roster['repetitions']
+assert repeats == len(seeds) == 1
+diagnostic_ids=set(roster['diagnosticModels'])
 diagnostic_models=[m for m in models if m['id'] in diagnostic_ids]
 metrics=['static_S_success','static_M_success','dynamic_D_control_success','dynamic_D_trigger_coverage','dynamic_D_recovery','dynamic_M_control_success','dynamic_M_trigger_coverage','dynamic_M_recovery','illegal_attempt_rate','decision_count','latency_seconds','cost_usd']
-result=dict(schema='brickplan-planned-results/1',status='NOT_RUN',models=models,seeds=[41,42,43],main=[dict(model=m['id'],**{k:None for k in metrics}) for m in models],human=dict(status='NOT_COLLECTED',**{k:None for k in metrics}),
+result=dict(schema='brickplan-planned-results/1',status='NOT_RUN',models=models,seeds=seeds,repetitions=repeats,main=[dict(model=m['id'],**{k:None for k in metrics}) for m in models],human=dict(status='NOT_COLLECTED',**{k:None for k in metrics}),
             ablations=[dict(variant=v,model=m['id'],D_recovery=None,M_recovery=None,illegal_rate=None) for v in ['full','no_previous_view','no_manual_M_only','no_candidate_preview','legality_success_failure_only','symbolic_state_privileged'] for m in diagnostic_models],
             perError=[dict(error=k,**{m['id']:None for m in models},human=None) for k in sorted({c['kind'] for c in dynamic if c['kind']!='none'})],
             difficulty=[dict(partsBin=b,stage=s,temporaryDisassembly=t,recovery=None,n=None) for b in ['4-7','8-10','11-16'] for s in ['early','middle','late'] for t in [False,True]])
@@ -159,9 +161,9 @@ assert set(appear.values())=={3} and len(appear)==72
 for schedule in schedules:
  assert len(schedule['conditions'])==36 and len({e['pairId'] for e in schedule['conditions']})==36
  assert sum(e['condition']=='fault' for e in schedule['conditions'])==18
-manifest=dict(schema='brickplan-experiment-design/1',status='PLANNED_NOT_EXECUTED',models=models,seeds=[41,42,43],
+manifest=dict(schema='brickplan-experiment-design/1',status='PLANNED_NOT_EXECUTED',models=models,seeds=seeds,repetitions=repeats,
  primary={'S':{'caseIds':test['publicIds'],'sourceGroups':test['sourceModels'],'visualAdmission':'PENDING'},'D':{'faultIds':balanced['interventions'],'normalIds':balanced['controls'],'pairing':'clone environment and visible conversation at admissible prefix; separate control continuation per fault'},'M':{'staticIds':Mstatic,'faultIds':Mfault,'normalIds':Mnormal,'scope':'Public development panel, not unseen-source evaluation'}},
- workUnits=dict(staticAttempts=(467+48)*len(models)*3,dynamicJobs=(168+72+36+12)*len(models)*3,faultJobsWithTwoContinuations=(168+36)*len(models)*3,total=(467+48+168+72+36+12)*len(models)*3,apiCalls=None,additionalWork=['human common panel','ablations','perception probe','cross-model recovery','strategy and visual robustness','full-bank coverage','visual admission']),
+ workUnits=dict(staticAttempts=(467+48)*len(models)*repeats,dynamicJobs=(168+72+36+12)*len(models)*repeats,faultJobsWithTwoContinuations=(168+36)*len(models)*repeats,total=(467+48+168+72+36+12)*len(models)*repeats,apiCalls=None,additionalWork=['human common panel','ablations','perception probe','cross-model recovery','strategy and visual robustness','full-bank coverage','visual admission']),
  human=dict(independentParticipants=6,pairs=pairs,conditions=72,completions=216,repeatsPerCondition=3,schedules=schedules,interface='Buttons and graphical actions; no written answer or JSON required',comparison='Between-participant conditions, not matched-history human trajectories'),
  decisionBudget='max(40, 6*N+20) per track; M additionally 4*N+12 manipulation attempts',
  transportRetries=2,sourceBootstrapReplicates=2000,capNote='No paid calls are authorized by this planning artifact alone; execution remains a later task.',sources=designsources)

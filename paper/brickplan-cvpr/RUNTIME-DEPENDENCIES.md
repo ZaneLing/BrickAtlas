@@ -66,7 +66,7 @@ no provider response text. No new API request is needed. The two radar figures
 read `evidence/results-template.json`; all current estimates are null and no
 model series is drawn. `evidence/radar-spec.json` records their axis definitions.
 
-`evidence/model-roster.json` lists twelve official-documentation-checked candidates.
+`evidence/model-roster.json` lists ten official-documentation-checked candidates.
 It does not verify account access or served revisions. `expand_experiments.py`,
 called by `prepare_revision.py`, generates fourteen unmeasured result tables and
 the model roster table. The paired API runner, perception probe adapter,

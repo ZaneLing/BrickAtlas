@@ -1,6 +1,6 @@
 # BrickPlan：静态修复与动态拼装论文
 
-更新：2026-10-22。**这是当前论文入口。** 旧版 BrickPlan 2.3、四物件示例和 v5 小汽车实验保留各自版本，不能拿它们的成绩代表新题库。
+更新：2026-10-23。**这是当前论文入口。** 旧版 BrickPlan 2.3、四物件示例和 v5 小汽车实验保留各自版本，不能拿它们的成绩代表新题库。
 
 ## 直接看
 
@@ -10,7 +10,7 @@
 - [图表怎么读、实测后怎么填](FIGURE-GUIDE.zh-CN.md)。
 - [全部模型与题目清单](ALL-MODELS.zh-CN.md)。
 - [下一步实验设计、操作安排与预算算法](EXPERIMENT-PLAN.zh-CN.md)。
-- [六篇同类 benchmark 的实验调研与借鉴](EXPERIMENT-REFERENCE-REVIEW.zh-CN.md) · [12 个具体模型及官方来源](evidence/model-roster.json)。
+- [六篇同类 benchmark 的实验调研与借鉴](EXPERIMENT-REFERENCE-REVIEW.zh-CN.md) · [10 个具体模型及官方来源](evidence/model-roster.json)。
 - [具体题号与真人分配](evidence/experiment-design.json) · [空结果文件](evidence/results-template.json)。
 - [还差哪些实验才能有力投稿](SUBMISSION-READINESS.zh-CN.md)。
 - [正文源码](main.tex)、[补充源码](supplement.tex)、[参考文献](references.bib)、[自动核对结果](verification.json)。
@@ -39,7 +39,7 @@
 
 ## 实验已经设计到哪一步
 
-正文预留主结果、干扰影响、输入对比三张表；补充材料预留十一张分析表。12 个具名候选模型各重复 3 次，另有 6 人、216 次独立操作的小面板。所有未测值保持为空。
+正文预留主结果、干扰影响、输入对比三张表；补充材料预留十一张分析表。10 个具名候选模型各运行 1 次，另有 6 人、216 次独立操作的小面板。所有未测值保持为空。
 
 检查题目分组时，发现静态迁移替换后有 151 个题号仍使用旧来源分组；本次已按当前模型来源修正。现在训练/开发/测试分别为 2,286 / 539 / 467 题。新的分组见 `deliverables/brickplan-static-plate5/splits.json`，旧文件只作历史记录。具体题号、分支规则、错误类别、预算计算及填表位置见上面的实验指南。
 

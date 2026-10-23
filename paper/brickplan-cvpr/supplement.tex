@@ -528,16 +528,20 @@ BrickBench~\cite{kulits2026brickbench} & Validity, semantic quality, human judgm
 \end{table*}
 
 \paragraph{Models and primary samples.}
-Table~\ref{tab:roster} names twelve candidates from five families: eight
-commercial APIs and four open-weight checkpoints. Official provider
+Table~\ref{tab:roster} names ten candidates: four moderate-cost commercial
+APIs and six open visual checkpoints. Earlier Qwen2.5-VL and Gemma 3
+models complement the newer candidates; costly flagship APIs are omitted. Official provider
 catalogs and model cards document image inputs; account access is not
 tested. Open-weight sizes support within-family comparisons, not a
 claim that size alone explains performance. The machine-readable roster
 links every row to its official source. Before execution, record the
 returned API revision or checkpoint commit, engine, precision, image
 processing, and native reasoning/decoding settings. Do not silently
-replace an unavailable candidate; report it as not run. Apply seeds 41, 42, and 43 to handle randomization and repeated
-runs; a provider seed is recorded only when supported. The S test list
+replace an unavailable candidate; report it as not run. Use one run per case and seed 41 for handle randomization; record a
+provider seed only when supported. Source-clustered intervals quantify
+variation across sources, not decoding stability across repeated runs.
+Generation/size comparisons also differ in training and architecture,
+so neither effect is isolated. No frontier-model claim is made. The S test list
 contains 467 question IDs from 20 source groups. Migration changed the
 source of some questions; 151 stale assignments are repaired while
 retaining the existing source-group allocation. The corrected current
@@ -571,9 +575,9 @@ additional construction controls; each of its 168 fault jobs still needs
 its own cloned control continuation. Keep scheduled faults with no
 admissible prefix in the exposure denominator, and report their stopping
 reasons. Count every API call in both continuations. The base plan has
-18,540 static attempts and 10,368 dynamic shared-prefix or normal jobs
-across twelve models and three repetitions (28,908 work units, not API calls).
-There are 7,344 fault jobs, each requiring two continuations when the
+5,150 static attempts and 2,880 dynamic shared-prefix or normal jobs
+across ten models with one run per case (8,030 work units, not API calls).
+There are 2,040 fault jobs, each requiring two continuations when the
 prefix is reached. Ablations, the human-comparison panel, detection probes, cross-model
 recovery, strategy/visual tests, admission, and full-bank coverage are
 additional work. Overlapping identical runs are reused, not counted twice.
@@ -610,13 +614,13 @@ participants. The exact schedule is saved before collection. Train on
 separate practice scenes. Record completion, exposure, actions, time,
 and an optional ``cannot see / cannot operate'' button. This is not
 three independent records when only one person submits an answer.
-The same panel is evaluated with all twelve models under the same views, action
-limits, and seeds. Human estimates additionally cluster by participant.
+The same panel is evaluated with all ten models once under the same views, action
+limits, and seed 41. Human estimates additionally cluster by participant.
 
 \input{tables/human-panel}
 
 \paragraph{Ablations and analysis units.}
-Use GPT-6.1 Sol, Gemini 4 Argon, and Qwen3.5-27B for diagnostic
+Use GPT-6.1 Sol, Gemini 3.8 Flash, and Qwen3.5-27B for diagnostic
 experiments, selected before viewing outcomes. Apply no-manual only to
 M, no-previous-view only to dynamic tracks, and keep all other inputs
 and cases fixed. The privileged symbolic condition may expose actual
@@ -625,7 +629,7 @@ actions. Recompute both control and fault continuations when input
 changes alter the prefix. Report source-macro completion and recovery,
 as well as aggregate exposure numerator/denominator; do not average
 undefined stratum rates as zero. Use 2,000 bootstrap replicates clustered
-by source, retaining seeds and case variants together; paired differences
+by source, retaining case variants together; paired differences
 resample the same sources. Sparse categories remain descriptive.
 
 \input{tables/difficulty}

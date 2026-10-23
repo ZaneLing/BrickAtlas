@@ -1,0 +1,126 @@
+{
+  "schema": "brickplan-single-run-budget/1",
+  "date": "2026-10-23",
+  "status": "ESTIMATE_NOT_RUN",
+  "apiCallsExecuted": 0,
+  "currency": "USD",
+  "modelCount": 10,
+  "repetitions": 1,
+  "workUnits": 8030,
+  "scope": "Primary test panel plus additional experiments; excludes full-bank coverage, human compensation and tax",
+  "assumptions": {
+    "staticDecisions": 10,
+    "normalDynamicDecisions": 22,
+    "pairedDynamicDecisions": 38,
+    "inputTokensPerDecision": 8000,
+    "billableOutputTokensPerDecision": 800,
+    "decisionsPerModel": 14750,
+    "uncachedStandardPricing": true,
+    "allFaultPrefixesAssumedReached": true
+  },
+  "prices": [
+    {
+      "model": "gpt61_sol",
+      "inputPerMillion": 2,
+      "outputPerMillion": 10,
+      "estimatedPrimaryUSD": 354.0
+    },
+    {
+      "model": "claude_sonnet55",
+      "inputPerMillion": 2,
+      "outputPerMillion": 10,
+      "estimatedPrimaryUSD": 354.0
+    },
+    {
+      "model": "gemini38_flash",
+      "inputPerMillion": 0.75,
+      "outputPerMillion": 3.75,
+      "estimatedPrimaryUSD": 132.75
+    },
+    {
+      "model": "claude_haiku55",
+      "inputPerMillion": 0.1,
+      "outputPerMillion": 0.5,
+      "estimatedPrimaryUSD": 17.7
+    }
+  ],
+  "sources": [
+    "https://developers.openai.com/api/docs/pricing",
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://ai.google.dev/gemini-api/docs/pricing",
+    "https://www.runpod.io/pricing"
+  ],
+  "primaryAPI": 858.45,
+  "primaryGPU": [
+    350,
+    950
+  ],
+  "additionalAPI": [
+    550,
+    750
+  ],
+  "additionalGPU": [
+    150,
+    350
+  ],
+  "reserveFraction": 0.2,
+  "diagnosticModelIds": [
+    "gpt61_sol",
+    "gemini38_flash",
+    "qwen35_27b"
+  ],
+  "gpuAssumptions": {
+    "small7to9B": {
+      "models": 3,
+      "hoursEach": [
+        30,
+        70
+      ],
+      "gpu": "L40S 48GB",
+      "usdPerHour": 1.09
+    },
+    "gemma12B": {
+      "models": 1,
+      "hoursEach": [
+        30,
+        90
+      ],
+      "gpu": "L40S 48GB",
+      "usdPerHour": 1.09
+    },
+    "large27to32B": {
+      "models": 2,
+      "hoursEach": [
+        40,
+        120
+      ],
+      "gpu": "RTX Pro 6000 96GB",
+      "usdPerHour": 2.49
+    },
+    "throughputMeasured": false
+  },
+  "additionalAssumptions": {
+    "variantPanelPairs": 24,
+    "fullPanelEquivalentAdditionalVariants": 10.5,
+    "commercialVariantDecisionsPerModel": 15120,
+    "commercialVariantUSD": 498.96,
+    "scope": "Includes allowance for separate judgment, cross-model continuations, doubled decision budget and non-reusable common-panel jobs; no second charge for identical baseline runs"
+  },
+  "heavyScenario": {
+    "staticDecisions": 18,
+    "normalDynamicDecisions": 35,
+    "pairedDynamicDecisions": 64,
+    "inputTokens": 24000,
+    "billableOutputTokens": 2500,
+    "primaryAPI": 4472.71
+  },
+  "recommendation": "Primary $1,500-2,200; primary plus diagnostics $2,500-3,500; not a hard upper bound. Pilot required before committing spend.",
+  "primaryIncludingReserve": [
+    1450.14,
+    2170.14
+  ],
+  "totalIncludingReserve": [
+    2290.14,
+    3490.14
+  ]
+}
