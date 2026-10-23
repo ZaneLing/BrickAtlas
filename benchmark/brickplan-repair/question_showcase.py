@@ -11,6 +11,7 @@ import hashlib
 import io
 import json
 import os
+import shutil
 import sys
 
 HERE=Path(__file__).resolve().parent
@@ -128,7 +129,7 @@ def dataset():
     for m in new_models.values():
         for c in read(EXT/'models'/m['id']/'cases.private.json.gz'):
             add('E7',c,c['mode'],c['family'],m['id'],m['title'])
-    assert len(rows)==5975
+    assert len(rows)==master['combinedPhysicalTasks']
     return rows,old_modules,new_models
 
 
@@ -166,7 +167,7 @@ def select(rows):
         else:pool.sort(key=preference)
         chosen=pool[0];used.add(chosen['key']);examples.append(dict(chosen,purpose=purpose,cellCount=len(groups[cell(chosen)])))
     for i,r in enumerate(examples,1):r['example']='Q'+str(i).zfill(3)
-    assert len(groups)==96 and len(examples)==99
+    assert len(examples)==len(groups)+3
     assert {r['model'] for r in examples if r['bank']=='E7'}==set(models)
     return examples,groups
 
@@ -230,7 +231,7 @@ def capture(ctx,ep,row,stage):
     forbidden={'initial','goal','oraclePlan','privateEvent','referenceActions','humanErrorIds','family','events'}
     assert not forbidden.intersection(obs)
     path=OUT/'inputs'/row['example']/(stage+'.json')
-    dump(path,dict(observation=obs,images=records,assetPathBase='deliverables/brickplan-question-showcase',
+    dump(path,dict(observation=obs,images=records,assetPathBase=OUT.relative_to(ROOT).as_posix(),
         **({'system':S_SYSTEM if row['bank']=='S' else D_SYSTEM} if row['bank'] in ('S','D') else {})))
     return dict(input=path.relative_to(OUT).as_posix(),images=records)
 
@@ -354,7 +355,8 @@ def image_table(records,roles=None):
 def write_markdown(examples,groups,rows):
     lines=['# 全类别、全难度组题目图解：输入、输出与GT','',
         '更新：2026-10-23。**GT就是参考正确答案。** 这份文件供你审题，含错误名称、后台事件和参考修法，不能整份发给被测模型。','',
-        '本文件覆盖现有 **5,975道物理任务**中全部 **96种实际存在的“题库 × 静态或动态 × 错误类别 × 结构难度组”组合**，每种选一道；另加3道特殊诊断题，共 **99个完整图解例子**。本轮扩展的21个物件配置全部至少出现一次。不是把5,975道题逐题展开，也没有为不存在的难度组合编题。','',
+        f'本文件覆盖当前范围内 **{len(rows):,}道物理任务**中全部 **{len(groups)}种实际存在的“题库 × 静态或动态 × 错误类别 × 结构难度组”组合**，每种选一道；另加3道特殊诊断题，共 **{len(examples)}个完整图解例子**。本轮扩展的21个物件配置全部至少出现一次。不是把全库逐题展开，也没有为不存在的难度组合编题。','',
+        '**当前范围：**H01–H11、H13；H12、H14–H17不做，H18待定。正常对照仍保留，不等于另做H18。[用户确认范围与库存核查](../brickplan-expansion-v7/HUMAN-ERROR-SCOPE.zh-CN.md)。','',
         '下面所有操作与图片都来自实际题目和现有执行器。程序已重放这些参考操作；没有调用模型API，没有把程序答案当作模型成绩。','',
         '## 先看懂一题','',
         '1. **看左边当前状态，右边是本题唯一目标。** 静态题可能只要求恢复某个中途阶段，不一定要求完整成品。',
@@ -390,7 +392,8 @@ def write_markdown(examples,groups,rows):
     for bank in BANKS:
         rr=[r for r in rows if r['bank']==bank];counts=Counter(r['level'] for r in rr)
         lines.append(f'| {BANKS[bank]} | {len(rr)} | {counts["L1"]} | {counts["L2"]} | {counts["L3"]} | {sum(k[0]==bank for k in groups)} |')
-    lines+=['','E7这里只计715道新增物理任务；另外83条复用旧题的接口条件不重复计数。M有96题，包含静态与动态各48题。','',
+    lines+=['',f'E7这里只计{sum(r["bank"]=="E7" for r in rows)}道当前新增物理任务；另外83条复用旧题的接口条件不重复计数。M有96题，包含静态与动态各48题。D的历史原始库仍保留1,872题，当前题单不含其中160道H12；扩展也已排除22条H12条件。','',
+        '当前“库存图”展示全部可选零件，已经安装的件仍在其中；没有实时剩件图、剩件数或剩件清单，不能据此声称已完成H18测试。','',
         '## 先认物件：完整外观参考','',
         '下图只帮助你认出是什么物件，属于审题说明，不是额外发送给模型的目标。具体该拼到哪一步，仍以每道题的右侧唯一目标为准。原S题是从套装中抽取的局部结构，不是整套模型复原任务。','',
         '原D中的42个简化完整物件：','',
@@ -493,8 +496,8 @@ def write_markdown(examples,groups,rows):
         '- 评分：先看最终是否完成；动态主修复结论还要求相同前半程的正常分支成功、计划事件实际触发、服务正常。未触发和服务错误单列。',
         '- 难度：仍需真实人类／模型成绩验证。本文没有虚构模型成功率、真人回答或错误发生频率。','',
         '## 全题库与来源入口','',
-        '- [5,975道任务的统一来源索引](../brickplan-expansion-v7/global-splits.csv)。',
-        '- [798条扩展条件逐题清单，含83条旧题的新接口条件](../brickplan-expansion-v7/MODEL-CASE-CATALOG.zh-CN.md)。',
+        '- [当前范围的全任务统一来源索引](../brickplan-expansion-v7/global-splits.csv)。',
+        '- [当前扩展条件逐题清单，含83条旧题的新接口条件](../brickplan-expansion-v7/MODEL-CASE-CATALOG.zh-CN.md)。',
         '- [原静态题库说明](../brickplan-static-plate5/README.zh-CN.md)、[原动态全部物件](../brickplan-dynamic-v6/OBJECTS.zh-CN.md)、[原社区模块清单](../brickplan-community-modules/MODEL-CASE-CATALOG.zh-CN.md)。',
         '- [30个网上来源、18种人类错误／问题和纳入范围](../brickplan-expansion-v7/human-error-research/README.zh-CN.md)。','']
     (OUT/'README.zh-CN.md').write_text('\n'.join(line.rstrip() for line in lines).rstrip()+'\n')
@@ -507,7 +510,7 @@ def main():
     current=None;ctx=None;results={}
     for row in sorted(examples,key=lambda r:(r['bank'],r['model'],r['example'])):
         saved=OUT/'examples'/(row['example']+'.json')
-        if args.resume and saved.exists():
+        if args.resume and saved.exists() and read(saved)['key']==row['key']:
             result=read(saved)
             result['title']=row['title']
             gt=read(OUT/result['gtFile']);gt.pop('referenceIsUnique',None)
@@ -519,19 +522,27 @@ def main():
                     data=read(OUT/p);data['system']=S_SYSTEM if row['bank']=='S' else D_SYSTEM;dump(OUT/p,data)
             dump(saved,result)
         else:
+            stale=OUT/'inputs'/row['example']
+            if stale.exists():shutil.rmtree(stale)
             key=row['bank'],row['model']
             if key!=current:ctx=context(row,old_modules);current=key
             result=build_example(row,ctx)
         results[row['example']]=result
         print('EXAMPLE',row['example'],row['bank'],row['mode'],row['family'],row['level'],flush=True)
     ordered=[results[r['example']] for r in examples]
+    names=set(results)
+    for directory in ('examples','gt'):
+        for path in (OUT/directory).glob('Q*.json'):
+            if path.stem not in names:path.unlink()
+    for path in (OUT/'inputs').glob('Q*'):
+        if path.name not in names:shutil.rmtree(path)
     write_markdown(ordered,groups,rows)
     dump(OUT/'manifest.json',dict(examples=[{k:v for k,v in e.items() if k not in ('gt','initial','events','candidateExample')} for e in ordered],
         completeCellCoverage=len(groups),examplesCount=len(ordered),newModelConfigurationsCovered=len({r['model'] for r in examples if r['bank']=='E7'}),
         selectionPolicy='One per populated bank/mode/category/structural group, plus three diagnostics; no empirical performance selection',
-        representedPhysicalTasks=5975,referenceWitnessesPassed=len(ordered),apiModelCalls=0,
+        representedPhysicalTasks=len(rows),referenceWitnessesPassed=len(ordered),apiModelCalls=0,
         sourceFiles={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [
-            Path(__file__),EXT/'global-splits.json',EXT/'difficulty-all.json',
+            Path(__file__),EXT/'global-splits.json',EXT/'difficulty-all.json',EXT/'human-error-scope.json',
             ROOT/'deliverables/brickplan-static-plate5/cases.jsonl',ROOT/'deliverables/brickplan-dynamic-v6/cases.private.json',
             ROOT/'deliverables/brickplan-community-modules/cases.private.jsonl']}))
     print('DONE',len(ordered),'examples',len(groups),'populated cells',flush=True)

@@ -7,6 +7,7 @@ from collections import Counter
 from urllib.parse import urlparse
 from expansion_v7 import OUT
 from expansion_v7.build import write
+from expansion_v7.scope import APPROVED,EXCLUDED,DEFERRED,POLICY
 
 # title, URL, relevant evidence paraphrase, source kind. Relevant passages were
 # inspected via the web research tools on 2026-10-23; thread comments may change.
@@ -50,7 +51,7 @@ SOURCES = [
 ('S19','Extra parts after a bag','https://www.reddit.com/r/lego/comments/11183xw/',
  '讨论多余零件可能来自漏装或包装数量问题，帖子未形成单一确定诊断。','community-unresolved'),
 ('S20','Three days to build, one mistake to unbuild','https://www.reddit.com/r/lego/comments/1pkivj9/',
- '作者说明搬动展示时未托住主体，碟形部分脱落；刚性任务只模拟脱落后的结构变化。','community-self-report'),
+ '作者说明搬动展示时未托住主体，碟形部分脱落；此类H12现按用户决定不纳入题库。','community-self-report'),
 ('S21','First time building Technic','https://www.reddit.com/r/lego/comments/1v9kf2o/',
  '建造建议指出近似销、轴、齿轮容易拿混；描述小错误在后续暴露且难以拆修。','community-advice'),
 ('S22','A supposedly missing piece after 27 years','https://www.reddit.com/r/lego/comments/1sc7j9a/',
@@ -85,13 +86,13 @@ TAXONOMY = [
 ('H09','顺序不当，提前封住安装通路','early-cover',['S01'],'simulate'),
 ('H10','早期内部错误，后期需要拆开返修','buried-repair',['S13','S15','S26'],'simulate'),
 ('H11','多一层导致高度不一致','extra-layer',['S27'],'simulate'),
-('H12','搬动时局部散开、连带掉件','cascade-removal',['S20','S05'],'simulate-state-only'),
+('H12','搬动时局部散开、连带掉件','cascade-removal',['S20','S05'],'excluded-by-user'),
 ('H13','修复后又遇到或造成其他错误','multi-event',['S11','S17','S26'],'temporal-stress-proxy'),
 ('H14','没有压紧、松动或受力变形',None,['S28','S20'],'excluded-contact-physics'),
 ('H15','齿轮能动但传动功能不对',None,['S03','S29'],'excluded-functional-test-missing'),
 ('H16','说明书印错、跳页、标注错误',None,['S16','S18'],'excluded-input-defect'),
 ('H17','真正缺货、包装发错、零件损坏',None,['S02','S19','S22'],'excluded-unsolvable-or-inventory-task'),
-('H18','看到库存剩余件就误以为结构有错','normal-control',['S19','S24','S25'],'normal-control'),
+('H18','看到库存剩余件就误以为结构有错','normal-control',['S19','S24','S25'],'deferred-inventory-design'),
 ]
 
 
@@ -100,7 +101,9 @@ def main():
     sources=[dict(id=i,title=t,url=u,summaryZh=s,kind=k,accessed='2026-10-23',
         evidenceStatus='relevant-page-sections-read',locator='Thread body and relevant comments, or named article sections',
         populationEstimate=False) for i,t,u,s,k in SOURCES]
-    taxonomy=[dict(id=i,title=t,simulationFamily=f,sourceIds=s,status=status) for i,t,f,s,status in TAXONOMY]
+    taxonomy=[dict(id=i,title=t,simulationFamily=f,sourceIds=s,status=status,
+        userDecision='do' if i in APPROVED else 'do-not-do' if i in EXCLUDED else 'undecided',
+        activeBenchmarkCategory=i in APPROVED) for i,t,f,s,status in TAXONOMY]
     write(directory/'sources.json',dict(sources=sources,sourceCount=len(sources),
         domains=dict(Counter(urlparse(s['url']).netloc for s in sources)),
         method='Purposive web search and relevant passage reading; not a systematic prevalence survey.',
@@ -108,23 +111,31 @@ def main():
         unsuccessfulBackgroundReads=[dict(url='https://papers.iafor.org/submission41389/',reason='403; not used as full-text evidence'),
             dict(url='https://escholarship.org/uc/item/1sf2c7jf',reason='Anti-bot page; not used as full-text evidence')]))
     write(directory/'taxonomy.json',dict(categories=taxonomy,sourceLevel='Community-informed synthetic state errors',
-        realHumanTrajectoryDataset=False,oneToOneCauseInference=False))
+        realHumanTrajectoryDataset=False,oneToOneCauseInference=False,scopePolicy=POLICY,
+        approved=APPROVED,excluded=EXCLUDED,deferred=DEFERRED,H18StandaloneTaskImplemented=False))
     lines=['# 社区与网上的人类拼装错误：证据、取舍与题目对应', '',
         '核对日期：2026-10-23。共核对30个来源页面的相关正文／评论，包括社区、自述、官方指导及一篇原始研究。采用关键词和案例追踪，未随机抽样。', '',
         '**这些来源支持“这种错误确实有人遇到过”；不支持发生率、年龄差异或代表全体玩家。新题是受社区证据启发的合成状态，不是真人操作轨迹。**', '',
+        '## 用户确认的范围', '',
+        '- 做：H01–H11、H13。',
+        '- 不做：H12、H14、H15、H16、H17。H12已从当前扩展题单和统一评测题单排除；历史记录仅供追溯。',
+        '- H18待定，不计作已实现的人类错误类别。现有输入展示全部零件目录，已装上的件仍在目录里；没有实时剩件清单。',
+        '- 正常拼装／正常验收对照继续保留，这是对照需求，不代表另做了H18实验。',
+        '- [剩件信息到底有没有给模型：实际接口核查](../HUMAN-ERROR-SCOPE.zh-CN.md)。', '',
         '## 错误怎么纳入', '', '| 编号 | 人类错误／问题 | 题目机制 | 来源 | 处理 |', '|---|---|---|---|---|']
     by_id={s['id']:s for s in sources}
     for row in taxonomy:
         refs='、'.join(f'[{s}]({by_id[s]["url"]})' for s in row['sourceIds'])
-        lines.append(f'| {row["id"]} | {row["title"]} | {row["simulationFamily"] or "暂不生成"} | {refs} | {row["status"]} |')
+        decision='做' if row['id'] in APPROVED else '不做（用户已排除）' if row['id'] in EXCLUDED else '待定；未实现独立任务'
+        lines.append(f'| {row["id"]} | {row["title"]} | {row["simulationFamily"] or "不生成"} | {refs} | {decision} |')
     lines += ['', '## 模拟边界', '',
         '- 漏看x2用相同类型／颜色的两个位置缺失来模拟，不声称读取了人类的注意过程。',
         '- 左右错误只使用合法刚体位姿、两个不同位置的实际零件。没有生成负行列式的镜像零件；普通左右位置互换也不冒充真实手性零件镜像。',
         '- 错轴长、错齿轮等社区例子只为相似零件选择提供依据；当前题目使用能验证几何的替代零件，不声称已测传动功能。',
         '- 多次事件测试连续恢复；第二次后台干扰不等于证明模型或人类在第一次修复时制造了该错误。',
         '- 所有模拟事件都检查合法改动及逆向恢复；低可见和完全遮挡另列，不能算普通看图漏检。',
-        '- 说明书缺页、错误库存、压紧程度等保留在问题清单，分别需要信息鲁棒性、库存搜寻或接触物理任务。',
-        '- 正常题也保留备用件，库存有剩余件不代表装配出错。', '', '## 逐项来源摘要', '']
+        '- H12与H14–H17只保留调研出处，不纳入本项目当前题目和实验计划。',
+        '- 正常题也保留备用件；有未使用的备用件不代表结构出错。当前全零件目录不是实时剩件托盘，H18仍待定。', '', '## 逐项来源摘要', '']
     for s in sources:
         lines += [f'### {s["id"]} · [{s["title"]}]({s["url"]})', '',
             s['summaryZh'], '', f'证据类型：`{s["kind"]}`。按相关段落核对；未复制整帖，未按点赞数或自报次数加权。', '']

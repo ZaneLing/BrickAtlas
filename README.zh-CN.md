@@ -14,11 +14,11 @@
 
 ## 拼装与修复题库扩展（2026-10-23）
 
-按长流程、社区错误、多次干扰、人类错误依据、难度描述和来源分组六个方向扩展：新增 **715 道物理任务**，与原 5,260 道合计 **5,975 道**。扩展保存 798 条运行条件，其中 83 条复用旧物理任务，不重复计数。包含 5 个需拼 21–32 块的新物件、3 个新社区来源、47 条两次／三次干扰条件；30 个网上来源对应 18 种错误／问题。
+按用户确认的范围，目前共 **5,793 道物理任务**：原题当前范围5,100道，扩展新增693道。扩展保存776条运行条件，其中83条复用旧题，不重复计数。保留5个需拼21–32块的新物件、3个新社区来源和47条多次干扰条件。调研整理18种情况，当前做H01–H11、H13；H12、H14–H17不做，H18待定。
 
 [完成报告与启动方法](deliverables/brickplan-expansion-v7/README.zh-CN.md) · [逐物件、逐题配图清单](deliverables/brickplan-expansion-v7/MODEL-CASE-CATALOG.zh-CN.md) · [人类错误来源与取舍](deliverables/brickplan-expansion-v7/human-error-research/README.zh-CN.md)。
 
-[全类别、全难度组题目图解：输入、输出与GT](deliverables/brickplan-question-showcase/README.zh-CN.md)：99个配图例子，覆盖全部96种现有类别／难度组合，另附3个特殊诊断例子、完整参考操作和原生观察包。
+[全类别、全难度组题目图解：输入、输出与GT](deliverables/brickplan-question-showcase/README.zh-CN.md)：95个配图例子，覆盖全部92种现有组合，另附3个特殊诊断例子。[错误范围与H18库存核查](deliverables/brickplan-expansion-v7/HUMAN-ERROR-SCOPE.zh-CN.md)：目前显示全部零件目录，不是实时剩件清单。
 
 扩展条件已通过程序物理重放；可见性为机器检查，难度仍待真人／模型实测。本轮 API 花费为 0，扩展统计尚未回填下列 10 月 21 日论文，不能混用旧实验结果。
 

@@ -9,6 +9,7 @@ import random
 import numpy as np
 
 from expansion_v7 import PROTOCOL
+from expansion_v7.scope import require_allowed
 from community_modules.core import ModuleAssembly, Episode as BaseEpisode
 from baseplate import PlateAssembly
 
@@ -179,6 +180,7 @@ def runtime(cert):
 
 class Episode(BaseEpisode):
     def __init__(self, cert, case, seed=41):
+        require_allowed(case)
         self.cert, self.case = cert, deepcopy(case)
         self.schedule = deepcopy(case.get('events', []))
         self.case['event'] = None  # Parent handles only physical actions.
@@ -272,6 +274,7 @@ def public_action(ep, action):
 
 def fork(prefix, fault_case, seed=None):
     """Replay the exact common prefix, then enable the hidden schedule in one copy."""
+    require_allowed(fault_case)
     if prefix.events or prefix.done:
         raise ValueError('Branch requires an unfinished normal prefix')
     clones = []

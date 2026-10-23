@@ -7,6 +7,7 @@ import { request } from 'node:http';
 
 const out='deliverables/brickplan-expansion-v7', base=process.env.BRICKPLAN_GALLERY_URL||'http://127.0.0.1:8797';
 const models=JSON.parse(readFileSync(`${out}/gallery.json`,'utf8'));
+const summary=JSON.parse(readFileSync(`${out}/release-summary.json`,'utf8'));
 async function status(path,method='GET'){
   return new Promise((resolve,reject)=>{
     const req=request(base+path,{method},res=>{res.resume();res.on('end',()=>resolve(res.statusCode));});
@@ -27,13 +28,14 @@ for(const path of ['/models/','/models/v7-long-city-bus/certificate.private.json
   assert.equal(await status(path,'HEAD'),404,path);
 }
 for(const path of ['/README.zh-CN.md','/MODEL-CASE-CATALOG.zh-CN.md','/human-error-research/README.zh-CN.md',
-  '/global-splits.csv','/difficulty-all.json','/evaluation-sets.json'])assert.equal(await status(path),200,path);
+  '/global-splits.csv','/difficulty-all.json','/evaluation-sets.json','/HUMAN-ERROR-SCOPE.zh-CN.md','/inventory-audit/audit.json'])assert.equal(await status(path),200,path);
 const browser=await chromium.launch({channel:'chrome',headless:true});
 const page=await browser.newPage({viewport:{width:1440,height:1000}}), errors=[];
 page.on('pageerror',e=>errors.push(e.message));
 await page.goto(base);await page.waitForSelector('article');
 assert.equal(await page.locator('article').count(),21);
-assert.match(await page.locator('#counts').innerText(),/798/);
+assert.ok((await page.locator('#counts').innerText()).includes(String(summary.extensionConditions)));
+assert.equal(await page.locator('#family option[value="cascade-removal"]').count(),0);
 await page.locator('#events').selectOption('3');assert.equal(await page.locator('article').count(),7);
 assert.equal(await page.locator('article').first().locator('.timeline>div').count(),3);
 assert.match(await page.locator('article').first().innerText(),/第一次干扰后的状态/);

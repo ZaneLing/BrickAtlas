@@ -66,7 +66,7 @@
 
 部分：D-long；正常拼装／模块全长：32块；来源：`original:v7:long-city-bus`。
 
-本物件包含：拆上层返修、连带掉件、提前封口、局部多层／重复加件、左右互换、少件、偏移一格、重复组件漏做、错色、错零件／厚度。
+本物件包含：拆上层返修、提前封口、局部多层／重复加件、左右互换、少件、偏移一格、重复组件漏做、错色、错零件／厚度。
 
 连续干扰：连续：少件 → 错色；连续：少件 → 错色 → 偏移一格；连续：偏移一格 → 局部多层／重复加件；连续：错零件／厚度 → 少件。
 
@@ -118,10 +118,6 @@
 | `v7::v7-long-city-bus::dynamic::repeat-omission::t6` | dynamic | 重复组件漏做 | 1 | H02 | L2 | [三维画面](assets/v7-long-city-bus/2d7090d5d3b6c44a614af2f73707ef2834f86b6d040dca3d10ce43a138820f61.png) | 新增 |
 | `v7::v7-long-city-bus::static::repeat-omission::t6` | static | 重复组件漏做 | 0 | H02 | L1 | [三维画面](assets/v7-long-city-bus/93813f784dd3dc484729fab75d087c9aac5aafd730514b5863a9308417a02090.png) | 新增 |
 | `v7::v7-long-city-bus::static::control::t6` | static | 正常 | 0 | 正常 | L1 | [三维画面](assets/v7-long-city-bus/36af7b24b7fc376680522bd1d0aba15b7237671d3972e68ea6f024f40a10b83a.png) | 新增 |
-| `v7::v7-long-city-bus::dynamic::cascade-removal::t13` | dynamic | 连带掉件 | 1 | H12 | L2 | [三维画面](assets/v7-long-city-bus/41f0413da34743042e3dbaecd12cb3308ed4ea8ed2007bdf336b39b16e8b53b7.png) | 新增 |
-| `v7::v7-long-city-bus::static::cascade-removal::t13` | static | 连带掉件 | 0 | H12 | L1 | [三维画面](assets/v7-long-city-bus/853e33b7b8963e690e927473f5321411988b121a40dd440ea95df47b77e8aafd.png) | 新增 |
-| `v7::v7-long-city-bus::dynamic::cascade-removal::t14` | dynamic | 连带掉件 | 1 | H12 | L2 | [三维画面](assets/v7-long-city-bus/af63b70031000cefff5260341722e0123082323931d1ebc1ec3735534e2f7790.png) | 新增 |
-| `v7::v7-long-city-bus::static::cascade-removal::t14` | static | 连带掉件 | 0 | H12 | L1 | [三维画面](assets/v7-long-city-bus/3a0cb96b00b6fedf00abd7a5a287448020b022ab47f4b14a18addfb61c3eada4.png) | 新增 |
 | `v7::v7-long-city-bus::dynamic::multiple::missingthen-wrong-color` | dynamic | 连续：少件 → 错色 | 2 | H01, H04, H13 | L3 | [三维画面](assets/v7-long-city-bus/69eae09caf5a3a80753a6820b74a3a37dfbac9a320b512768679d05e0ddd76e7.png) | 新增 |
 | `v7::v7-long-city-bus::dynamic::multiple::offsetthen-extra-layer` | dynamic | 连续：偏移一格 → 局部多层／重复加件 | 2 | H03, H07, H11, H13 | L3 | [三维画面](assets/v7-long-city-bus/57d362b4b38ad409bcb6dbf5f55c4b390b11687664daeb13ae0604fd4babb96a.png) | 新增 |
 | `v7::v7-long-city-bus::dynamic::multiple::wrong-partthen-missing` | dynamic | 连续：错零件／厚度 → 少件 | 2 | H01, H05, H13 | L3 | [三维画面](assets/v7-long-city-bus/50f82778219a51068b219afb66cafa9b2a312d81d8d4d7ab062dcb952885dfe4.png) | 新增 |
@@ -131,7 +127,7 @@
 
 部分：D-long；正常拼装／模块全长：25块；来源：`original:v7:long-stone-bridge`。
 
-本物件包含：拆上层返修、连带掉件、提前封口、局部多层／重复加件、少件、偏移一格、重复组件漏做、装反、错色、错零件／厚度。
+本物件包含：拆上层返修、提前封口、局部多层／重复加件、少件、偏移一格、重复组件漏做、装反、错色、错零件／厚度。
 
 连续干扰：连续：少件 → 错色；连续：少件 → 错色 → 偏移一格；连续：偏移一格 → 局部多层／重复加件；连续：错零件／厚度 → 少件。
 
@@ -183,8 +179,6 @@
 | `v7::v7-long-stone-bridge::static::repeat-omission::t8` | static | 重复组件漏做 | 0 | H02 | L1 | [三维画面](assets/v7-long-stone-bridge/cbc355c7615d2ae531360ddd5f2c94e003fc971459160bbceb197d8e6a223e70.png) | 新增 |
 | `v7::v7-long-stone-bridge::dynamic::repeat-omission::t3` | dynamic | 重复组件漏做 | 1 | H02 | L2 | [三维画面](assets/v7-long-stone-bridge/6d17a067c87deea405bd1e9f0c35af6ed2f10798f607565948bfa8a07bb4507a.png) | 新增 |
 | `v7::v7-long-stone-bridge::static::repeat-omission::t3` | static | 重复组件漏做 | 0 | H02 | L1 | [三维画面](assets/v7-long-stone-bridge/ddda0f029b5141a2f784223bf1a7ebf3232893e76f05279750651466d5b18295.png) | 新增 |
-| `v7::v7-long-stone-bridge::dynamic::cascade-removal::t6` | dynamic | 连带掉件 | 1 | H12 | L2 | [三维画面](assets/v7-long-stone-bridge/1cf7f700bfaa5faff269cdb5469c0b49d7b2b5dd05778364b3b4abffe578d7a4.png) | 新增 |
-| `v7::v7-long-stone-bridge::static::cascade-removal::t6` | static | 连带掉件 | 0 | H12 | L1 | [三维画面](assets/v7-long-stone-bridge/d0f70f9eeb8b91fe3eac24878c66f3b7f9862ab967b2ca0b56f54f4624b4ca82.png) | 新增 |
 | `v7::v7-long-stone-bridge::static::control::t6` | static | 正常 | 0 | 正常 | L1 | [三维画面](assets/v7-long-stone-bridge/640eee402d1e4e0cddd71d14736e80d4a1012182fa67a3d68e9e148a215eb1a9.png) | 新增 |
 | `v7::v7-long-stone-bridge::dynamic::multiple::missingthen-wrong-color` | dynamic | 连续：少件 → 错色 | 2 | H01, H04, H13 | L3 | [三维画面](assets/v7-long-stone-bridge/5345836acf7ed406b46b151595cd981bd112a70bd6cd1de3e70c52cf6b5b07de.png) | 新增 |
 | `v7::v7-long-stone-bridge::dynamic::multiple::offsetthen-extra-layer` | dynamic | 连续：偏移一格 → 局部多层／重复加件 | 2 | H03, H07, H11, H13 | L3 | [三维画面](assets/v7-long-stone-bridge/da4ac51f27f982d40a28a6b3be54e068b655470c730febb1f56c64190fdf8f20.png) | 新增 |
@@ -195,7 +189,7 @@
 
 部分：D-long；正常拼装／模块全长：24块；来源：`original:v7:long-gantry-press`。
 
-本物件包含：拆上层返修、连带掉件、提前封口、局部多层／重复加件、左右互换、少件、偏移一格、重复组件漏做、装反、错色、错零件／厚度。
+本物件包含：拆上层返修、提前封口、局部多层／重复加件、左右互换、少件、偏移一格、重复组件漏做、装反、错色、错零件／厚度。
 
 连续干扰：连续：少件 → 错色；连续：少件 → 错色 → 偏移一格；连续：偏移一格 → 局部多层／重复加件；连续：错零件／厚度 → 少件。
 
@@ -249,8 +243,6 @@
 | `v7::v7-long-gantry-press::static::repeat-omission::t8` | static | 重复组件漏做 | 0 | H02 | L1 | [三维画面](assets/v7-long-gantry-press/afacc561a1284a330fe52bfcf4c180f7fb792d5c405ff2c15cff97838348d93f.png) | 新增 |
 | `v7::v7-long-gantry-press::dynamic::repeat-omission::t16` | dynamic | 重复组件漏做 | 1 | H02 | L2 | [三维画面](assets/v7-long-gantry-press/15300b0bcb0d6c5c8235546ade5a8b1b77bec1a9bdd43f11ef8ea919f0f9b5e7.png) | 新增 |
 | `v7::v7-long-gantry-press::static::repeat-omission::t16` | static | 重复组件漏做 | 0 | H02 | L1 | [三维画面](assets/v7-long-gantry-press/3503c0c7f756a361667ffe1983898b28334cd47c7328141ebc38e99903c03246.png) | 新增 |
-| `v7::v7-long-gantry-press::dynamic::cascade-removal::t9` | dynamic | 连带掉件 | 1 | H12 | L2 | [三维画面](assets/v7-long-gantry-press/e18e08fb55cab1d11688dad0afbe2cbc1f3b2093e505bc6c34490e48356bd821.png) | 新增 |
-| `v7::v7-long-gantry-press::static::cascade-removal::t9` | static | 连带掉件 | 0 | H12 | L1 | [三维画面](assets/v7-long-gantry-press/1c6dcb23e57f2243e189ee4292167bf88edbeae49ff6a37b7a2a1b57fb50045a.png) | 新增 |
 | `v7::v7-long-gantry-press::static::control::t9` | static | 正常 | 0 | 正常 | L1 | [三维画面](assets/v7-long-gantry-press/01d8a057e04d60ddf4cdb18c799e088d8a49a73da5835b54ea80a2df48cc6758.png) | 新增 |
 | `v7::v7-long-gantry-press::dynamic::multiple::missingthen-wrong-color` | dynamic | 连续：少件 → 错色 | 2 | H01, H04, H13 | L3 | [三维画面](assets/v7-long-gantry-press/48090adaccdce33946ffd3e00bea541067a4e70489b5ec8f89fd80c84fded079.png) | 新增 |
 | `v7::v7-long-gantry-press::dynamic::multiple::offsetthen-extra-layer` | dynamic | 连续：偏移一格 → 局部多层／重复加件 | 2 | H03, H07, H11, H13 | L3 | [三维画面](assets/v7-long-gantry-press/c795a12f2965700bae5a7e01da1a160e8ed1838caeaef4c005f7251e0a440ce1.png) | 新增 |
@@ -321,7 +313,7 @@
 
 原模型作者：Stefan Frenz [smf]；[来源](https://library.ldraw.org/omr/sets/1164)。
 
-本物件包含：拆上层返修、连带掉件、局部多层／重复加件、少件、偏移一格、重复组件漏做、装反、错色、错零件／厚度。
+本物件包含：拆上层返修、局部多层／重复加件、少件、偏移一格、重复组件漏做、装反、错色、错零件／厚度。
 
 ![当前与唯一目标：小屋：补完屋顶](assets/cottage-roof/510bc19d8532c3963ca160d7799eee1c9ba436a4208e74b3b28960e8fda4303a.png)
 
@@ -361,8 +353,6 @@
 | `v7::cottage-roof::static::buried-repair::t5` | static | 拆上层返修 | 0 | H10 | L2 | [三维画面](assets/cottage-roof/d54e80676f0166252c1962cc00565ca76bf78e780ce5b3e4143ab54514ff2646.png) | 新增 |
 | `v7::cottage-roof::dynamic::repeat-omission::t3` | dynamic | 重复组件漏做 | 1 | H02 | L1 | [三维画面](assets/cottage-roof/e10b326118d795973fbd36f06210ce18c8c6f2275dcd4aee244ff53d4937a965.png) | 新增 |
 | `v7::cottage-roof::static::repeat-omission::t3` | static | 重复组件漏做 | 0 | H02 | L1 | [三维画面](assets/cottage-roof/7948caf119545cb8ce0ba646e2c726ef0ed09e793cef3bbbeaaf320c48615bfe.png) | 新增 |
-| `v7::cottage-roof::dynamic::cascade-removal::t5` | dynamic | 连带掉件 | 1 | H12 | L1 | [三维画面](assets/cottage-roof/c2d02abee1bf2b6b42dad28d5a48be328fa8a69bbef9736eeb70ada5fa1eafb6.png) | 新增 |
-| `v7::cottage-roof::static::cascade-removal::t5` | static | 连带掉件 | 0 | H12 | L1 | [三维画面](assets/cottage-roof/0f0420b1204ffa96ec3073bfeefcb499aa659ed8950e4a78ac345e975354d69e.png) | 新增 |
 
 ## 赛车：补完车身上半部 · `racer-top`
 
@@ -370,7 +360,7 @@
 
 原模型作者：Merlijn Wissink [legolijntje]；[来源](https://library.ldraw.org/omr/sets/223)。
 
-本物件包含：拆上层返修、连带掉件、局部多层／重复加件、少件、偏移一格、重复组件漏做、装反、错色、错零件／厚度。
+本物件包含：拆上层返修、局部多层／重复加件、少件、偏移一格、重复组件漏做、装反、错色、错零件／厚度。
 
 连续干扰：连续：少件 → 错色；连续：偏移一格 → 局部多层／重复加件；连续：错零件／厚度 → 少件。
 
@@ -415,8 +405,6 @@
 | `v7::racer-top::static::repeat-omission::t7` | static | 重复组件漏做 | 0 | H02 | L1 | [三维画面](assets/racer-top/142f023695ca0d956e41258d7b714bc7e66582e78c5fd542106081e4a0b1387e.png) | 新增 |
 | `v7::racer-top::dynamic::repeat-omission::t10` | dynamic | 重复组件漏做 | 1 | H02 | L1 | [三维画面](assets/racer-top/c8026c671d915d9e1a886e63a6ee53a9326cb754984d747fc81ff6cef1a203d9.png) | 新增 |
 | `v7::racer-top::static::repeat-omission::t10` | static | 重复组件漏做 | 0 | H02 | L1 | [三维画面](assets/racer-top/2f8f9379cd290a61eeccab44da261d44bb6e8d09e329f57ca431cc887a26ad38.png) | 新增 |
-| `v7::racer-top::dynamic::cascade-removal::t3` | dynamic | 连带掉件 | 1 | H12 | L1 | [三维画面](assets/racer-top/8331b98902f0c96609b4d98ece1bd813e2b46cdfe6537d0657bb7b653d14e5c9.png) | 新增 |
-| `v7::racer-top::static::cascade-removal::t3` | static | 连带掉件 | 0 | H12 | L1 | [三维画面](assets/racer-top/59c774715f3855e6893cc06096b6be4520c1e6ed5e55b0a3f59a8c8c03d8c102.png) | 新增 |
 | `v7::racer-top::dynamic::multiple::missingthen-wrong-color` | dynamic | 连续：少件 → 错色 | 2 | H01, H04, H13 | L2 | [三维画面](assets/racer-top/ad63d89ece51694808b54b7f9e9c6b028c18d4e41137f94e43169748814c7ce5.png) | 新增 |
 | `v7::racer-top::dynamic::multiple::offsetthen-extra-layer` | dynamic | 连续：偏移一格 → 局部多层／重复加件 | 2 | H03, H07, H11, H13 | L2 | [三维画面](assets/racer-top/64d76d4254ef8d54eccf10e583be33d02403ddd98b84e1933fb4190b88673776.png) | 新增 |
 | `v7::racer-top::dynamic::multiple::wrong-partthen-missing` | dynamic | 连续：错零件／厚度 → 少件 | 2 | H01, H05, H13 | L2 | [三维画面](assets/racer-top/58e15d9612edd4e339cd5a57888f5a6beafd36ce211e05ad44f797f9d5ff7215.png) | 新增 |
@@ -427,7 +415,7 @@
 
 原模型作者：Merlijn Wissink [legolijntje]；[来源](https://library.ldraw.org/omr/sets/259)。
 
-本物件包含：拆上层返修、连带掉件、局部多层／重复加件、少件、偏移一格、重复组件漏做、装反、错色。
+本物件包含：拆上层返修、局部多层／重复加件、少件、偏移一格、重复组件漏做、装反、错色。
 
 连续干扰：连续：少件 → 错色；连续：偏移一格 → 局部多层／重复加件。
 
@@ -465,8 +453,6 @@
 | `v7::seaplane-tail::dynamic::repeat-omission::t6` | dynamic | 重复组件漏做 | 1 | H02 | L1 | [三维画面](assets/seaplane-tail/94b7afa6d22cd9e3922522090eb1b4a27da6e6177d0db68e40b13e2ba022b53a.png) | 新增 |
 | `v7::seaplane-tail::static::repeat-omission::t6` | static | 重复组件漏做 | 0 | H02 | L1 | [三维画面](assets/seaplane-tail/e0b9272437a42fbfe4b4362f8457c364fe7a8978698403db70fe2d8af8855d08.png) | 新增 |
 | `v7::seaplane-tail::static::control::t6` | static | 正常 | 0 | 正常 | L1 | [三维画面](assets/seaplane-tail/aa34743d2f02cc7e9aa2c451c8c28afc50f9a8992518a701f5ed91d6a315eae4.png) | 新增 |
-| `v7::seaplane-tail::dynamic::cascade-removal::t3` | dynamic | 连带掉件 | 1 | H12 | L1 | [三维画面](assets/seaplane-tail/055b5cb67d4b3231764c9a87eba8ec65e986ba8fc4476fe5c03423e8eaedbc2f.png) | 新增 |
-| `v7::seaplane-tail::static::cascade-removal::t3` | static | 连带掉件 | 0 | H12 | L1 | [三维画面](assets/seaplane-tail/e95f8bdbe53b0d101ac72a6be203c854960b8d87cec7522eba0ba990732db325.png) | 新增 |
 | `v7::seaplane-tail::dynamic::multiple::missingthen-wrong-color` | dynamic | 连续：少件 → 错色 | 2 | H01, H04, H13 | L2 | [三维画面](assets/seaplane-tail/12c54dae1bb2b7db06b427dda99d69e0c878a3fbea04868142c58119d5bb6e4e.png) | 新增 |
 | `v7::seaplane-tail::dynamic::multiple::offsetthen-extra-layer` | dynamic | 连续：偏移一格 → 局部多层／重复加件 | 2 | H03, H07, H11, H13 | L2 | [三维画面](assets/seaplane-tail/9ea75c57723a16df896d40836e170f2506fcddf1f4ae862a209d1a313fb634a5.png) | 新增 |
 
@@ -558,7 +544,7 @@
 
 原模型作者：Merlijn Wissink [legolijntje]；[来源](https://library.ldraw.org/omr/sets/145)。
 
-本物件包含：拆上层返修、连带掉件、局部多层／重复加件、少件、偏移一格、装反、错色。
+本物件包含：拆上层返修、局部多层／重复加件、少件、偏移一格、装反、错色。
 
 连续干扰：连续：少件 → 错色；连续：偏移一格 → 局部多层／重复加件。
 
@@ -594,10 +580,6 @@
 | `v7::orange-helicopter-tail::dynamic::buried-repair::t4` | dynamic | 拆上层返修 | 1 | H10 | L2 | [三维画面](assets/orange-helicopter-tail/12a9be7e8e3e0a2d533209dfccee5ab41b280d051c90fd34964126391b050407.png) | 新增 |
 | `v7::orange-helicopter-tail::static::buried-repair::t4` | static | 拆上层返修 | 0 | H10 | L2 | [三维画面](assets/orange-helicopter-tail/c87eaa65b5b65aee589f002b845103d8a22a9ac8c8549eb91b0aad2be7852d40.png) | 新增 |
 | `v7::orange-helicopter-tail::static::control::t4` | static | 正常 | 0 | 正常 | L1 | [三维画面](assets/orange-helicopter-tail/084b427649eda6aa9d25f83ad4e71a250590be476078966f39e969796bcc6f70.png) | 新增 |
-| `v7::orange-helicopter-tail::dynamic::cascade-removal::t6` | dynamic | 连带掉件 | 1 | H12 | L1 | [三维画面](assets/orange-helicopter-tail/4676bc73b585708c78d7dbeab298f0f4710996d567e4bb0415fb011b490c8241.png) | 新增 |
-| `v7::orange-helicopter-tail::static::cascade-removal::t6` | static | 连带掉件 | 0 | H12 | L1 | [三维画面](assets/orange-helicopter-tail/1a1b1d6b7d777ac828701add33df06f3e8b69fa920fa472acb6ee7eab06d77c3.png) | 新增 |
-| `v7::orange-helicopter-tail::dynamic::cascade-removal::t5` | dynamic | 连带掉件 | 1 | H12 | L1 | [三维画面](assets/orange-helicopter-tail/48de42be676a67e8148f4ef0f2de1f12e58dbafad4ab932fb6110886092b2fc0.png) | 新增 |
-| `v7::orange-helicopter-tail::static::cascade-removal::t5` | static | 连带掉件 | 0 | H12 | L1 | [三维画面](assets/orange-helicopter-tail/39a586c73eafce92108272bcaba634aeaeebe933cd42a0e16f0794fcbc98e25e.png) | 新增 |
 | `v7::orange-helicopter-tail::static::control::t5` | static | 正常 | 0 | 正常 | L1 | [三维画面](assets/orange-helicopter-tail/c8a6e175d949ee62dbc21503510a2f167bf60c24edb78a17ba444a199d677e1d.png) | 新增 |
 | `v7::orange-helicopter-tail::dynamic::multiple::missingthen-wrong-color` | dynamic | 连续：少件 → 错色 | 2 | H01, H04, H13 | L2 | [三维画面](assets/orange-helicopter-tail/ffc72247941edc9123b59c6e146a6205c732b86426830f128af452f5e6237e68.png) | 新增 |
 | `v7::orange-helicopter-tail::dynamic::multiple::offsetthen-extra-layer` | dynamic | 连续：偏移一格 → 局部多层／重复加件 | 2 | H03, H07, H11, H13 | L2 | [三维画面](assets/orange-helicopter-tail/fdfaff4220b718e7b61c3c758b133c89a28166a65eb752fd693f062d5a5760e8.png) | 新增 |
@@ -962,7 +944,7 @@
 
 原模型作者：TotalyWicked [TotalyWicked]；[来源](https://library.ldraw.org/library/omr/10015-1.mpd)。
 
-本物件包含：拆上层返修、连带掉件、提前封口、局部多层／重复加件、左右互换、少件、偏移一格、重复组件漏做、装反、错色。
+本物件包含：拆上层返修、提前封口、局部多层／重复加件、左右互换、少件、偏移一格、重复组件漏做、装反、错色。
 
 连续干扰：连续：少件 → 错色；连续：少件 → 错色 → 偏移一格；连续：偏移一格 → 局部多层／重复加件。
 
@@ -1013,10 +995,6 @@
 | `v7::new-10015-1::static::repeat-omission::t12` | static | 重复组件漏做 | 0 | H02 | L1 | [三维画面](assets/new-10015-1/9b52a3d2c3171064c752e5f8cfece922cad88276586175f1409bd7c7d69ee2df.png) | 新增 |
 | `v7::new-10015-1::dynamic::repeat-omission::t18` | dynamic | 重复组件漏做 | 1 | H02 | L1 | [三维画面](assets/new-10015-1/e27fcb5d5dc171dcc55e22c156bda61229b4a4b2d4944e2d3810e03e73e3ca71.png) | 新增 |
 | `v7::new-10015-1::static::repeat-omission::t18` | static | 重复组件漏做 | 0 | H02 | L1 | [三维画面](assets/new-10015-1/e2d5ff2e55323e1df438e85818b310c367b1d71fa913c984bb4a21d97a3098e6.png) | 新增 |
-| `v7::new-10015-1::dynamic::cascade-removal::t6` | dynamic | 连带掉件 | 1 | H12 | L1 | [三维画面](assets/new-10015-1/9a35a224d8a4160e08028e6ebbdeb12b49aad7db919a555f9ea4c3817cc80f4c.png) | 新增 |
-| `v7::new-10015-1::static::cascade-removal::t6` | static | 连带掉件 | 0 | H12 | L1 | [三维画面](assets/new-10015-1/7f8475518e2f5f7e22276489fe7ee528742be0d23ca3296679184d753f0a8106.png) | 新增 |
-| `v7::new-10015-1::dynamic::cascade-removal::t12` | dynamic | 连带掉件 | 1 | H12 | L1 | [三维画面](assets/new-10015-1/bfb847c00759782fbff9f599e33b75bda6b350853e5e7e0d839bfdc14cab90c9.png) | 新增 |
-| `v7::new-10015-1::static::cascade-removal::t12` | static | 连带掉件 | 0 | H12 | L1 | [三维画面](assets/new-10015-1/9b6b69124875cb5896b5b1d747ac6235b8fbb667dbb4bd5c2ebab9ee671dad7c.png) | 新增 |
 | `v7::new-10015-1::dynamic::multiple::missingthen-wrong-color` | dynamic | 连续：少件 → 错色 | 2 | H01, H04, H13 | L2 | [三维画面](assets/new-10015-1/eb72ef5cf1316a37953819c8c6bac8c3f470d86b92083186299f0b5bad724cfc.png) | 新增 |
 | `v7::new-10015-1::dynamic::multiple::offsetthen-extra-layer` | dynamic | 连续：偏移一格 → 局部多层／重复加件 | 2 | H03, H07, H11, H13 | L2 | [三维画面](assets/new-10015-1/7d7a4d1b715c4e7f958d395d49a8cfce79c41ea2cf5f3bf03bf45b9f65206cbc.png) | 新增 |
 | `v7::new-10015-1::dynamic::multiple::missingthen-wrong-colorthen-offset` | dynamic | 连续：少件 → 错色 → 偏移一格 | 3 | H01, H04, H07, H13 | L2 | [三维画面](assets/new-10015-1/c11b7b55d885a2bafc43a0d2457f790fa3b2e95b0b20dfd81fd3eca2ec043c01.png) | 新增 |

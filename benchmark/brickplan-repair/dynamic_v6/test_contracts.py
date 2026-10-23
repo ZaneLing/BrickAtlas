@@ -8,12 +8,13 @@ from dynamic_v6.episode import BANK,DynamicEpisode,load_case,branch_before_actio
 from dynamic_v6.interface import renderer_for,packet
 from static_v4.certify import digest
 from dynamic_v5.build import write
+from expansion_v7.scope import allowed
 
 def pub(ep,a):return dict(type=a['type'],partId=ep.alias[a['partId']],**({'candidate':ep.pose(a['candidate'])} if 'candidate' in a else {}))
 def witness(mid):return json.loads((BANK/'models'/mid/'evidence.json').read_text())['buildWitness']
 
 def episodes():
-    cases=json.loads((BANK/'cases.private.json').read_text())['cases'];chosen={}
+    cases=[c for c in json.loads((BANK/'cases.private.json').read_text())['cases'] if allowed(c)];chosen={}
     for mid in {c['modelId'] for c in cases}:
         cert=json.loads((BANK/'models'/mid/'qualification.json').read_text())
         counts=Counter(r['actor'] for r in cert['candidates'].values())

@@ -9,14 +9,15 @@ import time
 from expansion_v7 import ROOT, OUT, PROTOCOL
 from expansion_v7.runtime import Episode, execute, move, public_action, runtime
 from expansion_v7.variants import augment, pad
+from expansion_v7.scope import require_allowed
 
 FAMILIES = ('missing','wrong-color','extra-layer','offset','rotated','wrong-part',
             'early-cover','buried-repair','left-right-swap','repeat-omission',
-            'cascade-removal','repeated-step')
+            'repeated-step')
 HUMAN = {'missing':['H01'],'repeat-omission':['H02'],'repeated-step':['H03'],
     'extra-layer':['H03','H11'],'wrong-color':['H04'],'wrong-part':['H05'],
     'rotated':['H06'],'offset':['H07'],'left-right-swap':['H08'],
-    'early-cover':['H09'],'buried-repair':['H10'], 'cascade-removal':['H12']}
+    'early-cover':['H09'],'buried-repair':['H10']}
 
 
 def write(path, data):
@@ -86,6 +87,7 @@ def build_one(meta):
     states=states_for(rt,normal);n=len(normal);cases=[];rejected=[];seen=set()
     initial=states[0];goal=states[-1]
     def add(case):
+        require_allowed(case)
         key=signature_key(rt,case)
         if key in seen:return
         seen.add(key);case['physicalTaskSha256']=key

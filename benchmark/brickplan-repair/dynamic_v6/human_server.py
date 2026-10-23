@@ -9,11 +9,17 @@ sys.path[:0]=[str(HERE.parent),str(HERE.parent/'eval')]
 from dynamic_v6.episode import BANK,DynamicEpisode,load_case
 from dynamic_v6.interface import renderer_for,packet
 from dynamic_v5.build import write
+from expansion_v7.scope import allowed
 OUT=BANK/'human-review'
 PAGE=HERE/'human.html'
 
 def review_tasks():
-    cases=json.loads((BANK/'cases.private.json').read_text())['cases']
+    cases=[c for c in json.loads((BANK/'cases.private.json').read_text())['cases'] if allowed(c)]
+    previous=OUT/'answer-key.private.json'
+    if previous.exists():
+        accepted={c['id'] for c in cases}
+        # Preserve existing human task identities and their saved answers.
+        return {code:cid for code,cid in json.loads(previous.read_text()).items() if cid in accepted}
     selected=[];coverage=Counter()
     audit=json.loads((BANK/'audit.json').read_text())
     visible={r['caseId'] for r in audit['rows'] if r['primaryMachineCandidate']}

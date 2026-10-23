@@ -11,8 +11,9 @@ class Handler(SimpleHTTPRequestHandler):
         path=unquote(urlparse(self.path).path).lstrip('/') or 'index.html'
         target=(OUT/path).resolve()
         allowed=(path in ('index.html','gallery-data.js','README.zh-CN.md','MODEL-CASE-CATALOG.zh-CN.md',
-                         'global-splits.csv','difficulty-all.json','evaluation-sets.json','cases.csv')
-                 or path.startswith('assets/') and path.endswith('.png')
+                         'global-splits.csv','difficulty-all.json','evaluation-sets.json','cases.csv','HUMAN-ERROR-SCOPE.zh-CN.md',
+                         'human-error-scope.json','inventory-audit/audit.json')
+                 or path.startswith(('assets/','inventory-audit/assets/')) and path.endswith('.png')
                  or path=='human-error-research/README.zh-CN.md')
         if not target.is_relative_to(OUT.resolve()) or not allowed or not target.is_file():
             self.send_error(404);return False

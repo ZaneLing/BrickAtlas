@@ -24,8 +24,9 @@ def read(p):return json.loads(p.read_text())
 def main():
     manifest=read(OUT/'manifest.json');selection=read(OUT/'selection.json')
     examples=[read(p) for p in sorted((OUT/'examples').glob('Q*.json'))]
-    assert len(examples)==manifest['examplesCount']==99
-    assert len({(r['bank'],r['mode'],r['family'],r['level']) for r in selection if r['purpose']=='coverage'})==96
+    assert len(examples)==manifest['examplesCount']
+    assert len({(r['bank'],r['mode'],r['family'],r['level']) for r in selection if r['purpose']=='coverage'})==manifest['completeCellCoverage']
+    assert not any('cascade' in r['family'] for r in examples)
     assert len({r['model'] for r in examples if r['bank']=='E7'})==21
     for source,expected in manifest['sourceFiles'].items():assert sha256((ROOT/source).read_bytes()).hexdigest()==expected,source
     asset_records={};action_count=0
@@ -90,7 +91,7 @@ def main():
     style+='[id]{scroll-margin-top:70px}'
     preview='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>题目图解：输入、输出与GT</title><style>'''+style+'''</style><main><nav><a href="#按类别和难度找题">分类索引</a><a href="#难度怎么读">难度说明</a><a href="README.zh-CN.md">Markdown原文件</a></nav><p class="notice">这是同一份Markdown的本机预览，包含GT供审题。图片按需加载；点击图片按原始分辨率查看，关闭后继续阅读。</p>'''+html+'''</main><dialog id="zoom"><button>关闭</button><a target="_blank">单独打开原图</a><img alt="原始分辨率图像"></dialog><script>const d=document.querySelector('#zoom');for(const im of document.querySelectorAll('main img')){im.loading='lazy';im.onclick=()=>{d.querySelector('img').src=im.src;d.querySelector('a').href=im.src;d.showModal();}}d.querySelector('button').onclick=()=>d.close();</script></html>'''
     (OUT/'preview.html').write_text(preview)
-    report=dict(status='PASS',examples=99,populatedCategoryModeLevelCells=96,newConfigurationsCovered=21,
+    report=dict(status='PASS',examples=len(examples),populatedCategoryModeLevelCells=manifest['completeCellCoverage'],newConfigurationsCovered=21,
         nativeReferenceWitnessesPassed=manifest['referenceWitnessesPassed'],nativeAcceptedManipulations=action_count,
         imagesEmbeddedInMarkdown=len(images),uniqueImagesLinked=len(set(images)),allLocalLinksExist=True,
         assetFilesHashed=len(asset_records),allGTFinalScenePixelsMatchTarget=True,

@@ -14,13 +14,13 @@
 
 ## Assembly and repair extension (23 October 2026)
 
-The additive extension admits **715 new physical tasks**, bringing the original 5,260 to **5,975**. Its 798 execution conditions include 83 adapters of existing tasks, which are not counted again. It adds five 21–32-piece objects, three community sources, and 47 conditions with two or three separated incidents. Thirty web sources inform eighteen human error/problem categories.
+The user-approved scope contains **5,793 physical tasks**: 5,100 retained baseline tasks and 693 additions. The 776 extension conditions include 83 adapters of existing tasks, which are not counted again. Five 21–32-piece objects, three community sources and 47 repeated-incident conditions remain. H01–H11 and H13 are approved; H12 and H14–H17 are excluded; H18 is deferred.
 
 [Report and local gallery](deliverables/brickplan-expansion-v7/README.zh-CN.md) · [All models, cases and images](deliverables/brickplan-expansion-v7/MODEL-CASE-CATALOG.zh-CN.md) · [Human error evidence and exclusions](deliverables/brickplan-expansion-v7/human-error-research/README.zh-CN.md).
 
-[Illustrated inputs, outputs and GT across every populated category/difficulty group](deliverables/brickplan-question-showcase/README.zh-CN.md): 99 examples covering all 96 current bank/mode/category/structural-level cells plus three diagnostics, with complete reference actions and native observations.
+[Illustrated inputs, outputs and GT](deliverables/brickplan-question-showcase/README.zh-CN.md): 95 examples covering all 92 current cells plus three diagnostics. [Scope and H18 inventory audit](deliverables/brickplan-expansion-v7/HUMAN-ERROR-SCOPE.zh-CN.md): inventory images show the full catalogue, not live remaining pieces.
 
-All 798 reference conditions pass physical replay. Visibility checks are machine evidence; human readability and empirical difficulty remain pending. No paid model calls were made. These counts have not been inserted into the 21 October manuscript below, and do not extend its measured results.
+The 776 retained extension conditions are an unchanged subset of the 798 previously replayed conditions. Visibility checks are machine evidence; human readability and empirical difficulty remain pending. No paid model calls were made. These counts have not been inserted into the 21 October manuscript below, and do not extend its measured results.
 
 ## Current assembly and repair paper (21 October 2026)
 

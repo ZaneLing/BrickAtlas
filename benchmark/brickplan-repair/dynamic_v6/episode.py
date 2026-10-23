@@ -11,10 +11,11 @@ from dynamic_v6 import VERSION
 from dynamic_v6.build import event_candidates,replay,perform
 from static_v4.certify import digest
 from static_v4.metrics import residual
+from expansion_v7.scope import allowed,require_allowed
 BANK=HERE.parents[2]/'deliverables/brickplan-dynamic-v6'
 
 @lru_cache(maxsize=1)
-def bank_cases():return {c['id']:c for c in json.loads((BANK/'cases.private.json').read_text())['cases']}
+def bank_cases():return {c['id']:c for c in json.loads((BANK/'cases.private.json').read_text())['cases'] if allowed(c)}
 @lru_cache(maxsize=128)
 def model_cert(mid):return json.loads((BANK/'models'/mid/'qualification.json').read_text())
 def load_case(case_id):
@@ -39,6 +40,7 @@ def continuation(rt,state,limit=2000):
 
 class DynamicEpisode(PreviousEpisode):
     def __init__(self,cert,case,seed=41):
+        require_allowed(case)
         assert case['protocol']==VERSION
         self.input_certificate=deepcopy(cert)
         super().__init__(cert,{**case,'protocol':'brickplan-dynamic/5'},seed)
@@ -176,6 +178,7 @@ class DynamicEpisode(PreviousEpisode):
 
 def branch_before_action(prefix,intervention_case,action):
     """The policy runs once before the trigger; both branches receive that exact prefix."""
+    require_allowed(intervention_case)
     if prefix.case['kind']!='none' or prefix.case['pairedGroup']!=intervention_case['pairedGroup']:
         raise ValueError('Need the paired control prefix')
     def clone():

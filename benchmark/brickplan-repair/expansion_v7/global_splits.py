@@ -14,6 +14,7 @@ from expansion_v7.build import read,write,signature_key,digest
 from expansion_v7.runtime import runtime
 from community_modules.core import ModuleAssembly
 from dynamic_v6.object_models import OBJECTS
+from expansion_v7.scope import allowed,POLICY,APPROVED,EXCLUDED,DEFERRED
 
 FAMILIES={'storage-long':'storage','road-vehicle-long':'road-vehicles',
           'span-long':'spans','industrial-frame-long':'frame-machines','building-long':'buildings'}
@@ -43,6 +44,7 @@ def main():
     d=read(ROOT/'deliverables/brickplan-dynamic-v6/index.json')
     dcerts={}
     for c in d['cases']:
+        if not allowed(c):continue
         mid=c['modelId']
         if mid not in dcerts:
             dcerts[mid]=read(ROOT/'deliverables/brickplan-dynamic-v6/models'/mid/'qualification.json')['source']
@@ -59,6 +61,7 @@ def main():
                 converted['events']=[dict(minimumInstalled=c['event']['minimumInstalled'])]
                 converted['referenceEvents']=[c['referenceIncident']]
             baseline[fingerprint(rt,converted)]=rid
+    baseline_total=len(records)
     index=read(OUT/'index.json');aliases=[];new_rows=[]
     for meta in index['models']:
         mid=meta['id'];folder=OUT/'models'/mid
@@ -94,11 +97,14 @@ def main():
         sources=assignments,cases=records,adapterAliases=aliases,newSourceEvaluation=sorted(new_holdout),
         leakageCheck=dict(status='PASS',sourcesCrossingSplits=0),
         counts=dict(Counter(r['split'] for r in records)),
-        baselineCases=5260,newPhysicalTasks=len(new_rows),extensionAdapterConditions=len(index['cases']),
+        baselineCases=baseline_total,historicalBaselineCases=5260,scopePolicy=POLICY,
+        newPhysicalTasks=len(new_rows),extensionAdapterConditions=len(index['cases']),
         adapterConditionsReusingBaselineTasks=len(aliases),combinedPhysicalTasks=len(records),
         publicSourcesAreNotUnseen=True,modelEvaluationCount=0,
         limitation='Unseen means held out from project prompt/model tuning, not guaranteed absent from pretraining or public sources.'))
-    write(OUT/'release-summary.json',dict(baselineCases=5260,extensionConditions=len(index['cases']),
+    write(OUT/'release-summary.json',dict(baselineCases=baseline_total,historicalBaselineCases=5260,
+        scopePolicy=POLICY,approvedHumanErrorIds=APPROVED,excludedHumanErrorIds=EXCLUDED,deferredHumanErrorIds=DEFERRED,
+        extensionConditions=len(index['cases']),
         newPhysicalTasks=len(new_rows),reusedBaselineTasks=len(aliases),combinedPhysicalTasks=len(records),
         modelConfigurations=len(index['models']),newLongObjects=sum(m['track']=='D-long' for m in index['models']),
         longerCommunityModules=sum(m['track']=='M-long' or (m['track']=='M-new-source' and m['activeParts']>12) for m in index['models']),
