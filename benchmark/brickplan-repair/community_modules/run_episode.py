@@ -9,7 +9,10 @@ import sys
 import uuid
 import numpy as np
 from PIL import Image, ImageDraw
-from core import OUT, ROOT, Episode, dump, render_certificate
+if __package__:
+    from .core import OUT, ROOT, Episode, dump, render_certificate
+else:
+    from core import OUT, ROOT, Episode, dump, render_certificate
 from render import PALETTE, FONT
 from dynamic_v5.vision import DynamicVisionRenderer
 from matched_canvas import comparison, panels

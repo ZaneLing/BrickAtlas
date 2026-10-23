@@ -12,6 +12,14 @@
   <a href="README.md">English</a> · <strong>简体中文</strong>
 </p>
 
+## 拼装与修复题库扩展（2026-10-23）
+
+按长流程、社区错误、多次干扰、人类错误依据、难度描述和来源分组六个方向扩展：新增 **715 道物理任务**，与原 5,260 道合计 **5,975 道**。扩展保存 798 条运行条件，其中 83 条复用旧物理任务，不重复计数。包含 5 个需拼 21–32 块的新物件、3 个新社区来源、47 条两次／三次干扰条件；30 个网上来源对应 18 种错误／问题。
+
+[完成报告与启动方法](deliverables/brickplan-expansion-v7/README.zh-CN.md) · [逐物件、逐题配图清单](deliverables/brickplan-expansion-v7/MODEL-CASE-CATALOG.zh-CN.md) · [人类错误来源与取舍](deliverables/brickplan-expansion-v7/human-error-research/README.zh-CN.md)。
+
+扩展条件已通过程序物理重放；可见性为机器检查，难度仍待真人／模型实测。本轮 API 花费为 0，扩展统计尚未回填下列 10 月 21 日论文，不能混用旧实验结果。
+
 ## 当前静态修复与动态拼装论文（2026-10-21）
 
 [英文正文 PDF](paper/brickplan-cvpr/main.pdf) · [补充材料](paper/brickplan-cvpr/supplement.pdf) · [Overleaf 上传包](paper/brickplan-cvpr/brickplan-cvpr-overleaf.zip) · [这版改了什么、如何编译](paper/brickplan-cvpr/README.zh-CN.md)。

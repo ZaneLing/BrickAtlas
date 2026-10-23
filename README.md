@@ -12,6 +12,14 @@
   <strong>English</strong> · <a href="README.zh-CN.md">简体中文</a>
 </p>
 
+## Assembly and repair extension (23 October 2026)
+
+The additive extension admits **715 new physical tasks**, bringing the original 5,260 to **5,975**. Its 798 execution conditions include 83 adapters of existing tasks, which are not counted again. It adds five 21–32-piece objects, three community sources, and 47 conditions with two or three separated incidents. Thirty web sources inform eighteen human error/problem categories.
+
+[Report and local gallery](deliverables/brickplan-expansion-v7/README.zh-CN.md) · [All models, cases and images](deliverables/brickplan-expansion-v7/MODEL-CASE-CATALOG.zh-CN.md) · [Human error evidence and exclusions](deliverables/brickplan-expansion-v7/human-error-research/README.zh-CN.md).
+
+All 798 reference conditions pass physical replay. Visibility checks are machine evidence; human readability and empirical difficulty remain pending. No paid model calls were made. These counts have not been inserted into the 21 October manuscript below, and do not extend its measured results.
+
 ## Current assembly and repair paper (21 October 2026)
 
 [Main PDF](paper/brickplan-cvpr/main.pdf) · [Supplement](paper/brickplan-cvpr/supplement.pdf) · [Overleaf source ZIP](paper/brickplan-cvpr/brickplan-cvpr-overleaf.zip) · [Build and evidence](paper/brickplan-cvpr/README.zh-CN.md).

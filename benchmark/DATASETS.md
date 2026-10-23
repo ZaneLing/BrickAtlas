@@ -1,5 +1,15 @@
 # Benchmark data 索引
 
+## 拼装与修复扩展：expansion-v7（2026-10-23）
+
+本轮实际新增 715 道物理任务：静态 370、动态 345；与原 S／D／M 的 5,260 道合计 5,975 道。扩展保存 798 条运行条件，83 条是旧题的新接口条件，不重复算新题。同物件题目彼此相关，不能把总题数当独立来源数。
+
+5 个长流程原创物件需操作 21–32 块；原社区物件补充更多错误与较长模块，另收录 10013／10015／10016 三个新 OMR 来源。47 条条件包含分时发生的两次／三次事件。统一来源分组包含 152 组，同来源不跨集合；公开新来源只表示未参与本项目模型调试，不保证预训练未见过。
+
+所有扩展条件通过独立物理重放。739 次参考事件画面中 710 次达到图像差异门槛，29 次单列低可见诊断；这些均非真人可读性认证。难度目前是结构描述，没有新增真人／模型成绩。
+
+[报告](../deliverables/brickplan-expansion-v7/README.zh-CN.md) · [全量配图清单](../deliverables/brickplan-expansion-v7/MODEL-CASE-CATALOG.zh-CN.md) · [网上人类错误研究](../deliverables/brickplan-expansion-v7/human-error-research/README.zh-CN.md) · [统一来源分组](../deliverables/brickplan-expansion-v7/global-splits.json) · [生成、运行与验证代码](brickplan-repair/expansion_v7/)。
+
 ## 当前规划任务：BrickPlan 2.3
 
 从冻结的 100 个新增 OMR 套装候选中执行来源准入，并保留全部排除记录。
