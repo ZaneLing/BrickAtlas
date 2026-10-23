@@ -52,7 +52,9 @@ class DynamicEpisode(PreviousEpisode):
         obs=super().observe();obs['protocol']=VERSION
         for handle in obs['actionHandles']:handle['candidates']=sorted(handle['candidates'])
         obs.update(decisionsUsed=len(self.records),decisionBudget=self.decision_budget,
-                   visualTiming=dict(firstDecision=not self.records,left='Immediately before your previous action; no prior scene at the first decision.',right='Actual scene now, after the previous action and any external change.',target='Fixed final target; identical camera and scale.'),
+                   visualTiming=dict(firstDecision=not self.records,
+                       currentTarget=dict(left='Actual current scene',right='Sole fixed required TARGET'),
+                       temporalPair=dict(available=self.previous_state is not None,left='Immediately before your previous action',right='Actual scene now, after execution and any external change')),
                    previousAction=self.history[-1] if self.history else None)
         obs['responseSchema']['unexpectedChange']='boolean: did something change beyond the effect of your own previous action? false at the first decision.'
         obs['responseSchema']['note']='optional; no explanation is required'

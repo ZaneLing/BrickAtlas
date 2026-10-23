@@ -155,6 +155,12 @@ python3 benchmark/brickplan-repair/community_modules/preview_server.py
 预览地址：<http://127.0.0.1:8768>。服务只提供公开讲解资源，不提供私有证书或运行记录。
 
 HTML 与 Markdown 是包含答案的设计展示，不应发给测试模型。正式输入使用接口返回的匿名零件、图像与动作结果。
+
+## 2026-10-23 输入与开发试跑更新
+
+构建发布时 API 为 0；同日已有小规模 [开发试跑](../brickplan-budget-pilot-2026-10-23/README.zh-CN.md)，不是正式模型主表。旧输入和回答保留原样。
+
+默认现在只有本题 TARGET，当前与目标放在同一张图里；说明书按步骤查看，不再每轮重发整本。全部零件合并成每页十二块，首轮 4–6 张、后续 7–9 张；看一步说明书加一张。未来说明必须明确请求，不会替换本题目标。单条动态完成不进入主修复成功率。[看修复说明和图示](../brickplan-interface-repair-2026-10-23/README.zh-CN.md)。
 ''')
     print('CATALOGUE',len(modules),case_count,flush=True)
 

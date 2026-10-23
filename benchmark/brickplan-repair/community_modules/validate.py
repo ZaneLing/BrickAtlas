@@ -93,6 +93,9 @@ def main():
     shutil.copyfile(HERE/'index.html',b.OUT/'index.html')
     manifest=json.loads((b.OUT/'source-manifest.json').read_text())
     manifest[str((HERE/'validate.py').relative_to(b.ROOT))]=''
+    for relative in ('benchmark/brickplan-repair/eval/matched_canvas.py',
+                     'benchmark/brickplan-repair/evaluation_outcomes.py'):
+        manifest[relative]=''
     b.dump(b.OUT/'source-manifest.json',{p:b.sha256(b.ROOT/p) for p in manifest})
     print('VALIDATION PASS',len(rows),round(time.time()-started,2),flush=True)
 

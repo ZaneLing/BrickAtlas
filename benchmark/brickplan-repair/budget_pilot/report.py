@@ -5,6 +5,7 @@ import csv,hashlib,html,json,statistics,sys
 HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(HERE))
 import run as pilot
+from evaluation_outcomes import assess_run
 
 def mean(xs):return statistics.mean(xs) if xs else None
 def calls(r):return r.get('steps',[])+[s for b in r.get('branches',{}).values() for s in b.get('steps',[])]
@@ -29,6 +30,7 @@ def main():
                 assert key not in packet['observation'],(r['runId'],key)
         usage=[s['response']['usage'] for s in steps]
         errors=r.get('errors',[])
+        evaluation=assess_run(r)
         eligible=r['status'] not in ['api_error','reservation_budget_stop','interface_update_stop']
         row=dict(runId=r['runId'],track=r['track'],caseId=r['caseId'],model=r['model'],label=label(r['model']),status=r['status'],
             modelRequests=r['requests'],returnedResponses=len(steps),inputTokens=sum(u.get('prompt_tokens',0) for u in usage),
@@ -36,8 +38,14 @@ def main():
             cachedInputTokens=sum(u.get('prompt_tokens_details',{}).get('cached_tokens',0) for u in usage),
             inputImages=sum(len(s['images']) for s in steps),meanInputTokens=mean([u.get('prompt_tokens',0) for u in usage]),
             meanImages=mean([len(s['images']) for s in steps]),costUSD=r['costUSD'],meanCostPerResponseUSD=r['costUSD']/len(steps) if steps else None,
-            success=score.get('success') if eligible else None,finalEquivalent=score.get('finalEquivalent',score.get('finalGeometryCorrect')) if eligible else None,
-            eventTriggered=score.get('eventTriggered',score.get('eventApplied')) if eligible else None,
+            success=evaluation['success'],finalEquivalent=score.get('finalEquivalent',score.get('finalGeometryCorrect')) if eligible else None,
+            eventTriggered=evaluation['eventTriggered'],
+            completionSuccess=evaluation['completionSuccess'],repairSuccess=evaluation['repairSuccess'],
+            recoveryPairEligible=evaluation['recoveryPairEligible'],detectionMiss=evaluation['detectionMiss'],
+            outcome=evaluation['outcome'],serviceErrors=evaluation['serviceErrors'],
+            visualFailure=evaluation['visualFailure'],placementFailure=evaluation['placementFailure'],
+            formatErrorResponses=evaluation['formatErrorResponses'],
+            actionSchemaErrorResponses=evaluation['actionSchemaErrorResponses'],physicalActionRejections=evaluation['physicalActionRejections'],
             invalidFormatResponses=sum(s['action'].get('type')=='invalid' for s in steps),
             rejectedActions=sum(s.get('feedback',{}).get('code') not in ['OK','OBSERVED','INSPECT','SUCCESS','FINISHED','INCOMPLETE'] for s in steps),
             providers=sorted({s['response'].get('provider','unknown') for s in steps}),
@@ -51,12 +59,18 @@ def main():
         rows.append(row);audit.append(dict(runId=r['runId'],imageReferencesVerified=input_ok,privateAnswerFieldsAbsent=True))
     confirmed=sum(c['actualUSD'] or 0 for c in ledger['charges']);upper=sum(c['actualUSD'] if c['actualUSD'] is not None else c['reservedUSD'] for c in ledger['charges'])
     assert upper<=10 and abs(sum(r['costUSD'] for r in rows)-confirmed)<1e-8
-    summary=dict(schema='brickplan-budget-pilot-summary/1',date='2026-10-23',capUSD=10,confirmedCostUSD=confirmed,
+    summary=dict(schema='brickplan-budget-pilot-summary/2',date='2026-10-23',capUSD=10,confirmedCostUSD=confirmed,
         uncertainReservedUSD=upper-confirmed,spendUpperBoundUSD=upper,submittedRequests=len(ledger['charges']),returnedResponses=len(all_calls),
         attemptedModelCount=len({r['model'] for r in rows}),modelsWithReturnedResponses=len({r['model'] for r,s in all_calls}),
         caseModelJobs=len(rows),distinctCases=len({(r['track'],r['caseId']) for r in rows}),
         inputTokens=sum(r['inputTokens'] for r in rows),outputTokens=sum(r['outputTokens'] for r in rows),reasoningTokens=sum(r['reasoningTokens'] for r in rows),
+        outcomeCounts=dict(Counter(r['outcome'] for r in rows)),
+        serviceErrorCounts=dict(sum((Counter(r['serviceErrors']) for r in rows),Counter())),
+        repairEligiblePairs=sum(r['recoveryPairEligible'] for r in rows),
+        formatErrorResponses=sum(r['formatErrorResponses'] for r in rows),
         rows=rows,limits=['Development pilot; one attempt per model/case.',
+            'Historical requests use the old image protocol. Reclassification changes accounting only; it is not a rerun of the repaired interface.',
+            'Untriggered episodes have null repair/detection scores. Unpaired M dynamic outcomes are descriptive observations, not main recovery evidence.',
             'S uses a new three-view visual API adapter over the current plate5 cases/executor; it is not a formal score collection.',
             'Input/response compatibility was repaired between cases; phases must not be pooled into a leaderboard.',
             'D from-empty runs did not produce a completed matched-prefix control/fault pair. M dynamic episodes are full policy runs, unpaired.',
@@ -119,6 +133,7 @@ def project(summary,all_calls):
     totals['primaryWithMissingModelsAndReserveUSD']=[round((base[0]+300)*1.2,2),round((base[1]+1000)*1.2,2)]
     totals['allPlannedWithAllowancesAndReserveUSD']=[round((base[0]+300+diagnostics+150)*1.2,2),round((base[1]+1000+diagnostics+400)*1.2,2)]
     return dict(status='CONDITIONAL_ESTIMATE_NOT_FULL_RUN',models=result,requestCounts=scenarios,moduleImageScaleFactor=module_factor,
+        inputProtocol='Historical pilot before matched-canvas/on-demand-manual changes; NOT a price estimate measured under the new protocol.',
         totals=totals,limits=['Only seven original-roster IDs are in the API catalogue; InternVL3.5-8B and Qwen2.5-VL-7B/32B require a different serving route.',
           'The missing-model deployment allowance is a planning reserve, not measured GPU throughput or a vendor quote.',
           'All D branching costs remain projected; service refusals and untriggered runs do not measure recovery.',
@@ -131,7 +146,18 @@ def make_html(out,s,traces,p):
     body=f'<h1>10 美元静态／动态试跑</h1><p>2026-10-23 · 已确认 ${s["confirmedCostUSD"]:.4f}；含未确认请求全部预留的上界 ${s["spendUpperBoundUSD"]:.4f}；授权上限 $10。</p><p>尝试 {s["attemptedModelCount"]} 个模型，{s["caseModelJobs"]} 个模型×题目组合。每个组合只尝试一次。接口修正前后的记录分开保留，不作为正式排名。</p><p><a href="README.zh-CN.md">中文总结与预算</a> · <a href="per-case.csv">逐题用量 CSV</a> · <a href="projection.json">预算计算</a></p>'
     body+='<table><thead><tr><th>模型</th><th>部分／题目</th><th>调用／返回</th><th>输入／输出 token</th><th>美元</th><th>结果</th></tr></thead><tbody>'
     for row,r in zip(s['rows'],traces):
-        result='接口失败，不计能力' if row['success'] is None else '完成' if row['success'] else '未完成／提前停止'
+        labels={'service_error':'接口故障，不计能力','evaluation_stopped':'评测中止，不计能力',
+                'untriggered':'未触发干扰，不计漏检／修复失败','unpaired_observation':'干扰已触发；单条观察，缺正常对照',
+                'completed':'完成','task_incomplete':'任务未完成','control_failed':'正常分支未成功，不计修复分数',
+                'repair_completed':'配对修复完成','repair_incomplete':'配对修复未完成','run_interrupted':'运行中断'}
+        result=labels.get(row['outcome'],row['outcome'])
+        if row['serviceErrors']:
+            categories={'request_rejected':'请求被拒绝','rate_limited':'限流','timeout':'超时',
+                        'provider_unavailable':'服务不可用','request_error':'请求错误',
+                        'transport_or_adapter_error':'传输／适配器错误'}
+            result+='；'+ '，'.join(f'{categories.get(k,k)} {v} 次' for k,v in row['serviceErrors'].items())
+        if row['outcome']=='unpaired_observation':result+='；本条'+('完成' if row['completionSuccess'] else '未完成')
+        if row['formatErrorResponses']:result+=f'；格式错误 {row["formatErrorResponses"]} 次'
         cost=f'${row["costUSD"]:.4f}' if not row['uncertainReservedUSD'] else f'未确认；预留 ${row["uncertainReservedUSD"]:.4f}'
         body+=f'<tr><td>{e(row["label"])}</td><td>{e(row["track"])} / {e(row["caseId"])}</td><td>{row["modelRequests"]} / {row["returnedResponses"]}</td><td>{row["inputTokens"]:,} / {row["outputTokens"]:,}</td><td>{cost}</td><td>{result}<br>{e(row["status"])}</td></tr>'
     body+='</tbody></table><h2>逐步记录</h2><p>展开后可看模型原始回答、动作反馈和实际收到的图片。图片在本机运行目录；仓库中的汇总文件不包含大批原始图片。</p>'

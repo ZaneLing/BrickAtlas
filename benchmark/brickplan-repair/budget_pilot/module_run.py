@@ -1,11 +1,12 @@
-"""Measure the shipped M JSON-lines image protocol without dropping manual pages."""
+"""Measure the public M JSON-lines protocol with manual steps available on demand."""
 from pathlib import Path
 import hashlib,json,subprocess,sys,time
 HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(HERE))
 import run as pilot
+from evaluation_outcomes import assess_run
 
-SYSTEM='''Complete or repair the specified LEGO module using the current scene, acceptance-target images, inventory, and numbered instruction images. The surrounding context is already assembled and locked. The acceptance target is the required final state for this episode; in static cases it can be an earlier instruction stage than the full-completion reference. The instruction images describe one valid original build order; any physically legal order reaching the acceptance target is allowed. In a dynamic episode the actual assembly can change without a notification. Account for your own previous action and repair unexpected changes. Every attach/detach moves exactly one part. Anonymous handles do not identify correct parts or poses. Inspect with view and candidate previews that candidate; inspect with view and partId shows the part. Use the exact schema in the observation. Return one JSON object {"action":{"type":"inspect","view":"isometric","candidate":"C001"},"note":"optional short note"}. No batch. Finish ends this attempt, including if incomplete. All supplied image roles and step numbers are provided in text immediately before each image.'''
+SYSTEM='''Complete or repair the specified LEGO module to the sole TARGET in the right panel of each current-target page. CURRENT NOW is the left panel. The surrounding context is already assembled and locked. TARGET may be an intermediate instruction stage; do not build beyond it. Three equal-size views and inventory contact sheets are provided. The manual is available on demand: {"action":{"type":"inspect","manualStep":1}} shows one reference step, then choose the next action. You choose which step to read; there is no prescribed action order. Future reference steps require futureReference:true, are never part of this task target, and never replace TARGET. After an action, temporal-pair pages show BEFORE LAST ACTION on the left and CURRENT NOW on the right. In a dynamic episode the actual assembly can change without a notification. Account for your own previous action and repair unexpected changes. Every attach/detach moves exactly one part. Anonymous handles do not identify correct parts or poses. Inspect with view and candidate previews that candidate; inspect with view and partId shows the part. Use the exact schema in the observation. Return one JSON object {"action":{"type":"inspect","view":"isometric","candidate":"C001"},"note":"optional short note"}. No batch. Finish ends this attempt, including if incomplete. All supplied image roles and step numbers are provided in text immediately before each image.'''
 
 def launch(module,condition):
     env=dict(__import__('os').environ)
@@ -16,14 +17,18 @@ def launch(module,condition):
     return proc,json.loads(line)
 
 def run(module,condition,model,max_decisions=20,max_job=3):
-    pilot.initialize();cid=module+'-'+condition;rid='M--'+cid+'--'+model.replace('/','--');out=pilot.OUT/'runs'/rid
+    pilot.initialize();cid=module+'-'+condition;rid='M--'+cid+'--'+model.replace('/','--')+'--on-demand-manual-v1';out=pilot.OUT/'runs'/rid
     if (out/'trace.json').exists():return json.loads((out/'trace.json').read_text())
     out.mkdir(parents=True,exist_ok=True);proc,obs=launch(module,condition)
     rep=dict(schema='brickplan-budget-pilot-run/1',runId=rid,track='M-S' if condition.startswith('static') else 'M-D',caseId=cid,
         model=model,seed=41,repetitions=1,requests=0,costUSD=0,status='running',steps=[],branches={},pilotDecisionCap=max_decisions,
-        perJobCapUSD=max_job,startedAt=time.time(),scope='Exact shipped module JSON-lines adapter, all instruction and inventory images. Single qualitative episode, not a matched-prefix causal pair.')
+        perJobCapUSD=max_job,startedAt=time.time(),scope='Module JSON-lines adapter with on-demand manual steps and inventory contact sheets. Single qualitative episode, not a matched-prefix causal pair.')
     rep['parserPolicy']='one-explicit-json-object-with-optional-prose'
-    save=lambda:pilot.dump(out/'trace.json',rep)
+    rep['imageProtocol']='matched-canvas-on-demand/1'
+    rep['eventScheduled']=condition.startswith('dynamic-') and not condition.endswith('control')
+    def save():
+        rep['evaluation']=assess_run(rep)
+        pilot.dump(out/'trace.json',rep)
     dialogue=[];save()
     record_paths=set()
     try:

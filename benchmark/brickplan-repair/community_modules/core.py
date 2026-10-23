@@ -242,13 +242,15 @@ class Episode:
     def observe(self):
         task = ("主体已装好。补完指定模块。说明书只是一种参考拼法，可以采用其他合法顺序；不比较中间状态与说明书。过程中积木可能发生未提示的变化，以每次返回的实际画面为准。"
                 if self.case["mode"] == "dynamic" else
-                "把当前状态修复成 acceptance-target 目标图。可以采用任何合法修复顺序；参考说明的步数只标识目标图，不规定你的操作顺序。")
+                "把当前状态修复成 TARGET 目标图。可以采用任何合法修复顺序；说明步数只标识目标阶段，不规定你的操作顺序。")
         return dict(protocol=PROTOCOL,
                     task=task + "每次只能装或拆一块。完成后 finish。",
                     mode=self.case["mode"],
                     acceptanceStage=self.case["completedInstructionStep"] if self.case["mode"] == "static" else "final",
-                    inputs=["fixed-final-target", "initial-context", "numbered-instructions",
-                            "inventory", "before-last-action", "current-now"],
+                    visualProtocol="matched-canvas-on-demand/1",
+                    targetDisplay=dict(name="TARGET", pageRole="current-target", panel="right",
+                                       policy="sole required state for this episode"),
+                    inputs=["current-target", "inventory-contact-sheets", "before-last-action-on-later-decisions"],
                     availableViews=["isometric", "rear", "top"],
                     manualAvailableThroughout=True, contextIsLocked=True,
                     orderPolicy="any-physically-legal-order", intermediateGTMatching=False,
@@ -260,7 +262,9 @@ class Episode:
                                                     if r["actor"] == a))
                              for a in sorted(self.actor_alias, key=self.actor_alias.get)],
                     actionSchema=dict(attach=["partId", "candidate"], detach=["partId"],
-                                      inspect={"required": ["view"], "optionalOneOf": ["candidate", "partId"]},
+                                      inspect={"oneOf": [{"view":"isometric|rear|top", "optionalOneOf":["candidate","partId"]},
+                                                         {"manualStep":"1-based integer", "futureReference":"true required beyond target stage"},
+                                                         {"inventoryPage":"1-based integer"}]},
                                       finish=[]))
 
     def step(self, action):
@@ -273,12 +277,27 @@ class Episode:
                   "detach": {"type", "partId"}, "inspect": {"type", "view"},
                   "finish": {"type"}}
         inspection_fields = ({"type", "view"}, {"type", "view", "candidate"},
-                             {"type", "view", "partId"})
+                             {"type", "view", "partId"}, {"type", "manualStep"},
+                             {"type", "manualStep", "futureReference"}, {"type", "inventoryPage"})
         if kind not in fields or (set(action) not in inspection_fields if kind == "inspect"
                                   else set(action) != fields[kind]):
             raise ValueError("Invalid action fields")
         if kind == "inspect":
-            if action["view"] not in ("isometric", "rear", "top"):
+            if "manualStep" in action:
+                n=action["manualStep"]
+                total=len(self.cert["source"]["moduleSourceIndices"])
+                limit=self.case["completedInstructionStep"] if self.case["mode"]=="static" else total
+                if type(n) is not int or not 1<=n<=total:
+                    raise ValueError("Unknown manual step")
+                if "futureReference" in action and action["futureReference"] is not True:
+                    raise ValueError("futureReference must be true when supplied")
+                if n>limit and action.get("futureReference") is not True:
+                    raise ValueError("This step is beyond TARGET; request futureReference:true to view it as reference only")
+            if "inventoryPage" in action:
+                n=action["inventoryPage"]
+                if type(n) is not int or not 1<=n<=(len(self.actors)+11)//12:
+                    raise ValueError("Unknown inventory page")
+            if "view" in action and action["view"] not in ("isometric", "rear", "top"):
                 raise ValueError("Unknown view")
             if "candidate" in action and action["candidate"] not in self.poses:
                 raise ValueError("Unknown candidate")
@@ -336,7 +355,9 @@ class Episode:
                     eventApplied=self.event_applied, interventionOpportunity=opportunity,
                     success=self.done and correct,
                     completionSuccess=self.done and correct,
-                    repairSuccess=(self.done and correct) if self.case.get('event') and self.event_applied else None,
+                    observedCompletionAfterEvent=(self.done and correct) if self.case.get('event') and self.event_applied else None,
+                    repairSuccess=None, recoveryPairEligible=False,
+                    repairEligibilityReason="Standalone episode; a successful matched normal branch is required for the main recovery score.",
                     intermediateStateComparedToGT=False,
                     acceptedActionsPhysicallyChecked=True,
                     manipulations=self.actions, inspections=self.inspections,

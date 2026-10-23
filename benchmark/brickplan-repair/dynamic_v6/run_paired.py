@@ -13,6 +13,7 @@ from dynamic_v6.episode import BANK,DynamicEpisode,load_case,branch_before_actio
 from dynamic_v6.interface import packet,renderer_for,SYSTEM
 from dynamic_v5.run_api import request,call,parse as legacy_parse
 from dynamic_v5.build import write
+from evaluation_outcomes import assess_run, pair_assessment, service_error
 
 def decode_one_object(content):
     """Accept one explicit JSON object, optionally surrounded by prose/fences.
@@ -57,11 +58,13 @@ def run(case_id,model,seed=41,execute=False,max_cost=None):
         report=dict(status='dry_run',paidRequests=0,costUSD=0,caseId=case_id,initialInput=str(out/'initial-input.json'),model=model)
         write(out/'trace.json',report);return report
     if max_cost is None or max_cost<=0:raise ValueError('--execute requires a positive --max-cost')
-    report=dict(schema='brickplan-paired-run/6',caseId=case_id,controlCaseId=control_case['id'],model=model,seed=seed,
+    report=dict(schema='brickplan-paired-run/6',caseId=case_id,controlCaseId=control_case['id'],model=model,seed=seed,eventScheduled=True,
                 systemPromptSha256=hashlib.sha256(SYSTEM.encode()).hexdigest(),decisionBudget=ep.decision_budget,
-                imageInterface='visual-temporal-v6-three-views-all-pages',prefix=[],branches={},requestAudit=[],requests=0,costUSD=0,status='running',
+                imageInterface='matched-canvas/1',prefix=[],branches={},requestAudit=[],requests=0,costUSD=0,status='running',
                 budgetNote='Check settled cost before each request; the last request may exceed the cap by its own charge.')
-    def save():write(out/'trace.json',report)
+    def save():
+        report['evaluation']=assess_run(report)
+        write(out/'trace.json',report)
     def decide(current,view_renderer,folder,extra,dialogue):
         if report['costUSD']>=max_cost:raise RuntimeError('cost_budget')
         observation,images=packet(current,view_renderer,folder,extra)
@@ -71,7 +74,7 @@ def run(case_id,model,seed=41,execute=False,max_cost=None):
         report['requests']+=1;report['requestAudit'].append(attempt);save()
         try:result=call(payload)
         except Exception as e:
-            attempt.update(status='api_error',error=str(e),costUSD=None);save();raise
+            attempt.update(status='api_error',error=str(e),costUSD=None,**service_error(e));save();raise
         attempt.update(status='returned',costUSD=result['cost']);report['costUSD']+=result['cost']
         action,note,change=parse(result['content'])
         return dict(index=len(current.records),observation=observation,images=images,response=result,action=action,
@@ -120,10 +123,11 @@ def run(case_id,model,seed=41,execute=False,max_cost=None):
             attribution=dict(sharedPrefix=True,controlSuccess=control_score['success'],controlFalseAlarms=control_score['preEventFalseAlarms'],
                              eventTriggered=event_score['eventTriggered'],interventionSuccess=event_score['success'],
                              declaredAtEvent=event_score['reportedAtEvent'],
-                             recoveryPairEligible=control_score['success'] and event_score['eventTriggered'],
                              authoredTemporalClass=admission['temporalClass'],visibilityGate=visibility_gate,
-                             detectionPairMachineEligible=control_score['success'] and not control_score['preEventFalseAlarms'] and event_score['reportedAtEvent'] is not None and visibility_gate,
                              humanValidated=False,paperDetectionClaimEligible=False))
+        report['attribution'].update(pair_assessment(control_score,event_score,
+            report['branches']['control']['status'],report['branches']['intervention']['status'],
+            visibility_gate=visibility_gate))
     except Exception as e:report.update(status='cost_budget' if str(e)=='cost_budget' else 'api_error',error=str(e),prefixEpisode=ep.export())
     save();return {k:v for k,v in report.items() if k not in ('prefix','branches','sharedPrefixActions')}
 

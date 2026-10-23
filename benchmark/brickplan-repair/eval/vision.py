@@ -150,7 +150,7 @@ def temporal_target(renderer, goal, view):
     return panel
 
 
-def images(ep, renderer, directory, extra=None, views=INITIAL_VIEWS, previous_state=None, paired_layout=False, expected_state=None):
+def images(ep, renderer, directory, extra=None, views=INITIAL_VIEWS, previous_state=None, paired_layout=False, expected_state=None, matched_layout=False):
     directory=Path(directory);directory.mkdir(parents=True,exist_ok=True)
     records=[]
     def save(image,role,**meta):
@@ -162,7 +162,19 @@ def images(ep, renderer, directory, extra=None, views=INITIAL_VIEWS, previous_st
                         'sha256':digest,'detail':'high',**meta})
     current,goal=ep.assignments(),ep.case['goal']
     for view in views:
-        if paired_layout:
+        if matched_layout:
+            from matched_canvas import comparison, panels
+            save(comparison(renderer,current,goal,view,'CURRENT NOW','TARGET (required final state)'),
+                 'current-target',view=view,panels=panels('current-now','target'))
+            prior=expected_state if expected_state is not None else previous_state
+            if prior is not None:
+                expected_mode=expected_state is not None
+                left='expected-after-action' if expected_mode else 'before-last-action'
+                save(comparison(renderer,prior,current,view,
+                     'EXPECTED AFTER YOUR ACTION' if expected_mode else 'BEFORE LAST ACTION','CURRENT NOW'),
+                     'expected-current' if expected_mode else 'temporal-pair',view=view,
+                     panels=panels(left,'current-now'))
+        elif paired_layout:
             comparison=expected_state if expected_state is not None else previous_state
             expected_mode=expected_state is not None
             save(temporal_pair(renderer,comparison,current,view,

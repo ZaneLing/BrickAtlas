@@ -72,7 +72,8 @@ def episodes():
         assert len(inv)==(len(ep.actors)+11)//12 and len(inv)>1
         assert len(cat)==(len(ep.case['choices'][actor])+11)//12
         assert not any(x['role']=='target-inspection' for x in ims)
-        assert {x['view'] for x in ims if x['role']=='temporal-pair'}=={'isometric','top','rear'}
+        assert {x['view'] for x in ims if x['role']=='current-target'}=={'isometric','top','rear'}
+        assert not any(x['role']=='temporal-pair' for x in ims)  # no invented prior scene
         for i,key in enumerate(sorted(ep.case['choices'][actor],key=ep.pose)):
             page,pos=divmod(i,12);n=min(12,len(ep.case['choices'][actor])-page*12);row,col=divmod(pos,4)
             assert ep.catalog_click_candidate(dict(partId=ep.alias[actor],catalogPage=page+1,catalogPoint=[(col+.5)/4,(row+.5)/((n+3)//4)]))==key

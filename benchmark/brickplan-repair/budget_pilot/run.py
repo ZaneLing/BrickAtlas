@@ -15,11 +15,12 @@ from dynamic_v6.run_paired import parse
 from plate5_eval import load as load_static,evaluate as evaluate_static,SOURCE as STATIC_SOURCE
 from static_v4.certify import digest
 from dynamic_v5.run_api import request
+from evaluation_outcomes import assess_run
 
 OUT=ROOT/'deliverables/brickplan-budget-pilot-2026-10-23'
 NODE=ROOT/'.tools/node-v22.23.2-darwin-arm64/bin/node'
 MODELS=['openai/gpt-6.1-sol','google/gemini-3.8-flash','qwen/qwen3.5-27b','google/gemma-3-12b-it','anthropic/claude-sonnet-5.5','anthropic/claude-haiku-5.5','qwen/qwen3-vl-8b-instruct','qwen/qwen3.5-9b','qwen/qwen2.5-vl-72b-instruct']
-S_SYSTEM='''Repair the CURRENT NOW LEGO assembly on its fixed white baseplate to match the separate FINAL TARGET images. This is a static task: the environment does not change. There are three labeled views, all inventory pages, and visual candidate catalogs available through inspect with partId. The same actor may be shown in several views: these are views of one assembly. Anonymous actor and candidate handles convey no answer. Inventory includes spare or distractor pieces. Choose any physically legal repair order; each attach or detach moves exactly one part. A rejected move leaves the state unchanged. Inspect is allowed at any time; inspect partId returns all its candidate pages uniformly in current-scene context, without correctness or legality labels. To identify a visible current part, inspect view and normalized point [x,y]. Candidate previews show the attempted placement, not an oracle. Attach needs partId and candidate (or catalogPage plus normalized catalogPoint). Detach needs partId. Finish ends the attempt, including if incomplete. Return exactly one JSON object with action, and an optional short note. No batch of actions. The BEFORE panel, when present, shows the same assembly immediately before your previous action; CURRENT NOW is the actual current state.'''
+S_SYSTEM='''Repair the CURRENT NOW LEGO assembly on its fixed white baseplate to match TARGET. Three current-target pages show CURRENT NOW on the left and the sole TARGET on the right. Each page has two equally sized 800x600 scenes on a 1600x636 canvas. This is a static task: the environment does not change. There are three labeled views, all inventory contact sheets, and visual candidate catalogs available through inspect with partId. There is no instruction manual in this track. The same actor may be shown in several views: these are views of one assembly. Anonymous actor and candidate handles convey no answer. Inventory includes spare or distractor pieces. Choose any physically legal repair order; each attach or detach moves exactly one part. A rejected move leaves the state unchanged. Inspect is allowed at any time; inspect partId returns all its candidate pages uniformly in current-scene context, without correctness or legality labels. To identify a visible current part, inspect view and normalized point [x,y]. Candidate previews show the attempted placement, not an oracle. Attach needs partId and candidate (or catalogPage plus normalized catalogPoint). Detach needs partId. Finish ends the attempt, including if incomplete. Return exactly one JSON object with action, and an optional short note. No batch of actions. After an action, temporal-pair pages show BEFORE LAST ACTION on the left and CURRENT NOW on the right. These are two times of the same assembly.'''
 S_SYSTEM+=POINT_GUIDE
 
 def dump(p,x):
@@ -87,17 +88,22 @@ def next_extra(action,fb):
     return ({'partId':fb['partId']} if 'partId' in fb else action) if action.get('type')=='inspect' and fb['code']=='OBSERVED' else None
 
 def run(track,cid,model,max_decisions=32,max_job=2):
-    initialize();rid=f'{track}--{cid}--'+model.replace('/','--');out=OUT/'runs'/rid
+    initialize();rid=f'{track}--{cid}--'+model.replace('/','--')+'--matched-canvas-v1';out=OUT/'runs'/rid
     if (out/'trace.json').exists():return json.loads((out/'trace.json').read_text())
     out.mkdir(parents=True,exist_ok=True)
     rep=dict(schema='brickplan-budget-pilot-run/1',runId=rid,track=track,caseId=cid,model=model,seed=41,repetitions=1,
              requests=0,costUSD=0,status='running',steps=[],branches={},pilotDecisionCap=max_decisions,perJobCapUSD=max_job,
              startedAt=time.time(),scope='Development usage estimate; not formal model ranking. Prior visual history is retained as text actions/feedback, with fresh full current image packet.')
     rep['parserPolicy']='one-explicit-json-object-with-optional-prose'
-    save=lambda:dump(out/'trace.json',rep)
+    rep['imageProtocol']='matched-canvas/1'
+    def save():
+        rep['evaluation']=assess_run(rep)
+        dump(out/'trace.json',rep)
     if track=='S':ep=StaticEpisode(cid);system=S_SYSTEM;intervention=None
     else:
         cert,intervention=load_case(cid);cert,control=load_case(intervention['pairedGroup']+'--control');ep=DynamicEpisode(cert,control,41);system=D_SYSTEM
+        if intervention['kind']=='none':intervention=None
+    rep['eventScheduled']=intervention is not None
     rep['sourceCertificateSha256']=ep.cert['contentSha256'];rep['targetParts']=sum(bool(x) for x in ep.runtime.goal.values())
     renderer=renderer_for(ep);extra=None;dialogue=[];branches=None;save()
     try:

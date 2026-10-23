@@ -89,7 +89,7 @@ def main():
 ## 现在怎么用
 
 - 真人直接打开 [A](http://127.0.0.1:8767/A)、[B](http://127.0.0.1:8767/B)、[C](http://127.0.0.1:8767/C)。每个入口有 126 道抽样操作题，覆盖 42 个物件；不用写文字、不用返回 JSON。每一步保存，换题后可继续。
-- 先看右侧的最终目标，再选零件、看候选位置，点卡片安装。一回合中可以随时看当前状态，一次只装或拆一块。看明白中间变化后，继续修好同一个物件。
+- 先看当前／目标对照图右半的唯一目标，再选零件、看候选位置，点卡片安装。一回合中可以随时看当前状态，一次只装或拆一块。看明白中间变化后，继续修好同一个物件。
 - [输入输出说明](INPUT-OUTPUT.zh-CN.md)：用图和例子解释每一步给什么、回什么。
 - [修了什么、还欠什么](FIX-REPORT.zh-CN.md)；[正式评测办法](EVALUATION.zh-CN.md)；[物件逐项清单](OBJECTS.zh-CN.md)。
 
@@ -186,7 +186,7 @@ benchmark/.runtime/mlx-env/bin/python benchmark/brickplan-repair/dynamic_v6/buil
 
 ## 真人操作
 
-右边是始终不变的最终目标。左侧并排图里，左半是你上一个动作之前，右半是现在真实状态。第一步底板是空的；之后按“自己的上一步操作”理解画面差异。不是让你把左右两份零件加起来。
+第一张对照图里，左半是现在，右半是本题唯一 TARGET。操作后另有时间对照图：左半是自己上一步之前，右半是现在。两种对照图都为 1600×636，场景均为 800×600。第一步没有时间对照图；从空底板开始。不要把不同时间或角度的零件加起来。
 
 1. 看目标图，决定先装什么。白色底板固定，不需要安装，也不能拆。
 2. 点下面的小零件图片，或选择编号后点“查看这个零件能放哪里”。所有零件页都展开。
@@ -203,9 +203,9 @@ benchmark/.runtime/mlx-env/bin/python benchmark/brickplan-repair/dynamic_v6/buil
 
 | 信息 | 内容 |
 |---|---|
-| 固定目标 | 同尺度、同相机的斜视、俯视、背面图 |
-| 中间状态 | 每个视角一张带标题的“上一步动作前／现在”并排图 |
-| 零件区 | 全部零件图片和随机公开编号，包括备用与干扰件；不透露哪些属于目标 |
+| 固定目标 | 三张“现在／TARGET”对照，当前和唯一目标在同一张图上，同尺度、同相机 |
+| 中间状态 | 首轮没有；之后每个视角一张带标题的“上一步动作前／现在”图，画布与目标对照相同 |
+| 零件区 | 每页最多十二块，全部页可见；随机编号，包括备用件，不透露哪些属于目标 |
 | 候选位置 | 查看零件后提供它的全部候选页，以当前场景为背景；每个候选显示统一轮廓 |
 | 上一步和历史 | 自己之前输出的动作、普通动作反馈；回合不中断，不重置 |
 | 操作限制 | 已用决策数和总预算；同一物件的预算不随隐藏错误类别变化 |
@@ -269,7 +269,7 @@ flowchart LR
 2. 先在开发组检查正常拼装。记录失败是看不清、不会选位置、动作错误还是拼装顺序问题。发现接口错误就改后重测，不保留旧版成绩冒充新版。
 3. 正式对比采用同一段前序过程的正常／干扰分支。记录图像、动作、反馈、实际事件、费用、模型精确版本和配置。
 4. 模型至少覆盖不同厂商的强视觉模型和可复现的开放权重模型；选定时记录实际可用的精确 ID、提供方、日期、图像模式、采样配置和价格。不得把名称相似但版本不同的模型混为同一个。
-5. 正式结果需要多个独立种子，并按来源家族报告区间；不把同一物件的很多变体当成独立的新物件样本。
+5. 当前实验方案每个模型／题目跑一次，不重复三次；按来源家族报告区间，不把同一物件的很多变体当成独立的新物件样本。
 
 ## 数据怎么分
 
@@ -291,12 +291,12 @@ flowchart LR
 |---|---|
 | 正常拼装成功 | 正常分支最终拼对并提交的比例；先回答模型原本会不会拼 |
 | 端到端受干扰成功 | 所有计划施加干扰的尝试都要列出，附实际触发率；没触发要单列 |
-| 条件恢复成功 | 正常分支拼成、干扰实际触发的配对中，受干扰分支拼成的比例 |
+| 条件恢复成功 | 两条分支无接口中断、正常分支拼成、干扰实际触发的同前序配对中，受干扰分支拼成的比例；否则分数为空 |
 | 异常发现 | 触发后第一次普通观察是否回答 true；缺失不能算 false；报告有效判断数量和未答数 |
 | 误报 | 正常分支、干扰前没有新外部变化时回答 true 的比例，同时报每回合和每决策 |
 | 格式／操作失败 | JSON 格式、无效候选、碰撞、路径阻挡分别统计，不都归为视觉错误 |
 | 反应与代价 | 首个降低实际结构差异的动作要多少决策，检查多少次，拆过多少本来正确的零件，最终差多少 |
-| 实验异常 | API 失败、达到预算、事件未触发及未完成都列出；不悄悄删掉 |
+| 实验异常 | 拒绝、限流、超时分开；没发生干扰记未触发，不计漏检或修复失败；单条 M 观察不进入主修复率 |
 
 “模型漏检”的最低条件：同前序；正常题拼成且无误报；干扰确实发生；该场景有可理解性证据；模型在对应观察给出有效的异常判断。再核对是否是一次视觉漏检或后续修复策略失败。只看最终没拼成无法区分这些原因。
 
@@ -338,7 +338,7 @@ benchmark/.runtime/mlx-env/bin/python benchmark/brickplan-repair/dynamic_v6/run_
     write(BANK/'verification.json',verification)
     files=[*sorted(HERE.glob('*.py')),HERE/'human.html',BANK/'cases.private.json',BANK/'index.json',BANK/'audit.json',BANK/'splits.json',BANK/'balanced-evaluation.json']
     # Include shared mechanics/rendering dependencies, which also affect reproducibility.
-    files += [HERE.parent/'baseplate.py',HERE.parent/'eval/vision.py',HERE.parent/'static_v4/certify.py',HERE.parent/'static_v4/metrics.py',HERE.parent/'dynamic_v5/episode.py',HERE.parent/'dynamic_v5/vision.py',HERE.parent/'dynamic_v5/build.py',HERE.parent/'dynamic_v5/run_api.py']
+    files += [HERE.parent/'baseplate.py',HERE.parent/'eval/vision.py',HERE.parent/'eval/matched_canvas.py',HERE.parent/'evaluation_outcomes.py',HERE.parent/'static_v4/certify.py',HERE.parent/'static_v4/metrics.py',HERE.parent/'dynamic_v5/episode.py',HERE.parent/'dynamic_v5/vision.py',HERE.parent/'dynamic_v5/build.py',HERE.parent/'dynamic_v5/run_api.py']
     write(BANK/'source-manifest.json',dict(schema='brickplan-v6-source-hashes/1',files={str(p.relative_to(HERE.parents[2])):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}))
     print(json.dumps(verification,ensure_ascii=False,indent=2))
 

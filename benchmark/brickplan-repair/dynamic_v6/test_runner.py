@@ -21,6 +21,7 @@ def main():
         observation=json.loads(payload['messages'][-1]['content'][0]['text'])
         for k in ('caseId','kind','trigger','privateEvent','current','target','buildGuide','legalActions'):assert k not in observation
         action,judgment=next(seq);calls.append(payload['seed'])
+        if isinstance(action,Exception):raise action
         return dict(content=json.dumps(dict(action=action,unexpectedChange=judgment)),cost=0,model='scripted-contract-only')
     oldcall,oldbank=runner.call,runner.BANK
     try:
@@ -37,9 +38,30 @@ def main():
             assert trace['branches']['control']['steps'][0]['priorDialogueSha256']==trace['branches']['intervention']['steps'][0]['priorDialogueSha256']
             assert trace['branches']['intervention']['episode']['event']['provenance']=='precertified'
             initial=json.loads(next((runner.BANK/'pilot-v6').rglob('initial-input.json')).read_text())
-            assert len([i for i in initial['images'] if i['role']=='temporal-pair'])==3
+            assert len([i for i in initial['images'] if i['role']=='current-target'])==3
+            assert not any(i['role']=='temporal-pair' for i in initial['images'])
+            assert result['evaluation']['repairSuccess'] is True
+            # A policy that stops on the empty plate never encounters the incident.
+            seq=iter([({'type':'finish'},False)])
+            result=runner.run(cid,'scripted-contract-only',execute=True,max_cost=1)
+            assert result['status']=='untriggered'
+            assert result['evaluation']['repairSuccess'] is None and result['evaluation']['detectionMiss'] is None
+            # A failed normal branch cannot support a recovery attribution.
+            failed=[(pub(ep,a),False) for a in plan[:at]]+[({'type':'finish'},False)]
+            failed += [(pub(ep,a),i==0) for i,a in enumerate(case['privateEvent']['recoveryWitness'])]+[({'type':'finish'},False)]
+            seq=iter(failed)
+            result=runner.run(cid,'scripted-contract-only',execute=True,max_cost=1)
+            assert result['attribution']['interventionSuccess'] and not result['attribution']['controlSuccess']
+            assert not result['attribution']['recoveryPairEligible'] and result['evaluation']['repairSuccess'] is None
+            # Exercise the real exception path; no live HTTP is involved.
+            for error,category in [('OpenRouter HTTP 403','request_rejected'),('OpenRouter HTTP 429','rate_limited'),('request timed out','timeout')]:
+                seq=iter([(RuntimeError(error),False)])
+                result=runner.run(cid,'scripted-contract-only',execute=True,max_cost=1)
+                assert result['status']=='api_error' and result['evaluation']['serviceErrors']=={category:1}
+                assert result['evaluation']['success'] is None and result['evaluation']['repairSuccess'] is None
     finally:runner.call=oldcall;runner.BANK=oldbank
     report=dict(status='PASS',testType='local scripted replies, not model performance',realPaidRequests=0,scriptedDecisions=len(calls),
-                sharedPrefix=True,identicalBranchDialogue=True,controlAndRecoveryCompleted=True,eventJudgmentAligned=True,strictSingleAction=True,privateInputFieldsAbsent=True)
+                sharedPrefix=True,identicalBranchDialogue=True,controlAndRecoveryCompleted=True,eventJudgmentAligned=True,strictSingleAction=True,privateInputFieldsAbsent=True,
+                untriggeredExcluded=True,failedControlExcluded=True,serviceErrorsExcluded=True)
     write(BANK/'runner-contract.json',report);print(json.dumps(report,indent=2))
 if __name__=='__main__':main()
