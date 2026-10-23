@@ -159,6 +159,13 @@ document.addEventListener('change',e=>{
   if(e.target.id==='action-kind'||e.target.id==='action-candidate')updateAction();
 });
 $('#search').addEventListener('input',()=>refreshRows());
+window.addEventListener('hashchange',()=>{
+  const [name,code]=location.hash.slice(1).split('/');
+  page(['peers','design'].includes(name)?name:'browse');
+  if(name==='browse' && code && code!==state.sample?.id){
+    const row=state.rows.find(r=>r.sample===code);if(row)selectRow(row);
+  }
+});
 async function init(){
   const parts=location.hash.slice(1).split('/');
   page(['peers','design'].includes(parts[0])?parts[0]:'browse');
