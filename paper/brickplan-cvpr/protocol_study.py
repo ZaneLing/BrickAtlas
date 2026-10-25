@@ -66,7 +66,7 @@ def main():
             blindControlCompleted=sum(r['blind']['score']['success'] for r in controls),
             blindFaultCompleted=sum(r['blind']['score']['success'] for r in faults),
             privilegedCompleted=sum(r['privileged']['score']['success'] for r in selected))
-    output=dict(schema='brickplan-paper-protocol-study/1',date='2026-10-21',
+    output=dict(schema='brickplan-paper-protocol-study/1',date='2026-10-25',originalDesignDate='2026-10-21',
         scope='Deterministic selected-route regression experiment; not random routes or learned models.',
         trials=len(rows),conditions=conditions,rows=rows,sources=sources,apiCalls=0,seconds=round(time.time()-start,2))
     dump(HERE/'evidence/protocol-study.json',output)

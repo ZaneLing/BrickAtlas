@@ -3,6 +3,21 @@
 \usepackage{times,graphicx,amsmath,amssymb,booktabs,tabularx,xspace}
 \usepackage[T1]{fontenc}
 \usepackage{microtype}
+\clubpenalty=10000
+\widowpenalty=10000
+% Pack supplemental panels at the top instead of centering sparse float pages.
+\setcounter{topnumber}{5}
+\setcounter{dbltopnumber}{5}
+\setcounter{totalnumber}{10}
+\renewcommand{\topfraction}{.95}
+\renewcommand{\dbltopfraction}{.95}
+\renewcommand{\textfraction}{.05}
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@dblfptop}{0pt}
+\setlength{\@fpsep}{12pt plus 2pt minus 2pt}
+\setlength{\@dblfpsep}{12pt plus 2pt minus 2pt}
+\makeatother
 \definecolor{cvprblue}{rgb}{0.13,0.40,0.67}
 \usepackage[breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
 \newcommand{\ours}{\textup{\textsc{BrickPlan}}\xspace}
@@ -18,250 +33,604 @@
 \renewcommand{\thefigure}{S\arabic{figure}}
 \renewcommand{\thetable}{S\arabic{table}}
 
-\section{Artifact Scope and Reproducibility}
-The manuscript describes an evidence snapshot dated 21 October 2026.
-All earlier models are included through their current versions. Three banks coexist: the 3,292-question white-baseplate static bank,
-the 1,872-episode dynamic mechanism bank, and the 96-case community
-module suite. Their counts are not independent model populations, and
-their experimental results are not interchangeable. The new route study
-runs on the community module suite, not on the historical six-part car.
-The complete module suite has no formal learned-agent evaluation or
-independent human assembly experiment in this snapshot.
+\section{Current Artifact and Evidence Boundaries}
+This supplement follows the organized dataset and metric specification
+of 25 October 2026. It supersedes the 5,260-record paper snapshot and
+its old experiment allocations. Historical model traces and the
+96-trial route study remain explicitly version-scoped evidence.
+Neither supplies formal scores for the current interface.
 
-The artifact records original model files, source metadata, certificates,
-cases, reference manuals, intervention witnesses, and order-regression
-checks. Each instruction contains the physical part and the resulting
-scene. Image manifests bind the current benchmark renders to their
-source states. Paper figure provenance separately records source hashes,
-cameras, native render dimensions, and exported figure hashes.
-The deterministic study records the four input files for each object
-and their SHA-256 digests. Re-execution does not require a model API.
+The artifact's organized catalogue, classification audit, physical replay,
+source groups, image examples, and scoring functions are bound by hashes.
+The paper records the current dataset in
+\path{evidence/current-dataset.json}, the candidate experiment assignments
+in \path{evidence/current-experiment-design.json}, and empty results in
+\path{evidence/current-results-template.json}. Older evidence files remain
+available for provenance, not as current case counts or budgets.
 
-The public object gallery is an author-facing inspection tool: it shows
-fault names and correction witnesses. It is not a valid blind agent
-input. Evaluation must use the observation adapter, which exposes the
-permitted images and action handles while retaining certificates,
-intervention labels, event timing, and recovery witnesses privately.
-Publishing such annotations supports reproducibility but also makes
-these public examples unsuitable as an undisclosed held-out test set.
+All 5,922 retained execution conditions pass fresh reference replay.
+This proves witnessed feasibility under the executor. It does not prove
+that every image is unambiguous, every adaptive event is visible, or
+that models and humans can solve the tasks. The current release status
+is program-checked with human image qualification pending. No paid model
+API is called by the paper build, and no new model or human result is
+imputed from a reference trajectory.
 
-\section{Complete Model Coverage}
-The three tracks contain 5,260 current records: 3,340 static and 1,920
-dynamic. Their 240 configuration entries are not independent objects.
-All 127 earlier static configurations and all 30 earlier dynamic
-structures remain in the current banks. The original chair, table, car,
-and crane are included in Figure~\ref{fig:allobjects}; another 38 complete
-object designs and 26 structural configurations are also shown. Twelve
-community modules extend this coverage rather than replacing it.
-The artifact's full catalogue lists every model identifier, source,
-target-part count, case count, and error distribution. Tables at the end
-of this supplement enumerate all 160 static configurations.
+\section{Dataset Accounting and Source Splits}
+\subsection{Records, aliases, and distinct tasks}
+The organized catalogue has 5,839 retained records: the earlier 5,793
+plus 46 complete-original-object conditions. It identifies 119 aliases
+within a source/configuration/contract: 27 static states equivalent
+under physical part matching and 92 repeated normal dynamic tasks.
+Removing their additional task weight leaves 5,720 distinct records.
+The equivalence test is scoped; two related designs from different
+source families are not claimed to have undergone global semantic
+deduplication.
+
+An additional 83 historical M/expanded-adapter aliases are excluded from
+the global catalogue but preserved as execution conditions. Consequently,
+5,839 catalogue conditions plus these 83 adapters yield 5,922 replays.
+The five implementation banks contribute 3,292 S, 1,712 D, 96 M, 776
+expanded, and 46 original-object reference executions. Distinct tasks
+within these banks number 3,265, 1,620, 96, 693, and 46. Bank labels
+describe provenance/runtime, not the primary evaluation scopes.
+
+The main set contains 5,452 candidates (3,697 static and 1,755 dynamic):
+3,315 local static, 148
+whole-object static stages, 234 named-module static stages, 1,534
+whole-object dynamic, and 221 named-module dynamic tasks. Another
+224 dynamic structural diagnostics and 44 arbitrary-crop dynamic tasks
+remain outside object main results. Their static counterparts can remain
+valid local repair tasks; a fragment need not be a recognizable whole
+object to test static structure correction.
+
+\begin{table}[t]
+\centering\small
+\caption{\textbf{Task types and main candidate counts.} C has no independent bank yet. Controls are scored separately from faults.}
+\label{tab:tasktypes}
+\begin{tabularx}{\linewidth}{@{}lXr@{}}
+\toprule
+Type & Required behavior & Main $N$\\
+\midrule
+S0 & Accept an already-correct stage. & 260\\
+S1 & Repair a supplied faulty stage. & 3,437\\
+D0 & Build normally without an external event. & 63\\
+D1 & Continue through one external event. & 1,649\\
+D2 & Continue through two or three events. & 43\\
+C & Repair from a system-built checkpoint. & Planned\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Source groups and public development material}
+All 5,720 distinct tasks are assigned by original set or procedural
+family to 154 source groups, with zero groups crossing splits. Forty-five
+sources already shown in galleries, examples, or debugging are promoted
+to public development. Table~\ref{tab:splits} gives the unified current
+assignment. This replaces the old S-only 2,286/539/467 split in current
+paper claims. The historical balanced D panel is also not the current
+unified test allocation.
+
+The existing-source test has 404 distinct tasks, of which 392 are main
+candidates: 309 local-static tasks (291 S1, 18 S0) and 83 whole-object
+dynamic tasks (79 D1, four D0). The remaining twelve are historical
+structure diagnostics. All named-module and complete-original-object
+examples currently belong to public development. A model comparison
+may report their performance descriptively, but cannot claim untouched
+community-source generalization from them.
+
+\begin{table}[t]
+\centering\small
+\caption{\textbf{Unified source-group assignment.} These are catalogue allocations, not visually admitted or executed model sample sizes. Source groups are disjoint across rows.}
+\label{tab:splits}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+\toprule
+Split & Distinct tasks\\
+\midrule
+Train & 2,076\\
+Development & 400\\
+Public development & 2,840\\
+Existing-source test & 404\\
+\midrule
+Total & 5,720\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Source separation does not establish absence from foundation-model
+pretraining. New-source evaluation needs newly acquired sources chosen
+before tuning and kept out of public examples. Future community holdouts
+and longer modules should be reported separately. Split names alone do
+not certify visual quality or statistical independence of variants.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures-v2/objects-all.pdf}
-\caption{\textbf{All 42 complete-object designs in D.} Every object is shown with its target-part count and current episode count. These are deliberately simplified complete constructions, including the original four objects. Their geometric simplicity is not evidence of measured human or model difficulty.}
-\label{fig:allobjects}
+\includegraphics[width=\textwidth]{figures-current/distributions.pdf}
+\caption{\textbf{Current main-candidate composition.} Counts derive from the organized distinct-task catalogue. T0 in the right panel denotes the 63 normal dynamic tasks; static tasks are not in that panel. Planning grades are structural scheduling labels, not measured difficulty.}
+\label{fig:distribution}
+\end{figure*}
+
+\section{Complete Object and Module Coverage}
+\subsection{Fifty whole-object configurations}
+The earlier 42 complete-object designs remain, including the chair,
+table, city car, and crane (Fig.~\ref{fig:whole}). They are intentionally
+simplified procedural objects. Five longer procedural builds extend
+coverage: a 21-part bookshelf, 32-part city bus, 25-part bridge,
+24-part gantry press, and 24-part cottage. Their larger part counts
+increase sequence length but do not alone establish difficulty.
+
+Three additional whole objects preserve complete downloaded LDraw
+source files: the 12-part 4018 ship, 13-part 4017 sea helicopter, and
+nine-part 4037 helicopter. All original instances, colors, and poses are
+retained, with zero dropped parts. Wheels or rotors are not removed to
+make the task easier. They start on an empty white plate. The claim is
+complete coverage of these source files, not independent confirmation
+against retail packaging. Together these additions yield 50 whole-object
+operation configurations, not 50 original community models.
+
+The three original objects contribute 46 conditions: 25 static stages
+and 21 dynamic tasks. Faults cover missing, extra, color, part,
+position, and orientation discrepancies where feasible. All normal
+routes and fault repair witnesses replay legally, and three alternative
+normal orders are checked. The condition totals must not be mistaken
+for an equal number of distinct objects.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures-current/objects-all.pdf}
+\caption{\textbf{All 42 retained procedural complete objects.} Each cell gives active parts and distinct current dynamic task count. Compared with historical galleries, repeated controls and excluded human-error scope are removed from the counts. Geometry is unchanged. These simplified objects complement the source-preserving LDraw examples.}
+\label{fig:whole}
 \end{figure*}
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures-v2/mechanisms-all.pdf}
-\caption{\textbf{All 26 structural configurations in D.} These configurations provide source-derived assemblies and controlled tests of access, support, buried errors, and reconstruction. Together with Figure~\ref{fig:allobjects}, they cover all 68 dynamic structures and 1,872 episodes.}
-\label{fig:allmechanisms}
+\includegraphics[width=\textwidth]{figures-current/added-objects.pdf}
+\caption{\textbf{Nine added operation configurations.} Three complete original LDraw models, five longer procedural objects, and one enlarged museum roof. Counts are distinct dynamic tasks; static siblings are additional tasks. The roof retains the full building context and manipulates only its named remaining portion. All scenes are rendered natively at $3200\times2400$.}
+\label{fig:added}
 \end{figure*}
+
+\subsection{Thirteen named remaining modules}
+Twelve community scenes supply recognizable bodies and explicit remaining
+modules: cottage roof, racer cabin, seaplane tail, museum roof, truck
+cab lights, two helicopter upper/tail assemblies, panda head, burger-stand
+roof/sign, White House roof details, Rockefeller crown, and Brandenburg
+crest (Fig.~\ref{fig:modules}). These twelve source scenes contain 2,135
+instances in the original M inventory, with 99 task placements in its
+5--12-part selected modules. The expanded museum roof adds a thirteenth
+configuration with sixteen active pieces, without adding another source.
+
+The original M adapter retains 96 conditions (four static and four
+dynamic per module). Expanded conditions introduce additional error
+families and repeated events. Duplicate controls and cross-adapter aliases
+do not gain extra weight. Current named-module totals across adapters
+are 234 static and 221 dynamic distinct tasks. An original M eight-case
+count is therefore not the current total for that source configuration.
+The expanded module collection is not limited to three physical errors.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures-v2/modules-all.pdf}
-\caption{\textbf{All twelve community sources in M.} The entire source scene provides context; only the bounded 5--12-part module is manipulated. Part counts below the scenes count those task pieces, not the complete source object. Each module supplies eight cases.}
-\label{fig:allmodules}
+\includegraphics[width=\textwidth]{figures-current/modules-all.pdf}
+\caption{\textbf{All twelve original named community modules.} Full source scenes establish semantic context; active-part counts refer only to the remaining modules. Task counts combine current M and expanded records after deduplication and include static and dynamic tasks. The thirteenth configuration is the larger museum roof in Fig.~\ref{fig:added}.}
+\label{fig:modules}
 \end{figure*}
+
+\subsection{Static and diagnostic continuity}
+All 160 source-derived static configurations remain. The original white
+baseplate migration certified 3,292 raw questions; within-contract
+physical deduplication now assigns them 3,265 task weights. All 127 earlier
+static configurations and all 30 earlier dynamic structures are retained
+in their relevant current main or diagnostic scope. A change in main
+eligibility does not delete provenance or convert an arbitrary crop into
+a complete object.
+
+The 26 older non-object dynamic structures remain diagnostic
+(Fig.~\ref{fig:mechanisms}). Three additional arbitrary community crops,
+\texttt{new-10013-1}, \texttt{new-10015-1}, and \texttt{new-10016-1},
+are also excluded from object dynamic main results. Their local static
+repair tasks can still be studied in the local structure scope.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures-current/mechanisms-all.pdf}
+\caption{\textbf{All 26 historical dynamic structural configurations.} The 224 distinct tasks test execution mechanisms and local repair. They are not included among the 63 object/module dynamic configurations or in object-construction main scores.}
+\label{fig:mechanisms}
+\end{figure*}
+
+\section{Error Taxonomy and Structural Descriptors}
+\subsection{Physical labels versus human-inspired causes}
+E01--E07 denote missing pieces, excess pieces, wrong colors, wrong
+parts, position/height offsets, non-equivalent orientations, and swapped
+positional relations. Matching is physical rather than instance-based.
+A replacement can create both a missing correct placement and an excess
+wrong placement. A swap means changed positions, not mirrored physical
+geometry. Direction changes equivalent under supported brick symmetries
+are not orientation errors.
+
+P01 marks premature covering that can block a later insertion. In a
+static stage task, the same cover may simply be premature relative to
+that stage target; only continued execution tests the access consequence.
+P02 marks a buried defect with reference dismantling of correct layers.
+A witness that removes covers does not prove every successful repair
+must remove the same covers. Repetition omission remains a missing-piece
+error with a process/cause tag. Simultaneous faults can have several
+physical labels; they are not repeated temporal events.
+
+T0--T3 record zero to three external interventions. Main D2 includes
+43 tasks (37 T2, six T3); the broader catalogue has 47 repeated-event
+tasks, including four archived-crop diagnostics. These populations must
+not share an unexplained denominator.
+
+Human-inspired tags H01--H11 and H13 are twelve approved categories
+motivated by community reports. H12 and H14--H17 are excluded from the
+current task selection; H18 remains deferred. The inventory is not a
+live remaining-piece count, so no leftover-count reasoning claim is
+made. Synthetic category balance is not an estimate of real human
+mistake frequency, and online reports are not independently collected
+participant trajectories.
 
 \begin{table*}[t]
 \centering\small
-\caption{\textbf{Related evaluation contracts.} Inputs and outputs determine what a failure can mean. This is a task comparison, not a performance comparison.}
-\label{tab:related}
-\begin{tabularx}{\textwidth}{@{}lXXX@{}}
+\caption{\textbf{Main-candidate multilabel coverage.} A task can occur in several rows. Process tags are distinct from the seven physical labels. The absent module-swap stratum is a coverage gap. Counts include normal controls only when a label genuinely applies (normally none).}
+\label{tab:coverage}
+\begin{tabularx}{\textwidth}{@{}lXrrr@{}}
 \toprule
-Work & Goal information & Output / interaction & Recovery setting\\
+Label & Meaning & Static & Whole dynamic & Module dynamic\\
 \midrule
-BrickNet; BrickBench & Generation conditions or text & Assembly program / agentic design & Validity during generation; no prescribed external fault in a supplied module.\\
-MEPNet; SCANet & Visual assembly manual & Part poses / step correction & Manual execution or correction of a particular assembly step.\\
-Break and Make & Interactive inspection of a target & Inspect, disassemble, reconstruct & Reconstruction after a dedicated inspection phase.\\
-AsgardBench; RoboRecover & Task and visual scene & Interactive actions / robot policy & Plan adaptation or continuation from execution deviations.\\
-\ours module suite & Prebuilt context, goal, full remaining manual & One attach, detach, inspect, or finish & Continuous construction with an actual-state intervention; any legal order is accepted.\\
+E01 & Missing piece & 1,361 & 209 & 60\\
+E02 & Extra piece / local added layer & 356 & 167 & 36\\
+E03 & Wrong color & 1,458 & 426 & 60\\
+E04 & Wrong type, size, or thickness & 339 & 185 & 15\\
+E05 & Position or height offset & 804 & 227 & 32\\
+E06 & Non-equivalent orientation & 489 & 130 & 25\\
+E07 & Positional relation / swap & 31 & 20 & 0\\
+P01 & Premature cover / access obstruction & 17 & 23 & 4\\
+P02 & Buried repair & 36 & 219 & 22\\
 \bottomrule
 \end{tabularx}
 \end{table*}
 
-\section{Exact Observation and Action Roles}
-\label{sec:interface}
-Table~\ref{tab:roles} distinguishes the images that define a task from
-those that show its current state. In a static question, the acceptance
-target is an intermediate stage. A full-completion reference is provided
-for context and must not silently replace that stage target. In a
-dynamic episode, the acceptance target is the completed module and
-remains fixed even when a hidden intervention occurs.
+\subsection{Migration labels and reference burdens}
+The old static migration retained 3,025 source-linked records and replaced
+267 incompatible cases. Its raw ledger contains 2,144 direct replays,
+834 dismantle/rebuild witnesses, 37 held-component witnesses, ten corrected
+board-penetrating starts, and 267 substitutions. This historical ledger
+sums to 3,292 raw conditions and precedes the new deduplication.
+Replacement-state labels are resolved using qualified candidate kinds
+after physical multiset matching; they are not a new error class.
+Height-layer cases map to actual displaced poses. No labelled static
+error in the organized catalogue is physically equivalent to its target.
+
+Build descriptors count the current target, not unused future pieces.
+B1 is at most twelve active pieces, B2 is thirteen to twenty-four, and
+B3 is at least twenty-five. R0 is a control. R1 has at most two
+reference repair moves and no reference removal of correct covers.
+R3 has such a removal or at least seven reference moves. R2 covers
+remaining ordinary rework, including three to six moves and relevant
+multiple-defect cases. These rules describe the available witness;
+optimal repair search has not been proved.
+
+The provisional grade is G3 if B3, T3, or both T2-or-more and R3.
+Otherwise it is G2 if B2, R2/R3, or T2; the remaining tasks are G1.
+Main counts are 2,577 G1, 2,823 G2, and 52 G3. Empirical model/human
+results must validate these descriptors before calling them easy,
+medium, and hard. Visibility remains an independent admission field;
+invisibility is not merely a higher difficulty grade.
+
+\section{Exact Input and Action Interface}
+\subsection{Public input and private evaluation state}
+The current contract is
+\path{brick-atlas-direct-actions-full-context/1}. The common local runner
+uses existing physical engines and emits one direct action schema.
+S and D no longer require a different outer \texttt{action} object.
+Historical interface results retain their old input version.
+The public gallery is an author-facing display of labels and witnesses,
+not a blind model input. Only the observation adapter is used for a
+model attempt.
 
 \begin{table*}[t]
 \centering\small
-\caption{\textbf{Image roles in the community interface.} A reference image is not a report of current execution. These roles are explicit in the adapter rather than inferred from file order.}
+\caption{\textbf{Roles of current input information.} The acceptance target is unique. Files and paper layouts do not define image roles implicitly. Information varies by track; unsupported queries are not silently provided.}
 \label{tab:roles}
 \begin{tabularx}{\textwidth}{@{}lXX@{}}
 \toprule
-Role & Content & Interpretation\\
+Role & Content & Scoring interpretation\\
 \midrule
-Scene overview & Full original object, initial and completed views & Establishes the recognizable object and the supplied context.\\
-Module start & Cropped scene before any task manipulation & The initial movable-part state; the context is already assembled.\\
-Full-completion reference & Completed remaining module & Explains the whole module; may differ from a static question's acceptance target.\\
-Acceptance target & Required final state for this episode & Stage target for static repair; completed module for dynamic completion.\\
-Instruction part / after & Isolated part and scene after its reference placement & One executable demonstration; the numbered order is not compulsory.\\
-Inventory card & Shape and color of an available piece & Identifies an action handle without declaring its correct placement.\\
-Before last action & Actual scene before the agent's last action & Temporal evidence; explicitly absent at the first decision.\\
-Current scene & Actual state after execution and any intervention & The authoritative observation of the world now.\\
-Candidate preview & Hypothetical placement of a selected piece & A planning aid; not executed, not a correctness certificate.\\
+Acceptance target & Required static stage or completed dynamic object/module & Sole endpoint for this task.\\
+Current scene & Actual state after own action and any hidden event & Authoritative world observation.\\
+Previous scene & State before the preceding own action & Temporal evidence; absent at the first decision.\\
+Supplied context & Whole body around a named remaining module & Visible fixture; excluded from movable-part scores.\\
+Reference manual & Isolated part and state after one reference placement & Optional route, where supported; future pages do not change a static stage goal.\\
+Inventory & Part cards, colors, and anonymous handles, with spares & Catalogue, not a live count of remaining pieces.\\
+Candidate preview & Hypothetical selected part/pose overlay & Query aid, not a correctness label or executed action.\\
+Legality feedback & Physical result or reason for rejection & Separate from image evidence and semantic correctness.\\
 \bottomrule
 \end{tabularx}
 \end{table*}
 
-\paragraph{Views and handles.}
-The module interface provides isometric, rear, and top views at
-$900\times660$ pixels. Part and candidate handles are randomized by
-seed and do not expose target labels. The manual stays accessible
-throughout the episode. Current-state images do not include the
-paper's error boxes or corrective arrows. Explicit request and response
-logs distinguish inspection from manipulation and retain the actual
-view delivered to the agent.
+Each matched current/target scene is $800\times600$ pixels on a
+$1600\times636$ comparison canvas. Native partial-manual pages can be
+$1600\times1040$. Isometric, rear, and top views are available through
+supported inspection. Named modules retain full-object context in both
+current and target images. A publication crop does not redefine the
+input framing. Actual image count, dimensions, hashes, and provider
+processing must be logged per request; the number of images is not a
+constant cost inferred from the number of scene roles.
 
-\paragraph{One physical action per turn.}
-An attach action chooses one rack piece and one catalog candidate. A
-detach action removes one installed piece. The executor checks the
-resulting configuration and a straight insertion or extraction path.
-An invalid physical attempt consumes a manipulation attempt, reports a
-legality code, and leaves the world unchanged. Inspection does not
-advance construction or trigger an event. Finish requests termination;
-success additionally requires the exact permitted geometric endpoint.
-The manipulation budget is $4N+12$ for $N$ normal module pieces. The
-outer model runner has a separately configured decision cap so repeated
-inspection cannot run indefinitely. Both limits must be reported in a
-model comparison.
+The model receives neutral rules and anonymous action handles alongside
+RGB. This is not pure image-only input. It does not receive raw pose
+maps, error codes, family labels, reference correction actions, task type,
+planned accidents, or hidden event times. The first decision identifies
+that no prior action exists. Public names and image paths must not encode
+the correct candidate. Observations are checked for prohibited fields.
 
-\paragraph{Finite action candidates.}
-The action catalog is part of the task definition. This is not unrestricted
-six-degree-of-freedom pose prediction. Candidate previews and legality
-codes reduce the planning burden and can leak useful physical information,
-even though neither states the correction. They must be held constant
-across compared agents; an ablation can quantify their contribution.
-A symbolic state or expected next-state overlay is privileged information
-and should be reported as a separate condition.
+\subsection{Direct actions and finite candidates}
+A response is one JSON object. Examples are:
+\begin{quote}\small\ttfamily
+\{"type":"attach","partId":"A023",\\
+\hspace*{1em}"candidate":"C00523"\}\\
+\{"type":"detach","partId":"A023"\}\\
+\{"type":"inspect","view":"top"\}\\
+\{"type":"finish"\}
+\end{quote}
+These handles illustrate an interface, not universal answers. Attach and
+detach each manipulate one physical part. Inspection can request a
+supported view, part, preview, inventory page, or manual step. It does
+not change geometry or itself trigger an accident. Multiple-action
+scripts, hidden state replacement, and unsupported field combinations
+are invalid in the default interface. Human participants operate
+buttons; they do not type these objects or write explanatory text.
 
-\paragraph{Indistinguishable parts.}
-Terminal comparison uses physical part geometry, color, and pose rather
-than instance identity. Supported rotational equivalences are limited
-to plain rectangular parts with the appropriate geometric symmetry.
-Decorated, directional, and asymmetric pieces are not assumed invariant
-to arbitrary rotations. Identical-part exchanges are tested separately
-from sequence exchanges: changing an identifier alone must not create
-an apparent alternative physical trajectory.
+The main action space selects anonymous candidate poses. It is not
+unrestricted six-degree-of-freedom prediction. Free coordinates require
+another adapter and output-localization experiment. Likewise, text-state
+and RGB-plus-state conditions are planned separately. Explicit state can
+reveal occluded geometry, so such a comparison measures added state
+information rather than equal-information modality alone.
 
-\section{Intervention Selection and Causal Comparisons}
-\paragraph{Deterministic adaptive selection.}
-Each community fault condition names one of three mechanisms and an
-installed-part threshold. After an accepted manipulation reaches the
-threshold, the selector inspects the actual state. For a missing part
-or color replacement, it considers older installed normal pieces,
-retaining the newest piece to avoid merely undoing the last action.
-For an extra layer, it searches compatible exposed positions for the
-spare plate. The control and all three fault conditions share the same
-inventory and candidate catalog.
+\subsection{Physical checks and budgets}
+Attachment checks supported pose/connection, endpoint collision, and a
+straight insertion path. Detachment checks extraction. A rejection
+changes no geometry; a later correct finish remains successful.
+Feedback and candidate previews can aid planning and must be held
+constant or ablated explicitly. Plain rectangular brick symmetries
+are supported only where justified. Decorated and asymmetric pieces
+are not assumed rotationally invariant. Terminal comparison fixes the
+construction frame rather than globally aligning arbitrary assemblies.
 
-An event is admitted only if it changes the state through legal
-primitives and has a feasible inverse returning to the pre-event state.
-A replacement uses a same-shape alternative-color spare: the environment
-removes the original piece and attaches the spare between observations.
-These two environment primitives do not allow the agent to submit two
-manipulations in one turn. If no suitable event is available, selection
-is deferred. At most one event is applied in the current module suite.
-The private log records the realized location and its inverse.
+The proposed comparison cap is $\max(40,6N+20)$ model decisions,
+including inspections and malformed outputs. Applicable native caps,
+such as the original module manipulation limit $4N+12$, remain
+recorded. Native limits are not claimed identical across every engine.
+A formal comparison must declare the effective caps per track before
+running and use the same caps for every model on the same task.
+A reference route is feasible, not necessarily shortest.
 
-\paragraph{What feasibility establishes.}
-A legal inverse is a recovery witness, not a proof that it is the shortest
-recovery or that the error is visually obvious. Every selected normal
-route in the protocol study has a complete replay, so restoring its
-pre-event state permits the remaining route to finish. This guarantee
-does not extend to an arbitrary agent state that was already incorrect
-before the intervention. Likewise, a reference event's RGB check does
-not certify visibility at every location an adaptive selector can reach.
-New trajectories require their own observation-level audit.
+\section{Static Metrics in Detail}
+Let $I,F,G$ denote initial, final, and target multisets of canonical
+shape/color/symmetry-aware poses for movable pieces only. Immutable
+context is excluded. The endpoint success indicator requires explicit
+\texttt{finish} and $F=G$. A rejected physical request is not accepted
+as a state transition; its existence does not invalidate a subsequent
+successful completion. Model budget exhaustion is an unsuccessful
+attempt, not an implicit finish at a correct intermediate snapshot.
 
-\paragraph{Matched-prefix controls.}
-For a causal recovery comparison, execute a normal prefix once, save
-the environment and conversation, and branch it into control and fault
-continuations. The two branches have identical history before the event.
-Keep the target, action vocabulary, inventory, renderer, budgets, and
-model settings fixed. Report both completion and whether the fault
-actually occurred. A run that finishes correctly without encountering
-its scheduled fault is a completion, not a successful repair trial.
+\begin{align}
+ \mathrm{TP}&=|F\cap G|,\quad \mathrm{FP}=|F-G|,\quad
+ \mathrm{FN}=|G-F|,\\
+ \mathrm{F1}_{\rm place}&=\frac{2\mathrm{TP}}{2\mathrm{TP}+\mathrm{FP}+\mathrm{FN}},\\
+ E_0&=|G-I|+|I-G|,\quad E_T=|G-F|+|F-G|,\\
+ \mathrm{ER}&=1-E_T/E_0,\\
+ H&=I\cap G,\qquad \mathrm{DR}=|H-F|/|H|.
+\end{align}
+Undefined denominators are N/A. F1 of two empty multisets is defined
+as one. ER can be negative. If a wrong-color brick is removed but its
+correct-color counterpart is not installed, residual falls from two to
+one: ER is 50\%, but exact SR is zero. This does not mean that one of
+two human mistakes was fixed or that a globally shortest repair was used.
 
-A conditional recovery rate excludes untriggered episodes from its
-denominator, so it must be accompanied by exposure coverage and the
-number of stalled prefixes. Even with the same input seed, two fresh
-API runs are not necessarily matched-prefix controls: their actions may
-diverge before the event. Adaptive location selection also creates
-trajectory-dependent fault difficulty. Stratify by the realized edit
-and report the reference-location subset separately when appropriate.
+For S0 controls, FR records any accepted attach/detach during an
+initially correct task. A remove-and-restore sequence has FR one and
+can still finish correctly. DR instead records final damage only;
+temporarily removing correct work to access a buried error does not
+incur DR if restored. Normal acceptance, unnecessary manipulation,
+and fault repair therefore need separate denominators.
 
-\section{Community Objects and Route Diagnostics}
-Table~\ref{tab:objects} lists all twelve objects. Original instance counts
-include the supplied surrounding scene, figures, and accessories. The
-module count measures the actual task; it does not imply reconstructing
-the entire source object. The full scenes contain 2,135 source instances;
-the bounded modules contain 99 normal placements. Larger source models
-therefore need not be harder tasks.
+Original missing recovery is
+$|(F-H)\cap(G-I)|/|G-I|$.
+Original excess clearance is
+$1-| (F-G)\cap(I-G)|/|I-G|$.
+Moving an excess brick to a different wrong pose can clear its original
+excess signature while still failing the task; these are diagnostics,
+not replacements for SR/F1. Type-plus-color, shape-plus-pose, and
+color-plus-pose F1 expose attribute combinations, not independent
+visual recognition accuracies. A uniform connection-adjacency F1 is
+planned but not implemented in the common scorer.
+
+\section{Dynamic Metrics and Pair Eligibility}
+\subsection{Normal building and raw intervention outcomes}
+BCR uses valid normal D0 runs. ICR uses valid D1/D2 runs assigned an
+intervention, whether or not the event was reached. TR is actual events
+over planned events, with per-task exposure counts. An untriggered
+correct completion is raw completion, not successful repair. A partial
+one-of-two exposure remains visible in the ledger and does not enter
+all-event recovery. An empty recovery denominator is N/A.
+
+C denotes future system-built checkpoint continuation. Its CSR measures
+repair plus remaining completion from that checkpoint. The prefix must
+be described as supplied by the system, not assembled by the model.
+There is no independent C bank in this snapshot, and CSR cannot replace
+D1/D2 continuous-construction evidence.
+
+\subsection{Shared-prefix construction and incident effect}
+Execute the common prefix once. Save environment state, conversation,
+images, handle mapping, used budget, and random settings. Clone these
+into control and intervention continuations at the admissible incident
+opportunity. Keep targets, inventory, action vocabulary, budgets, and
+model revision fixed. After branching, allow each continuation its own
+legal order. Two separate normal/fault runs with the same nominal seed
+are not verified shared-prefix pairs.
+
+The eligible population $Q$ requires valid branches, verified shared
+history, all planned events actually applied, and verified incident
+effects. An event that removes an already-wrong brick or helps an
+incorrect agent cannot automatically support a standard repair claim.
+Record pre-existing errors and the realized edit. A correct future cover
+can block assembly without adding a target residual; verify access
+obstruction through the executor rather than demand a residual increase.
+Adaptive event locations can have trajectory-dependent difficulty.
+
+For $c_i,f_i\in\{0,1\}$ on $Q$, CRR is
+$\sum_i c_i f_i/\sum_i c_i$. Its denominator excludes failed normal
+branches. The signed paired difference is
+$\Delta\mathrm{SR}=|Q|^{-1}\sum_i(c_i-f_i)$ and retains all four
+outcome cells, including fault-only success. It can be negative.
+Report planned pairs, technically valid branches, normal failures,
+untriggered pairs, partial exposure, unverified effects, and eligible
+counts. A high conditional rate with poor normal-build or exposure
+coverage must not be presented alone.
+
+\subsection{Multiple events and recovery while progressing}
+For a realized event, let $B$ be the pre-event movable multiset and $A$
+the post-event multiset. Relative to full target $G$, obligations are
+\begin{equation}
+ L=(B\cap G)-A,\qquad X=(A-G)-(B-G).
+\end{equation}
+At a later state, the lost correct quantities must be restored and the
+incremental excess quantities removed. There is no requirement to
+return exactly to $B$: legitimate new target placements are permitted.
+Pre-existing agent defects remain separate. Windows end immediately
+before the next external intervention so a later accident is not counted
+as regression from the earlier repair.
+
+Count all decisions, including inspections, invalid outputs, and physical
+rejections, toward first-recovery latency. Report latency conditional
+on observed recovery together with unrecovered proportion. Also report
+window-end recovery and retention over at least two follow-up decisions.
+An observed recurrence is a retention failure; a correct short window
+is N/A with its sample count. An early-cover process error with no $L,X$
+positions must not receive automatic zero latency. Use completion and
+verified process measures instead. Repair@2/@4/@8 is reserved for
+sufficiently observed single-event or checkpoint windows; next-event
+and technical truncation are listed separately.
+
+All-event D2 CRR requires successful normal control, all planned events,
+verified effects, and terminal success. Per-event repair reports use
+actual effective events and their windows. The two measures must not
+be confused when a first repair succeeds but the second event is never
+reached. The common metric functions implement eligibility and window
+logic; formal batch-runner logging still needs integration.
+
+\subsection{Detection is a separate task}
+The continuous agent is not required to state whether it noticed an
+anomaly. Failure can arise from perception, action selection, ordering,
+or premature stopping. Successful recovery does not prove conscious
+or explicit detection either. Independent detection uses fixed normal
+and fault snapshots with balanced change/no-change coverage, and reports
+precision, recall, F1, false-positive rate, and multilabel location-set
+F1. It remains a planned task bank and must not interrupt the primary
+assembly episode or manufacture detection labels from GT actions.
+
+\section{Technical Status, Aggregation, and Cost}
+\subsection{Ability failures and censored runs}
+\texttt{completed} and \texttt{model\_budget\_exhausted} are ability-valid
+statuses; the latter is a failure. A premature finish with a wrong target
+is also failure. Final \texttt{service\_error}, \texttt{harness\_error},
+and \texttt{external\_stop} do not receive ability scores. A transient
+service error recovered at the same decision can lead to a valid completed
+run; its charge and retry are retained. It is incorrect to censor every
+completed attempt merely because one retry occurred.
+
+Parsing failure, parsed-but-invalid schema/handles, and physical rejection
+are separate events. Accepted attach/detach over well-formed manipulation
+attempts defines legal-action rate. Every attempted request and decision
+is retained in cost and failure reporting. Neither a 403/429/timeout nor
+JSON-format failure should be relabeled as a visual error.
+
+Report valid-run coverage and completed/planned-attempt operational rate
+alongside ability SR. The latter planned denominator combines access
+and task ability and must be named accordingly. All compared models
+receive the same predeclared task list; service failures do not justify
+substituting other tasks. A common-valid-subset analysis can be added
+with its scope and N explicitly recorded.
+
+\subsection{Aliases, macro aggregation, and uncertainty}
+Group every result by model, input version, track, and task type.
+Normalize canonical-task weights so duplicate control conditions and
+interchangeable-ID records do not inflate performance. Average within
+object and then across objects; additionally report source-macro results
+by original set or design family. Task-micro rates are references.
+Static S0 and S1, and dynamic normal/intervention tasks, remain separate.
+Multilabel error rows cannot be summed as independent task populations.
+
+Source-cluster bootstrap intervals are planned, with 2,000 group
+resamples retaining variants and paired branches together. Sparse cells
+remain descriptive. One attempt per model/condition does not establish
+run-to-run stability. The common scorer implements grouping and macro
+weights; source-clustered intervals have not yet been integrated into
+formal model reporting.
+
+\subsection{Requests, actions, and financial reporting}
+Record accepted moves, all manipulation attempts, inspections, decisions,
+requests, actual image count/dimensions, input/output tokens, wall time,
+and billed dollars. Divide manipulation attempts by a feasible witness
+only when that witness is nonzero. The ratio can be below one and is
+not SPL or globally optimal efficiency. Report zero-witness S0 via FR.
+
+Count shared prefixes once, both continuations, and billed retries or
+failed calls. USD per successful task is N/A when none succeeds. A
+service retry repeats the same request without silently restarting the
+episode or selecting a better answer. The old 8,030-work-unit plan and
+old budget estimates apply only to the historical snapshot. Current
+financial estimates require a small current-interface pilot per selected
+model and a declared admitted case list; no current dollar total is
+asserted here.
+
+\section{Reference and Historical Diagnostics}
+\subsection{Replay and visibility admission}
+The current replay audit has 5,922 passes and zero failures, including
+aliases and controls. Source and reference hashes are retained. The
+three complete LDraw objects have 36 faulty reference conditions and
+ten controls. Every checked faulty condition changes at least 128 pixels
+by at least 24 RGB levels in one of three $800\times600$ views.
+These reference-image thresholds are machine screening, not human
+perception guarantees.
+
+Old M and expanded-module image checks used cropped framing. They do
+not certify current full-context readability, and new adaptive locations
+need their own observation-level check. Legacy low-contrast and
+latest-action-cancellation flags are retained separately. A removed
+newly installed part can make previous and current scenes equal,
+requiring action-outcome monitoring rather than ordinary change detection.
+Current-interface human qualification remains pending for all formal
+perception claims.
+
+\subsection{Historical alternative-order study}
+The original twelve-module study uses two routes and four conditions
+per route: control, missing piece, wrong color, and extra plate. Its
+96 route--condition trials are not the current 5,720-task dataset.
+Alternative routes were found by legal swaps and preferentially selected
+to differ at the trigger threshold. Nine modules have a different
+physical threshold state; three have a different order but the same
+threshold state. This selection demonstrates regression cases, not
+the distribution of a learned agent's orders.
+
+Exact-reference triggers have opportunity on 36/36 reference-route and
+9/36 alternative-route faults. Actual-state selectors trigger 36/36 in
+both groups. Every normal route reaches the correct target, while a
+comparator requiring every manual prefix accepts zero of twelve
+alternatives. Blind continuation finishes 24/24 controls and 0/72 faults;
+a privileged inverse-and-continue policy finishes 96/96. Privileged
+state access makes this a reachability check, not a visual baseline.
+The recorded source hashes and route indices support reproduction
+without a model API.
 
 \begin{table*}[t]
 \centering\small
-\caption{\textbf{Complete community suite.} Every row has four static and four dynamic cases: control, missing piece, wrong color, and extra layer. The threshold is a count of installed normal pieces, not a compulsory reference prefix.}
-\label{tab:objects}
-\begin{tabularx}{\textwidth}{@{}llXrrr@{}}
-\toprule
-Source set & Object & Remaining module & Source parts & Task parts & Threshold\\
-\midrule
-31009 & Cottage & Roof section & 270 & 6 & 3\\
-31027 & Blue racer & Upper cabin & 67 & 11 & 3\\
-31028 & Seaplane & Tail assembly & 53 & 7 & 3\\
-21004 & Guggenheim Museum & Roof section & 208 & 12 & 4\\
-3179 & Repair truck & Cabin top and lights & 128 & 5 & 4\\
-30181 & Orange helicopter & Tail assembly & 52 & 7 & 3\\
-30311 & Police helicopter & Rotor assembly & 59 & 10 & 4\\
-30026 & Panda & Head section & 61 & 6 & 4\\
-6683 & Burger stand & Roof and sign & 79 & 7 & 3\\
-21006 & White House & Chimneys and roof details & 556 & 10 & 4\\
-21007 & Rockefeller Center & Upper crown & 240 & 8 & 7\\
-21011 & Brandenburg Gate & Top crest & 362 & 10 & 6\\
-\midrule
-Total & 12 objects & 96 cases & 2,135 & 99 & ---\\
-\bottomrule
-\end{tabularx}
-\end{table*}
-
-\paragraph{Selection of the alternative routes.}
-Each reference route is the verified manual. An alternative is obtained
-by testing swaps and retaining a physically legal route with all three
-feasible adaptive faults. When available, the search favors a route
-whose geometry at the threshold differs from the reference checkpoint.
-The study therefore uses selected regression examples, not a random
-sample of all topological orders or an estimate of agent route choice.
-Table~\ref{tab:routes} provides the precise reference-position indices.
-
-\begin{table*}[t]
-\centering\small
-\caption{\textbf{Alternative legal routes used in the deterministic study.} Reference-position numbers identify pieces; the actual executor uses randomized handles. All routes reach the same normal target. The threshold states differ for nine objects.}
+\caption{\textbf{Historical selected alternative routes.} Integers identify reference placements, not compulsory times. This table is unchanged protocol evidence from the original twelve modules.}
 \label{tab:routes}
 \begin{tabularx}{\textwidth}{@{}lXc@{}}
 \toprule
-Object & Alternative route in reference-position indices & Different threshold state\\
+Object & Alternative reference-position order & Different threshold state\\
 \midrule
 Cottage & 1, 2, 4, 3, 5, 6 & Yes\\
 Racer & 1, 6, 3, 4, 5, 2, 7, 8, 9, 10, 11 & Yes\\
@@ -279,506 +648,275 @@ Brandenburg Gate & 1, 2, 3, 4, 5, 7, 6, 8, 9, 10 & Yes\\
 \end{tabularx}
 \end{table*}
 
-\paragraph{Exact-prefix opportunity.}
-The comparison inspects the otherwise normal physical trajectory for
-equality with the reference checkpoint. This avoids confounding trigger
-eligibility with a different repair policy. It yields 36/36 eligible
-reference-route fault trials and 9/36 alternative-route trials. The
-actual-state selector applies an event in all 36 trials in each group.
-A separate comparator requiring every intermediate state to match the
-manual accepts 12/12 reference routes and 0/12 alternatives. The terminal
-comparator accepts all 24 normal routes. These numbers establish
-counterexamples to an overly restrictive contract, not a learned-agent
-performance improvement.
-
-The blind policy follows its normal route after any change. It completes
-24/24 controls and 0/72 fault trials. The privileged policy uses the
-recorded inverse immediately after the event and then continues; it
-completes 96/96 trials. No model API is involved. A privileged repair
-trace tests solvability and logging, not visual detection, reasoning,
-or human-level assembly skill.
-
-\section{Static Migration and Error Coverage}
-The static bank uses an explicit white baseplate and disallows unsupported
-floating states or passage through the board. Its migration ledger
-records the five routes in Table~\ref{tab:migration}. All resulting
-repair witnesses replay under the new executor. Figure~\ref{fig:static}
-shows actual current and target states for eight error categories.
-
-\begin{table}[t]
-\centering\small
-\caption{\textbf{White-baseplate migration ledger.} Counts refer to questions, not independent objects.}
-\label{tab:migration}
-\begin{tabular}{@{}lr@{}}
-\toprule
-Migration method & Questions\\
-\midrule
-Direct replay & 2,144\\
-Verified dismantle/rebuild & 834\\
-Witness using held components & 37\\
-Corrected board-penetrating initial scene & 10\\
-Replaced incompatible source case & 267\\
-\midrule
-Total certified questions & 3,292\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Of the 267 replacements, 250 source targets were not buildable under
-the new rules, 13 had board-penetrating initial states,
-and four were duplicate states. Replacements preserve their source
-links and substitution reasons. The ledger's 3,025 preserved cases
-include ten repaired initial scenes; ``preserved'' therefore does not
-mean that every initial coordinate was unchanged. The 160 controls
-have a zero-action repair witness.
-
-A complete geometric replay is a necessary check, but does not establish
-that every question has sufficient visual evidence or comprehensible
-wording. The full static RGB package and per-question human readability
-review are still pending. It would be incorrect to interpret the
-3,292/3,292 replay count as a human-validated visual dataset size.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures-v2/legacy-static.pdf}
-\caption{\textbf{Eight static error categories on the white baseplate.} Each compact cell places the faulty current state on the left and the correct stage target on the right. Categories cover missing pieces, color/type/size substitutions, translation, rotation, layer height, and compound errors. Orange difference boxes are paper annotations only.}
-\label{fig:static}
-\end{figure*}
-
-\section{Dynamic Mechanisms and Visibility}
-The mechanism bank contains 68 structures: 42 simplified recognizable
-objects and 26 smaller structural configurations. Of its 1,872 episodes,
-1,588 use complete-object models and 284 use the remaining configurations.
-There are 160 controls and 1,712 interventions across twelve families
-(Table~\ref{tab:families}). This is broader mechanism coverage than the
-three error families in the community suite, but does not substitute
-for testing those mechanisms on the larger source-preserving modules.
-
-\begin{table}[t]
-\centering\small
-\caption{\textbf{Dynamic mechanism counts.} Each episode belongs to one recorded family, including the explicitly compound family.}
-\label{tab:families}
-\begin{tabular}{@{}lr@{}}
-\toprule
-Condition & Episodes\\
-\midrule
-Normal control & 160\\
-Removed piece & 214\\
-Shifted piece & 246\\
-Cascaded removal & 160\\
-Extra layer & 179\\
-Early cover & 31\\
-Wrong color & 218\\
-Wrong size & 80\\
-Rotated piece & 132\\
-Swapped positions & 23\\
-Wrong part type & 98\\
-Buried color error & 209\\
-Compound fault & 122\\
-\midrule
-Total & 1,872\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures-v2/mechanism-errors.pdf}
-\caption{\textbf{All twelve dynamic error mechanisms.} Each cell compares a faulty state with its correct intermediate stage, using a common view. Examples are drawn from complete objects in D. They illustrate detectable scene changes and witnessed repairs; they do not establish human error frequencies or model detection performance. Boxes are explanatory annotations only.}
-\label{fig:mechanismerrors}
-\end{figure*}
-
-\paragraph{Machine visibility screens.}
-Pixel differences use a maximum RGB-channel change of at least 24.
-The reference mechanism audit retains 1,553 interventions as primary
-machine candidates with at least 2,000 contrast pixels in an available
-view. Another 136 interventions are classified as action cancellation,
-and 23 have low contrast; there are no duplicate event states. A visible
-change in pixel space is not proof that a person can identify the
-incorrect part or infer a valid correction. Re-rendering and rechecking
-the realized event is necessary when a different route changes its
-location or occlusion.
-
-The community reference snapshots use a separate minimum of 128 changed
-pixels in at least one fixed module view. All 36 reference fault
-snapshots pass that machine screen. Its lower threshold is an engineering
-admission criterion, not an experimentally calibrated human perceptual
-threshold. The two visual admission rules must not be pooled as one
-validated population.
-
-\paragraph{Splits and difficulty.}
-The mechanism bank groups sources into 43 families for development and
-evaluation separation. Its balanced development subset has 108 faults
-(nine per family) and 42 controls; the evaluation subset has 168 faults
-(fourteen per family) and 72 controls, where ``family'' in these counts
-means an error mechanism. Source-family separation applies within this
-bank, not across every artifact in the repository. The community suite
-is a public development collection and has no undisclosed held-out
-source-object evaluation in the current report.
-
-Part count, prerequisite depth, access obstruction, and the amount of
-reconstruction needed after a fault describe different dimensions of
-difficulty. Neither source-file size nor the labels ``roof'' and ``car''
-justify an easy/medium/hard ranking without performance evidence.
-Figure~\ref{fig:distributions} reports case coverage without making that
-inference.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures-v2/distributions.pdf}
-\caption{\textbf{Coverage of the broader banks.} Static counts include normal controls; dynamic bars show intervention families and exclude 160 controls. Counts describe repeated tasks on shared models, not independent object diversity or measured difficulty.}
-\label{fig:distributions}
-\end{figure*}
-
-\section{Historical Development Evidence}
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures-v2/recovery.pdf}
-\caption{\textbf{Two certified repair examples, eight views in one row.} Left four: replace a wrong-color racer cabin piece and finish the community module. Right four: restore pieces removed by a cascade in the original table object. Each transition summarizes selected stages; any multi-part recovery executes separate one-brick actions. These are geometry witnesses, not model rollouts.}
-\label{fig:witness-recovery}
+\caption{\textbf{Two historical feasible repair witnesses.} These summarize legal one-brick recovery processes in the racer and table. A summarized multi-part operation expands into separate actions. They are executor witnesses, not model trajectories or new repeated-event results.}
+\label{fig:witness}
 \end{figure*}
 
-\paragraph{Earlier API car pilot.}
-A prior interface version records three completed episodes with the
-provider route named \texttt{google/gemini-4-argon} on a six-part car
-(Table~\ref{tab:pilot}). These were development traces with seed 41 and
-a 40-decision cap. They used a different bank and interface, without
-the community manuals, and cannot populate a result table for the
-current suite. One control response was invalidly formatted; no illegal
-physical action was executed. A normal-run trajectory diverged from the
-fault runs before the intervention, so these traces are not a paired
-causal estimate of repair difficulty.
+\subsection{Archived car model and human checks}
+The historical six-part-car pilot used the provider route
+\path{google/gemini-4-argon}, seed 41, and a 40-decision cap. Three
+older-interface episodes finished: control (18 decisions, eight legal
+moves, recorded USD 0.1950043), extra layer (14, seven, USD 0.2022685),
+and removed piece (14, seven, USD 0.2140114). These charges are archived
+observations, not current prices. The manual, bank, and interface differ
+from the current contract, so none populates current result tables.
 
-\paragraph{How to read the GT/model comparison.}
-The main paper's eight-column filmstrip uses the extra-layer and control
-traces from this archive. GT is a feasible reference, not a required
-intermediate trajectory. The extra-layer run completes in fourteen
-decisions with seven accepted physical moves; its first two attachments
-and final two additions have a different order from GT. In the control
-run, P001 is legally placed at C006 rather than its target pose, then
-detached and reattached correctly. Physical legality therefore does
-not imply target correctness. All displayed episodes eventually succeed;
-the red cell marks a transient wrong placement, not final failure.
+The main filmstrip shows one GT witness and two of those model traces.
+All 32 selected traces' decisions reproduce saved state hashes and
+feedback. The extra-layer run uses another legal order. The normal run
+legally places a piece at the wrong pose, then removes and restores it.
+Its red frame is a temporary mistake, not terminal failure. Separate
+normal and fault runs diverged before the event and are not causal
+shared-prefix pairs. Inspections and some intervening placements are
+omitted in the eight-column display and disclosed in its caption.
 
-The figure export checks every saved state hash and feedback code in
-both runs (32 decisions total), and supplies a response-free JSON with
-the original certificate, selected states, source hashes, and actions.
-The plotted states use one shared camera and framing. Inspections are
-omitted; the final control image also follows an unshown last placement.
-The external extra layer is labeled separately from the model's mistake.
-These examples illustrate reporting conventions and cannot establish
-current-bank success rates or an independent effect of interventions.
+One earlier participant independently submitted eleven correct binary
+change judgments; a twelfth exposed-answer item was excluded. Two more
+reviewers were reported to agree without independent submission records.
+This is neither a three-rater study nor timed assembly performance, and
+does not qualify all current images. Earlier interface-development
+403 errors and no-progress traces likewise do not supply current
+population-level ability conclusions.
 
-\begin{table}[t]
-\centering\small
-\caption{\textbf{Archived pilot only.} Costs are the recorded charges for these individual calls, not current prices or a projected experiment budget. All three completed the older car task.}
-\label{tab:pilot}
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-Condition & Decisions & Legal moves & USD\\
-\midrule
-Control & 18 & 8 & 0.1950043\\
-Extra layer & 14 & 7 & 0.2022685\\
-Removed piece & 14 & 7 & 0.2140114\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Earlier no-progress runs and HTTP 403 provider failures occurred during
-interface development. An API access failure is not evidence of a
-model's assembly ability. There are zero paid model episodes in the
-new community suite and mechanism-v6 release record.
-
-\paragraph{Earlier human check.}
-One recorded participant answered binary change-detection questions
-correctly on eleven selected, unprompted images; a twelfth item had
-already exposed its answer and is excluded. Two further reviewers were
-reported to agree, but have no independent submission records. This is
-not a three-rater study, a timed assembly baseline, or validation of
-all current cases. It supports only a narrow development observation
-about those eleven images.
-
-\section{Planned Experiments and Reserved Result Tables}
-\label{sec:plans}
-All dashes in the fourteen planned result tables (E1--E14) are
-uncollected measurements. They are neither zero scores nor executor
-results. The artifact contains machine-readable case assignments,
-participant schedules, and a results template whose empty values are
-\texttt{null}. These define the planned experiment; they are not an
-implementation claim for the paired API runner or human study.
-
-\input{tables/model-roster}
+\section{Planned Experiments and Empty Result Tables}
+All nineteen reserved result tables E1--E19 contain unmeasured dashes.
+Their machine-readable performance fields are null; known assigned
+case counts are metadata, not scores. E1--E4 are in the main paper.
+The current experiment manifest records candidate IDs and audited
+existing-source allocations, not a completed admission procedure or
+implemented paired API runner. Independent C, detection, text-state,
+and coordinate banks still require construction/integration.
 
 \begin{table*}[t]
 \centering\small
-\caption{\textbf{Related experimental designs and our adaptations.} These works motivate controls and analyses; their original tasks, agents, and scores are not directly comparable to BrickPlan. E1--E14 identify our planned result tables.}
-\label{tab:experimentreferences}
+\caption{\textbf{Experimental design references.} These motivate analyses, not direct comparisons of scores across incompatible tasks or input spaces.}
+\label{tab:references}
 \begin{tabularx}{\textwidth}{@{}lXX@{}}
 \toprule
-Work & Experimental element & BrickPlan adaptation\\
+Work & Relevant evaluation element & Adaptation here\\
 \midrule
-LEGO-Puzzles~\cite{tang2025legopuzzles} & Task-wise model and human comparison & Named candidates, common human panel, difficulty (E1/E5/E6)\\
-PhyBlock~\cite{ma2025phyblock} & Complexity levels and part precision/recall & Complexity and secondary part F1 (E6/E10)\\
-AsgardBench~\cite{tupini2026asgard} & Observation, history, and feedback ablations & Input controls and failure ledger (E3/E7/E13)\\
-SCANet~\cite{wan2024scanet} & Correction versus new misplacement & Terminal repair quality and collateral damage (E10)\\
-RoboRecover~\cite{li2026roborecover} & Recovery by stage and source/recovery policy & Same-prefix effect, stage, same-state recovery (E2/E6/E12)\\
-BrickBench~\cite{kulits2026brickbench} & Validity, semantic quality, human judgment, cost & Separate legality, exact goal, human results, and cost (E1/E5/E8)\\
+LEGO-Puzzles; PhyBlock~\cite{tang2025legopuzzles,ma2025phyblock} & Task breakdown, human comparison, complexity & Scope-specific main tables, structural strata, common operation panel.\\
+SCANet~\cite{wan2024scanet} & Correction and new misplacement & Separate ER, DR, original-defect recovery, and S0 FR.\\
+Break and Make~\cite{walsman2022breakmake} & Structure reconstruction and partial quality & Canonical movable-placement F1 with fixed construction frame.\\
+AsgardBench~\cite{tupini2026asgard} & Observation and feedback controls & Manual/history/view/feedback and input-state conditions.\\
+RoboRecover~\cite{li2026roborecover} & Recovery from deviations and cross-policy analysis & Qualified shared-prefix effect, checkpoint and same-state recovery.\\
+BrickBench~\cite{kulits2026brickbench} & Validity, quality, human judgments, and cost & Distinct legality, goal, human, and efficiency reports.\\
 \bottomrule
 \end{tabularx}
 \end{table*}
 
-\paragraph{Models and primary samples.}
-Table~\ref{tab:roster} names ten candidates: four moderate-cost commercial
-APIs and six open visual checkpoints. Earlier Qwen2.5-VL and Gemma 3
-models complement the newer candidates; costly flagship APIs are omitted. Official provider
-catalogs and model cards document image inputs; account access is not
-tested. Open-weight sizes support within-family comparisons, not a
-claim that size alone explains performance. The machine-readable roster
-links every row to its official source. Before execution, record the
-returned API revision or checkpoint commit, engine, precision, image
-processing, and native reasoning/decoding settings. Do not silently
-replace an unavailable candidate; report it as not run. Use one run per case and seed 41 for handle randomization; record a
-provider seed only when supported. Source-clustered intervals quantify
-variation across sources, not decoding stability across repeated runs.
-Generation/size comparisons also differ in training and architecture,
-so neither effect is isolated. No frontier-model claim is made. The S test list
-contains 467 question IDs from 20 source groups. Migration changed the
-source of some questions; 151 stale assignments are repaired while
-retaining the existing source-group allocation. The corrected current
-split contains 2,286 train, 539 development, and 467 test questions. D uses its existing
-168-fault/72-control evaluation definitions, with fourteen faults per
-mechanism. M uses all 48 static cases, 36 dynamic fault definitions,
-and twelve dynamic controls; it remains a public development panel.
-The full-bank secondary report covers every model configuration and
-retains separate track/source averages. No joint tuning may use a source
-later presented as unseen in another track.
+\input{tables/model-roster}
 
-\paragraph{Prerequisites and budgets.}
-Complete image rendering and blind readability review before S visual
-scoring. Verify the observation adapter, trajectory saving, actual-event
-logging, and both cloned continuations on deterministic smoke tests
-before paid trials. For this planned comparison, use a decision cap
-$\max(40,6N+20)$ for every track, with $N$ target pieces; retain M's
-additional $4N+12$ manipulation cap. Repeated inspection and malformed
-outputs consume decisions. S's feasibility witnesses remain reference
-costs, not optimality claims. Store input images, actual actions,
-accepted/rejected moves, termination reason, and service errors. Retry
-transient transport failures at most twice with the same request; do
-not retry semantically incorrect model answers into success.
+\subsection{Named model candidates and admission}
+The roster retains four previously selected API candidates and six
+open visual candidates, including older Qwen2.5-VL and Gemma 3 baselines.
+No claim is made that these names are the newest available or all
+account-accessible. Requested names are historical planning entries;
+verify vision support, requested ID, actual served revision or checkpoint
+commit, inference engine, precision, image processing, decoding, output
+budget, and context before any formal run. An unavailable candidate
+remains not run rather than being silently replaced.
 
-\paragraph{Pair construction and exposure.}
-At the first admissible fault opportunity, save the environment and
-visible conversation once. Continue a control copy without an edit and
-a fault copy with the prescribed actual-state edit. A separate control
-run with the same seed is not this pair. D's 72 control definitions are
-additional construction controls; each of its 168 fault jobs still needs
-its own cloned control continuation. Keep scheduled faults with no
-admissible prefix in the exposure denominator, and report their stopping
-reasons. Count every API call in both continuations. The base plan has
-5,150 static attempts and 2,880 dynamic shared-prefix or normal jobs
-across ten models with one run per case (8,030 work units, not API calls).
-There are 2,040 fault jobs, each requiring two continuations when the
-prefix is reached. Ablations, the human-comparison panel, detection probes, cross-model
-recovery, strategy/visual tests, admission, and full-bank coverage are
-additional work. Overlapping identical runs are reused, not counted twice.
+Use one run per model/condition; seed 41 controls handle mapping and
+provider randomness only where supported. Four API versus six open
+models does not isolate architecture, training, or size effects. No
+frontier-model coverage is claimed. Use Sol, Flash, and Qwen 27B as the
+preselected diagnostic subset. Scoring summaries always bind the input
+version, exact model revision, track, and task type.
 
-\input{tables/dynamic-errors}
+Formal evaluation uses a common predeclared task list after visual and
+interface admission. Existing-source test results are separate from
+public-development module/object results. The candidate list covers
+all main configurations, but its size is not the final admitted $N$.
+Do not use the former 467-question static or 168-fault dynamic panel as
+if it were the new unified test allocation. Keep all rejected candidates
+and reasons in an admission ledger, and create untouched community
+sources before making new-source claims.
+
+\subsection{Correction, error, and structural analyses}
+E5 and E6 distinguish the seven physical error labels with current
+assignment counts. Repeat process-tagged and simultaneous-error analyses
+separately. E7 reports part-level restoration and collateral damage by
+static scope. E8 stratifies B/R/T and provisional G; include sample
+counts and track/task type in every estimate. Richer labels do not
+justify pooling normal controls with repair cases or treating a
+multilabel count as independent examples.
+
+
+\subsection{Repeated events and checkpoint continuation}
+E9 distinguishes two-event from three-event conditions. Save each event's
+pre/post state, own-action state before the edit, realized event effect,
+and window boundary. Whole-episode success, per-event repair, and
+retention have different denominators. Failed controls, partial exposure,
+and short windows remain visible. Repair after the second event must
+not be attributed to the first without its proper window.
+
+E10 is a future checkpoint study. Its system-built prefix separates
+ability to construct the first half from ability to repair a supplied
+midway state. Use identical checkpoint states for every model and list
+which earlier work is supplied. Do not report it as continuous D1/D2
+performance or fill a table before the bank and logging exist.
+
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{figures-v2/error-radar.pdf}
-\caption{\textbf{Error-specific recovery profile template.} Each axis is conditional recovery for one D mechanism in Table~\ref{tab:errorresults}. All axes use the same 0--100\% scale. Missing measurements have no curve; an untriggered stratum is undefined, not zero. Report exposure counts and source-clustered intervals in the table.}
+\includegraphics[width=\columnwidth]{figures-current/error-radar.pdf}
+\caption{\textbf{Seven-label recovery profile template.} No performance series is drawn. Apply it within one dynamic scope and task type only after obtaining eligible CRR and counts on every axis. Missing module-swap coverage is N/A, not zero. Tables retain denominators and intervals; area is not a score.}
 \label{fig:errorradar}
 \end{figure}
 
-\paragraph{Reading the radar profiles.}
-The aggregate profile in the main paper separates tracks and outcomes;
-Figure~\ref{fig:errorradar} separates error families within D. Plot one
-series per model only when all required estimates exist, without filling
-missing values or joining across missing axes. Both templates are bound
-to the same result fields as their tables and currently contain no model
-curves. Rates use source-macro aggregation; their denominators differ
-across tasks, so neither polygon area nor an average of axes is a score.
-Exposure is an opportunity for repair, not evidence that the error was
-recognized. Tables remain the source of counts and uncertainty.
+\subsection{Input and output conditions}
+E4 changes one supported input factor at a time: prior scene, manual,
+candidate preview, or legality feedback. Recompute shared prefixes if
+input changes alter construction. Manual removal is unavailable for
+legacy local-static tasks without a manual. A one-view ablation must
+also remove alternative inspection views. Provider resizing is a
+measured property, not assumed equal just because native scenes match.
 
-\paragraph{Human comparison without written responses.}
-Select twelve S control/fault pairs from different sources, twelve D
-pairs covering the twelve mechanisms, and one pair per M module,
-cycling evenly through its three errors. This yields 36 pairs or 72
-conditions. Six independent participants each operate one condition
-from every pair, using buttons and graphical actions. Each condition
-receives three observations; nobody sees both members of the same
-pair. Randomize order and balance normal/fault assignments across
-participants. The exact schedule is saved before collection. Train on
-separate practice scenes. Record completion, exposure, actions, time,
-and an optional ``cannot see / cannot operate'' button. This is not
-three independent records when only one person submits an answer.
-The same panel is evaluated with all ten models once under the same views, action
-limits, and seed 41. Human estimates additionally cluster by participant.
+E11 distinguishes default RGB with neutral text from explicit text state
+and RGB-plus-state. Extra state can expose hidden pieces; label its
+privileged scope. A text-state adapter must specify current placements,
+inventory, pose convention, and inspection equivalents without leaking
+fault labels or target-correct actions. E12 compares candidate IDs to
+free position/orientation output only after building a matched coordinate
+adapter. These are different burdens, not automatically a fair single
+leaderboard.
 
-\input{tables/human-panel}
 
-\paragraph{Ablations and analysis units.}
-Use GPT-6.1 Sol, Gemini 3.8 Flash, and Qwen3.5-27B for diagnostic
-experiments, selected before viewing outcomes. Apply no-manual only to
-M, no-previous-view only to dynamic tracks, and keep all other inputs
-and cases fixed. The privileged symbolic condition may expose actual
-part poses but must not silently provide intervention labels or recovery
-actions. Recompute both control and fault continuations when input
-changes alter the prefix. Report source-macro completion and recovery,
-as well as aggregate exposure numerator/denominator; do not average
-undefined stratum rates as zero. Use 2,000 bootstrap replicates clustered
-by source, retaining case variants together; paired differences
-resample the same sources. Sparse categories remain descriptive.
+\subsection{Detection, cross-model repair, and robustness}
+E13 uses independent fixed snapshots with controls and faulty scenes.
+Ask for anomaly/no anomaly and a location set; humans use buttons.
+Use multilabel type/location scoring rather than forcing multiple errors
+into one choice. Report readability and interface failures alongside
+valid precision/recall/F1. This probe is separate from continuous assembly
+and does not establish whether a particular failed agent noticed a fault.
+Its bank and adapter are planned.
 
+E14 saves the first accepted off-target placement from a normal source-model
+run, then seeks a legal recovery witness. Select states without observing
+recoverer success; retain no-state/no-witness exclusions. Each recoverer
+receives the identical state, inventory, target, and fresh context with
+source identity hidden. Diagonal restart performance differs from
+uninterrupted self-repair. This is a proposed selected-state analysis,
+not an existing bank or an all-failure distribution.
+
+E15 fixes geometry and camera while varying delivered resolution,
+current-only input, or available views. Record actual images/tokens and
+visibility under each condition. E16 compares the closed loop with an
+open-loop action script, explicit checking prompt, or larger decision
+allowance. An open-loop script still executes through one-brick physical
+checks. Keep manipulation caps fixed when doubling decisions, record
+native supported reasoning settings, and never score private reasoning.
+Reuse identical baseline attempts rather than charging or counting them
+twice.
+
+
+\subsection{Human operation, efficiency, and failure ledger}
+The proposed common panel selects twelve normal/fault pairs in each of
+three scopes: static repair, whole-object dynamic, and named-module
+dynamic. Its 36 pairs give 72 conditions. Six independent participants
+operate 36 conditions each; each condition gets three submissions and
+nobody sees both pair members. This is a plan for 216 operations, not
+a completed measurement. Current-source case selection and new schedules
+must be fixed after qualification; the old schedule is historical.
+
+Humans see the same task information and use graphical actions without
+prose or JSON. Train on separate practice scenes, balance normal/fault
+assignments, and record completion, exposure, action count, time, and
+optional unreadable/unusable buttons. Cluster human analyses by both
+source and participant. Report actual independent submissions; verbal
+agreement cannot be copied into additional participant rows.
+
+E17 captures image/request/token/time/money and action effort for each
+model and condition. E18 holds human and common-model outcomes. E19
+retains service, schema, physics, normal-build, exposure, and budget
+status. Read each rate with its valid/admitted/planned counts. A pilot
+for the current input contract is needed before estimating the price
+of full evaluation. No new API cost estimate or measured model rank
+is asserted by these empty tables.
+
+
+
+
+\section{Rendering, Attribution, and Remaining Limits}
+All publication brick scenes are native $3200\times2400$ renders with
+$2\times$ supersampling per dimension before downsampling. Composite
+exports use 600 dpi; PDF/SVG labels and process elements remain vector.
+The compact filmstrips use seven or eight scenes per row. Native
+publication resolution does not replace evaluation input dimensions.
+Orange boxes, correctness borders, and paper-only callouts are absent
+from blind current-state input. Figure manifests record source hashes,
+state/camera provenance, render pixels, and export hashes.
+
+Original LDraw files retain authors, set IDs, URLs, and license headers.
+Source-derived assets remain subject to their attribution and library
+terms; community authorship is not reassigned. LEGO is a trademark of
+its owner, with no claimed affiliation. A future public dataset card
+must preserve source licenses and known reuse constraints.
+
+Physical legality refers to the rigid geometric executor. Straight
+insertion/extraction, finite candidates, fixed context, and conservative
+bounds for unsupported surrounding meshes simplify real manipulation.
+Articulated states are rigid poses; hinge motion, clutch forces,
+flexibility, stability, slipping, and grippers are outside scope. No
+real-robot performance follows from these replays. Only three whole
+objects are complete original LDraw files, long community modules are
+few, G3 is sparse, and untouched new sources remain to be acquired.
+
+Before empirical claims, finish current-interface image/human admission,
+pair-prefix/event-effect logging, repeated-event windows, API cost
+collection, and source-clustered intervals. Build the independent C and
+detection panels and alternative input/output adapters before filling
+their tables. Program checks, metric tests, and a finished paper layout
+are not evidence of CVPR acceptance or completed model evaluation.
+
+\clearpage
+\onecolumn
+\section{Reserved Detailed Result Panels}
+These are E5--E19; E1--E4 appear in the main paper. Dashes remain
+unmeasured. Assigned counts describe the candidate catalogue and do not
+substitute for valid, exposed, or qualified paired sample counts.
+
+\begingroup
+\makeatletter
+\renewenvironment{table}[1][]{\par\noindent\begin{minipage}{\textwidth}\def\@captype{table}}{\end{minipage}\par\medskip}
+\renewenvironment{table*}[1][]{\par\noindent\begin{minipage}{\textwidth}\def\@captype{table}}{\end{minipage}\par\medskip}
+\makeatother
+\input{tables/static-errors}
+\input{tables/dynamic-errors}
+\input{tables/repair-quality}
 \input{tables/difficulty}
-
+\input{tables/multi-events}
+\input{tables/checkpoint}
+\input{tables/modality}
+\input{tables/action-output}
+\input{tables/perception-probe}
+\input{tables/cross-recovery}
+\input{tables/visual-robustness}
+\input{tables/strategy-budget}
+\input{tables/efficiency}
+\input{tables/human-panel}
 \input{tables/failures}
 
-\input{tables/efficiency}
-
-
-
-Do not infer a detection miss solely from an incomplete object. If
-anomaly judgments are measured, run a separately declared judgment panel
-at recorded observations without interrupting the primary assembly
-runs, and retain no-change controls. A state-query ablation and action
-trace inspection distinguish visible evidence, planning, and action
-selection, but their causal scope depends on what information changes.
-Estimate money from a small current-interface pilot for each selected
-model. Old car charges are archived observations, not current price
-quotes. The experiment guide specifies caps and a cost formula; no paid
-calls are made in this revision.
-
-\subsection{Additional questions and reserved analyses}
-\paragraph{Paired intervention effect (E2).}
-For each exposed pair, let $c,f\in\{0,1\}$ denote control and fault
-completion. Save $n_{11},n_{10},n_{01},n_{00}$, including cases where an
-edit helps rather than harms. The within-source difference is
-$\Delta=C_c-C_f$; average source differences and bootstrap sources
-jointly for its interval. Unexposed jobs remain in the exposure report
-and do not enter this conditional effect. Raw pooled counts and
-source-macro rates are both reported; the latter need not equal pooled
-ratios. Recovery conditional on control success is
-$n_{11}/(n_{11}+n_{10})$ within a source; retain its denominator.
-
-\input{tables/static-errors}
-\input{tables/repair-quality}
-\paragraph{Static correction quality (E9--E10).}
-The error breakdown uses the actual 467-question S test assignments,
-including controls and migrated replacement states. Report M-static
-separately. Let $G$ be the target multiset of part type, color, and pose;
-$A_0,A_T$ the initial and terminal multisets, excluding locked context.
-Define $d(A,G)=|A\setminus G|+|G\setminus A|$. Defect reduction is
-$[d(A_0,G)-d(A_T,G)]/d(A_0,G)$ and may be negative. It is undefined for
-an initially correct control. Part F1 is $2|A_T\cap G|/(|A_T|+|G|)$;
-exact completion and physical legality remain the primary criteria.
-For initially correct placements $H=A_0\cap G$, terminal collateral
-damage is $|H\setminus A_T|/|H|$, undefined when $H$ is empty.
-Temporary removal followed by correct replacement causes no terminal
-damage. Count accepted state-changing edits on normal controls as
-unnecessary edits. These multiset metrics adapt SCANet's
-correction/damage distinction; they are not its original component-wise
-scores. Dynamic completion uses E1/E2, avoiding confusion between
-unfinished construction and a repair defect.
-
-\input{tables/perception-probe}
-\paragraph{Detection independent of assembly (E11).}
-Use certified fixed checkpoints from the twelve D and twelve M
-control/fault pairs in the human panel: 48 conditions with both changed
-and unchanged scenes. Every model sees the same before/after images,
-target, and public part/slot handles. Ask for change/no-change and a
-selection of affected handles; humans use buttons. Score change
-balanced accuracy, anomaly recall, false alarms, and affected-slot F1.
-No-change is not a fault label, and removed pieces remain identifiable
-through previous-state slots. Three independent human ratings per
-condition also mark visibility and interface usability; ambiguous
-snapshots are reported and revised before a new version is evaluated.
-API validity is recorded separately. This probe is a separate task:
-it neither interrupts nor diagnoses an individual assembly trajectory
-with certainty. Its adapter and independent ratings remain to be built
-and collected.
-
-\input{tables/cross-recovery}
-\paragraph{Same-state cross-model repair (E12).}
-Use the normal siblings of the twelve D and twelve M panel pairs,
-with no external edit during source collection. For each source model,
-save its first accepted attachment adding a placement outside the target
-multiset, then seek a legal recovery witness. This is an off-target
-state, not proof the original episode would fail; a temporary placement
-could still be corrected. If no such state
-arises or no witness can be found, retain the non-admission reason;
-do not substitute a later error from that run.
-Do not choose states for how well a recoverer performs. Each recoverer
-starts the identical state with the same target, remaining inventory,
-visible observations, and fresh context; source identity is hidden.
-Separate D/M panels and source-model rows reveal dependence on who
-created the failure. A diagonal restart differs from the original
-uninterrupted self-repair, which is reported separately. The state bank
-does not yet exist; admission counts and this selected-state scope must
-accompany every rate. This design follows cross-policy recovery analysis,
-without borrowing the physical claims of a robot benchmark.
-
-\input{tables/visual-robustness}
-\paragraph{Observation robustness (E13).}
-Use the same 48-condition D/M panel for three diagnostic models.
-Change one input factor at a time: current image only, one fixed camera,
-or half/double image resolution. One-view removes alternate views from
-inspection as well as the initial prompt. Keep scene geometry and
-camera poses fixed for resolution tests; verify provider preprocessing
-and record actual delivered image sizes and token use. E3 already
-covers manual, candidate-preview, feedback, and privileged-state
-conditions; reuse identical baseline runs. Recheck visibility under
-each condition and report results for all assigned items and the
-jointly readable subset. These tests change available evidence; they
-cannot automatically be described as changes in reasoning ability.
-
-\input{tables/strategy-budget}
-\paragraph{Planning and computation (E14).}
-Compare the standard one-action closed loop to a single generated action
-script with no intermediate observation returned, an explicit visual
-checking instruction using the same public images/history, and twice
-the decision allowance. All scripts execute one brick at a time through
-the same legality checks; use deterministic part/pose references, never
-a hidden reference plan. Keep the manipulation cap fixed in the doubled
-condition. State which native reasoning effort is supported and record
-actual tokens, time, and charges; equal action limits do not imply equal
-provider computation. No private reasoning trace is scored. The script
-adapter and observation variants are planned, not implemented results.
-
-\section{Rendering, Attribution, and Physical Limits}
-\paragraph{Publication images.}
-All brick scenes in the paper are rendered from original geometry at
-$3200\times2400$ pixels, with $2\times$ supersampling in each dimension
-before downsampling. Composite figure exports use 600 dpi. PDF and SVG
-retain vector labels, arrows, tables, and process boxes. The paper's
-larger renders do not replace the $900\times660$ images received by the
-current community interface. Orange boxes and manual highlights are
-presentation annotations and are disclosed in the relevant captions.
-They are not supplied as automatic fault detections.
-
-\paragraph{Sources and licensing.}
-The original LDraw OMR files retain their author headers, set identifiers,
-source links, and license metadata. Derived figures retain source-file
-provenance. The accompanying source manifest identifies the applicable
-Creative Commons Attribution or LDraw library license metadata rather
-than assigning new authorship to community models. Redistributed model
-and part assets remain subject to those original terms. LEGO is a
-trademark of its owner; the benchmark has no claimed affiliation.
-
-\paragraph{Physical scope.}
-The environment checks rigid geometry, supported connections, and
-straight manipulation paths. Unsupported surrounding parts are retained
-as conservative collision bounds rather than deleted, which can reject
-some motions that a more precise mesh would allow. The preassembled
-context is fixed. The executor does not model deformation, insertion
-force, frictional stability, accidental slipping, articulated mechanics,
-or a robot gripper. Consequently, ``legal'' and ``recoverable'' refer
-to this geometric contract. Neither the protocol study nor its renders
-establish real-robot performance.
+\endgroup
+\clearpage
+\section{Enumerated Configuration Inventories}
+The following tables enumerate all 63 primary dynamic configurations
+and all 160 original static source configurations. The dynamic inventory
+uses distinct current tasks and excludes diagnostic-only structures.
+The static inventory uses 3,265 distinct S tasks after 27 aliases; it
+is not the larger 3,697-task all-scope static main total. Parts refer
+to the active task or stage, never the entire supplied building.
+\input{dynamic-inventory-1}
+\clearpage
+\input{dynamic-inventory-2}
+\clearpage
 \input{static-inventory}
 \clearpage
+\twocolumn
 {\small
 \bibliographystyle{ieeenat_fullname}
 \bibliography{references}

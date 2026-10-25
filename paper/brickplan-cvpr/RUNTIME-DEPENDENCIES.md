@@ -1,74 +1,67 @@
-# Reproducing this paper snapshot
+# Reproducing the current paper (25 October 2026)
 
-## Compile the documents
+## Compile
 
-The Overleaf ZIP is self-contained for LaTeX compilation: select `main.tex` or
-`supplement.tex`. It includes the official style, bibliography style, BibTeX
-entries, fifteen figure PDFs, the complete static inventory, and all generated `tables/*.tex`. Compiling these sources does not require the
-geometry engine or any model API.
+The Overleaf ZIP contains main/supplement TeX, unmodified official CVPR style,
+BibTeX/style files, 14 referenced figure PDFs, current static/dynamic inventories,
+and result-table sources. Select `main.tex` or `supplement.tex`. No geometry
+engine or model API is needed for standalone LaTeX compilation.
 
-For the repository build, install Tectonic and the Python packages in
-`requirements-paper.txt`, then run `python paper/brickplan-cvpr/build.py`.
-This additionally verifies the recorded benchmark evidence and source hashes.
-The existing project environment is `benchmark/.runtime/mlx-env/bin/python`.
-The `--skip-verification` option supports compile-only use; it does not certify
-the benchmark data.
+Repository build:
 
-## Execute the study or render the scenes again
+```bash
+benchmark/.runtime/mlx-env/bin/python paper/brickplan-cvpr/build.py
+```
 
-`build.py --study --refresh-figures` also requires:
+Tectonic and `requirements-paper.txt` are required. The normal repository build
+also verifies current organized dataset/code hashes, recorded replay evidence,
+empty results, source splits, historical diagnostics, and PDF layout/fonts/images.
+`--skip-verification` compiles without this evidence check.
 
-- BrickNet Python package 0.1.0, including its bundled connector catalog.
-- MeshLib 3.1.4.297; the geometry module imports `meshlib.mrmeshpy`.
-- NumPy, Pillow, and Matplotlib versions recorded in `requirements-paper.txt`.
-- A C compiler (`cc`), which builds `benchmark/brickplan-repair/eval/raster.c`
-  into a local shared library. That binary is not versioned.
-- BrickNet's inset collision meshes under `$BRICKNET_DATA/inset/`. The project's
-  default is `benchmark/.runtime/bricknet-data/inset`, a local link to the
-  separately installed collision resources. The runtime directory is not
-  bundled with the paper or checked into Git.
-- The repository's pinned LDraw part library at
-  `assets-source/ldraw-library/locked/`, original source models, and model
-  manifests. Source author headers and license metadata are retained.
-- The community certificates/manuals/cases, static plate5 bank and its 160
-  referenced static-held4 qualification files, plus the dynamic-v6 audit files.
-  These paper dependencies are included in this synchronization.
+## Current asset generation
 
-`evidence/runtime-snapshot.json` records installed package versions, relevant
-package/catalog hashes, and the collision meshes needed by all S/D/M paper examples
-and the community study. It does not redistribute third-party binaries. A fresh
-machine must install those upstream resources before rerunning geometry; merely
-cloning the repository is sufficient for compiling the supplied figures, but
-not for recreating the geometry environment.
+```bash
+PYTHONPATH=benchmark/brickplan-repair benchmark/.runtime/mlx-env/bin/python paper/brickplan-cvpr/build.py --refresh-figures
+```
 
-## Evidence boundaries
+`update_current.py` reads the organized catalogue, renders native new scenes,
+relabels retained galleries, and writes current inventories and dataset evidence.
+`make_current_tables.py` writes 19 unmeasured result panels and candidate task
+assignments. It resets only the paper's unmeasured template; save collected
+results in separate run artifacts.
 
-`protocol_study.py` executes the two selected legal routes per object. Its
-96 route/condition rows contain a blind replay and a privileged recovery replay.
-These are scripted executor diagnostics, not learned-model evaluation.
-`verify.py` checks source hashes and the existing full-bank audit results; it
-does not rerun all 3,292 + 1,872 geometry cases on every PDF compilation.
+Native rendering also needs the project's BrickNet/connector and collision
+resources, MeshLib, NumPy/Pillow/Matplotlib, pinned LDraw library, source models,
+certificates, and the locally compiled rasterizer. The project Python environment
+and `benchmark/.runtime/bricknet-data/inset` supply these resources locally.
+Third-party runtime binaries are not redistributed by the paper ZIP.
+`evidence/runtime-snapshot.json` is historical environment provenance; newly added
+assets and dependencies are pinned by `evidence/current-dataset.json` and the
+organized dataset data/code manifests.
 
-The historical pilot summary contains aggregate measurements and source trace
-hashes. Raw provider logs and identifiable reviewer records are not bundled.
-No new paid API request was made for this paper rewrite.
+## Historical diagnostic reproduction
 
-`prepare_revision.py` regenerates the full model inventory, corrected plate5 source
-splits, planned case manifest, participant schedules, and empty results template.
-Run it only while preparing the design; it intentionally resets the unmeasured
-result template. Collected results should be saved in a separate run artifact.
+```bash
+PYTHONPATH=benchmark/brickplan-repair benchmark/.runtime/mlx-env/bin/python paper/brickplan-cvpr/protocol_study.py
+```
 
-`prepare_case_figures.py` optionally rebuilds the sanitized qualitative export from
-local archived v5 API traces. Those raw logs are not distributed. Normal figure
-regeneration reads the bundled `evidence/repair-comparison.json`, which contains
-the original certificate, verified state/action records, and source hashes, but
-no provider response text. No new API request is needed. The two radar figures
-read `evidence/results-template.json`; all current estimates are null and no
-model series is drawn. `evidence/radar-spec.json` records their axis definitions.
+This replays the original twelve modules, two routes, and four conditions (96
+scripted trials). It was rechecked on 25 October; 9/36 versus 36/36 remains a
+protocol diagnostic, not a learned-model result. Current verify checks the
+recorded 5,922-condition replay audit rather than rerunning all physics on every
+compile. Metric regression tests are in `bench_design.test_metrics`.
 
-`evidence/model-roster.json` lists ten official-documentation-checked candidates.
-It does not verify account access or served revisions. `expand_experiments.py`,
-called by `prepare_revision.py`, generates fourteen unmeasured result tables and
-the model roster table. The paired API runner, perception probe adapter,
-observation/strategy variants, and cross-model recovery state bank remain planned.
-No source file in this paper build invokes a model API.
+`prepare_revision.py`, `expand_experiments.py`, `build_figures.py`, and the old
+experiment/results/budget manifests describe earlier snapshots. They are retained
+for history and are no longer invoked by `build.py --refresh-figures`. Do not use
+them to overwrite current plans. The old qualitative comparison reads the bundled
+sanitized replay export; raw provider responses and identified human records are
+not redistributed. No paper build script calls a model API.
+
+## Unfinished empirical components
+
+Candidate model IDs remain a roster rather than verified availability. Exact
+API/checkpoint revisions, vision support, image processing, account access, and
+costs must be checked before a run. Current-interface human qualification,
+paired API execution/logging, source bootstrap, C/detection banks, and alternative
+state/coordinate adapters remain outstanding; the paper explicitly labels them.

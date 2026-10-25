@@ -26,7 +26,11 @@ def main():
         compiler = str(fallback)
     if not compiler:
         raise SystemExit('Install Tectonic or set TECTONIC to its executable path.')
-    for flag, script in [(args.refresh_figures,'prepare_revision.py'),(args.study,'protocol_study.py'),(args.refresh_figures,'build_figures.py')]:
+    # The old prepare_revision/build_figures scripts describe the historical
+    # snapshot. Do not let refresh silently restore its obsolete counts/plans.
+    for flag, script in [(args.study,'protocol_study.py'),
+                         (args.refresh_figures,'update_current.py'),
+                         (args.refresh_figures,'make_current_tables.py')]:
         if flag:
             subprocess.run([paper_python,str(HERE/script)],cwd=ROOT,check=True)
     (HERE/'build').mkdir(exist_ok=True)
@@ -44,9 +48,13 @@ def main():
     for name in ['main','supplement']:
         shutil.copyfile(HERE/'build'/f'{name}.pdf',HERE/f'{name}.pdf')
     # Portable LaTeX compilation package: no local data paths or private API logs.
-    names = ['main.tex','supplement.tex','static-inventory.tex','references.bib','cvpr.sty',
+    names = ['main.tex','supplement.tex','static-inventory.tex',
+             'dynamic-inventory-1.tex','dynamic-inventory-2.tex','references.bib','cvpr.sty',
              'ieeenat_fullname.bst','template-provenance.json']
-    figures = sorted((HERE/'figures-v2').glob('*.pdf'))
+    # Include only figures referenced by the current TeX source.
+    import re
+    tex = '\n'.join((HERE/n).read_text() for n in ['main.tex','supplement.tex'])
+    figures = [HERE/p for p in sorted(set(re.findall(r'\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}',tex)))]
     with zipfile.ZipFile(HERE/'brickplan-cvpr-overleaf.zip','w',zipfile.ZIP_DEFLATED) as z:
         for p in [HERE/n for n in names] + figures + sorted((HERE/'tables').glob('*.tex')):
             z.write(p,str(p.relative_to(HERE)))
@@ -54,7 +62,9 @@ def main():
                    'Use pdfLaTeX/BibTeX or Tectonic. Figures are already included.\n'
                    'CVPR 2026 official style; 2027 venue/year label remains a draft.\n'
                    'Replace Draft with the assigned submission ID before submission.\n'
-                   'Formal model and human experiments are not yet complete.\n')
+                   'Dataset/metrics snapshot: 25 October 2026.\n'
+                   '5,720 distinct tasks; 5,452 main candidates; 268 diagnostic dynamic tasks.\n'
+                   'Formal model and current-interface human experiments are not yet complete.\n')
     print('Published main.pdf, supplement.pdf, and brickplan-cvpr-overleaf.zip',flush=True)
 
 
