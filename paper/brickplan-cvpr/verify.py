@@ -94,12 +94,38 @@ def main():
         assert digest(HERE/'figures-current'/f'{name}.pdf')==r['pdfSha256']
         assert abs(Image.open(HERE/'figures-current'/f'{name}.png').size[0]-600*r['inches'][0])<=1
     assert all(not r['plottedSeries'] and not r['missingImputation'] for r in prov['radars'].values())
+    publication=read(HERE/'figures-publication/provenance.json');check_sources(publication['sources'])
+    assert publication['nativePixels']==[3200,2400] and publication['exportDpi']==600
+    assert publication['exactGeometry'] and publication['publicationOnly'] and publication['evaluationInputUnchanged']
+    assert publication['apiCalls']==0 and len(publication['figures'])==14
+    for name,r in publication['images'].items():
+        p=HERE/'figures-publication/native'/name
+        assert digest(p)==r['sha256'] and Image.open(p).size==(3200,2400),name
+        assert read(p.with_suffix('.png.json'))['sha256']==r['sha256'],name
+    for name,r in publication['figures'].items():
+        assert digest(HERE/'figures-publication'/f'{name}.pdf')==r['pdfSha256'],name
+    scenes=read(HERE/'evidence/publication-render-states.json')
+    assert scenes['evaluationInputUnchanged'] and scenes['publicationOnly'] and scenes['apiCalls']==0
+    byname={s['name']:s for s in scenes['scenes']}
+    for s in scenes['scenes']:
+        assert hashlib.sha256(json.dumps(s['state'],sort_keys=True).encode()).hexdigest()==s['stateSha256']
+    for step in [2,6]:
+        assert byname[f'roof-referenceOrder-{step}']['state']==byname[f'roof-alternateOrder-{step}']['state']
+    assert byname['roof-referenceOrder-3']['state']!=byname['roof-alternateOrder-3']['state']
+    worked=read(HERE/'evidence/worked-metric-example.json')
+    assert worked['referenceOnly'] and not worked['modelPerformance']
+    assert [r['metrics']['finalEditResidual'] for r in worked['states']]==[2,1,0]
+    assert [r['metrics']['errorReduction'] for r in worked['states']]==[0,.5,1]
+    assert [r['metrics']['success'] for r in worked['states']]==[False,False,True]
     for name,h in read(HERE/'template-provenance.json')['files'].items():assert digest(HERE/name)==h
 
     # Ensure every referenced old figure remains its recorded native export.
     tex='\n'.join((HERE/n).read_text() for n in ['main.tex','supplement.tex'])
     old=read(HERE/'figures-v2/provenance.json')
     referenced=set(re.findall(r'\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}',tex))
+    main_tex=(HERE/'main.tex').read_text()
+    assert 'evaluation-radar.pdf' not in main_tex and r'\input{tables/main-models}' not in main_tex
+    assert r'\input{tables/main-dynamic}' not in main_tex
     for name in referenced:
         p=HERE/name;assert p.exists()
         if p.parent.name=='figures-v2':assert digest(p)==old['figures'][p.stem]['pdfSha256']
@@ -135,6 +161,8 @@ def main():
         sourceGroups=154,sourceGroupsCrossingSplits=0,mainRepeatedEventTasks=43,
         basicPhysicalErrorLabels=7,plannedResultTables=19,plannedModels=10,plannedRepetitions=1,
         bodyPages=8,figureCount=len(referenced),currentNativeRenders=len(prov['renders']),
+        publicationFigures=len(publication['figures']),publicationSceneStates=len(scenes['scenes']),
+        nativeModelInputUnchanged=True,emptyResultSheetsInSupplement=True,
         formalModelStudyComplete=False,currentInterfaceHumanQualificationComplete=False,
         paidApiCallsThisRevision=0,scope='Current evidence, hash, layout and output consistency; not human visual validation or an acceptance certificate.')
     (HERE/'verification.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))

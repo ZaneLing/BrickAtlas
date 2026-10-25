@@ -1,6 +1,8 @@
 # 实验设计与已有工作的关系
 
-更新：2026-10-25。当前设计和19张结果表见[实验计划](EXPERIMENT-PLAN.zh-CN.md)。文献条目在`references.bib`，正文／补充材料保留原有引用；本轮没有重新做一轮文献搜索。
+更新：2026-10-25。当前设计和19张结果表见[实验计划](EXPERIMENT-PLAN.zh-CN.md)。文献条目在`references.bib`。
+
+本轮还实际下载并查看了BrickNet（CVPR 2026）、VSI-Bench与Spatial457（CVPR 2025）、BrickGPT（ICCV 2025）的原始论文页面。具体原文链接、图形和内容组织借鉴、我们的页面前后对比见[设计修改记录](DESIGN-REVISION.zh-CN.md)。其中VSI-Bench和Spatial457已加入正文引用及输入输出对照表；没有挪用别人的实验结果。
 
 | 参考方向 | 我们借鉴什么 | 不可以直接照搬什么 |
 |---|---|---|

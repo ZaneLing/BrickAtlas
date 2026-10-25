@@ -30,9 +30,17 @@ def main():
     # snapshot. Do not let refresh silently restore its obsolete counts/plans.
     for flag, script in [(args.study,'protocol_study.py'),
                          (args.refresh_figures,'update_current.py'),
-                         (args.refresh_figures,'make_current_tables.py')]:
+                         (args.refresh_figures,'make_current_tables.py'),
+                         (args.refresh_figures,'publication_scenes.py')]:
         if flag:
             subprocess.run([paper_python,str(HERE/script)],cwd=ROOT,check=True)
+    if args.refresh_figures:
+        node = os.environ.get('BRICKPLAN_NODE') or shutil.which('node')
+        local_node=ROOT/'.tools/node-v22.23.2-darwin-arm64/bin/node'
+        if not node and local_node.exists():node=str(local_node)
+        if not node:raise SystemExit('Publication rendering needs Node 22+; set BRICKPLAN_NODE.')
+        subprocess.run([node,str(HERE/'render_publication.mjs')],cwd=ROOT,check=True)
+        subprocess.run([paper_python,str(HERE/'design_figures.py')],cwd=ROOT,check=True)
     (HERE/'build').mkdir(exist_ok=True)
     for name in ['main','supplement']:
         log = HERE/'build'/f'{name}-compile.txt'

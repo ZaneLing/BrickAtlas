@@ -1,25 +1,30 @@
-# 当前论文图片说明
+# 新版出版图：怎么画、展示什么
 
-更新：2026-10-25。全部场景来自实际几何，不用AI画示意积木代替题目。
+当前使用 `figures-publication/` 的14张重设计图；补充材料保留一张原有的题库分布图。参考与前后对比见[设计修改记录](DESIGN-REVISION.zh-CN.md)。
 
-| 图 | 文件 | 放什么 |
+| 图 | 文件 | 展示内容 |
 |---|---|---|
-| 总览 | `figures-current/teaser.pdf` | 24幅小场景，静态／完整拼装／明确收尾。 |
-| 错误 | `figures-current/errors.pdf` | 七类实际错误、提前封口、内部返修、正常对照；每对同框当前与阶段GT。 |
-| 新增配置 | `figures-current/added-objects.pdf` | 三个完整原始LDraw、五个长程序物件、扩大屋顶。 |
-| 原有完整物件 | `figures-current/objects-all.pdf` | 全部42个，按当前去重题数重标。 |
-| 历史机制 | `figures-current/mechanisms-all.pdf` | 全部26个，只作诊断。 |
-| 社区主体 | `figures-current/modules-all.pdf` | 12个原始收尾来源，显示完整主体；扩大屋顶另示。 |
-| 分布 | `figures-current/distributions.pdf` | 当前主题型、结构G分级和动态事故数。 |
-| 雷达模版 | `figures-current/*radar.pdf` | 两张无模型曲线的空模板，未测不补0，不用面积排名。 |
-| 交互循环 | `figures-v2/protocol.pdf` | 观察、单块动作、执行器、未提示变化。 |
-| 说明书 | `figures-v2/instructions.pdf` | 一排7步、单块零件与状态。 |
-| 不同合法顺序 | `figures-v2/alternative-orders.pdf` | 中途不同，最终一样。 |
-| 真模型旧示例 | `figures-v2/repair-comparison.pdf` | 一排8状态，GT／旧模型外部修复／自身纠错，明确历史版本。 |
-| 可行返修路线 | `figures-v2/recovery.pdf` | 旧执行器路线，不能说成模型成绩。 |
+| 任务总览 | `teaser.pdf` | 静态错误到修复、动态已有主体到被干扰后完成、8个物件。 |
+| 输入输出循环 | `interaction.pdf` | 唯一目标、当前RGB、一个动作、合法性检查、下一状态。 |
+| 物理错误 | `error-atlas.pdf` | E01–E07与正常S0；同组相机和灯光一致。厚度用特写，偏移／装反用后侧视角。 |
+| 内部返修 | `access-repair.pdf` | 一个错件，四个正确盖件临时拆下，换件后恢复；真实10步可行路线。 |
+| 配对资格 | `paired-recovery.pdf` | 共用前半段的正常／干扰分支；CRR与ΔSR分母不同。 |
+| 静态计分实例 | `metric-example.pdf` | 残差2→1→0、F1与ER上升；未补回正确件仍未完成。直接调用当前计分器计算。 |
+| 数据分析 | `dataset-analysis.pdf` | 各范围题数、按物件配置计权的安装量CDF、真实多标签错误覆盖。 |
+| 路线诊断 | `route-diagnostic.pdf` | 实际脚本诊断9/36与36/36，无虚构模型曲线。 |
+| GT与真实模型轨迹 | `repair-filmstrip.pdf` | 每排8个状态；参考、历史模型外部修复、历史模型自身纠错。 |
+| 42个完整物件 | `whole-object-atlas.pdf` | 原有完整物件全部保留，统一材质／光照。 |
+| 13个收尾配置 | `module-atlas.pdf` | 完整主体背景与实际操作件数。 |
+| 26个诊断结构 | `diagnostic-atlas.pdf` | 历史结构诊断单列。 |
+| 9个新增配置 | `added-atlas.pdf` | 3个原始完整LDraw、5个长程序物件、扩大屋顶。 |
+| 两种合法顺序 | `alternative-orders.pdf` | 完整小屋作背景锚点；不同第三步、同一个最终屋顶。 |
 
-共14张不同图。场景3200×2400、2倍超采样、组合图600dpi，文字和箭头保留矢量。几何小图保持紧凑，一排7–8幅为主。
+## 质量与证据
 
-论文的橙框、正确性颜色和标注用于解释。不能原封不动放入盲测模型的当前状态图。模型收到的是原生800×600场景等接口图片；高清发表图不等于提高了模型的输入质量。
+- 152个出版场景来自题目证书、已验证参考动作或历史轨迹，不用AI画假积木。
+- 场景3200×2400、抗锯齿、材质与接触阴影；组合图600dpi，注释和图表为矢量。
+- 仅裁去画布留白，同一对照／轨迹共享取景，不拉伸积木几何。细节图明确标注。
+- 论文橙框和状态颜色仅用于解释，不进入模型输入。
+- **评测RGB、800×600原生场景、完整背景、数据和计分未因本轮排版改变。**
 
-`figures-current/provenance.json`记录新图来源、状态、分辨率和哈希；旧图仍由`figures-v2/provenance.json`追溯。`build.py --refresh-figures`只更新当前图与清单，不重写旧计划。
+`publication_scenes.py`导出原始几何和状态，`render_publication.mjs`本地渲染，`design_figures.py`做版面和矢量注释。每张PNG有缓存与哈希记录，所有图由`figures-publication/provenance.json`追溯。

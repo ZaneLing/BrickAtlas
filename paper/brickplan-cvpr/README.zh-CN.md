@@ -3,9 +3,10 @@
 更新日期：**2026-10-25**。
 
 - [正文 PDF](main.pdf)：CVPR 双栏，**8页正文＋1页参考文献**。
-- [补充材料 PDF](supplement.pdf)：20页，含完整物件清单、指标细则、实验表与历史证据。
+- [补充材料 PDF](supplement.pdf)：21页，含完整物件清单、指标细则、实验表与历史证据。
 - [Overleaf 源文件包](brickplan-cvpr-overleaf.zip)：上传后选择 `main.tex` 或 `supplement.tex` 编译。
-- [本次修改说明](REVISION-2026-10-25.zh-CN.md)。
+- [本次图形与版面修改、页面前后对比](DESIGN-REVISION.zh-CN.md)。
+- [此前的数据与指标更新](REVISION-2026-10-25.zh-CN.md)。
 
 ## 论文现在用哪份数据
 
@@ -33,11 +34,15 @@
 - 保留十个候选模型，每模型／条件一次。**19张实验结果表全部未测留空**。
 - C中途开始、独立检测、文字状态、自由坐标等明确写成待补／待接入，不能当作已经跑完。
 
-## 图片
+## 这一轮图形与排版升级
 
-新制9张数据／示例图，保留有用的历史说明书、流程、非唯一顺序和真实小车轨迹图。当前论文共引用14张不同图。
+[对照正式论文的修改记录与前后对比](DESIGN-REVISION.zh-CN.md)。实际查看了BrickNet、VSI-Bench、Spatial457的CVPR原始页面和BrickGPT的ICCV原始页面。
 
-场景用实际积木几何原生渲染，3200×2400、2倍超采样；组合图600dpi，PDF/SVG文字为矢量。一排保留7–8幅场景的紧凑展示。发表图的分辨率与模型收到的原生800×600场景分开说明。
+- 全面重做14张出版图：任务总览、输入输出循环、错误细节、内部返修、配对资格、真实计分例子、数据覆盖、路线诊断、真实修复轨迹和完整物件图册。
+- 场景来自真实LDraw几何，用材质、光照、接触阴影重新渲染；相同对照保持相机、光照和取景一致。厚度、偏移和装反用更清楚的细节／视角展示。
+- 原生3200×2400，多重采样抗锯齿；组合图600dpi，图中文字、箭头和统计图为矢量。
+- 正文围绕研究问题、任务、数据、评估和真实诊断；10个候选模型和受控实验设计仍列明。19张未测成绩表集中保留在补充材料，空雷达不进入当前稿。
+- **论文图片的美化不改变模型答题时的800×600原生场景、完整背景、题目或计分规则。**
 
 ## 怎么编译和检查
 
@@ -61,7 +66,7 @@ PYTHONPATH=benchmark/brickplan-repair benchmark/.runtime/mlx-env/bin/python pape
 
 ## 证据文件怎么读
 
-当前：`evidence/current-dataset.json`、`current-experiment-design.json`、`current-results-template.json`、`figures-current/provenance.json`。
+当前：`evidence/current-dataset.json`、`current-experiment-design.json`、`current-results-template.json`、`figures-publication/provenance.json`。
 
 历史：`benchmark-coverage.json`、`experiment-design.json`、`results-template.json`、`budget-single-run.json` 和旧生成脚本对应10月23日及更早版本。保留追溯，**不能用作当前数量、费用和实验计划**。当前 `build.py --refresh-figures` 已改用新脚本，不会自动恢复旧计划。
 
