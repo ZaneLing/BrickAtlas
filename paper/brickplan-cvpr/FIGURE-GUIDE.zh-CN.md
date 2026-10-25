@@ -21,6 +21,7 @@
 
 ## 质量与证据
 
+- 所有当前论文图内的文字统一为**Comic Sans MS**：正文标注、图例、坐标轴、数字用常规体，标题和原有加粗标注用Bold。PDF嵌入字体，SVG文字转成矢量轮廓，PNG直接以该字体渲染。
 - 152个出版场景来自题目证书、已验证参考动作或历史轨迹，不用AI画假积木。
 - 场景3200×2400、抗锯齿、材质与接触阴影；组合图600dpi，注释和图表为矢量。
 - 仅裁去画布留白，同一对照／轨迹共享取景，不拉伸积木几何。细节图明确标注。
@@ -28,3 +29,11 @@
 - **评测RGB、800×600原生场景、完整背景、数据和计分未因本轮排版改变。**
 
 `publication_scenes.py`导出原始几何和状态，`render_publication.mjs`本地渲染，`design_figures.py`做版面和矢量注释。每张PNG有缓存与哈希记录，所有图由`figures-publication/provenance.json`追溯。
+
+只重新生成图中文字和统计图，不重渲染积木几何：
+
+```bash
+benchmark/.runtime/mlx-env/bin/python paper/brickplan-cvpr/build.py --refresh-typography
+```
+
+字体在`figure_typography.py`统一设置；`verify.py`直接检查正文／补充材料引用的15张图的PDF字体，防止静默替换成其他字体。

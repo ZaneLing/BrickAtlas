@@ -74,6 +74,15 @@ state/coordinate adapters remain outstanding; the paper explicitly labels them.
 
 ## Publication rendering revision
 
+All current figure text uses Comic Sans MS, with the separate Bold face for
+bold labels. `figure_typography.py` registers the installed fonts and fails if
+the required faces are unavailable. The font files are not bundled; exported
+PDFs embed subsets and SVG text becomes paths, so the Overleaf package and
+exported figures do not require font installation. Regenerating figure text
+requires both local faces. Use `build.py --refresh-typography` to reuse scene
+PNGs, regenerate typography/charts, then compile and verify both documents.
+`verify.py` audits the actual fonts in all fifteen referenced figure PDFs.
+
 Current figures use `publication_scenes.py`, `render_publication.mjs`, and
 `design_figures.py`. The first exports certified triangles/states; the second
 renders with Three.js 0.180.0 and headless Chrome through local Playwright; the

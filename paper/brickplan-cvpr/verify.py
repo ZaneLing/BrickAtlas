@@ -129,6 +129,21 @@ def main():
     for name in referenced:
         p=HERE/name;assert p.exists()
         if p.parent.name=='figures-v2':assert digest(p)==old['figures'][p.stem]['pdfSha256']
+    # Every active figure label, title, tick and code example uses the requested
+    # font. Inspect the exported PDFs so a silent Matplotlib fallback cannot pass.
+    for manifest in [prov,publication]:
+        assert manifest['typography']['family']=='Comic Sans MS'
+        assert manifest['typography']['pdfEmbedded'] and manifest['typography']['svgTextAsPaths']
+    figure_fonts={}
+    for name in sorted(referenced):
+        doc=fitz.open(HERE/name);names=set()
+        for page in doc:
+            for font in page.get_fonts(full=True):
+                assert 'ComicSansMS' in font[3],(name,font[3])
+                assert doc.extract_font(font[0])[3],(name,'Font is not embedded')
+                names.add(font[3])
+        assert names,(name,'Expected vector figure labels')
+        figure_fonts[name]=sorted(names)
     assert r'\"type' not in tex, 'Accented quotes instead of JSON quotes'
     pdfs={}
     for name in ['main','supplement']:
@@ -163,6 +178,7 @@ def main():
         bodyPages=8,figureCount=len(referenced),currentNativeRenders=len(prov['renders']),
         publicationFigures=len(publication['figures']),publicationSceneStates=len(scenes['scenes']),
         nativeModelInputUnchanged=True,emptyResultSheetsInSupplement=True,
+        figureTypography='Comic Sans MS',figureFontAudit=figure_fonts,
         formalModelStudyComplete=False,currentInterfaceHumanQualificationComplete=False,
         paidApiCallsThisRevision=0,scope='Current evidence, hash, layout and output consistency; not human visual validation or an acceptance certificate.')
     (HERE/'verification.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))

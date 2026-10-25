@@ -12,12 +12,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle,FancyArrowPatch,FancyBboxPatch
 from PIL import Image
+from figure_typography import configure
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];OUT=HERE/'figures-publication';NATIVE=OUT/'native'
 INK='#24364b';MUTED='#677786';TEAL='#157d79';CORAL='#d75b3b';BLUE='#426bb0';GRAY='#d8dfe6'
-plt.rcParams.update({'font.family':'DejaVu Sans','font.size':7.4,'pdf.fonttype':42,'ps.fonttype':42,'svg.fonttype':'none','axes.labelcolor':INK,'text.color':INK,'axes.spines.top':False,'axes.spines.right':False})
+typography=configure(7.4)
+plt.rcParams.update({'axes.labelcolor':INK,'text.color':INK,'axes.spines.top':False,'axes.spines.right':False})
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 manifest=dict(schema='brickplan-publication-figures/1',date='2026-10-25',nativePixels=[3200,2400],exportDpi=600,
-    exactGeometry=True,publicationOnly=True,evaluationInputUnchanged=True,apiCalls=0,figures={},images={},sources={})
+    exactGeometry=True,publicationOnly=True,evaluationInputUnchanged=True,apiCalls=0,figures={},images={},sources={},typography=typography)
 for p in [HERE/'evidence/publication-render-states.json',HERE/'evidence/worked-metric-example.json',HERE/'evidence/current-dataset.json',ROOT/'deliverables/brickplan-benchmark-spec/questions.jsonl']:
  manifest['sources'][str(p.relative_to(ROOT))]=sha(p)
 scene_spec=json.loads((HERE/'evidence/publication-render-states.json').read_text())
@@ -86,7 +88,7 @@ for x,label in zip(xs,['1  Observe','2  Choose one action','3  Execute legally',
 panel(fig,(.006,.46,.098,.37),'E03-current','Current',CORAL,6.4);panel(fig,(.11,.46,.098,.37),'E03-target','Stage target',TEAL,6.4)
 fig.text(.108,.31,'RGB + neutral rules\nAnonymous action handles',ha='center',va='top',fontsize=6.3,color=MUTED,linespacing=1.45)
 fig.text(.371,.79,'attach   detach\ninspect   finish',ha='center',va='top',fontsize=7.7,color=INK,linespacing=1.8)
-fig.text(.371,.45,'{"type":"detach",\n "partId":"A008"}',ha='center',va='top',fontsize=6.6,fontfamily='DejaVu Sans Mono',color=TEAL,linespacing=1.5)
+fig.text(.371,.45,'{"type":"detach",\n "partId":"A008"}',ha='center',va='top',fontsize=6.6,color=TEAL,linespacing=1.5)
 fig.text(.628,.79,'Connection\nCollision\nInsertion / extraction',ha='center',va='top',fontsize=7.3,linespacing=1.8)
 fig.text(.628,.28,'Hidden events: dynamic only',ha='center',va='top',fontsize=6.1,color=CORAL)
 panel(fig,(.795,.42,.185,.41),'metric-remove','Actual new state',INK,6.6)
@@ -122,7 +124,7 @@ panel(fig,(.005,.30,.17,.49),'racer-stage-3','One shared prefix',INK,6.5)
 arrow(fig,(.174,.54),(.225,.78),TEAL);arrow(fig,(.174,.54),(.225,.36),CORAL)
 line(fig,(.23,.78),(.53,.78),TEAL,1);line(fig,(.23,.36),(.53,.36),CORAL,1)
 fig.text(.24,.83,'Control: continue unchanged',fontsize=7,color=TEAL);fig.text(.24,.41,'Fault: verify the actual edit',fontsize=7,color=CORAL)
-fig.text(.555,.78,'cᵢ',fontsize=10,ha='center',va='center',color=TEAL);fig.text(.555,.36,'fᵢ',fontsize=10,ha='center',va='center',color=CORAL)
+fig.text(.555,.78,'c[i]',fontsize=9,ha='center',va='center',color=TEAL);fig.text(.555,.36,'f[i]',fontsize=9,ha='center',va='center',color=CORAL)
 panel(fig,(.355,.48,.105,.24),'racer-event')
 line(fig,(.60,.18),(.60,.90),GRAY,.7)
 heading(fig,.635,.86,'Eligible pair Q',size=7.5)
@@ -138,7 +140,7 @@ for i,(name,s) in enumerate(zip(['E03-current','metric-remove','E03-target'],wor
  x=i/3+.005;panel(fig,(x,.40,.32,.52),name,['Initial','Remove wrong part','Replace + finish'][i],CORAL if i==0 else INK,6.4)
  m=s['metrics'];v=m['fullPlacement']['f1'];er=m['errorReduction'];success=int(m['success'])
  fig.text(x+.16,.26,f'F1 {v:.3f}\nER {er*100:.0f}%  ·  SR {success}',ha='center',va='top',fontsize=6.9,linespacing=1.55,color=TEAL if success else INK)
-fig.text(.5,.04,'Residual: 2 → 1 → 0.  Final damage DR = 0 throughout.',ha='center',fontsize=6.3,color=MUTED)
+fig.text(.5,.04,'Residual: 2, 1, 0.  Final damage DR = 0 throughout.',ha='center',fontsize=6.3,color=MUTED)
 save(fig,'metric-example')
 
 # Figure 7: composition, object sequence length, and multilabel coverage.
@@ -229,6 +231,7 @@ save(fig,'alternative-orders')
 manifest['sources'][str(Path(__file__).relative_to(ROOT))]=sha(Path(__file__))
 manifest['sources'][str((HERE/'publication_scenes.py').relative_to(ROOT))]=sha(HERE/'publication_scenes.py')
 manifest['sources'][str((HERE/'render_publication.mjs').relative_to(ROOT))]=sha(HERE/'render_publication.mjs')
+manifest['sources'][str((HERE/'figure_typography.py').relative_to(ROOT))]=sha(HERE/'figure_typography.py')
 manifest['sharedPublicationViewports']={k:[int(x) for x in v] for k,v in crop_cache.items()}
 (OUT/'provenance.json').write_text(json.dumps(manifest,indent=2)+'\n')
 print('PUBLICATION FIGURES',len(manifest['figures']),flush=True)

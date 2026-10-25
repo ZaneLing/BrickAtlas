@@ -12,6 +12,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from PIL import Image
+from figure_typography import configure
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
@@ -41,15 +42,16 @@ provenance = dict(schema='brickplan-current-paper-figures/1', date='2026-10-25',
     vectorText=True, sources={}, renders={}, figures={}, apiCalls=0)
 for p in [SPEC/'questions.jsonl',SPEC/'summary.json',SPEC/'coverage.json',SPEC/'examples.json']:
     provenance['sources'][str(p.relative_to(ROOT))]=sha(p)
-plt.rcParams.update({'font.family':'DejaVu Sans','font.size':8,'pdf.fonttype':42,
-                     'ps.fonttype':42,'svg.fonttype':'none'})
+provenance['typography']=configure(8)
 BLUE='#2166ac'; GREEN='#167d72'; ORANGE='#c75c19'; INK='#162e3c'; GRAY='#63727b'
 PALETTE.update(dict(re.findall(r'CODE\s+(\d+)\s+VALUE\s+(#[0-9A-Fa-f]{6})',
     (ROOT/'assets-source/ldraw-library/locked/LDConfig.ldr').read_text())))
 
 def save(fig,name):
     for ext in ['pdf','svg','png']:
-        fig.savefig(FIG/f'{name}.{ext}', dpi=600, facecolor='white')
+        path=FIG/f'{name}.{ext}'
+        fig.savefig(path, dpi=600, facecolor='white')
+        if ext=='svg':path.write_text('\n'.join(line.rstrip() for line in path.read_text().splitlines())+'\n')
     provenance['figures'][name]=dict(inches=list(fig.get_size_inches()),
         pdfSha256=sha(FIG/f'{name}.pdf'), formats=['pdf','svg','png'])
     plt.close(fig)
@@ -224,5 +226,6 @@ snapshot=dict(schema='brickplan-current-paper-snapshot/1',date='2026-10-25',
     resultStatus='NOT_RUN',apiCalls=0)
 write(HERE/'evidence/current-dataset.json',snapshot)
 provenance['sources'][str(Path(__file__).relative_to(ROOT))]=sha(Path(__file__))
+provenance['sources'][str((HERE/'figure_typography.py').relative_to(ROOT))]=sha(HERE/'figure_typography.py')
 write(FIG/'provenance.json',provenance)
 print('CURRENT',len(unique),'distinct;',len(main),'main;',len(configs),'dynamic configurations',flush=True)
