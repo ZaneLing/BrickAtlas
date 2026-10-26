@@ -4,6 +4,7 @@ Full scene context for named modules. Diagnostic historical dynamic crops requir
 an explicit flag. This runner does not contact any model API.
 """
 from copy import deepcopy
+from functools import lru_cache
 from pathlib import Path
 import argparse,json,uuid
 import numpy as np
@@ -23,12 +24,27 @@ VERSION=INPUT_VERSION
 SYSTEM='''Match the sole TARGET using the current images. For static tasks repair the current stage; for dynamic tasks complete the whole required target. One action per response: attach, detach, inspect, or finish. Return one direct JSON object, for example {"type":"attach","partId":"anonymous handle","candidate":"anonymous position"}. Every attach/detach moves one part. Any physically legal order is accepted. You may inspect throughout. Inventory contains spare parts. No changes are announced in dynamic episodes. Do not assume a change occurred merely because an episode is being evaluated. Finish only when the required target is complete.'''
 
 
+@lru_cache(maxsize=1)
+def source_rows():
+    return {r['key']:r for r in rows_with_cases()}
+
+
+@lru_cache(maxsize=1)
+def public_rows():
+    return {r['id']:r for r in map(json.loads,(OUT/'questions.jsonl').read_text().splitlines())}
+
+
 def load(case_id,directory,diagnostic=False):
-    row=next(r for r in rows_with_cases() if r['key']==case_id)
-    public=next(json.loads(l) for l in (OUT/'questions.jsonl').read_text().splitlines() if json.loads(l)['id']==case_id)
+    if case_id.startswith('QX:'):
+        from bench_design.challenges import load_challenge
+        return load_challenge(case_id,directory)
+    row=deepcopy(source_rows()[case_id])
+    public=public_rows()[case_id]
     if public['track'] in ('archived-crop-dynamic','dynamic-structure-diagnostic') and not diagnostic:
         raise ValueError('This historical dynamic structure is diagnostic only; use --diagnostic explicitly.')
     row['evaluationMetadata']={k:public[k] for k in ('canonicalId','taskType','track','source','model')}
+    normal=next((r for r in public_rows().values() if r['model']==public['model'] and r['taskType']=='D0'),None)
+    if normal:row['evaluationMetadata']['normalCanonicalId']=normal['canonicalId']
     bank,mid,c=row['bank'],row['model'],row['case']
     if bank in ('M','O'):
         ep,packet=load_object_episode(c['id'],directory=directory)
@@ -72,54 +88,33 @@ def valid(action):
     if kind=='attach':return fields=={'type','partId','candidate'}
     if kind=='detach':return fields=={'type','partId'}
     if kind=='finish':return fields=={'type'}
-    return kind=='inspect' and fields<={'type','view','partId','candidate','manualStep','inventoryPage','futureReference'} and len(fields)>1
+    return kind=='inspect' and fields<={'type','view','partId','candidate','point','manualStep','inventoryPage','futureReference'} and len(fields)>1
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--id',required=True);parser.add_argument('--diagnostic',action='store_true')
-    args=parser.parse_args();directory=(OUT/'runs'/uuid.uuid4().hex).resolve()
-    directory.mkdir(parents=True,exist_ok=True)
-    row,ep,packet,renderer=load(args.id,directory,args.diagnostic)
-    initial=deepcopy(ep.state);records=[];states=[deepcopy(initial)]
-    print(json.dumps(observation(row,ep,packet,renderer,directory),ensure_ascii=False),flush=True)
+    from bench_design.session import Session
     import sys
-    for line in sys.stdin:
-        try:action=json.loads(line);parse_error=False
-        except json.JSONDecodeError:action={'type':'invalid'};parse_error=True
-        supplied=deepcopy(action);action=action if valid(action) else {'type':'invalid'}
-        before=deepcopy(ep.state)
-        try:
-            result=ep.step(action)
-            fb=ep.feedback if hasattr(ep,'feedback') else result
-        except (ValueError,KeyError,TypeError) as exc:
-            fb=dict(code='INVALID_REQUEST',message=str(exc))
-        if not valid(supplied):fb=dict(code='INVALID_REQUEST')
-        records.append(dict(action=supplied if isinstance(supplied,dict) else {'type':'invalid'},
-            parseError=parse_error,feedback=fb,before=before,after=deepcopy(ep.state)))
-        if action.get('type') in ('attach','detach') and fb.get('code')=='OK' and hasattr(ep,'expected_after_last_action'):
-            records[-1]['afterOwnActionBeforeExternalChange']=deepcopy(ep.expected_after_last_action)
-        states.append(deepcopy(ep.state))
-        extra=action if action.get('type')=='inspect' and fb.get('code') in ('INSPECT','OBSERVED') else None
-        print(json.dumps(observation(row,ep,packet,renderer,directory,extra),ensure_ascii=False),flush=True)
-        if getattr(ep,'done',getattr(ep,'finished',False)):break
-    done=getattr(ep,'done',getattr(ep,'finished',False));goal=row['case'].get('goal',ep.runtime.goal)
-    explicit_finish=bool(records and valid(records[-1]['action']) and records[-1]['action']['type']=='finish'
-        and records[-1]['feedback'].get('code') in ('FINISHED','SUCCESS','INCOMPLETE'))
-    metrics=state_metrics(ep.runtime,initial,ep.state,goal,finished=explicit_finish)
-    case=row['case'];reference=case.get('oraclePlan',case.get('referenceActions'))
-    if reference is not None:reference_moves=len(reference)
-    elif row['bank']=='D':reference_moves=case['trigger']+len(case['privateEvent']['recoveryWitness']) if case.get('privateEvent') else case['targetParts']
-    else:reference_moves=None
-    native_events=getattr(ep,'events',None)
-    if native_events is None:
-        single=getattr(ep,'event',None) or getattr(ep,'last_event',None)
-        native_events=[deepcopy(single)] if single else []
-    write(directory/'record.private.json.gz',dict(caseId=args.id,inputVersion=VERSION,
-        evaluationMetadata=row['evaluationMetadata'],
-        terminalStatus='completed' if explicit_finish else 'model_budget_exhausted' if done else 'external_stop',records=records,states=states,
-        stateMetrics=metrics,executionMetrics=execution_metrics(records,initial_was_correct=metrics['initialWasCorrect'],reference_moves=reference_moves),
-        nativeEvents=native_events,nativeHistory=getattr(ep,'history',[]),
-        nativeScore=ep.score(),apiCalls=0))
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--id',required=True)
+    parser.add_argument('--diagnostic',action='store_true')
+    parser.add_argument('--actions',type=Path,help='Optional JSONL action script; otherwise read stdin')
+    parser.add_argument('--output',type=Path)
+    parser.add_argument('--actor',default='scripted-cli')
+    args=parser.parse_args()
+    directory=(args.output or OUT/'runs'/uuid.uuid4().hex).resolve()
+    session=Session.open(args.id,directory,args.actor,args.diagnostic)
+    print(json.dumps(session.observe(),ensure_ascii=False),flush=True)
+    stream=args.actions.open() if args.actions else sys.stdin
+    try:
+        for line in stream:
+            try: action=json.loads(line);parse_error=False
+            except json.JSONDecodeError: action={'type':'invalid'};parse_error=True
+            session.submit(action,parse_error)
+            print(json.dumps(session.observe(),ensure_ascii=False),flush=True)
+            if session.done:break
+    finally:
+        if args.actions:stream.close()
+        session.save()
 
 
 if __name__=='__main__':main()

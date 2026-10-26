@@ -1,7 +1,7 @@
 """Numerical examples and attribution gates that materially affect conclusions."""
 from collections import Counter
 import unittest
-from bench_design.metrics import state_metrics,execution_metrics,event_recovery,pair_metrics,aggregate
+from bench_design.metrics import state_metrics,execution_metrics,event_recovery,pair_metrics,aggregate,aggregate_pairs
 from evaluation_outcomes import assess_run,pair_assessment
 from bench_design.policy import descriptors
 
@@ -11,6 +11,49 @@ class ToyRuntime:
 
 
 class MetricsTests(unittest.TestCase):
+    def test_empty_prefix_still_requires_images_and_equal_budget(self):
+        from types import SimpleNamespace
+        from copy import deepcopy
+        from bench_design.session import assess_pair
+        def branch(scheduled):
+            return SimpleNamespace(initial={},ep=SimpleNamespace(),cap=40,actor='scripted:proof',
+                records=[dict(decision=1,action={'type':'finish'},newEventIndices=[])],
+                result=lambda:dict(terminalStatus='completed',success=True,scheduledEvents=scheduled,
+                                   appliedEvents=0,effectiveIncidentVerified=False))
+        a,b=branch(0),branch(1)
+        self.assertFalse(assess_pair(a,b,0)['sharedPrefixProof']['verified'])
+        observation=dict(packetSha256='a'*64,imageHashes=[])
+        for s in [a,b]:s.records[0]['observation']=deepcopy(observation)
+        self.assertFalse(assess_pair(a,b,0)['sharedPrefixProof']['verified'])
+        for s in [a,b]:s.records[0]['observation']['imageHashes']=['b'*64]
+        self.assertTrue(assess_pair(a,b,0)['sharedPrefixProof']['verified'])
+        b.cap=41
+        self.assertFalse(assess_pair(a,b,0)['sharedPrefixProof']['verified'])
+
+    def test_unobserved_event_window_is_not_a_repair_failure(self):
+        a=('brick','red','p1')
+        out=event_recovery(ToyRuntime(),{'a':a},{},{'a':a},[])
+        self.assertIsNone(out['observedRecovery'])
+        self.assertIsNone(out['retainedAfterRecovery'])
+
+    def test_untriggered_remains_na_with_failed_control(self):
+        c=dict(terminalStatus='completed',success=False)
+        e=dict(terminalStatus='completed',success=False,scheduledEvents=2,appliedEvents=0,effectiveIncidentVerified=False)
+        out=pair_metrics(c,e,shared_prefix_verified=True)
+        self.assertEqual(out['repairJudgment'],'not_applicable')
+        self.assertIn('untriggered',out['exclusionReasons'])
+        self.assertIn('control_failed',out['exclusionReasons'])
+
+    def test_pair_aggregation_preserves_both_denominators(self):
+        base=dict(model='scripted',inputVersion='v2',track='whole-object-dynamic',taskType='D1',terminalStatus='completed',scheduledEvents=1,appliedEvents=1,effectiveIncidentVerified=True)
+        pairs=[]
+        for index,(control,fault) in enumerate([(True,True),(False,True)]):
+            pairs.append(dict(control={**base,'success':control},intervention={**base,'success':fault,'conditionId':str(index)},sharedPrefixProof={'verified':True}))
+        result=aggregate_pairs(pairs)[0]
+        self.assertEqual(result['conditionalRecoveryEligibleN'],1)
+        self.assertEqual(result['pairedComparisonN'],2)
+        self.assertEqual(result['conditionalRecoveryRate'],1)
+        self.assertEqual(result['pairedCompletionDrop'],-.5)
     def test_identical_pieces_and_temporary_dismantling(self):
         r=ToyRuntime();goal={'a':('brick','red','p1'),'b':('brick','red','p2')}
         swapped={'a':goal['b'],'b':goal['a']}

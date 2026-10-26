@@ -23,7 +23,37 @@ Rebuild with `PYTHONPATH=benchmark/brickplan-repair` and the project's
 one-action environment. It calls no model. Its `inputVersion` records the unified
 direct-action envelope; old measured input formats must stay separate.
 
-`-m bench_design.score results.jsonl` aggregates explicit normalized result
-records. Actual API collection, event-damage qualification, source-cluster CIs,
-standalone detection and checkpoint tasks still require integration. The paired
-metric functions refuse incomplete eligibility evidence.
+The active `Session` adapter is `brick-atlas-direct-actions-full-context/2`.
+The published task catalogue still records the earlier `/1` snapshot; the new
+runtime version is separate from task identity. Version two adds neutral full
+position cards on inspect-part and visible-piece point inspection on module
+tracks, using the same public interface for people and models. It explicitly
+states the held-fixture / ideal rigid manipulation assumptions.
+
+`-m bench_design.score results.jsonl` accepts normalized run records, new private
+records containing `normalizedResult`, and paired evaluation JSONL. It reports
+run groups and qualified pair groups separately. `session.py` records every
+decision, the state after the actor's move and before any intervention, a
+verified incident ledger, public-packet/image hashes and snapshots, and recovery
+windows ending before the next event. Untriggered/unverified repair is N/A.
+
+`-m bench_design.run_pair --id ... --prefix prefix.jsonl --control-actions normal.jsonl
+--fault-actions fault.jsonl --output ...` executes an explicit shared prefix and
+two continuations without a model API. Non-scripted actors additionally need
+matching actual full-request-context hashes before formal pair eligibility.
+Provider collection/billing, source-cluster CIs, independent detection and
+checkpoint task banks remain separate work; scripts are never model scores.
+
+## Current independent quality round
+
+`-m bench_design.launch_review` opens persistent local A/B/C click-only operation
+and mechanical-review pages. `--no-open` starts the server without opening a tab.
+`--manager` opens the private aggregate view. Participants can submit one task
+at a time; independent answers are not copied between identities.
+
+The additive targeted conditions, independent Manifold Boolean spotchecks,
+scripted execution evidence, and human protocol are documented under
+`deliverables/brickplan-quality-round/README.zh-CN.md`. New conditions remain
+outside the published count until independently admitted. `quality_validate`
+replays them through the actual unified judge. `test_quality_ui.mjs` must use
+an isolated `/tmp` participant directory, never real human storage.

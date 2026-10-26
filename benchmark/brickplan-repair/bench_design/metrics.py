@@ -43,7 +43,7 @@ def _project(counter,fn):
 
 
 def execution_metrics(records,*,initial_was_correct=False,reference_moves=None):
-    attempts=well_formed=accepted=inspections=parse_errors=schema_errors=0;rejections=Counter()
+    attempts=well_formed=accepted=inspections=parse_errors=schema_errors=budget_rejections=0;rejections=Counter()
     for r in records:
         action=r.get('action',{});kind=action.get('type')
         feedback=r.get('feedback',r.get('result',{})) or {}
@@ -51,8 +51,9 @@ def execution_metrics(records,*,initial_was_correct=False,reference_moves=None):
         parse=bool(r['parseError']) if 'parseError' in r else kind=='invalid'
         schema=not parse and code in ('INVALID_ACTION','INVALID_REQUEST')
         parse_errors+=parse;schema_errors+=schema;inspections+=kind=='inspect'
+        budget_rejections+=code=='BUDGET_EXHAUSTED'
         if kind in ('attach','detach'):attempts+=1
-        if kind in ('attach','detach') and not schema and not parse:
+        if kind in ('attach','detach') and not schema and not parse and code!='BUDGET_EXHAUSTED':
             well_formed+=1
             if code=='OK':accepted+=1
             elif code is None:raise ValueError('Manipulation feedback missing; cannot score legality')
@@ -61,7 +62,7 @@ def execution_metrics(records,*,initial_was_correct=False,reference_moves=None):
         wellFormedManipulationAttempts=well_formed,
         physicalRejections=dict(rejections),legalActionRate=rate(accepted,well_formed),
         formatErrorResponses=parse_errors,schemaErrorResponses=schema_errors,
-        inspectionCalls=inspections,falseRepair=bool(initial_was_correct and accepted),
+        inspectionCalls=inspections,budgetRejectedResponses=budget_rejections,falseRepair=bool(initial_was_correct and accepted),
         movesRelativeToWitness=rate(attempts,reference_moves) if reference_moves is not None else None,
         referenceIsNotOptimal=True,optimalityScore=None)
 
@@ -93,7 +94,16 @@ def pair_metrics(control,event,*,shared_prefix_verified=False):
     eligible=reason=='eligible'
     comparable=bool(scheduled and a['abilityEligible'] and b['abilityEligible'] and shared_prefix_verified
         and applied==scheduled and event.get('effectiveIncidentVerified') is True)
-    return dict(recoveryPairEligible=eligible,reason=reason,
+    exclusions=[]
+    for condition,label in [(scheduled==0,'normal_control'),
+        (not a['abilityEligible'] or not b['abilityEligible'],'run_interrupted'),
+        (a['abilityEligible'] and a['success'] is False,'control_failed'),(not shared_prefix_verified,'unmatched_prefix'),
+        (bool(scheduled and applied==0),'untriggered'),
+        (bool(scheduled and 0<applied<scheduled),'not_all_events_triggered'),
+        (bool(scheduled and event.get('effectiveIncidentVerified') is not True),'incident_effect_unverified')]:
+        if condition:exclusions.append(label)
+    return dict(recoveryPairEligible=eligible,reason=reason,exclusionReasons=exclusions,
+        repairJudgment='not_applicable' if not eligible else 'recovered' if b['success'] else 'not_recovered',
         conditionalRecoverySuccess=bool(b['success']) if eligible else None,
         rawInterventionCompletion=b['success'],triggerCoverage=rate(applied,scheduled),
         pairedComparisonEligible=comparable,
@@ -124,7 +134,7 @@ def event_recovery(rt,before,after,goal,window,*,minimum_retention_decisions=2,p
     remaining=values[first:] if first is not None else []
     retention=(False if remaining and not all(remaining) else
                True if len(remaining)>=minimum_retention_decisions else None)
-    return dict(repairApplicable=True,observedRecovery=bool(values and values[-1]),
+    return dict(repairApplicable=True,observedRecovery=bool(values[-1]) if values else None,
         firstRecoveryDecision=first,retainedAfterRecovery=retention,windowDecisions=len(window),
         newlyMissingCorrectPlacements=sum(lost.values()),newExcessPlacements=sum(new_bad.values()),
         detectionSuccess=None,referencePrefixEqualityRequired=False)
@@ -164,4 +174,30 @@ def aggregate(records):
             validRunCoverage=rate(len(valid),len(rows)),
             operationalCompletion=rate(sum(run_status(r)['success'] for r in valid),len(rows)),
             populationSuccessCI=None,modelRepeatabilityMeasured=False))
+    return out
+
+
+def aggregate_pairs(pairs):
+    """Aggregate qualified pair outcomes with both denominators and exclusions."""
+    groups=defaultdict(list);seen=set()
+    for pair in pairs:
+        c,e=pair['control'],pair['intervention']
+        token=(e['model'],e['inputVersion'],e['conditionId'])
+        if token in seen:raise ValueError('Duplicate paired condition')
+        seen.add(token)
+        proof=pair.get('sharedPrefixProof',{})
+        measured=pair_metrics(c,e,shared_prefix_verified=proof.get('verified') is True)
+        groups[e['model'],e['inputVersion'],e['track'],e['taskType']].append(measured)
+    out=[]
+    for (model,version,track,kind),rows in groups.items():
+        eligible=[r for r in rows if r['recoveryPairEligible']]
+        comparable=[r for r in rows if r['pairedComparisonEligible']]
+        out.append(dict(model=model,inputVersion=version,track=track,taskType=kind,
+            plannedPairs=len(rows),conditionalRecoveryEligibleN=len(eligible),pairedComparisonN=len(comparable),
+            conditionalRecoveryRate=rate(sum(r['conditionalRecoverySuccess'] for r in eligible),len(eligible)),
+            pairedCompletionDrop=rate(sum(r['pairedCompletionDrop'] for r in comparable),len(comparable)),
+            reasons=dict(Counter(r['reason'] for r in rows)),
+            exclusionReasons=dict(Counter(k for r in rows for k in r['exclusionReasons'])),
+            scheduledEvents=sum(r['scheduledEvents'] for r in rows),appliedEvents=sum(r['appliedEvents'] for r in rows),
+            triggerCoverage=rate(sum(r['appliedEvents'] for r in rows),sum(r['scheduledEvents'] for r in rows))))
     return out
