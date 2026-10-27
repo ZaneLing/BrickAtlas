@@ -11,6 +11,7 @@ from PIL import Image,ImageDraw
 from bench_design.challenges import QUALITY
 from bench_design.session import Session,INPUT_VERSION,digest
 from bench_design.run_episode import load
+from bench_design.gt_review import GTReview,CHOICES,REVIEW_VERSION
 from expansion_v7.build import read,write
 from render import FONT
 
@@ -39,16 +40,19 @@ class Server(ThreadingHTTPServer):
     def __init__(self,address,data=None):
         self.tasks=read(QUALITY/'review-tasks.private.json')
         self.maps={role:{r['code']:r for r in self.tasks[role]} for role in ['blind','physics']}
+        self.maps['gt']=dict(self.maps['blind'])
         self.probes={p['code']:p for p in read(QUALITY/'physics-probes.private.json.gz')['probes']}
         self.data=Path(data or QUALITY/'submissions').resolve();self.data.mkdir(parents=True,exist_ok=True)
         self.assets={};self.downloads={};self.sessions=OrderedDict();self.lock=threading.RLock()
         keyfile=self.data/'manager-key.private.json'
         if not keyfile.exists():atomic(keyfile,dict(key=secrets.token_urlsafe(24)))
         self.manager=read(keyfile)['key']
+        self.gt=GTReview(self)
         super().__init__(address,Handler)
 
     def identity(self,person,role,code):
         if person not in PEOPLE or role not in self.maps or code not in self.maps[role]:raise ValueError('审查者或题号无效')
+        if role=='gt':return self.data/person/role/self.gt.version[:16]/code
         return self.data/person/role/code
 
     def state(self,person,role,code):
@@ -96,6 +100,7 @@ class Server(ThreadingHTTPServer):
         return {**asset,'file':'/assets/'+sha+'.png','sha256':sha}
 
     def observe(self,person,role,code):
+        if role=='gt':return self.gt.public(person,code)
         value=self.state(person,role,code)
         if role=='blind':
             session=self.session(person,code);obs=session.observe()
@@ -255,6 +260,11 @@ class Server(ThreadingHTTPServer):
             blindStatusCounts=dict(Counter(x['status'] for x in out)),physicsStatusCounts=dict(Counter(x['status'] for x in physics)),
             wholeDatasetHumanQualified=False,causalHumanModelComparison=False,
             policy='每人每题按一次独立提交计数；分歧保留；未检查题不自动通过；图像一致不能代替实物验证。')
+        result['gtInspection']=self.gt.summary()
+        for row in result['admission']:
+            vote=next(v for v in result['gtInspection']['rows'] if v['code']==row['code'])
+            if vote['counts'].get('problem'):row['status']='GT检查存在异议，暂停纳入'
+            elif vote['counts'].get('unclear'):row['status']='GT图像无法判断，待改进'
         atomic(self.data/'qualification-summary.json',result)
         return result
 
@@ -270,15 +280,23 @@ class Handler(BaseHTTPRequestHandler):
         u=urlparse(self.path);q=parse_qs(u.query)
         try:
             if u.path in ('/','/A','/B','/C'):
-                return self.send((HERE/'human_review.html').read_text(),kind='text/html')
-            if u.path=='/health':return self.send(dict(ok=True,inputVersion=INPUT_VERSION,tasks={k:len(v) for k,v in self.server.maps.items()}))
+                return self.send((HERE/'gt_review.html').read_text(),kind='text/html')
+            if u.path in ('/operate/A','/operate/B','/operate/C'):
+                return self.send((HERE/'human_review.html').read_text().replace('location.pathname.slice(1)',"location.pathname.split('/').pop()"),kind='text/html')
+            if u.path=='/health':return self.send(dict(ok=True,inputVersion=INPUT_VERSION,reviewVersion=REVIEW_VERSION,tasks={k:len(v) for k,v in self.server.maps.items()}))
+            if u.path=='/api/gt-image':
+                code=q.get('code',[''])[0];which=q.get('which',[''])[0];view=q.get('view',['isometric'])[0]
+                step=int(q['step'][0]) if 'step' in q else None
+                with self.server.lock:path=self.server.gt.image(code,which,view,step)
+                return self.send(path.read_bytes(),kind='image/png')
             if u.path=='/api/tasks':
                 person=q.get('reviewer',['A'])[0];role=q.get('role',['blind'])[0]
                 if person not in PEOPLE or role not in self.server.maps:raise ValueError('审查者无效')
                 tasks=[]
                 for code,item in self.server.maps[role].items():
                     saved=self.server.state(person,role,code)
-                    tasks.append(dict(code=code,mode=item.get('mode'),priority=item.get('priority',False),submitted=saved['submitted']))
+                    tasks.append(dict(code=code,mode=item.get('mode'),priority=item.get('priority',False),submitted=saved['submitted'],
+                        **(dict(title=self.server.gt.title(code)) if role=='gt' else {})))
                 if role=='blind':
                     priority=[x for x in tasks if x['priority']];others=[x for x in tasks if not x['priority']]
                     shift=PEOPLE.index(person);tasks=priority[shift:]+priority[:shift]+others
@@ -308,6 +326,20 @@ class Handler(BaseHTTPRequestHandler):
             with self.server.lock:
                 saved=self.server.state(person,role,code)
                 if self.path=='/api/open':return self.send(self.server.observe(person,role,code))
+                if self.path in ('/api/gt-choice','/api/gt-submit'):
+                    if role!='gt' or data.get('choice') not in CHOICES:raise ValueError('请选择GT正确、有问题或看不清')
+                    if data.get('previewVersion')!=self.server.gt.version:raise ValueError('页面已更新，请刷新后再提交')
+                    rev=data.get('answerRevision')
+                    if type(rev) is not int or rev<=saved['answerRevision']:
+                        return self.send(dict(choice=saved.get('choice'),submitted=saved['submitted'],answerRevision=saved['answerRevision']),409)
+                    if saved.get('choice')!=data['choice']:saved['submitted']=False
+                    saved.update(choice=data['choice'],answerRevision=rev,updatedAt=time.time(),
+                        reviewVersion=REVIEW_VERSION,previewVersion=self.server.gt.version,answerVisible=True,
+                        isBlindHumanPerformance=False)
+                    if self.path=='/api/gt-submit':saved.update(submitted=True,submittedAt=time.time())
+                    self.server.save_state(saved)
+                    if saved['submitted']:self.server.summary()
+                    return self.send(dict(choice=saved['choice'],submitted=saved['submitted'],answerRevision=rev))
                 if self.path=='/api/action':
                     if role!='blind' or saved['submitted']:raise ValueError('本题已提交或不是操作题')
                     request=data.get('requestId')
@@ -319,6 +351,7 @@ class Handler(BaseHTTPRequestHandler):
                     saved['requestIds'].append(request);saved['updatedAt']=time.time();self.server.save_state(saved)
                     return self.send({**self.server.observe(person,role,code),'lastFeedback':feedback})
                 if self.path in ('/api/ratings','/api/submit'):
+                    if role=='gt':raise ValueError('请使用简版GT提交按钮')
                     if saved['submitted']:return self.send(self.server.observe(person,role,code))
                     choices=BLIND_OPTIONS if role=='blind' else PHYSICS_OPTIONS
                     supplied=data.get('ratings',{})

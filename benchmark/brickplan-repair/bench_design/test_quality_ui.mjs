@@ -20,7 +20,7 @@ for(let i=0;i<60;i++){
 const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
 try{
 const page=await browser.newPage({viewport:{width:1440,height:1100}});page.on('pageerror',e=>errors.push(e.message));
-await page.goto(base+'/A');await page.locator('#reviewFields [name=goal]').first().waitFor({timeout:90000});
+await page.goto(base+'/operate/A');await page.locator('#reviewFields [name=goal]').first().waitFor({timeout:90000});
 await page.locator('[name=goal][value=yes]').check();await page.waitForFunction(()=>document.querySelector('#saveStatus').textContent.includes('已保存'));
 await page.locator('[data-code=Q002]').click();await page.waitForFunction(()=>document.querySelector('#taskIntro h2')?.textContent==='Q002 · 独立操作');
 assert.equal(await page.locator('[name=goal]:checked').count(),0,'Q001 choices must not leak to Q002');
@@ -53,7 +53,7 @@ for(const [key,value] of Object.entries({goal:'yes',view:'clear',operation:'clea
 await page.locator('#independent').check();await page.locator('#submitReview').click();
 await page.waitForFunction(()=>document.querySelector('#saveStatus').textContent.includes('本题已提交'),{},{timeout:90000});
 checks.push('One finished question submits independently; no all-questions gate.');
-const b=await browser.newPage();await b.goto(base+'/B');await b.locator('#reviewFields [name=goal]').first().waitFor({timeout:90000});
+const b=await browser.newPage();await b.goto(base+'/operate/B');await b.locator('#reviewFields [name=goal]').first().waitFor({timeout:90000});
 await b.locator('[data-code=Q002]').click();await b.waitForFunction(()=>document.querySelector('#taskIntro h2')?.textContent==='Q002 · 独立操作');
 assert.equal(await b.locator('[name=goal]:checked').count(),0);checks.push('Reviewer B has independent empty answers, not copied from A.');
 const opened=await request('/api/open',id('B','Q002'));
@@ -85,7 +85,7 @@ await page.locator('[data-role=physics]').click();await page.locator('[data-code
 assert((await page.locator('#sceneTitle').textContent()).includes('不是目标答案'));assert.equal(await page.locator('#taskIntro img').count(),1);
 await page.evaluate(()=>scrollTo(0,0));await page.locator('#scenes img').first().evaluate(image=>image.decode());
 await page.screenshot({path:resolve(out,'physics.png')});
-await page.setViewportSize({width:400,height:900});await page.goto(base+'/C');await page.locator('#reviewFields [name=goal]').first().waitFor({timeout:90000});
+await page.setViewportSize({width:400,height:900});await page.goto(base+'/operate/C');await page.locator('#reviewFields [name=goal]').first().waitFor({timeout:90000});
 assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'No narrow-screen horizontal overflow');
 await page.screenshot({path:resolve(out,'mobile.png')});checks.push('The 400px page fits without horizontal overflow.');
 const manager=JSON.parse(readFileSync(resolve(data,'manager-key.private.json'))).key;

@@ -4,6 +4,7 @@ import argparse,json,os,subprocess,time,urllib.request,webbrowser
 from bench_design import ROOT
 from bench_design.challenges import QUALITY
 from bench_design.session import INPUT_VERSION
+from bench_design.gt_review import REVIEW_VERSION
 
 
 def main():
@@ -14,6 +15,7 @@ def main():
         try:
             with urllib.request.urlopen(base+'/health',timeout=1) as r:value=json.load(r)
             if value.get('inputVersion')!=INPUT_VERSION:raise RuntimeError('This port belongs to another interface; do not stop it automatically.')
+            if value.get('reviewVersion')!=REVIEW_VERSION:raise RuntimeError('旧版检查服务仍在运行，需要重启本项目的检查服务。')
             return True
         except (OSError,TimeoutError):return False
     if not ready():

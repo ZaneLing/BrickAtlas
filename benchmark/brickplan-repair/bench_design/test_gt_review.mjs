@@ -1,0 +1,58 @@
+// GT inspection regressions: never write fixtures into actual participant storage.
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'../../..');
+const base=process.env.BRICK_GT_TEST_URL||'http://127.0.0.1:8826';
+const data=process.env.BRICK_GT_TEST_DATA||'/tmp/brick-gt-review-ui-v1';
+assert(data.startsWith('/tmp/'));
+const out=resolve(root,'deliverables/brickplan-quality-round/gt-interface-evidence');mkdirSync(out,{recursive:true});
+const checks=[],errors=[],actions=[];
+for(let i=0;i<60;i++){try{if((await fetch(base+'/health')).ok)break;}catch{}await new Promise(r=>setTimeout(r,300));}
+const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+try{
+ const page=await browser.newPage({viewport:{width:1440,height:1050}});
+ page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(new URL(r.url()).pathname==='/api/action')actions.push(r.url());});
+ const loaded=async code=>{await page.waitForFunction(c=>document.querySelector('#title')?.textContent.startsWith(c)&&!document.querySelector('#content').classList.contains('hidden'),code,{timeout:90000});};
+ await page.goto(base+'/A');await loaded('Q001');
+ assert.equal(await page.locator('[name=verdict]').count(),3);assert.equal(await page.locator('#attach,#detach,#part,#candidate').count(),0);
+ for(const id of ['current','result','goal'])await page.locator('#'+id).evaluate(im=>im.decode());
+ for(const im of await page.locator('.step img').all())await im.evaluate(image=>image.decode());
+ await page.screenshot({path:resolve(out,'desktop.png')});
+ checks.push('Default page needs no assembly or long questionnaire: three aligned scenes and exactly three verdict choices.');
+ await page.locator('[name=verdict][value=correct]').check();await page.waitForFunction(()=>document.querySelector('#save').textContent.includes('选择已保存'));
+ await page.locator('#question').selectOption('Q002');await loaded('Q002');assert.equal(await page.locator('[name=verdict]:checked').count(),0);
+ await page.locator('[name=verdict][value=problem]').check();await page.waitForFunction(()=>document.querySelector('#save').textContent.includes('选择已保存'));
+ await page.locator('#previous').click();await loaded('Q001');assert(await page.locator('[value=correct]').isChecked());
+ await page.reload();await loaded('Q001');assert(await page.locator('[value=correct]').isChecked());
+ checks.push('Each question preserves its own choice through previous/next navigation and browser reload.');
+ await page.locator('#submit').click();await loaded('Q002');assert(await page.locator('[value=problem]').isChecked());
+ await page.locator('#submit').click();await loaded('Q003');
+ checks.push('Submit saves only the current question and advances naturally; existing next-question choices remain intact.');
+ await page.locator('#question').selectOption('Q001');await loaded('Q001');await page.locator('[data-view=rear]').click();
+ for(const id of ['current','result','goal'])assert((await page.locator('#'+id).getAttribute('src')).includes('view=rear'));
+ await page.locator('.step').first().click();assert.equal(await page.locator('.modal').count(),1);
+ await page.locator('.modalbar button').last().click();assert((await page.locator('.modalbar span').textContent()).startsWith('2 /'));
+ await page.locator('.modal .close').click();checks.push('One view switch applies to all scenes; GT steps enlarge and advance without executing human actions.');
+ const b=await browser.newPage();await b.goto(base+'/B?task=Q001');await b.waitForFunction(()=>!document.querySelector('#content').classList.contains('hidden'),{},{timeout:90000});
+ assert.equal(await b.locator('[name=verdict]:checked').count(),0);await b.locator('[value=unclear]').check();await b.locator('#submit').click();await b.waitForFunction(()=>document.querySelector('#title').textContent.startsWith('Q002'),{},{timeout:90000});
+ checks.push('Reviewer B starts with independent empty choices; uncertainty is submitted rather than forced into correct/incorrect.');
+ await page.setViewportSize({width:400,height:900});await page.goto(base+'/C?task=Q001');await loaded('Q001');
+ for(const id of ['current','result','goal'])await page.locator('#'+id).evaluate(im=>im.decode());
+ assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2));await page.screenshot({path:resolve(out,'mobile.png')});
+ checks.push('The compact page fits a 400px screen without horizontal overflow.');
+ const key=JSON.parse(readFileSync(resolve(data,'manager-key.private.json'))).key;
+ const summary=await (await fetch(base+'/api/summary?key='+key)).json();
+ assert.equal(summary.gtInspection.submitted,3);assert.equal(summary.submittedBlind,0);
+ assert(summary.gtInspection.rows.find(x=>x.code==='Q001').status.includes('画面'));
+ assert(summary.gtInspection.rows.find(x=>x.code==='Q002').status.includes('异议'));
+ assert(!existsSync(resolve(data,'A/blind/Q001/execution/record.private.json.gz')));
+ assert.equal(summary.gtInspection.isBlindHumanPerformance,false);assert.deepEqual(actions,[]);
+ checks.push('GT votes are separate from blind-operation evidence; disagreements/uncertainty remain flagged and no human action log is fabricated.');
+ await page.setViewportSize({width:1440,height:1050});await page.goto(base+'/?manager='+key);await page.locator('#manager table').waitFor();await page.screenshot({path:resolve(out,'owner.png')});
+ assert.deepEqual(errors,[]);
+ writeFileSync(resolve(out,'ui-check.json'),JSON.stringify({status:'PASS',checks,automated:true,participantDataDirectory:data,realHumanGTSubmissions:0,modelAPICalls:0,javascriptErrors:errors},null,2)+'\n');
+ console.log('PASS',checks.length,'GT review UI checks; fixture votes isolated in /tmp.');
+}finally{await browser.close();}

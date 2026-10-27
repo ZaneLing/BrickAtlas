@@ -49,7 +49,7 @@ def main():
     uncertain=[p for p in probes if p['independentResult']['status'] in
                ('needs-review','accepted-action-has-independent-collision')]
     lines=['# 关键题目清单：检查什么、给什么、怎样算完成','',
-        '**组织者使用。盲做参与者提交前不要阅读本文件。** 页面上只有匿名题号，不显示下表中的错误或答案。','',
+        '**新版页面用于看图检查GT，不需要亲自拼装。** 默认展示当前、GT结果和本题目标；只选GT正确、有问题或看不清。模型实验和旧版盲做仍使用各自的原协议，本页不计盲做成绩。','',
         '## 先看6道重点题','',
         '| 页面题号 | 检查重点 | 为什么保留 |','|---|---|---|',
         '| [Q001](http://127.0.0.1:8808/A?task=Q001) | 原有完整物件的错色静态修复 | 检查当前图、目标图和选位置能否看懂。 |',
@@ -58,7 +58,7 @@ def main():
         '| [Q004](http://127.0.0.1:8808/A?task=Q004) | 小屋屋顶正常拼装 | 检查没有事故时，能否按说明和实际状态完成。 |',
         '| [Q005](http://127.0.0.1:8808/A?task=Q005) | 书架修到一半又有事故 | 检查两个问题重叠时，记录与返修是否正确。 |',
         '| [Q006](http://127.0.0.1:8808/A?task=Q006) | 连续三次事故 | 检查修过之后是否仍能继续观察、恢复、完成。 |','',
-        '上面链接以A为例。B、C使用自己的入口再选同一题，答案不会互相复制。每题单独提交，不要求做完整个列表。','',
+        '上面链接以A为例。B、C使用自己的入口再选同一题，答案不会互相复制。每题单独提交，不要求做完整个列表。以下输入输出表描述原题；看GT的审查页会额外展示参考修复结果和步骤。','',
         '## 题目的输入、操作与GT','',
         '| 项目 | 具体内容 |','|---|---|',
         '| 输入 | 左边当前状态，右边本题唯一目标；相同画布的多个视角；全部零件；按需查看的说明和位置假设图。 |',
@@ -103,8 +103,7 @@ def main():
         lines.append(f"| {p['code']} | {p['sameAsBlindCase']}，{NAMES[next(x['model'] for x in items if x['id']==p['caseId'])]} | {why} | 暂停本项纳入；补可靠网格或第三方／实物证据。 |")
     lines+=['','## 页面截图','',
         '下面是隔离测试账户的界面截图，模拟答案不计入真人统计。每道题的实际图像在对应页面中查看。','',
-        '![当前状态与唯一目标](interface-evidence/desktop.png)','',
-        '![拆装检查：单独移动件、多视角和假设动作](interface-evidence/physics.png)','']
+        '![简版GT检查：当前、参考修复结果与目标](gt-interface-evidence/desktop.png)','']
     (QUALITY/'KEY-CASES.zh-CN.md').write_text('\n'.join(lines))
     contract=dict(activeInputVersion=INPUT_VERSION,publishedSnapshotInputVersion=SNAPSHOT_VERSION,
         sameModelHumanActionInformation=True,humanGUIFormattingBurdenDifferent=True,
@@ -113,10 +112,14 @@ def main():
         mechanicsScope='Fixed context, rigid inset meshes, continuous straight paths; fixtures allowed; no gravity/friction/clutch certification',
         newConditions=44,existingPublishedTasks=5720,newConditionsAddedToPublishedSnapshot=False,
         blindTasks=71,priorityTasks=6,physicalProbes=32,independentGeometryUnresolved=[p['code'] for p in uncertain],
-        noRealHumanResultClaimed=True,noProviderCalls=True,noPaperChanges=True)
+        noRealHumanResultClaimed=True,noProviderCalls=True,noPaperChanges=True,
+        defaultHumanReview='Answer-visible GT inspection, three choices; no assembly required',
+        gtInspectionIsBlindHumanPerformance=False,priorOperationAnswersPreserved=True)
     write(QUALITY/'runtime-contract.json',contract)
     code=list((ROOT/'benchmark/brickplan-repair/bench_design').glob('*.py'))+[
         ROOT/'benchmark/brickplan-repair/bench_design/human_review.html',
+        ROOT/'benchmark/brickplan-repair/bench_design/gt_review.html',
+        ROOT/'benchmark/brickplan-repair/bench_design/test_gt_review.mjs',
         ROOT/'benchmark/brickplan-repair/bench_design/test_quality_ui.mjs',
         ROOT/'benchmark/brickplan-repair/bench_design/requirements-quality.txt']
     native=['assembly.py','baseplate.py','library.py','qualify.py','evaluation_outcomes.py',
@@ -131,7 +134,8 @@ def main():
         'review-tasks.private.json','physics-probes.private.json.gz','targeted-judge-check.json',
         'evaluation-wiring-checks.json','independent-geometry-check.json','runtime-contract.json',
         'interface-evidence/automated-ui-check.json','metric-unit-check.json',
-        'paired-cli-evidence/scored.json','paired-cli-evidence/run/pair.private.json']]
+        'paired-cli-evidence/scored.json','paired-cli-evidence/run/pair.private.json',
+        'gt-preview-replay-check.json','gt-interface-evidence/ui-check.json']]
     unchanged=[ROOT/'deliverables/brickplan-benchmark-spec/questions.jsonl']
     generation=read(QUALITY/'challenge-generation.json')
     for group in generation['sources'].values():

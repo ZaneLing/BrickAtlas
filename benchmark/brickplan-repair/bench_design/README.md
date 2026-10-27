@@ -1,5 +1,12 @@
 # Current organization and evaluation specification
 
+The default local A/B/C pages now provide **answer-visible GT inspection**:
+current / reference result / target, optional step viewing, and just three
+verdict choices. No construction or long questionnaire is required. These votes
+are stored separately from blind operation and never count as human task success.
+The earlier operation UI remains at `/operate/A`, `/operate/B`, `/operate/C`;
+its existing records are preserved. See `deliverables/brickplan-quality-round/README.zh-CN.md`.
+
 Authoritative task view: `deliverables/brickplan-benchmark-spec/questions.jsonl`.
 Historical raw banks and stored answers remain unchanged. `canonicalId` maps
 physical aliases within a task contract; retain execution conditions for paired
