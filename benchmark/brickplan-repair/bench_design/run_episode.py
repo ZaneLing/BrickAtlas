@@ -35,6 +35,9 @@ def public_rows():
 
 
 def load(case_id,directory,diagnostic=False):
+    if case_id.startswith('QN:'):
+        from bench_design.source_expansion import load as load_source_extension
+        return load_source_extension(case_id,directory)
     if case_id.startswith('QX:'):
         from bench_design.challenges import load_challenge
         return load_challenge(case_id,directory)
@@ -75,7 +78,7 @@ def observation(row,ep,packet,renderer,directory,extra=None):
     obs['responseEnvelope']='one direct action object, with no outer action field'
     obs['responseSchema']=dict(attach=['type','partId','candidate'],detach=['type','partId'],
         inspect='type plus view, partId, candidate, manualStep or inventoryPage as available',finish=['type'])
-    if row['bank']=='E7' and ep.cert.get('environmentMode')!='white-baseplate':
+    if row['bank'] in ('E7','QN') and ep.cert.get('environmentMode')!='white-baseplate':
         obs['startingStateDescription']='完整主体已经装好，本次只补指定部分；当前／目标图保留完整物件背景。'
     forbidden={'family','events','initial','goal','humanErrorIds','referenceActions','score','scheduledEvents','appliedEvents','taskType'}
     assert not forbidden.intersection(obs)

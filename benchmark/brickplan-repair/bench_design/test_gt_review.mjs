@@ -8,7 +8,8 @@ const root=resolve(dirname(fileURLToPath(import.meta.url)),'../../..');
 const base=process.env.BRICK_GT_TEST_URL||'http://127.0.0.1:8826';
 const data=process.env.BRICK_GT_TEST_DATA||'/tmp/brick-gt-review-ui-v1';
 assert(data.startsWith('/tmp/'));
-const out=resolve(root,'deliverables/brickplan-quality-round/gt-interface-evidence');mkdirSync(out,{recursive:true});
+for(const person of ['A','B','C'])assert(!existsSync(resolve(data,person,'gt')),'Use fresh temporary participant storage; historical fixture votes affect the review queue.');
+const out=resolve(root,process.env.BRICK_GT_TEST_EVIDENCE||'deliverables/brickplan-quality-round/gt-interface-evidence');mkdirSync(out,{recursive:true});
 const checks=[],errors=[],actions=[];
 for(let i=0;i<60;i++){try{if((await fetch(base+'/health')).ok)break;}catch{}await new Promise(r=>setTimeout(r,300));}
 const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
@@ -16,7 +17,7 @@ try{
  const page=await browser.newPage({viewport:{width:1440,height:1050}});
  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(new URL(r.url()).pathname==='/api/action')actions.push(r.url());});
  const loaded=async code=>{await page.waitForFunction(c=>document.querySelector('#title')?.textContent.startsWith(c)&&!document.querySelector('#content').classList.contains('hidden'),code,{timeout:90000});};
- await page.goto(base+'/A');await loaded('Q001');
+ await page.goto(base+'/A?task=Q001');await loaded('Q001');
  assert.equal(await page.locator('[name=verdict]').count(),3);assert.equal(await page.locator('#attach,#detach,#part,#candidate').count(),0);
  for(const id of ['current','result','goal'])await page.locator('#'+id).evaluate(im=>im.decode());
  for(const im of await page.locator('.step img').all())await im.evaluate(image=>image.decode());

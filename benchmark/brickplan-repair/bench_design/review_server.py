@@ -41,6 +41,8 @@ class Server(ThreadingHTTPServer):
         self.tasks=read(QUALITY/'review-tasks.private.json')
         self.maps={role:{r['code']:r for r in self.tasks[role]} for role in ['blind','physics']}
         self.maps['gt']=dict(self.maps['blind'])
+        extension=QUALITY/'source-expansion/review-tasks.json'
+        if extension.exists():self.maps['gt'].update({r['code']:r for r in read(extension)['tasks']})
         self.probes={p['code']:p for p in read(QUALITY/'physics-probes.private.json.gz')['probes']}
         self.data=Path(data or QUALITY/'submissions').resolve();self.data.mkdir(parents=True,exist_ok=True)
         self.assets={};self.downloads={};self.sessions=OrderedDict();self.lock=threading.RLock()
@@ -287,7 +289,7 @@ class Handler(BaseHTTPRequestHandler):
             if u.path=='/api/gt-image':
                 code=q.get('code',[''])[0];which=q.get('which',[''])[0];view=q.get('view',['isometric'])[0]
                 step=int(q['step'][0]) if 'step' in q else None
-                with self.server.lock:path=self.server.gt.image(code,which,view,step)
+                with self.server.lock:path=self.server.gt.image(code,which,view,step,q.get('scope',['focus'])[0])
                 return self.send(path.read_bytes(),kind='image/png')
             if u.path=='/api/tasks':
                 person=q.get('reviewer',['A'])[0];role=q.get('role',['blind'])[0]
@@ -296,7 +298,7 @@ class Handler(BaseHTTPRequestHandler):
                 for code,item in self.server.maps[role].items():
                     saved=self.server.state(person,role,code)
                     tasks.append(dict(code=code,mode=item.get('mode'),priority=item.get('priority',False),submitted=saved['submitted'],
-                        **(dict(title=self.server.gt.title(code)) if role=='gt' else {})))
+                        **(dict(title=self.server.gt.title(code),isNew=code.startswith('N'),needsAttention=self.server.gt.needs_attention(code)) if role=='gt' else {})))
                 if role=='blind':
                     priority=[x for x in tasks if x['priority']];others=[x for x in tasks if not x['priority']]
                     shift=PEOPLE.index(person);tasks=priority[shift:]+priority[:shift]+others
