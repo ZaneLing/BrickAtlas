@@ -43,6 +43,10 @@ class Server(ThreadingHTTPServer):
         self.maps['gt']=dict(self.maps['blind'])
         extension=QUALITY/'source-expansion/review-tasks.json'
         if extension.exists():self.maps['gt'].update({r['code']:r for r in read(extension)['tasks']})
+        extension=QUALITY/'inventory-equivalence/review-tasks.json'
+        if extension.exists():self.maps['gt'].update({r['code']:r for r in read(extension)['tasks']})
+        from bench_design.selection import retired
+        for role in self.maps:self.maps[role]={code:r for code,r in self.maps[role].items() if not retired(r['caseId'])}
         self.probes={p['code']:p for p in read(QUALITY/'physics-probes.private.json.gz')['probes']}
         self.data=Path(data or QUALITY/'submissions').resolve();self.data.mkdir(parents=True,exist_ok=True)
         self.assets={};self.downloads={};self.sessions=OrderedDict();self.lock=threading.RLock()
@@ -298,7 +302,7 @@ class Handler(BaseHTTPRequestHandler):
                 for code,item in self.server.maps[role].items():
                     saved=self.server.state(person,role,code)
                     tasks.append(dict(code=code,mode=item.get('mode'),priority=item.get('priority',False),submitted=saved['submitted'],
-                        **(dict(title=self.server.gt.title(code),isNew=code.startswith('N'),needsAttention=self.server.gt.needs_attention(code)) if role=='gt' else {})))
+                        **(dict(title=self.server.gt.title(code),isNew=code.startswith(('N','I')),needsAttention=self.server.gt.needs_attention(code)) if role=='gt' else {})))
                 if role=='blind':
                     priority=[x for x in tasks if x['priority']];others=[x for x in tasks if not x['priority']]
                     shift=PEOPLE.index(person);tasks=priority[shift:]+priority[:shift]+others

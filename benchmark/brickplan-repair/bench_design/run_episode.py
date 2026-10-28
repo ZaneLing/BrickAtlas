@@ -22,6 +22,7 @@ from budget_pilot.run import StaticEpisode
 
 VERSION=INPUT_VERSION
 SYSTEM='''Match the sole TARGET using the current images. For static tasks repair the current stage; for dynamic tasks complete the whole required target. One action per response: attach, detach, inspect, or finish. Return one direct JSON object, for example {"type":"attach","partId":"anonymous handle","candidate":"anonymous position"}. Every attach/detach moves one part. Any physically legal order is accepted. You may inspect throughout. Inventory contains spare parts. No changes are announced in dynamic episodes. Do not assume a change occurred merely because an episode is being evaluated. Finish only when the required target is complete.'''
+SYSTEM+=''' Follow the observation's targetContract. When alternative decompositions are explicitly allowed, the target picture illustrates the required colored volume and height; different internal seams and part counts are allowed, with legal connections still required. Use only actual available inventory; each handle is one finite physical part. Multiple views show the same object at the same time. Default current-target views arrive automatically; inspect requests additional views, part/position previews or optional manual pages.'''
 
 
 @lru_cache(maxsize=1)
@@ -36,12 +37,18 @@ def public_rows():
 
 def load(case_id,directory,diagnostic=False):
     from bench_design.reference_revisions import apply
+    from bench_design.selection import require_active
+    require_active(case_id)
     row,ep,packet,renderer=_load(case_id,directory,diagnostic)
+    require_active(case_id,row['model'],row.get('evaluationMetadata',{}).get('source'))
     apply(row,ep)
     return row,ep,packet,renderer
 
 
 def _load(case_id,directory,diagnostic=False):
+    if case_id.startswith('QI:'):
+        from bench_design.inventory_tasks import load as load_inventory
+        return load_inventory(case_id,directory)
     if case_id.startswith('QN:'):
         from bench_design.source_expansion import load as load_source_extension
         return load_source_extension(case_id,directory)

@@ -30,6 +30,10 @@ class GTReview:
         from bench_design.reference_revisions import PATH as reference_path
         source_hashes=[hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((QUALITY/'source-expansion/models').glob('*/*.json*'))]
         self.version=digest([REVIEW_VERSION,server.tasks['taskVersion'],read(extension) if extension.exists() else None,source_hashes,
+            read(QUALITY/'inventory-equivalence/index.json') if (QUALITY/'inventory-equivalence/index.json').exists() else None,
+            [hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((QUALITY/'inventory-equivalence/cases').glob('*/*/*.json.gz'))],
+            [hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in ('inventory_tasks.py','selection.py','metrics.py')],
+            hashlib.sha256(Path(__file__).parents[1].joinpath('dynamic_v5/vision.py').read_bytes()).hexdigest(),
             hashlib.sha256(reference_path.read_bytes()).hexdigest() if reference_path.exists() else None,
             hashlib.sha256(Path(__file__).parents[1].joinpath('expansion_v7/runtime.py').read_bytes()).hexdigest(),
             hashlib.sha256(Path(__file__).with_name('reference_revisions.py').read_bytes()).hexdigest(),
@@ -43,6 +47,9 @@ class GTReview:
             return NAMES.get(self.items[cid]['model'],self.items[cid]['model'])
         if cid.startswith('QN:'):
             from bench_design.source_expansion import source_row
+            return source_row(cid)['title']
+        if cid.startswith('QI:'):
+            from bench_design.inventory_tasks import source_row
             return source_row(cid)['title']
         return source_rows()[cid]['title']
 
@@ -115,6 +122,18 @@ class GTReview:
                          '当前已经符合目标，GT不需要拆装。' if not dynamic else
                          '这是正常拼装题，下方展示GT怎样完成目标。'))
         if case.get('referenceRepairNote'):value['description']+=' '+case['referenceRepairNote']
+        if s.row['bank']=='QI':
+            from bench_design.inventory_tasks import DIMS,SIZE_LABELS
+            counts={}
+            for actor in ep.runtime.actors:
+                stem=ep.runtime.parts[actor]['canonical'];nx,nz,h=DIMS[stem]
+                name=SIZE_LABELS[stem]+('标准砖' if h==3 else '薄板')
+                status='已装' if visible[0]['state'].get(actor) else '剩余' if actor in ep.runtime.available else '不可用'
+                counts.setdefault(name,Counter())[status]+=1
+            value['inventoryText']='；'.join(name+'：'+f'已装{c["已装"]}块，剩余{c["剩余"]}块'+(f'，另有{c["不可用"]}块不可用' if c['不可用'] else '') for name,c in counts.items())
+            value['inventoryAvailableActors']=sorted(ep.runtime.available)
+            value.update(goalIsStage=False,stageNumber=None,fullParts=value['acceptanceParts'],
+                description=('这是库存不足后的返工题。' if case['family']=='inventory-replan' else '这是根据现有库存完成目标的题。' if not dynamic else '库存变化后，GT拆掉旧拼法，再用现有零件完成目标。')+' '+case['referenceRepairNote'])
         folder.mkdir(parents=True,exist_ok=True);temporary=folder/'preview.pending.json.gz';write(temporary,value);temporary.replace(path)
         self.bundles[code]=value;self.renderers[code]=s
         while len(self.renderers)>3:self.renderers.popitem(last=False)
@@ -150,7 +169,15 @@ class GTReview:
     def image(self,code,which,view,step=None,scope='focus'):
         if code not in self.server.maps['gt'] or view not in ANGLES:raise ValueError('图片无效')
         b=self.bundle(code)
-        if which not in ('current','result','goal','step','before','context'):raise ValueError('图片无效')
+        if which not in ('current','result','goal','step','before','context','inventory'):raise ValueError('图片无效')
+        if which=='inventory':
+            if 'inventoryText' not in b:raise ValueError('No inventory panel for this task')
+            path=self.folder(code)/'inventory.png'
+            if not path.exists():
+                self.renderer(code);s=self.renderers[code];s.ep.state=deepcopy(b['current'])
+                s.ep.runtime.available=set(b['inventoryAvailableActors'])
+                src=s.packet.inventory_pages()[0]['file'];Image.open(src).save(path)
+            return path
         if scope not in ('focus','whole'):raise ValueError('取景无效')
         if which in ('step','before') and (type(step) is not int or not 0<=step<len(b['frames'])):raise ValueError('步骤无效')
         path=self.folder(code)/f'{which}-{step if step is not None else "main"}-{view}-{scope}.png'
@@ -215,6 +242,7 @@ class GTReview:
             previousReview=self.previous(person,code),
             defaultView=self.default_view(code),
             stageNumber=b['stageNumber'],acceptanceParts=b['acceptanceParts'],fullParts=b['fullParts'],
+            inventoryText=b.get('inventoryText'),
             choice=saved.get('choice'),submitted=saved['submitted'],answerRevision=saved['answerRevision'])
 
     def summary(self):
@@ -226,7 +254,7 @@ class GTReview:
             historical=[v for v in historical if v]
             counts=Counter(v['choice'] for v in votes+historical)
             status=('GT存在异议，需复查' if counts['problem'] else '画面或题意需改进' if counts['unclear'] else
-                    '三人一致认为GT正确' if counts['correct']==3 else '还需其他人检查' if votes else '历史判断已保留' if historical else '待检查')
+                    '三人一致认为GT正确' if sum(v['choice']=='correct' for v in votes)==3 else '还需其他人检查' if votes else '历史判断已保留' if historical else '待检查')
             rows.append(dict(code=code,title=self.title(code),submissions=len(votes),historicalSubmissions=len(historical),counts=dict(counts),currentCounts=dict(Counter(v['choice'] for v in votes)),status=status))
         return dict(reviewVersion=REVIEW_VERSION,answerVisible=True,isBlindHumanPerformance=False,
             submitted=sum(x['submissions'] for x in rows),historicalSubmissions=sum(x['historicalSubmissions'] for x in rows),total=len(rows),rows=rows,

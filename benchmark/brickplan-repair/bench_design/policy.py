@@ -12,6 +12,9 @@ FAULTS={
  'compound':('MIX','同时多错'), 'compound_fault':('MIX','同时多错'),
  'repair_state':('DERIVED','可验证修复中的状态，基本类别待细分'),
  'none':('OK','无错误对照'), 'control':('OK','无错误对照'),
+ 'inventory-allocation':('C01','按库存选择等价拼法'),
+ 'inventory-replan':('P04','库存不足，需要拆掉重拼'),
+ 'inventory-shortage':('P04','过程中库存变化，需要重新调配'),
 }
 
 

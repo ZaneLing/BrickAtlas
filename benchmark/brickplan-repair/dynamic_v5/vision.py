@@ -12,6 +12,7 @@ from vision import VisionRenderer as BaseVisionRenderer, _camera, FONT
 
 
 class DynamicVisionRenderer(BaseVisionRenderer):
+    part_boundary_version='visible-physical-part-boundaries/1'
     no_target_isolation = True
     catalog_in_context = False
 
@@ -41,6 +42,17 @@ class DynamicVisionRenderer(BaseVisionRenderer):
             angles=None, crop=None, frame_keys=None, supersample=2, fixtures=True):
         image, mask = super().rgb(state, view, size, only, angles, crop,
                                   frame_keys, supersample, fixtures)
+        # Draw only boundaries between TWO actually visible physical parts.
+        # Coplanar same-color bricks must not merge into an invented larger one.
+        # No triangle edges, hidden edges, target labels or segmentation IDs are
+        # exported. A single brick never receives an artificial internal seam.
+        edges=np.zeros(mask.shape,dtype=bool)
+        horizontal=(mask[:,1:]!=mask[:,:-1])&(mask[:,1:]>0)&(mask[:,:-1]>0)
+        vertical=(mask[1:]!=mask[:-1])&(mask[1:]>0)&(mask[:-1]>0)
+        edges[:,1:]|=horizontal;edges[:,:-1]|=horizontal
+        edges[1:]|=vertical;edges[:-1]|=vertical
+        pixels=np.asarray(image).copy();pixels[edges]=(45,48,51)
+        image=Image.fromarray(pixels)
         # Individual inventory cards retain a clean neutral background.
         if only is not None or not fixtures:
             return image, mask

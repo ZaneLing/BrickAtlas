@@ -22,7 +22,9 @@ def state_metrics(rt,initial,final,goal,*,finished):
     type_color=lambda x:_project(x,lambda k:(k[0],k[1]))
     restored=(f-base)&missing
     still_bad=(f-g)&extra
-    return dict(finished=bool(finished),success=bool(finished and f==g),finalEquivalent=f==g,
+    constraints=rt.final_constraints(final) if hasattr(rt,'final_constraints') else True
+    return dict(finished=bool(finished),success=bool(finished and f==g and constraints),finalEquivalent=f==g,
+        finalConstraintsSatisfied=bool(constraints),
         fullPlacement=quality,partTypeColor=overlap(type_color(f),type_color(g)),
         shapeAndPose=overlap(_project(f,lambda k:(k[0],k[2])),_project(g,lambda k:(k[0],k[2]))),
         colorAndPose=overlap(_project(f,lambda k:(k[1],k[2])),_project(g,lambda k:(k[1],k[2]))),
@@ -43,7 +45,7 @@ def _project(counter,fn):
 
 
 def execution_metrics(records,*,initial_was_correct=False,reference_moves=None):
-    attempts=well_formed=accepted=inspections=parse_errors=schema_errors=budget_rejections=0;rejections=Counter()
+    attempts=well_formed=accepted=inspections=parse_errors=schema_errors=budget_rejections=0;rejections=Counter();resource=Counter()
     for r in records:
         action=r.get('action',{});kind=action.get('type')
         feedback=r.get('feedback',r.get('result',{})) or {}
@@ -57,10 +59,11 @@ def execution_metrics(records,*,initial_was_correct=False,reference_moves=None):
             well_formed+=1
             if code=='OK':accepted+=1
             elif code is None:raise ValueError('Manipulation feedback missing; cannot score legality')
+            elif code=='OUT_OF_STOCK':resource[code]+=1
             else:rejections[code]+=1
     return dict(decisions=len(records),manipulationAttempts=attempts,acceptedMoves=accepted,
         wellFormedManipulationAttempts=well_formed,
-        physicalRejections=dict(rejections),legalActionRate=rate(accepted,well_formed),
+        physicalRejections=dict(rejections),resourceRejections=dict(resource),legalActionRate=rate(accepted,well_formed),
         formatErrorResponses=parse_errors,schemaErrorResponses=schema_errors,
         inspectionCalls=inspections,budgetRejectedResponses=budget_rejections,falseRepair=bool(initial_was_correct and accepted),
         movesRelativeToWitness=rate(attempts,reference_moves) if reference_moves is not None else None,
@@ -111,7 +114,7 @@ def pair_metrics(control,event,*,shared_prefix_verified=False):
         detectionSuccess=None,scheduledEvents=scheduled,appliedEvents=applied)
 
 
-def event_recovery(rt,before,after,goal,window,*,minimum_retention_decisions=2,process_incident=False):
+def event_recovery(rt,before,after,goal,window,*,minimum_retention_decisions=2,process_incident=False,resource_incident=False):
     """Each window entry is a POST-event/post-model-decision state.
 
     Window ends immediately before the NEXT external event. New correct build
@@ -119,6 +122,14 @@ def event_recovery(rt,before,after,goal,window,*,minimum_retention_decisions=2,p
     Identity swaps of equivalent physical parts are accepted by rt.signature.
     """
     b,a,g=(rt.signature(s) for s in (before,after,goal));base=b&g
+    if resource_incident:
+        values=[rt.complete(s) for s in window]
+        first=next((i+1 for i,v in enumerate(values) if v),None)
+        remaining=values[first:] if first is not None else []
+        return dict(repairApplicable=True,observedRecovery=bool(values[-1]) if values else None,
+            firstRecoveryDecision=first,retainedAfterRecovery=False if remaining and not all(remaining) else True if len(remaining)>=minimum_retention_decisions else None,
+            windowDecisions=len(window),reason='inventory-change-use-legally-completed-equivalent-target',
+            detectionSuccess=None,referencePrefixEqualityRequired=False)
     lost=base-a;new_bad=(a-g)-(b-g)
     required={k:base[k] for k in lost};excess_before=b-g
     applicable=bool(lost or new_bad)
@@ -148,12 +159,12 @@ def aggregate(records):
     """
     groups=defaultdict(list);seen=set()
     for r in records:
-        token=(r['model'],r['inputVersion'],r['conditionId'])
+        token=(r['model'],r['inputVersion'],r['conditionId'],r.get('sensorVersion','archived'),r.get('targetContract','exact-physical-parts-and-poses'))
         if token in seen:raise ValueError('Duplicate attempt for a model/condition/input version')
         seen.add(token);run_status(r)
-        groups[r['model'],r['inputVersion'],r['track'],r['taskType']].append(r)
+        groups[r['model'],r['inputVersion'],r['track'],r['taskType'],r.get('sensorVersion','archived'),r.get('targetContract','exact-physical-parts-and-poses')].append(r)
     out=[]
-    for (model,version,track,task_type),rows in groups.items():
+    for (model,version,track,task_type,sensor,contract),rows in groups.items():
         valid=[r for r in rows if run_status(r)['abilityEligible']]
         tasks=defaultdict(list)
         for r in valid:tasks[r['canonicalTaskId']].append(run_status(r)['success'])
@@ -165,7 +176,7 @@ def aggregate(records):
             sample=next(r for r in valid if r['canonicalTaskId']==tid)
             objects[sample['objectId']].append(score);sources[sample['sourceGroup']].append(score)
         statuses=Counter(r['terminalStatus'] for r in rows)
-        out.append(dict(model=model,inputVersion=version,track=track,taskType=task_type,plannedConditions=len(rows),
+        out.append(dict(model=model,inputVersion=version,sensorVersion=sensor,targetContract=contract,track=track,taskType=task_type,plannedConditions=len(rows),
             validConditions=len(valid),validDistinctTasks=len(tasks),terminalStatuses=dict(statuses),
             conditionSuccessRate=rate(sum(run_status(r)['success'] for r in valid),len(valid)),
             distinctTaskSuccessRate=rate(sum(task_scores.values()),len(task_scores)),
@@ -182,17 +193,17 @@ def aggregate_pairs(pairs):
     groups=defaultdict(list);seen=set()
     for pair in pairs:
         c,e=pair['control'],pair['intervention']
-        token=(e['model'],e['inputVersion'],e['conditionId'])
+        token=(e['model'],e['inputVersion'],e['conditionId'],e.get('sensorVersion','archived'),e.get('targetContract','exact-physical-parts-and-poses'))
         if token in seen:raise ValueError('Duplicate paired condition')
         seen.add(token)
         proof=pair.get('sharedPrefixProof',{})
         measured=pair_metrics(c,e,shared_prefix_verified=proof.get('verified') is True)
-        groups[e['model'],e['inputVersion'],e['track'],e['taskType']].append(measured)
+        groups[e['model'],e['inputVersion'],e['track'],e['taskType'],e.get('sensorVersion','archived'),e.get('targetContract','exact-physical-parts-and-poses')].append(measured)
     out=[]
-    for (model,version,track,kind),rows in groups.items():
+    for (model,version,track,kind,sensor,contract),rows in groups.items():
         eligible=[r for r in rows if r['recoveryPairEligible']]
         comparable=[r for r in rows if r['pairedComparisonEligible']]
-        out.append(dict(model=model,inputVersion=version,track=track,taskType=kind,
+        out.append(dict(model=model,inputVersion=version,sensorVersion=sensor,targetContract=contract,track=track,taskType=kind,
             plannedPairs=len(rows),conditionalRecoveryEligibleN=len(eligible),pairedComparisonN=len(comparable),
             conditionalRecoveryRate=rate(sum(r['conditionalRecoverySuccess'] for r in eligible),len(eligible)),
             pairedCompletionDrop=rate(sum(r['pairedCompletionDrop'] for r in comparable),len(comparable)),

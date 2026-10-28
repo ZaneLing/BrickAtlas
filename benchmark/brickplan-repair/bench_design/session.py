@@ -90,6 +90,7 @@ class Session:
         value = observation(self.row, self.ep, self.packet, self.renderer,
                             self.directory, self.extra)
         value['inputVersion']=INPUT_VERSION
+        value['sensorVersion']=self.sensor_version()
         value['catalogueSnapshotInputVersion']=CATALOGUE_INPUT_VERSION
         value['responseSchema']['inspect']='type plus view/point, partId, candidate, manualStep or inventoryPage as supported'
         value['pointInspection']=dict(request=dict(type='inspect',view='isometric',point=[.5,.5]),
@@ -113,6 +114,13 @@ class Session:
             '夹具允许托住分离的子结构；本任务不模拟重力、摩擦和卡扣力度。',
             '零件不能穿过其他零件；安装和拆卸需要存在直线通路。',
             '位置预览是假设效果，按安装后才改变实际状态。']
+        if self.row['bank']=='QI':value['physicalRules'].append(self.ep.observe()['task'])
+        value['viewInputPolicy']=dict(defaultViews=['isometric','rear','top'],
+            automaticallyIncludedEachDecision=True,sameAssemblyAcrossViews=True,
+            additionalViewsViaInspect=True,manualImagesByExplicitRequestOnly=True)
+        if self.packet and 'inventoryAvailability' not in value:
+            value['inventoryAvailability']=[dict(partId=self.ep.actor_alias[a],
+                status='installed' if self.ep.state.get(a) else 'available') for a in sorted(self.ep.actor_alias,key=self.ep.actor_alias.get)]
         value['done'] = self.done
         value['decisionsUsed'] = len(self.records)
         value['outerDecisionBudget'] = self.cap
@@ -134,6 +142,10 @@ class Session:
     @property
     def done(self):
         return self.terminal is not None
+
+    def sensor_version(self):
+        renderer=self.packet.renderer if self.packet else self.renderer
+        return getattr(renderer,'part_boundary_version','legacy-native-rgb')
 
     def submit(self, supplied, parse_error=False, request_evidence=None, client_request_id=None):
         from bench_design.run_episode import valid
@@ -232,6 +244,16 @@ class Session:
         except (ValueError, KeyError, TypeError):
             verified = False
         rt = self.ep.runtime
+        resource=False
+        if native.get('inventoryOnlyEvent'):
+            available_before=set(native.get('inventoryBefore',[]));available_after=set(native.get('inventoryAfter',[]))
+            removed=available_before-available_after;small=set(self.row['case'].get('resourceActors',[]))
+            capacity=lambda actors:sum(len(next(r['cells'] for r in rt.candidates.values() if r['actor']==a)) for a in actors&small)
+            required=sum(rt.signature(self.goal).values())
+            resource=bool(removed and available_before<=set(rt.actors) and not available_after-available_before
+                and removed==set(native.get('withdrawnActors',[])) and all(not before.get(a) for a in removed)
+                and available_after==rt.available and capacity(available_before)>=required>capacity(available_after))
+            verified=bool(resource and before==after and not changes)
         b, a, g = (rt.signature(s) for s in (before, after, self.goal))
         lost, excess = (b & g)-a, (a-g)-(b-g)
         obstruction = False
@@ -246,12 +268,17 @@ class Session:
                     changes=changes, transactionVerified=verified,
                     newlyMissingCorrectPlacements=sum(lost.values()), newExcessPlacements=sum(excess.values()),
                     processObstructionVerified=bool(obstruction),
-                    effectiveIncidentVerified=bool(verified and (lost or excess or obstruction)),
+                    resourceChangeVerified=resource,
+                    effectiveIncidentVerified=bool(verified and (lost or excess or obstruction or resource)),
                     family=native.get('family', native.get('kind')), native=deepcopy(native))
 
     def result(self):
         finished = self.terminal == 'completed' and bool(self.records) and self.records[-1]['action'].get('type')=='finish'
         metrics = state_metrics(self.ep.runtime, self.initial, self.ep.state, self.goal, finished=finished)
+        if self.row['bank']=='QI':
+            metrics.update(evaluationUnit='colored-stud-by-stud-by-plate-cell',scope='Target body coverage, color and final connection; internal seams and part count may differ.')
+            metrics['cellCoverage']=metrics.pop('fullPlacement')
+            metrics['partTypeColor']=None;metrics['shapeAndPose']=None;metrics['colorAndPose']=None
         terminal = self.terminal or 'external_stop'
         meta = self.row['evaluationMetadata']
         control = getattr(self, 'control', False)
@@ -262,7 +289,7 @@ class Session:
             entries = [r for r in self.records if r['decision']>start and (next_at is None or r['decision']<=next_at)]
             states = [r['afterOwnActionBeforeExternalChange'] if r['decision']==next_at else r['after'] for r in entries]
             measured = event_recovery(self.ep.runtime, event['before'], event['after'], self.goal,
-                                      states, process_incident=event['processObstructionVerified'])
+                                      states, process_incident=event['processObstructionVerified'],resource_incident=event.get('resourceChangeVerified',False))
             windows.append(dict(eventIndex=event['index'], startAfterDecision=start,
                                 endBeforeEventIndex=i+2 if next_at is not None else None,
                                 endDecision=entries[-1]['decision'] if entries else start,
@@ -270,7 +297,7 @@ class Session:
         scheduled = scheduled_of(self.ep)
         reference = self.row['case'].get('referenceActions', self.row['case'].get('oraclePlan'))
         reference_moves=len(reference) if reference is not None else None
-        if control or meta['taskType']=='D0':reference_moves=sum(bool(k) for k in self.goal.values())
+        if control or meta['taskType']=='D0':reference_moves=len(self.row['case']['normalReferenceActions']) if 'normalReferenceActions' in self.row['case'] else sum(bool(k) for k in self.goal.values())
         elif reference_moves is None and self.row['case'].get('privateEvent'):
             reference_moves=self.row['case']['trigger']+len(self.row['case']['privateEvent']['recoveryWitness'])
         execution = execution_metrics(self.records, initial_was_correct=metrics['initialWasCorrect'],
@@ -280,6 +307,8 @@ class Session:
                     caseId=self.row['key'], conditionId=self.condition, inputVersion=INPUT_VERSION,
                     canonicalTaskId=meta.get('normalCanonicalId', meta['canonicalId']) if control else meta['canonicalId'],
                     objectId=meta['model'], sourceGroup=meta['source'], track=meta['track'], taskType=task_type,
+                    targetContract=self.row['case'].get('targetContract','exact-physical-parts-and-poses'),
+                    sensorVersion=self.sensor_version(),
                     terminalStatus=terminal, success=metrics['success'] if terminal in ('completed','model_budget_exhausted') else None,
                     scheduledEvents=scheduled, appliedEvents=len(self.events),
                     effectiveIncidentVerified=bool(self.events and all(e['effectiveIncidentVerified'] for e in self.events)),
