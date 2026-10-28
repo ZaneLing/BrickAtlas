@@ -60,6 +60,7 @@ class ToolArena:
         assert not any(session.initial.values()) and not session.ep.runtime.cert['fixed'] and not session.records
         assert type(max_decisions) is int and 1 <= max_decisions <= session.cap
         self.session, self.transport, self.cap = session, transport, max_decisions
+        self.model = getattr(transport, 'model', MODEL)
         self.frames, self.calls, self.history, self.archive = [], [], [], {}
         self.azimuth, self.elevation = 35, 30
         self.pending_images, self.last_result = [], None
@@ -98,8 +99,8 @@ class ToolArena:
     def public_request(self):
         number = len(self.calls) + 1
         handles = self.session.ep.observe()['handles']
-        return dict(protocol=PROTOCOL, episode=CASE_ID, decision=number, decisionBudget=self.cap,
-                    task='Build the pictured blue table on the white baseplate. You control all object parts.',
+        return dict(protocol=PROTOCOL, episode=self.session.row['key'], decision=number, decisionBudget=self.cap,
+                    task='Build the pictured ' + self.session.row['title'] + ' on the white baseplate. You control all object parts.',
                     camera=dict(azimuthDegrees=self.azimuth, elevationDegrees=self.elevation),
                     actionHandles=handles, availableTools=TOOLS, lastToolResult=self.last_result,
                     observationPolicy='No images are sent unless you called observe or recall on the previous turn.',
@@ -117,10 +118,10 @@ class ToolArena:
                 url='data:image/png;base64,' + base64.b64encode(raw).decode(), detail='high')))
             image_refs.append(asset)
         messages = [dict(role='system', content=SYSTEM), *self.history, dict(role='user', content=content)]
-        provider = dict(model=MODEL, messages=messages)
+        provider = dict(model=self.model, messages=messages)
         # This is the exact message structure given to the transport. Binary
         # image contents are represented by verified URLs in the readable log.
-        readable = dict(model=MODEL, messages=[*self.history, dict(role='user', content=[
+        readable = dict(model=self.model, messages=[*self.history, dict(role='user', content=[
             dict(type='text', value=visible), *[dict(type='image_url', image_url=dict(
                 url=a['url'], sha256=a['sha256'], detail='high', role=a['role'])) for a in image_refs]])],
             system=SYSTEM, binaryImagePolicy='URLs and hashes shown here; full base64 request is stored in api/*.request.json.gz')
@@ -166,9 +167,11 @@ class ToolArena:
     def publish(self):
         result = self.result() if self.session.done else None
         state = dict(schema='brick-atlas-spectator-arena/2', protocol=PROTOCOL,
-            runId=self.session.directory.name, title=TITLE, caseId=CASE_ID, model=self.session.actor,
+            runId=self.session.directory.name, title=self.session.row['title'],
+            caseId=self.session.row['key'], model=self.model,
             phase=self.phase, startedAt=self.started, updatedAt=time.time(), frames=self.frames,
-            calls=self.calls, usage=self.transport.usage(), targetParts=5, maxDecisions=self.cap,
+            calls=self.calls, usage=self.transport.usage(),
+            targetParts=sum(bool(v) for v in self.session.goal.values()), maxDecisions=self.cap,
             result=result, fullModelControl=True, scriptedPrefix=0, autoRepair=0, resets=0,
             formalBenchmarkResult=False, inputMode='model-requested observation images + tool JSON',
             spectatorNotice='Spectator camera images, event markers and score never enter model messages.')

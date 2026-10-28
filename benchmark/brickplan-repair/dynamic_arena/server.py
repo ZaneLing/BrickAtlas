@@ -33,11 +33,15 @@ class Handler(BaseHTTPRequestHandler):
                 number = query.get('call', [''])[0]
                 if not number.isdecimal() or not 1 <= int(number) <= 100:
                     return self.send_error(400)
-                ledger = json.loads((OUT / 'api-ledger.private.json').read_text())
+                ledger_name = ('normal-pilot-ledger.private.json' if
+                    runid.startswith(('normal-', 'incident-')) else 'api-ledger.private.json')
+                ledger = json.loads((OUT / ledger_name).read_text())
                 charges = [c for c in ledger['charges'] if c['run'] == runid]
                 if int(number) > len(charges):
                     return self.send_error(404)
                 if parsed.path == '/api/raw-response':
+                    if charges[int(number)-1]['status'] != 'settled':
+                        return self.send_error(404, 'Provider returned no recorded response')
                     return self.send((directory / 'api' / (charges[int(number)-1]['id'] + '.private.json')).read_bytes(),
                                      'application/json')
                 data = gzip.decompress((directory / 'api' / (charges[int(number)-1]['id'] + '.request.json.gz')).read_bytes())

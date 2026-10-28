@@ -1,0 +1,303 @@
+{
+  "schema": "brick-atlas-spectator-arena/2",
+  "protocol": "brick-atlas-tool-arena/2",
+  "runId": "normal-qwen-qwen3-vl-235b-a22b-instruct-obj-chair-20261028-151726",
+  "title": "餐椅 · 从空底板到完成",
+  "caseId": "arena:obj-chair:continuous-v1",
+  "model": "qwen/qwen3-vl-235b-a22b-instruct",
+  "phase": "finished",
+  "startedAt": 1793171856.102038,
+  "updatedAt": 1793171857.199881,
+  "frames": [
+    {
+      "index": 0,
+      "environmentStep": 0,
+      "scenes": {
+        "isometric": {
+          "current": "/assets/89de72558a7ccddef2be990398b9830f8fc2190711930acaa2f5a5545515f745.png",
+          "target": "/assets/18102ddfff0e55a62acd4b76e72c59b77e6423b1ece08759c29cb61d667fd188.png"
+        },
+        "rear": {
+          "current": "/assets/a586f9e4adde69ad06717b6533ee7b32c91db173fdd0a8edcf6d72b804b1bade.png",
+          "target": "/assets/5de96ea9968e0f0f799c736b735666150e16c571d5270ab9a763cb84bda0bb55.png"
+        },
+        "top": {
+          "current": "/assets/1accee1fae1d268a16e46cd69a0027cae47a914b1537f2fdee5400c1c39c5239.png",
+          "target": "/assets/c6947a6ea8c584c7e1927794248eccca2ba5098270dba03a01209e42e963e9dc.png"
+        }
+      },
+      "action": null,
+      "feedback": null,
+      "events": [],
+      "recordedAt": 1793171856.257299
+    }
+  ],
+  "calls": [
+    {
+      "index": 1,
+      "modelInput": {
+        "model": "qwen/qwen3-vl-235b-a22b-instruct",
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "value": {
+                  "protocol": "brick-atlas-tool-arena/2",
+                  "episode": "arena:obj-chair:continuous-v1",
+                  "decision": 1,
+                  "decisionBudget": 30,
+                  "task": "Build the pictured 餐椅 · 从空底板到完成 on the white baseplate. You control all object parts.",
+                  "camera": {
+                    "azimuthDegrees": 35,
+                    "elevationDegrees": 30
+                  },
+                  "actionHandles": [
+                    {
+                      "partId": "A001",
+                      "candidates": [
+                        "C00005"
+                      ]
+                    },
+                    {
+                      "partId": "A002",
+                      "candidates": [
+                        "C00007"
+                      ]
+                    },
+                    {
+                      "partId": "A003",
+                      "candidates": [
+                        "C00003"
+                      ]
+                    },
+                    {
+                      "partId": "A004",
+                      "candidates": [
+                        "C00002"
+                      ]
+                    },
+                    {
+                      "partId": "A005",
+                      "candidates": [
+                        "C00008"
+                      ]
+                    },
+                    {
+                      "partId": "A006",
+                      "candidates": [
+                        "C00004"
+                      ]
+                    },
+                    {
+                      "partId": "A007",
+                      "candidates": [
+                        "C00001"
+                      ]
+                    },
+                    {
+                      "partId": "A008",
+                      "candidates": [
+                        "C00006"
+                      ]
+                    }
+                  ],
+                  "availableTools": {
+                    "observe": {
+                      "args": {
+                        "view": [
+                          "angled",
+                          "top"
+                        ],
+                        "rotateDegrees": [
+                          -90,
+                          0,
+                          90,
+                          180
+                        ],
+                        "show": [
+                          "current",
+                          "target",
+                          "inventory"
+                        ]
+                      },
+                      "example": {
+                        "tool": "observe",
+                        "args": {
+                          "view": "angled",
+                          "rotateDegrees": 90,
+                          "show": [
+                            "current",
+                            "target"
+                          ]
+                        }
+                      }
+                    },
+                    "attach": {
+                      "args": {
+                        "partId": "anonymous inventory handle",
+                        "candidate": "registered placement handle"
+                      }
+                    },
+                    "detach": {
+                      "args": {
+                        "partId": "anonymous installed handle"
+                      }
+                    },
+                    "recall": {
+                      "args": {
+                        "decision": "a previously requested observe decision number"
+                      }
+                    },
+                    "finish": {
+                      "args": {}
+                    }
+                  },
+                  "lastToolResult": null,
+                  "observationPolicy": "No images are sent unless you called observe or recall on the previous turn.",
+                  "disturbancePolicy": "An environmental change may occur after a physical move without announcement."
+                }
+              }
+            ]
+          }
+        ],
+        "system": "You own one continuous LEGO assembly episode from an empty white baseplate. Call exactly ONE tool per JSON response: {\"tool\":\"observe\",\"args\":{\"view\":\"angled\",\"rotateDegrees\":0,\"show\":[\"current\",\"target\",\"inventory\"]}}, {\"tool\":\"attach\",\"args\":{\"partId\":\"A001\",\"candidate\":\"C00001\"}}, {\"tool\":\"detach\",\"args\":{\"partId\":\"A001\"}}, {\"tool\":\"recall\",\"args\":{\"decision\":1}}, or {\"tool\":\"finish\",\"args\":{}}. All handles and positions are anonymous. Call observe whenever you want a new view: rotateDegrees can be -90, 0, 90 or 180; angles are relative to the previous camera. view is angled (30 degree elevation) or top. You may request any nonempty subset of current, target, inventory. Current images are NEVER provided automatically after assembly moves. Each accepted attach or detach moves one physical part. Feedback says whether your requested action was legal, never whether the whole build stayed unchanged. The environment can change without warning. Look at the current state whenever useful, compare it with what you previously saw, replan or repair, and finish only when you believe the target is complete. You can recall only an observation you already requested; recall images are historical, not the current state. The manual is not required for this small complete object. Return ONE direct JSON object with only tool and args, no explanations. No fixed build order is required.",
+        "binaryImagePolicy": "URLs and hashes shown here; full base64 request is stored in api/*.request.json.gz"
+      },
+      "error": {
+        "code": "service_error",
+        "type": "HTTPError",
+        "message": "HTTP Error 404: Not Found"
+      }
+    }
+  ],
+  "usage": {
+    "calls": 1,
+    "costUSD": 0,
+    "unsettledReservationsUSD": 0.0048966800000000005,
+    "settled": false,
+    "capUSD": 3.0,
+    "promptTokens": 0,
+    "completionTokens": 0
+  },
+  "targetParts": 7,
+  "maxDecisions": 30,
+  "result": {
+    "schema": "brick-atlas-evaluated-run/2",
+    "runId": "8e79aa10daa047eb8bddc44205cd13db",
+    "model": "qwen/qwen3-vl-235b-a22b-instruct",
+    "caseId": "arena:obj-chair:continuous-v1",
+    "conditionId": "arena:obj-chair:continuous-v1",
+    "inputVersion": "brick-atlas-direct-actions-full-context/2|brick-atlas-tool-arena/2",
+    "canonicalTaskId": "arena:obj-chair:continuous-v1",
+    "objectId": "arena-obj-chair",
+    "sourceGroup": "original:arena-obj-chair",
+    "track": "whole-object-dynamic",
+    "taskType": "D0",
+    "targetContract": "exact-physical-parts-and-poses",
+    "sensorVersion": "visible-physical-part-boundaries/1",
+    "terminalStatus": "service_error",
+    "success": null,
+    "scheduledEvents": 0,
+    "appliedEvents": 0,
+    "effectiveIncidentVerified": false,
+    "incidentExposure": "normal_control",
+    "repairApplicable": false,
+    "standaloneConditionalRecovery": null,
+    "stateMetrics": {
+      "finished": false,
+      "success": false,
+      "finalEquivalent": false,
+      "finalConstraintsSatisfied": true,
+      "fullPlacement": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 7,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "partTypeColor": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 7,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "shapeAndPose": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 7,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "colorAndPose": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 7,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "initialEditResidual": 7,
+      "finalEditResidual": 7,
+      "errorReduction": 0.0,
+      "missingTargetRecovered": 0.0,
+      "originalExcessCleared": null,
+      "initiallyCorrectPlacements": 0,
+      "finalDamageCount": 0,
+      "finalDamageRate": null,
+      "initialWasCorrect": false,
+      "scope": "Operable target placements only; unchanged scenery cannot inflate the score.",
+      "residualIsNotShortestRepairLength": true
+    },
+    "executionMetrics": {
+      "decisions": 0,
+      "manipulationAttempts": 0,
+      "acceptedMoves": 0,
+      "wellFormedManipulationAttempts": 0,
+      "physicalRejections": {},
+      "resourceRejections": {},
+      "legalActionRate": null,
+      "formatErrorResponses": 0,
+      "schemaErrorResponses": 0,
+      "inspectionCalls": 0,
+      "budgetRejectedResponses": 0,
+      "falseRepair": false,
+      "movesRelativeToWitness": 0.0,
+      "referenceIsNotOptimal": true,
+      "optimalityScore": null
+    },
+    "allIncidentCompletion": null,
+    "allWindowsRecovered": null,
+    "eventWindows": [],
+    "apiCallsByEnvironment": 0,
+    "apiCalls": 1,
+    "providerUsage": {
+      "calls": 1,
+      "costUSD": 0,
+      "unsettledReservationsUSD": 0.0048966800000000005,
+      "settled": false,
+      "capUSD": 3.0,
+      "promptTokens": 0,
+      "completionTokens": 0
+    },
+    "baseInputVersion": "brick-atlas-direct-actions-full-context/2",
+    "controllerMetrics": {
+      "decisions": 1,
+      "observeCalls": 0,
+      "recallCalls": 0,
+      "budget": 30
+    }
+  },
+  "fullModelControl": true,
+  "scriptedPrefix": 0,
+  "autoRepair": 0,
+  "resets": 0,
+  "formalBenchmarkResult": false,
+  "inputMode": "model-requested observation images + tool JSON",
+  "spectatorNotice": "Spectator camera images, event markers and score never enter model messages."
+}

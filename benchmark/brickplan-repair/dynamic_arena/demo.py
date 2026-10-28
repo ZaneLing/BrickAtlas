@@ -8,23 +8,26 @@ from bench_design.session import Session
 from expansion_v7.designs import certificate
 from expansion_v7.runtime import Episode, runtime, move
 from expansion_v7.run_episode import Packet
+from dynamic_v5.object_models import OBJECTS
 
 CASE_ID = 'arena:blue-table:continuous-v1'
 TITLE = '蓝色小桌 · 从空底板到完成'
 
 
-def create(directory, actor, events=True):
-    spec = dict(name='蓝色小桌', family='arena-table', category='furniture',
+def create(directory, actor, events=True, model_id='blue-table'):
+    table = dict(name='蓝色小桌', family='arena-table', category='furniture',
         wrongColorActor='P002', wrongColor='#9b59b6', parts=[
             ('F001', '3005', -30, -24, -10, '#a66b35', 0),
             ('P001', '3005', 30, -24, -10, '#a66b35', 0),
             ('P002', '3005', -30, -24, 10, '#a66b35', 0),
             ('P003', '3005', 30, -24, 10, '#a66b35', 0),
-            ('P004', '3020', 0, -32, 0, '#0055bf', 0)])
-    cert = certificate('arena-blue-table', spec)
+        ('P004', '3020', 0, -32, 0, '#0055bf', 0)])
+    spec = table if model_id == 'blue-table' else OBJECTS[model_id]
+    key = 'arena-' + model_id
+    cert = certificate(key, spec)
     cert['source'].update(longProcess=False, generator='dynamic_arena/demo.py')
     rt = runtime(cert)
-    normal = [move(a, a + ':goal') for a in ['F001', 'P001', 'P002', 'P003', 'P004']]
+    normal = [move(a, a + ':goal') for a, *_ in spec['parts']]
     initial = {a: '' for a in rt.actors}
     states = [deepcopy(initial)]
     for action in normal:
@@ -32,13 +35,15 @@ def create(directory, actor, events=True):
         assert feedback['code'] == 'OK', feedback
         states.append(after)
     assert rt.complete(states[-1])
-    case = dict(id=CASE_ID, mode='dynamic', family='missing', initial=initial, goal=rt.goal,
+    case_id = 'arena:' + model_id + ':continuous-v1'
+    title = spec['name'] + ' · 从空底板到完成'
+    case = dict(id=case_id, mode='dynamic', family='missing' if events else 'none', initial=initial, goal=rt.goal,
         events=[dict(family='missing', minimumInstalled=3)] if events else [],
         completedInstructionStep=0, normalReferenceActions=normal)
     ep = Episode(cert, case, 41)
     packet = Packet(ep, dict(actions=normal, states=states), directory)
-    row = dict(key=CASE_ID, bank='E7', model='arena-blue-table', title=TITLE,
+    row = dict(key=case_id, bank='E7', model=key, title=title,
         mode='dynamic', case=deepcopy(case), evaluationMetadata=dict(
-            canonicalId=CASE_ID, taskType='D1' if events else 'D0',
-            track='whole-object-dynamic', source='original:arena-blue-table', model='arena-blue-table'))
+            canonicalId=case_id, taskType='D1' if events else 'D0',
+            track='whole-object-dynamic', source='original:' + key, model=key))
     return Session(row, ep, packet, None, directory, actor=actor)
