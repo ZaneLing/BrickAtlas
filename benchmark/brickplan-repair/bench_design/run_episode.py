@@ -35,6 +35,13 @@ def public_rows():
 
 
 def load(case_id,directory,diagnostic=False):
+    from bench_design.reference_revisions import apply
+    row,ep,packet,renderer=_load(case_id,directory,diagnostic)
+    apply(row,ep)
+    return row,ep,packet,renderer
+
+
+def _load(case_id,directory,diagnostic=False):
     if case_id.startswith('QN:'):
         from bench_design.source_expansion import load as load_source_extension
         return load_source_extension(case_id,directory)

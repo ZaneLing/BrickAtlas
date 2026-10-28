@@ -27,8 +27,12 @@ class GTReview:
         self.server=server;self.cache=server.data/'gt-previews';self.bundles={};self.renderers=OrderedDict()
         self.items={c['id']:c for c in read(QUALITY/'challenges.private.json.gz')['cases']}
         extension=QUALITY/'source-expansion/review-tasks.json'
+        from bench_design.reference_revisions import PATH as reference_path
         source_hashes=[hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((QUALITY/'source-expansion/models').glob('*/*.json*'))]
         self.version=digest([REVIEW_VERSION,server.tasks['taskVersion'],read(extension) if extension.exists() else None,source_hashes,
+            hashlib.sha256(reference_path.read_bytes()).hexdigest() if reference_path.exists() else None,
+            hashlib.sha256(Path(__file__).parents[1].joinpath('expansion_v7/runtime.py').read_bytes()).hexdigest(),
+            hashlib.sha256(Path(__file__).with_name('reference_revisions.py').read_bytes()).hexdigest(),
             hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
             hashlib.sha256(Path(__file__).with_name('session.py').read_bytes()).hexdigest()])
 
@@ -74,7 +78,8 @@ class GTReview:
                 failure='参考动作被拒绝：'+feedback['code'];break
             moves+=1;record=s.records[-1]
             color=COLORS.get(str(part.get('colorCode')),'')
-            text=('拆下' if a['type']=='detach' else '装上')+color+'积木（'+part['partNumber']+'）'
+            piece=case.get('referenceActorLabels',{}).get(actor,color+'积木（'+part['partNumber']+'）')
+            text=('拆下' if a['type']=='detach' else '装上')+piece
             frames.append(dict(state=deepcopy(record['afterOwnActionBeforeExternalChange']),
                 label=text,kind=a['type'],actor=actor,key=key,before=before))
             for index in record['newEventIndices']:
@@ -109,6 +114,7 @@ class GTReview:
                          '从当前状态修到目标；下方是GT的一种修法。' if not dynamic and len(visible)>1 else
                          '当前已经符合目标，GT不需要拆装。' if not dynamic else
                          '这是正常拼装题，下方展示GT怎样完成目标。'))
+        if case.get('referenceRepairNote'):value['description']+=' '+case['referenceRepairNote']
         folder.mkdir(parents=True,exist_ok=True);temporary=folder/'preview.pending.json.gz';write(temporary,value);temporary.replace(path)
         self.bundles[code]=value;self.renderers[code]=s
         while len(self.renderers)>3:self.renderers.popitem(last=False)

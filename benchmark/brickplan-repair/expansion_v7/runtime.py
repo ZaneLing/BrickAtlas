@@ -28,6 +28,31 @@ def execute(rt, state, actions):
     return state, checks
 
 
+def prune_roundtrips(rt, initial, actions, protected=()):
+    """Remove whole detach/restore pairs only after replaying the shorter plan.
+
+    Search subsets of these pairs, keeping the existing order of all remaining
+    actions. This proves those pairs unnecessary, not global path optimality.
+    """
+    actions=deepcopy(actions);final,_=execute(rt,initial,actions)
+    if final is None:raise ValueError('Cannot shorten an illegal reference')
+    candidates=[]
+    for actor,key in initial.items():
+        if not key or actor in protected or final.get(actor)!=key:continue
+        moves=[a for a in actions if a['actor']==actor]
+        if len(moves)==2 and moves[0]['type']=='detach' and moves[1].get('candidate')==key:
+            candidates.append(actor)
+    if len(candidates)>12:raise ValueError('Reference cleanup search requires a larger explicit budget')
+    for count in range(len(candidates),0,-1):
+        for omitted in combinations(candidates,count):
+            trial=[a for a in actions if a['actor'] not in omitted]
+            end,checks=execute(rt,initial,trial)
+            if end==final:
+                return trial,dict(removedRoundtripActors=list(omitted),beforeMoves=len(actions),
+                    afterMoves=len(trial),checks=checks,globalShortestClaim=False)
+    return actions,dict(removedRoundtripActors=[],beforeMoves=len(actions),afterMoves=len(actions),globalShortestClaim=False)
+
+
 class ExpandedAssembly(ModuleAssembly):
     def incident(self, family, state, latest=None, placement_order=None, variant=0):
         order = placement_order or {}
@@ -163,7 +188,15 @@ class ExpandedAssembly(ModuleAssembly):
                             down + [move(wa), move(actor, state[actor])] + up,
                             [actor], temporarilyRemovedCorrectParts=removed)
                         if found:
-                            return found
+                            # The greedy access search may remove an unrelated
+                            # pillar before finding the real blocker. Do not
+                            # preserve that unnecessary round trip in the GT.
+                            changes,change_audit=prune_roundtrips(self,state,found['changes'],[actor,wa])
+                            recovery,repair_audit=prune_roundtrips(self,found['after'],found['recovery'],[actor,wa])
+                            necessary=[a for a in removed if a not in repair_audit['removedRoundtripActors']]
+                            cleaned=qualify(changes,recovery,[actor],temporarilyRemovedCorrectParts=necessary,
+                                referenceCleanup=dict(intervention=change_audit,recovery=repair_audit))
+                            if cleaned:return cleaned
                     if len(removed) >= 4:
                         break
         return None
