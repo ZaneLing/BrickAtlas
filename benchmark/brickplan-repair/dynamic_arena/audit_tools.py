@@ -20,9 +20,20 @@ def main():
     ledger = json.loads((OUT / 'api-ledger.private.json').read_text())
     charges = [c for c in ledger['charges'] if c['run'] == runid]
     record = json.loads(gzip.decompress((directory / 'record.private.json.gz').read_bytes()))
-    assert len(charges) == len(calls) and all(c['status'] == 'settled' for c in charges)
+    assert len(charges) == len(calls)
+    completed = [c for c in calls if c.get('providerReceipt')]
+    failed = calls[len(completed):]
+    assert len(failed) <= 1
+    assert all(c['status'] == 'settled' for c in charges[:len(completed)])
+    if failed:
+        assert spectator['result']['terminalStatus'] == 'service_error'
+        assert failed[0]['error']['code'] == 'service_error'
+        assert charges[-1]['status'] == 'uncertain'
+        # The provider returned no usable response. Preserve the request and
+        # keep its charge uncertain; do not invent a model action or a cost.
+        assert (directory / 'api' / (charges[-1]['id'] + '.request.json.gz')).exists()
     image_count, observations, rotated = 0, 0, 0
-    for charge, call in zip(charges, calls):
+    for charge, call in zip(charges, completed):
         receipt = json.loads((directory / 'api' / (charge['id'] + '.private.json')).read_text())
         raw = gzip.decompress((directory / 'api' / (charge['id'] + '.request.json.gz')).read_bytes())
         assert hashlib.sha256(raw).hexdigest() == call['providerReceipt']['requestBodySha256']
@@ -70,11 +81,12 @@ def main():
             assert result[key] == record['normalizedResult'][key], key
     usage = spectator['usage']
     assert usage['calls'] == len(charges)
-    assert abs(usage['costUSD'] - sum(c['actualUSD'] for c in charges)) < 1e-10
-    report = dict(status='PASS', runId=runid, protocol=PROTOCOL, calls=len(calls),
+    assert abs(usage['costUSD'] - sum(c['actualUSD'] or 0 for c in charges)) < 1e-10
+    report = dict(status='PASS_PARTIAL' if failed else 'PASS', runId=runid, protocol=PROTOCOL,
+        calls=len(calls), completedModelCalls=len(completed), serviceErrors=len(failed),
         modelRequestedObservations=observations, modelRequested90DegreeRotations=rotated,
         verifiedSentImages=image_count, environmentEvents=len(record['eventLedger']),
-        costUSD=usage['costUSD'], chargesSettled=True, exactProviderBodiesChecked=True,
+        confirmedCostUSD=usage['costUSD'], chargesSettled=not failed, exactProviderBodiesChecked=True,
         finalStateReplayed=True, privateEventLabelsAbsentFromModelInputs=True, paidCallsDuringAudit=0,
         scope='One API demo. Spectator views and private event records are excluded from the model input.')
     write_json(OUT / 'audit-tools.json', report)
