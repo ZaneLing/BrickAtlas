@@ -2,6 +2,7 @@
 import gzip
 import hashlib
 import json
+import argparse
 from pathlib import Path
 import tempfile
 from bench_design.run_autonomous import decode, PRIVATE_FIELDS
@@ -11,7 +12,9 @@ from dynamic_arena.transport import write_json
 
 
 def main():
-    runid = json.loads((OUT / 'latest.json').read_text())['runId']
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--run', default='gemini-20261028-133320')
+    runid = parser.parse_args().run
     directory = OUT / 'runs' / runid
     trace = json.loads((directory / 'autonomous/trace.private.json').read_text())
     record = json.loads(gzip.decompress((directory / 'record.private.json.gz').read_bytes()))

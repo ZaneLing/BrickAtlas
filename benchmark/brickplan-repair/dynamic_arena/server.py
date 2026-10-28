@@ -1,5 +1,6 @@
 """Local read-only arena viewer. It cannot trigger model spending or actions."""
 import argparse
+import gzip
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
@@ -21,6 +22,26 @@ class Handler(BaseHTTPRequestHandler):
                 if not re.fullmatch(r'[a-zA-Z0-9_-]+', runid):
                     return self.send_error(400)
                 return self.send((OUT / 'runs' / runid / 'spectator.json').read_bytes(), 'application/json')
+            if parsed.path in ('/api/log', '/api/raw-request', '/api/raw-response'):
+                query = parse_qs(parsed.query)
+                runid = query.get('run', [''])[0]
+                if not re.fullmatch(r'[a-zA-Z0-9_-]+', runid):
+                    return self.send_error(400)
+                directory = OUT / 'runs' / runid
+                if parsed.path == '/api/log':
+                    return self.send((directory / 'log.json').read_bytes(), 'application/json')
+                number = query.get('call', [''])[0]
+                if not number.isdecimal() or not 1 <= int(number) <= 100:
+                    return self.send_error(400)
+                ledger = json.loads((OUT / 'api-ledger.private.json').read_text())
+                charges = [c for c in ledger['charges'] if c['run'] == runid]
+                if int(number) > len(charges):
+                    return self.send_error(404)
+                if parsed.path == '/api/raw-response':
+                    return self.send((directory / 'api' / (charges[int(number)-1]['id'] + '.private.json')).read_bytes(),
+                                     'application/json')
+                data = gzip.decompress((directory / 'api' / (charges[int(number)-1]['id'] + '.request.json.gz')).read_bytes())
+                return self.send(data, 'application/json')
             if parsed.path == '/api/runs':
                 runs = []
                 for p in sorted((OUT / 'runs').glob('*/spectator.json'), reverse=True):

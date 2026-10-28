@@ -1,5 +1,6 @@
 """One real API transport with a persistent $1 demo ceiling and no retries."""
 import base64
+import gzip
 import hashlib
 import io
 import json
@@ -89,6 +90,12 @@ class Transport:
             provider=dict(sort='price', allow_fallbacks=False, require_parameters=True,
                 data_collection='deny', max_price=dict(prompt=.4, completion=3, image=.005)))
         raw_body = json.dumps(body, ensure_ascii=False).encode()
+        # Keep the exact request body (including image bytes) for an audit.
+        # No Authorization header or API key is written to this file.
+        request_archive = self.directory / 'api' / (entry['id'] + '.request.json.gz')
+        request_archive.parent.mkdir(parents=True, exist_ok=True)
+        with gzip.open(request_archive, 'wb') as archive:
+            archive.write(raw_body)
         request = urllib.request.Request('https://openrouter.ai/api/v1/chat/completions', data=raw_body,
             headers={'Authorization': 'Bearer ' + self.secret, 'Content-Type': 'application/json',
                 'X-OpenRouter-Title': 'Brick Atlas continuous assembly arena'})
