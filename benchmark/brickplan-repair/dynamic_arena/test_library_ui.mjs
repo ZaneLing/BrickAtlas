@@ -1,0 +1,31 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import {mkdirSync,writeFileSync} from 'node:fs';
+const base=process.env.ARENA_URL||'http://127.0.0.1:8811';
+const out='deliverables/brickplan-dynamic-arena/ui-evidence/migration';mkdirSync(out,{recursive:true});
+const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+const errors=[];const page=await browser.newPage({viewport:{width:1440,height:1050}});page.on('pageerror',e=>errors.push(e.message));
+try{
+ await page.goto(base+'/library');await page.locator('#object option').first().waitFor({state:'attached'});
+ assert(Number(await page.locator('#count').textContent())>=2134);
+ await page.selectOption('#object','v7-long-bookshelf');await page.selectOption('#task','E7:v7::v7-long-bookshelf::dynamic::missing::t14');
+ await page.screenshot({path:out+'/library.png',fullPage:true});
+ await page.click('#normal');await page.waitForURL('**/arena?run=preview-*',{timeout:120000});
+ await page.locator('#current').evaluate(im=>im.decode());await page.locator('#target').evaluate(im=>im.decode());
+ assert((await page.locator('#evidenceNotice').textContent()).includes('尚未运行'));
+ await page.click('[data-view=rear]');await page.locator('#current').evaluate(im=>im.decode());
+ await page.screenshot({path:out+'/module-preview.png',fullPage:true});
+ await page.goto(base+'/arena?run=check-chair-incident-v3');await page.locator('#timeline button').last().waitFor();
+ await page.locator('#current').evaluate(im=>im.decode());
+ assert((await page.locator('#evidenceNotice').textContent()).includes('不是模型成绩'));
+ assert((await page.locator('#result').textContent()).includes('最终结构正确'));
+ await page.locator('#timeline button').nth(2).click();assert((await page.locator('#inputJSON').textContent()).includes('availableTools'));
+ await page.click('#inputButton');await page.locator('#large').evaluate(im=>im.decode());await page.click('#close');
+ const log=await(await fetch(base+'/api/log?run=check-chair-incident-v3')).json();assert(log.calls.length>5);
+ await page.screenshot({path:out+'/replay-log.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});await page.goto(base+'/library');await page.locator('#grid .card').first().waitFor();
+ assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.screenshot({path:out+'/mobile.png',fullPage:true});
+ assert.deepEqual(errors,[]);writeFileSync(out+'/checks.json',JSON.stringify({passed:true,apiCalls:0,errors,checks:['task selection','normal preview','module cameras','scripted replay disclosure','input/action/environment logs','requested image display','mobile overflow']},null,2));
+ console.log('PASS task catalogue, preview, replay, logs and mobile UI');
+}finally{await browser.close()}

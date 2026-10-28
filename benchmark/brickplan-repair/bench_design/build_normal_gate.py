@@ -13,22 +13,19 @@ from expansion_v7.build import write
 
 
 def main():
-    rows = [json.loads(line) for line in (OUT / 'questions.jsonl').read_text().splitlines()]
-    dynamic = [r for r in rows if r['mode'] == 'dynamic' and
-               not retired(r['id'], r['model'], r.get('source'))]
-    controls = {(r['track'], r['model']) for r in dynamic if r['taskType'] == 'D0'}
+    from dynamic_arena.catalogue import build
+    catalogue = build()
+    dynamic = catalogue['cases']
     entries = []
     for r in dynamic:
-        key = (r['track'], r['model'])
-        assert key in controls, ('No published normal control for', r['id'])
-        entries.append(dict(caseId=r['id'], canonicalId=r['canonicalId'],
+        entries.append(dict(caseId=r['caseId'], canonicalId=r['canonicalId'],
             track=r['track'], model=r['model'], source=r.get('source'),
-            taskType=r['taskType'], controlCaseId=r['id'],
-            controlLaunch='Session.open(caseId, ..., control=True)',
+            taskType=r['taskType'], controlCaseId=r['caseId'],
+            controlLaunch='python -m dynamic_arena.run --id CASE --condition normal --model MODEL',
             exactSameCase=True, eventScheduleSuppressed=True,
             prerequisite='Evaluate normal completion before interpreting any incident repair',
             repairEligibleOnlyIfNormalSucceeded=r['taskType'] != 'D0'))
-    out = dict(schema='brick-atlas-normal-gate/1', totalDynamic=len(entries),
+    out = dict(schema='brick-atlas-normal-gate/2', arenaProtocol='brick-atlas-tool-arena/3', totalDynamic=len(entries),
         byType=dict(Counter(e['taskType'] for e in entries)),
         byTrack=dict(Counter(e['track'] for e in entries)),
         uniqueModels=len({(e['track'], e['model']) for e in entries}),

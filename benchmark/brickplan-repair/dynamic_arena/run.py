@@ -1,151 +1,98 @@
-"""Run one continuous API episode and publish a separate spectator recording."""
-import argparse
-import base64
-from copy import deepcopy
-import hashlib
-import json
+"""One entry point for every dynamic task; normal success gates repair runs."""
+import argparse,fcntl,json,re,time,uuid
 from pathlib import Path
-import time
-from PIL import Image
-from bench_design.run_autonomous import AutonomousRun
-from dynamic_arena import OUT, MODEL
-from dynamic_arena.demo import create, TITLE, CASE_ID
-from dynamic_arena.transport import Transport, write_json
+from bench_design.session import Session,scheduled_of,digest
+from dynamic_arena import OUT
+from dynamic_arena.catalogue import entry
+from dynamic_arena.tool_arena import ToolArena,PROTOCOL,SYSTEM,TOOLS
+from dynamic_arena.transport import Transport,write_json
 
 
-class ArenaRun(AutonomousRun):
-    def __init__(self, session, policy, usage, max_decisions=32):
-        super().__init__(session, policy, max_decisions=max_decisions)
-        self.usage = usage
-        self.frames = []
-        self.started = time.time()
-        self.phase = 'ready'
-        self.assets = OUT / 'assets'
-        self.assets.mkdir(parents=True, exist_ok=True)
+class NoProvider:
+    model='未调用 API · 题目预览'
+    def usage(self):return dict(calls=0,costUSD=0.,capUSD=0.)
 
-    def result(self):
-        value = super().result()
-        usage = self.usage()
-        value['normalizedResult'].update(apiCalls=usage['calls'], providerUsage=usage)
-        return value
 
-    def asset(self, path):
-        data = Path(path).read_bytes()
-        sha = hashlib.sha256(data).hexdigest()
-        dest = self.assets / (sha + '.png')
-        if not dest.exists():
-            dest.write_bytes(data)
-        return '/assets/' + dest.name
+def open_session(cid,directory,actor,normal):
+    r=entry(cid)
+    s=Session.open(cid,directory,actor,diagnostic=r['diagnostic'],control=normal)
+    s.row.setdefault('title',r['title']);return s
 
-    def crop(self, path, rectangle):
-        with Image.open(path) as im:
-            crop = im.crop(rectangle)
-        import io
-        stream = io.BytesIO()
-        crop.save(stream, format='PNG')
-        data = stream.getvalue()
-        sha = hashlib.sha256(data).hexdigest()
-        dest = self.assets / (sha + '.png')
-        if not dest.exists():
-            dest.write_bytes(data)
-        return '/assets/' + dest.name
 
-    def capture(self, observation):
-        scenes, inputs = {}, []
-        for asset in observation['images']:
-            inputs.append({**{k: v for k, v in asset.items() if k != 'file'}, 'url': self.asset(asset['file'])})
-            if asset['role'] == 'current-target':
-                scenes[asset['view']] = dict(
-                    current=self.crop(asset['file'], (0, 36, 800, 636)),
-                    target=self.crop(asset['file'], (800, 36, 1600, 636)))
-        frame = dict(index=len(self.steps), environmentStep=len(self.session.records), scenes=scenes,
-            inputs=inputs, action=self.steps[-1].get('action') if self.steps else None,
-            feedback=self.steps[-1].get('feedback') if self.steps else None,
-            events=[dict(index=e['index'], atDecision=e['atDecision'],
-                affected=[self.session.ep.actor_alias[a] for a in e['native'].get('affected', [])],
-                description='系统移走一块已安装的积木', verified=e['effectiveIncidentVerified'])
-                for e in self.session.events],
-            usage=deepcopy(self.usage()), recordedAt=time.time())
-        if self.frames and self.frames[-1]['index'] == frame['index']:
-            self.frames[-1] = frame
-        else:
-            self.frames.append(frame)
-        return frame
+def preview(cid,normal=True):
+    runid='preview-'+digest([cid,normal,PROTOCOL])[:20];directory=OUT/'runs'/runid
+    path=directory/'spectator.json'
+    if not path.exists():
+        s=open_session(cid,directory,'scripted:preview',normal)
+        arena=ToolArena(s,NoProvider(),min(60,s.cap));arena.spectator_frame()
+    return runid
 
-    def publish(self):
-        result = self.result() if self.session.done else None
-        data = dict(schema='brick-atlas-spectator-arena/1', runId=self.session.directory.name,
-            title=TITLE, caseId=CASE_ID, model=self.session.actor, phase=self.phase,
-            startedAt=self.started, updatedAt=time.time(), frames=self.frames, usage=self.usage(),
-            targetParts=5, maxDecisions=self.cap, result=result,
-            fullModelControl=True, scriptedPrefix=0, autoRepair=0, resets=0,
-            formalBenchmarkResult=False, inputMode='visual observations + anonymous action handles',
-            description='模型从空白底板接管。每次只装或拆一块，也可以自主查看。中途变化不发通知。',
-            spectatorNotice='此页面是观看者视角；干扰标记与最终评分不发送给模型。')
-        write_json(self.session.directory / 'spectator.json', data)
-        write_json(OUT / 'latest.json', dict(runId=self.session.directory.name))
 
-    def request(self):
-        payload, public = super().request()
-        frame = self.capture(public)
-        # Copy precisely the images handed to the API, including optional
-        # history lookups. Spectator metadata is never added to payload.
-        model_inputs = []
-        label = '观察图'
-        for block in payload['messages'][-1]['content']:
-            if block['type'] == 'text':
-                try:
-                    metadata = json.loads(block['text'])
-                    label = metadata.get('role', '观察图')
-                    if metadata.get('view'):
-                        label += ' · ' + metadata['view']
-                except (ValueError, TypeError):
-                    if block['text'].startswith('HISTORICAL'):
-                        label = '历史状态'
-            elif block['type'] == 'image_url':
-                raw = base64.b64decode(block['image_url']['url'].split(',', 1)[1])
-                sha = hashlib.sha256(raw).hexdigest()
-                (self.assets / (sha + '.png')).write_bytes(raw)
-                model_inputs.append(dict(url='/assets/' + sha + '.png', role=label, sha256=sha))
-        frame['modelInputs'] = model_inputs
-        self.phase = 'thinking'
-        self.publish()
-        return payload, public
+def task_digest(s,budget):
+    from hashlib import sha256
+    implementation={name:sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+                    for name in ['tool_arena.py','sensors.py','plate_render.py']}
+    return digest(dict(initial=s.initial,goal=s.goal,certificate=s.ep.runtime.cert,
+        inventory=sorted(getattr(s.ep.runtime,'available',[])),budget=budget,
+        protocol=PROTOCOL,system=SYSTEM,tools=TOOLS,implementation=implementation))
 
-    def save(self):
-        super().save()
-        self.capture(self.session.observe())
-        self.phase = 'finished' if self.session.done else 'running'
-        self.publish()
+
+def gate(normal,s,model,budget):
+    return bool(normal.get('success') and normal.get('caseId')==s.row['key'] and
+        normal.get('actor')==model and normal.get('arenaProtocol')==PROTOCOL and
+        normal.get('arenaBranch')=='normal' and normal.get('taskDigest')==task_digest(s,budget))
+
+
+def execute(cid,model,condition,cap,max_decisions,normal=None):
+    runid='arena-'+condition+'-'+time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:6]
+    directory=OUT/'runs'/runid;s=open_session(cid,directory,model,condition=='normal')
+    budget=min(max_decisions or s.cap,s.cap)
+    if not 1<=budget<=s.cap:raise ValueError('Decision budget must be positive')
+    contract_digest=task_digest(s,budget)
+    if condition=='incident':
+        if not normal or not gate(normal,s,model,budget):raise ValueError('Repair requires successful SAME case/model/input/budget normal result; run --condition pair first.')
+        if not scheduled_of(s.ep):raise ValueError('This task has no intervention schedule; use normal.')
+        s.normal_gate=dict(eligible=True,normalRunId=normal['arenaRunId'],sameCase=True,sameModel=True,sharedPrefixVerified=False)
+    try:
+        t=Transport(directory,cap=cap,model=model,ledger_path=OUT/'unified-ledger.private.json')
+    except Exception as exc:
+        t=NoProvider();t.model=model
+        runner=ToolArena(s,t,min(max_decisions or s.cap,s.cap))
+        s.terminal='service_error';runner.phase='finished';runner.spectator_frame()
+        result=runner.result();result['setupError']=dict(type=type(exc).__name__,message=str(exc)[:160])
+        write_json(directory/'log.json',dict(protocol=PROTOCOL,calls=[],result=result))
+        s.save()
+    else:
+        result=ToolArena(s,t,min(max_decisions or s.cap,s.cap)).run()
+    result.update(arenaProtocol=PROTOCOL,arenaBranch=condition,arenaRunId=runid,taskDigest=contract_digest,actor=model)
+    write_json(directory/'result.json',result)
+    # Preserve the gate in the replay's final metric panel as well.
+    state=json.loads((directory/'spectator.json').read_text());state['result']=result;write_json(directory/'spectator.json',state)
+    log=json.loads((directory/'log.json').read_text());log['result']=result;write_json(directory/'log.json',log)
+    return result
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--prepare', action='store_true', help='Render the empty arena without contacting an API')
-    parser.add_argument('--max-decisions', type=int, default=32)
-    args = parser.parse_args()
-    # Only one process may consume this demo budget. Viewer requests never call an API.
-    import fcntl
-    OUT.mkdir(parents=True, exist_ok=True)
-    with (OUT / 'run.lock').open('w') as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        runid = ('preview-' if args.prepare else 'gemini-') + time.strftime('%Y%m%d-%H%M%S')
-        directory = OUT / 'runs' / runid
-        session = create(directory, 'preview:no-model' if args.prepare else MODEL)
-        if args.prepare:
-            driver = ArenaRun(session, lambda _: None, lambda: dict(calls=0, costUSD=0, capUSD=1, settled=True), args.max_decisions)
-            driver.capture(session.observe())
-            driver.publish()
-            print(json.dumps(dict(run=runid, preview=True, apiCalls=0)))
-            return
-        transport = Transport(directory)
-        driver = ArenaRun(session, transport, transport.usage, args.max_decisions)
-        result = driver.run()
-        usage = transport.usage()
-        result['normalizedResult'].update(apiCalls=usage['calls'], providerUsage=usage)
-        write_json(directory / 'result.json', result)
-        print(json.dumps(dict(run=runid, result=result['normalizedResult'], usage=usage), ensure_ascii=False), flush=True)
+    p=argparse.ArgumentParser();p.add_argument('--id',required=True);p.add_argument('--model');p.add_argument('--condition',choices=['normal','incident','pair','preview'],default='pair');p.add_argument('--normal-run');p.add_argument('--cap-usd',type=float,default=1.);p.add_argument('--max-decisions',type=int)
+    a=p.parse_args();OUT.mkdir(parents=True,exist_ok=True)
+    if a.condition=='preview':print(preview(a.id));return
+    if not a.model:p.error('--model is required')
+    with (OUT/'run.lock').open('w') as lock:
+        fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        normal=None
+        if a.normal_run:
+            if not re.fullmatch(r'[a-zA-Z0-9_-]+',a.normal_run):p.error('Invalid run ID')
+            normal=json.loads((OUT/'runs'/a.normal_run/'result.json').read_text())
+        if a.condition in ('normal','pair'):
+            normal=execute(a.id,a.model,'normal',a.cap_usd,a.max_decisions)
+            print(json.dumps(normal,ensure_ascii=False),flush=True)
+        if a.condition=='incident' or (a.condition=='pair' and normal['success'] and entry(a.id)['incidentBranch']):
+            result=execute(a.id,a.model,'incident',a.cap_usd,a.max_decisions,normal)
+            print(json.dumps(result,ensure_ascii=False),flush=True)
+        elif a.condition=='pair':print(json.dumps(dict(repairStatus='not_applicable',reason='normal-not-successful' if not normal['success'] else 'normal-only-task')))
 
 
-if __name__ == '__main__':
-    main()
+# Historical automatic-image recordings retain their original reader.
+from dynamic_arena.legacy_run import ArenaRun
+
+if __name__=='__main__':main()

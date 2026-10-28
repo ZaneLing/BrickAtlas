@@ -46,6 +46,9 @@ def load(case_id,directory,diagnostic=False):
 
 
 def _load(case_id,directory,diagnostic=False):
+    if case_id.startswith('A4:'):
+        from dynamic_arena.qualify_sources import load as load_arena_source
+        return load_arena_source(case_id,directory)
     if case_id.startswith('QI:'):
         from bench_design.inventory_tasks import load as load_inventory
         return load_inventory(case_id,directory)

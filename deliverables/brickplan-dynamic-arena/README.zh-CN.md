@@ -1,6 +1,6 @@
 # 动态 Arena：模型全程接管积木
 
-**当前推荐看 [模型主动调用观察接口的新版 Arena](ARENA-TOOLS.zh-CN.md)。** 本文保留最初自动发图版本的运行记录，便于对照接口变化。新版页面同时能在下拉菜单回看这次旧运行。
+**当前入口：[完整动态题库与物件库](http://127.0.0.1:8810/library)。请看 [本轮迁移与扩充说明](MIGRATION-AND-400.zh-CN.md) 和 [输入输出协议](../../benchmark/brickplan-repair/dynamic_arena/PROTOCOL.zh-CN.md)。** 本文保留最初自动发图版本的运行记录，便于对照接口变化。新版页面同时能在下拉菜单回看这次旧运行。
 
 [打开本机 Arena](http://127.0.0.1:8810) · [只看本次真实 API 运行](http://127.0.0.1:8810/?run=gemini-20261028-133320)
 
@@ -94,7 +94,7 @@ PYTHONPATH=benchmark/brickplan-repair benchmark/.runtime/mlx-env/bin/python -m d
 PYTHONPATH=benchmark/brickplan-repair benchmark/.runtime/mlx-env/bin/python -m dynamic_arena.audit
 
 # 再次发起真实 API 运行：会消耗该演示账本的剩余额度
-PYTHONPATH=benchmark/brickplan-repair benchmark/.runtime/mlx-env/bin/python -m dynamic_arena.run
+PYTHONPATH=benchmark/brickplan-repair benchmark/.runtime/mlx-env/bin/python -m dynamic_arena.legacy_run
 ```
 
 模型可用性与报价已在运行前查询 [OpenRouter 模型目录](https://openrouter.ai/google/gemini-2.5-flash)，实际费用采用 API 返回的 usage.cost，不按网页价格估算。

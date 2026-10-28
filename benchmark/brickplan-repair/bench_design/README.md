@@ -1,3 +1,7 @@
+# Current dynamic entry point
+
+All active dynamic cases now enter `dynamic_arena.run` using requested observations. Start the local viewer with `python -m dynamic_arena.server`, then open `/library`. See `../dynamic_arena/PROTOCOL.zh-CN.md`. Historical automatic-image runners remain for reproducing old recordings; do not mix their scores with Arena v3.
+
 # Current organization and evaluation specification
 
 The default local A/B/C pages now provide **answer-visible GT inspection**:

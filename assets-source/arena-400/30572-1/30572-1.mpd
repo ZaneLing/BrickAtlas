@@ -1,0 +1,154 @@
+0 FILE 30572 - Main.ldr
+0 Main
+0 Name: 30572 - Main.ldr
+0 Author: Marc Belanger [MonsieurPoulet]
+0 !LDRAW_ORG Model
+0 !LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt
+
+0 !THEME Creator
+0 !KEYWORDS Car, Microscale, Racing
+
+0 !HISTORY 2019-12-06 [MonsieurPoulet] Initial creation
+
+0 !HISTORY 2019-12-06 [MonsieurPoulet] Initial creation
+
+1 72 0 0 0 1 0 0 0 1 0 0 0 1 30572 - Race Car.ldr
+
+
+0 FILE 30572 - Race Car.ldr
+0 Race Car
+0 Name: 30572 - Race Car.ldr
+0 Author: Marc Belanger [MonsieurPoulet]
+0 !LDRAW_ORG Model
+0 !LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt
+
+0 !THEME Creator
+0 !KEYWORDS Car, Microscale, Racing
+0 !HISTORY 2019-12-06 [MonsieurPoulet] Initial creation
+
+
+
+0 !LDCAD GROUP_DEF [topLevel=true] [LID=0] [GID=2JA3HuSDlfW] [name=Group 1] [center=0 0 0]
+0 !LDCAD GROUP_DEF [topLevel=true] [LID=1] [GID=4JpHrmrsXhj] [name=Group 2] [center=0 0 0]
+0 !LDCAD GROUP_DEF [topLevel=true] [LID=2] [GID=evDEvGrF4u] [name=Group 3] [center=0 0 0]
+0 !LDCAD GROUP_DEF [topLevel=true] [LID=3] [GID=7aq3LH64dWt] [name=Group 4] [center=0 0 0]
+0 !LDCAD GROUP_DEF [topLevel=true] [LID=4] [GID=FTdVO1TcLnV] [name=Group 5] [center=0 0 0]
+0 !LDCAD GROUP_DEF [topLevel=true] [LID=5] [GID=HI7qBpJJseT] [name=Group 6] [center=0 0 0]
+0 !LDCAD GROUP_DEF [topLevel=true] [LID=7] [GID=GWboCL7bSw7] [name=Group 8] [center=0 0 0]
+0 !LDCAD GROUP_DEF [topLevel=true] [LID=8] [GID=2lnCjmIQeun] [name=Group 9] [center=0 0 0]
+0 !LDCAD GROUP_DEF [topLevel=true] [LID=9] [GID=4aKcVeWid4M] [name=Group 7] [center=0 0 0]
+
+1 0 0 0 0 1 0 0 0 1 0 0 0 1 6157.dat
+1 71 0 0 10 1 0 0 0 1 0 0 0 1 3023.dat
+0 STEP
+1 72 0 0 -60 0 0 1 0 1 0 -1 0 0 3795.dat
+0 STEP
+1 15 -30 0 -40 0 0 1 0 1 0 -1 0 0 99206.dat
+1 15 -30 0 -80 0 0 1 0 1 0 -1 0 0 99206.dat
+1 15 30 0 -40 0 0 -1 0 1 0 1 0 0 99206.dat
+1 15 30 0 -80 0 0 -1 0 1 0 1 0 0 99206.dat
+0 STEP
+1 0 0 0 -120 1 0 0 0 1 0 0 0 1 6157.dat
+0 STEP
+0 !LDCAD GROUP_NXT [ids=0] [nrs=-1]
+1 4 0 -8 10 -1 0 0 0 1 0 0 0 -1 2436b.dat
+0 !LDCAD GROUP_NXT [ids=0] [nrs=2]
+1 4 30 2 24 -1 0 0 0 0 -1 0 -1 0 54200.dat
+0 !LDCAD GROUP_NXT [ids=0] [nrs=3]
+1 0 10 2 32 -1 0 0 0 0 -1 0 -1 0 20482.dat
+0 !LDCAD GROUP_NXT [ids=0] [nrs=4]
+1 0 -10 2 32 -1 0 0 0 0 -1 0 -1 0 20482.dat
+0 !LDCAD GROUP_NXT [ids=0] [nrs=5]
+1 4 -30 2 24 -1 0 0 0 0 -1 0 -1 0 54200.dat
+0 STEP
+1 0 0 -8 -30 0 0 -1 0 1 0 1 0 0 3021.dat
+1 0 0 -8 -90 0 0 -1 0 1 0 1 0 0 3021.dat
+0 STEP
+1 321 30 -8 -60 0 0 -1 0 1 0 1 0 0 92593.dat
+1 321 -30 -8 -60 0 0 -1 0 1 0 1 0 0 92593.dat
+0 STEP
+1 4 -48 2 -60 0 1 0 0 0 1 1 0 0 2431.dat
+1 4 48 2 -60 0 -1 0 0 0 -1 1 0 0 2431.dat
+0 STEP
+1 15 0 -24 0 1 0 0 0 1 0 0 0 1 60212.dat
+1 15 -20 -16 -60 0 0 1 0 1 0 -1 0 0 3020.dat
+1 15 20 -16 -60 0 0 1 0 1 0 -1 0 0 3020.dat
+0 STEP
+0 !LDCAD GROUP_NXT [ids=1] [nrs=-1]
+1 15 0 -16 30 1 0 0 0 1 0 0 0 1 3710.dat
+0 !LDCAD GROUP_NXT [ids=1] [nrs=2]
+1 71 10 -24 20 0 0 -1 0 1 0 1 0 0 92280.dat
+0 !LDCAD GROUP_NXT [ids=1] [nrs=3]
+1 71 -10 -24 20 0 0 -1 0 1 0 1 0 0 92280.dat
+0 STEP
+0 !LDCAD GROUP_NXT [ids=2] [nrs=-1]
+1 0 40 5 -120 0 0 -1 0 1 0 1 0 0 93595.dat
+0 !LDCAD GROUP_NXT [ids=2] [nrs=2]
+1 256 40 5 -120 0 0 -1 0 1 0 1 0 0 50951.dat
+0 !LDCAD GROUP_NXT [ids=3] [nrs=-1]
+1 0 40 5 0 0 0 -1 0 1 0 1 0 0 93595.dat
+0 !LDCAD GROUP_NXT [ids=3] [nrs=2]
+1 256 40 5 0 0 0 -1 0 1 0 1 0 0 50951.dat
+0 !LDCAD GROUP_NXT [ids=4] [nrs=-1]
+1 0 -40 5 0 0 0 1 0 1 0 -1 0 0 93595.dat
+0 !LDCAD GROUP_NXT [ids=4] [nrs=2]
+1 256 -40 5 0 0 0 1 0 1 0 -1 0 0 50951.dat
+0 !LDCAD GROUP_NXT [ids=5] [nrs=-1]
+1 0 -40 5 -120 0 0 1 0 1 0 -1 0 0 93595.dat
+0 !LDCAD GROUP_NXT [ids=5] [nrs=2]
+1 256 -40 5 -120 0 0 1 0 1 0 -1 0 0 50951.dat
+0 STEP
+0 !LDCAD GROUP_NXT [ids=9] [nrs=-1]
+1 4 0 0 -130 1 0 0 0 1 0 0 0 1 2436b.dat
+0 !LDCAD GROUP_NXT [ids=9] [nrs=4]
+1 4 30 10 -144 -1 0 0 0 0 1 0 1 0 54200.dat
+0 !LDCAD GROUP_NXT [ids=9] [nrs=3]
+1 4 -30 10 -144 -1 0 0 0 0 1 0 1 0 54200.dat
+0 !LDCAD GROUP_NXT [ids=9] [nrs=2]
+1 321 0 10 -144 -1 0 0 0 0 1 0 1 0 85984.dat
+0 STEP
+0 !LDCAD GROUP_NXT [ids=7] [nrs=-1]
+1 321 0 -8 -130 1 0 0 0 1 0 0 0 1 99780.dat
+0 !LDCAD GROUP_NXT [ids=7] [nrs=2]
+1 321 0 -10 -152 1 0 0 0 0 -1 0 1 0 2412b.dat
+0 STEP
+1 4 0 -16 -120 1 0 0 0 1 0 0 0 1 44674.dat
+0 STEP
+1 71 0 -24 -110 1 0 0 0 1 0 0 0 1 3023.dat
+1 71 0 -24 -10 1 0 0 0 1 0 0 0 1 3023.dat
+1 4 0 -24 -30 1 0 0 0 1 0 0 0 1 15573.dat
+1 4 20 -24 -50 1 0 0 0 1 0 0 0 1 15573.dat
+1 4 20 -24 -70 1 0 0 0 1 0 0 0 1 15573.dat
+1 4 20 -24 -90 1 0 0 0 1 0 0 0 1 15573.dat
+1 4 -20 -24 -90 1 0 0 0 1 0 0 0 1 15573.dat
+1 4 -20 -24 -70 1 0 0 0 1 0 0 0 1 15573.dat
+1 4 -20 -24 -50 1 0 0 0 1 0 0 0 1 15573.dat
+0 STEP
+1 321 -10 -16 -120 1 0 0 0 1 0 0 0 1 11477.dat
+1 321 10 -16 -120 1 0 0 0 1 0 0 0 1 11477.dat
+0 STEP
+1 4 -30 -16 0 1 0 0 0 1 0 0 0 1 93273.dat
+1 4 30 -16 0 1 0 0 0 1 0 0 0 1 93273.dat
+0 STEP
+1 0 -10 -24 -90 1 0 0 0 1 0 0 0 1 85984.dat
+1 0 20 -24 -90 1 0 0 0 1 0 0 0 1 54200.dat
+1 0 0 -32 -60 1 0 0 0 1 0 0 0 1 3021.dat
+0 STEP
+1 179 -10 -32 -10 1 0 0 0 1 0 0 0 1 6141.dat
+1 179 10 -32 -10 1 0 0 0 1 0 0 0 1 6141.dat
+1 179 -10 -32 10 1 0 0 0 1 0 0 0 1 6141.dat
+1 179 10 -32 10 1 0 0 0 1 0 0 0 1 6141.dat
+1 321 0 -40 -70 1 0 0 0 1 0 0 0 1 3070b.dat
+1 321 0 -24 -40 -1 0 0 0 1 0 0 0 -1 11477.dat
+0 STEP
+1 4 20 -40 -70 1 0 0 0 1 0 0 0 1 3070b.dat
+1 4 -20 -40 -70 1 0 0 0 1 0 0 0 1 3070b.dat
+1 4 20 -24 -40 -1 0 0 0 1 0 0 0 -1 29119.dat
+1 4 -20 -24 -40 -1 0 0 0 1 0 0 0 -1 29120.dat
+0 STEP
+0 !LDCAD GROUP_NXT [ids=8] [nrs=-1]
+1 0 0 -44.388 44.035 1 0 0 0 0.766 -0.643 0 0.643 0.766 48336.dat
+1 321 0 -50.516 38.893 1 0 0 0 0.766 -0.643 0 0.643 0.766 92593.dat
+
+
+

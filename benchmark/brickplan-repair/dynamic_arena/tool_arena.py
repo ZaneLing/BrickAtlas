@@ -11,16 +11,19 @@ from PIL import Image
 from bench_design.session import digest
 from dynamic_arena import OUT, MODEL
 from dynamic_arena.demo import create, CASE_ID, TITLE
-from dynamic_arena.plate_render import ArenaVision
+from dynamic_arena.sensors import Sensors
 from dynamic_arena.transport import Transport, write_json
 
-PROTOCOL = 'brick-atlas-tool-arena/2'
-SYSTEM = '''You own one continuous LEGO assembly episode from an empty white baseplate. Call exactly ONE tool per JSON response: {"tool":"observe","args":{"view":"angled","rotateDegrees":0,"show":["current","target","inventory"]}}, {"tool":"attach","args":{"partId":"A001","candidate":"C00001"}}, {"tool":"detach","args":{"partId":"A001"}}, {"tool":"recall","args":{"decision":1}}, or {"tool":"finish","args":{}}. All handles and positions are anonymous. Call observe whenever you want a new view: rotateDegrees can be -90, 0, 90 or 180; angles are relative to the previous camera. view is angled (30 degree elevation) or top. You may request any nonempty subset of current, target, inventory. Current images are NEVER provided automatically after assembly moves. Each accepted attach or detach moves one physical part. Feedback says whether your requested action was legal, never whether the whole build stayed unchanged. The environment can change without warning. Look at the current state whenever useful, compare it with what you previously saw, replan or repair, and finish only when you believe the target is complete. You can recall only an observation you already requested; recall images are historical, not the current state. The manual is not required for this small complete object. Return ONE direct JSON object with only tool and args, no explanations. No fixed build order is required.'''
+PROTOCOL = 'brick-atlas-tool-arena/3'
+SYSTEM = '''You control one continuous LEGO assembly episode. The starting scene may be an empty white studded baseplate or a preassembled object with a named section to finish. Match the sole target; all physically legal assembly orders are accepted. Call exactly ONE tool per JSON response, with only tool and args. Use observe for current/target/inventory images, inspect for a part's neutral candidate positions or an optional instruction page, attach or detach to move one physical part, recall to retrieve a previously requested image, and finish to submit. No image is supplied automatically after a move. Observation is your responsibility. Environment changes may happen without announcement; feedback only describes your requested action. Choose observations, plan, build, recheck and repair autonomously. Anonymous handles do not encode answers. A candidate preview is hypothetical, not a legality or correctness label. Inventory is finite; one handle represents one physical part. For tasks explicitly allowing equivalent assemblies, match the stated colored volume and connections, not the illustrated seams. The manual provides a possible construction order, never a required order. Return a direct JSON object, for example {"tool":"observe","args":{"view":"angled","rotateDegrees":0,"show":["current","target","inventory"]}}.'''
+
 TOOLS = {
     'observe': {'args': {'view': ['angled', 'top'], 'rotateDegrees': [-90, 0, 90, 180],
-                         'show': ['current', 'target', 'inventory']},
+                         'show': ['current', 'target', 'inventory'],
+                         'inventoryPage': 'optional 1-based page, default 1', 'focus': 'optional module (default) or whole'},
                 'example': {'tool': 'observe', 'args': {'view': 'angled', 'rotateDegrees': 90,
                                                        'show': ['current', 'target']}}},
+    'inspect': {'args': {'partId': 'part handle (candidate catalogue)', 'page': '1-based page; default 1', 'manualStep': 'instruction number; use instead of partId'}},
     'attach': {'args': {'partId': 'anonymous inventory handle', 'candidate': 'registered placement handle'}},
     'detach': {'args': {'partId': 'anonymous installed handle'}},
     'recall': {'args': {'decision': 'a previously requested observe decision number'}},
@@ -42,12 +45,16 @@ def parse(reply):
             return obj
         if name == 'recall' and set(args) == {'decision'} and type(args['decision']) is int and args['decision'] > 0:
             return obj
-        if name == 'observe' and set(args) == {'view', 'rotateDegrees', 'show'}:
+        if name == 'inspect' and ((set(args) <= {'partId','page'} and isinstance(args.get('partId'),str) and type(args.get('page',1)) is int and args.get('page',1)>0) or (set(args)=={'manualStep'} and type(args['manualStep']) is int and args['manualStep']>0)):
+            return obj
+        if name == 'observe' and {'view','rotateDegrees','show'} <= set(args) <= {'view','rotateDegrees','show','inventoryPage','focus'}:
             show = args['show']
             if (args['view'] in ('angled', 'top') and type(args['rotateDegrees']) is int
                     and args['rotateDegrees'] in (-90, 0, 90, 180)
                     and isinstance(show, list) and show and len(show) == len(set(show))
-                    and set(show) <= {'current', 'target', 'inventory'}):
+                    and set(show) <= {'current', 'target', 'inventory'}
+                    and type(args.get('inventoryPage',1)) is int and args.get('inventoryPage',1)>0
+                    and args.get('focus','module') in ('module','whole')):
                 return obj
     except (ValueError, TypeError, KeyError):
         pass
@@ -56,8 +63,8 @@ def parse(reply):
 
 class ToolArena:
     def __init__(self, session, transport, max_decisions=30):
-        assert session.row['mode'] == 'dynamic' and session.row['evaluationMetadata']['track'] == 'whole-object-dynamic'
-        assert not any(session.initial.values()) and not session.ep.runtime.cert['fixed'] and not session.records
+        assert session.row['mode'] == 'dynamic' and not session.records
+        session.row.setdefault('title', session.row['model'])
         assert type(max_decisions) is int and 1 <= max_decisions <= session.cap
         self.session, self.transport, self.cap = session, transport, max_decisions
         self.model = getattr(transport, 'model', MODEL)
@@ -67,8 +74,7 @@ class ToolArena:
         self.phase, self.started = 'ready', time.time()
         self.asset_dir = OUT / 'assets'
         self.asset_dir.mkdir(parents=True, exist_ok=True)
-        self.session.packet.renderer = ArenaVision(self.session.packet.renderer.cert, runtime=session.ep.runtime)
-        self.session.packet.inventory = self.session.packet.inventory_pages()
+        self.sensors = Sensors(session)
 
     def image(self, im, role, **extra):
         stream = io.BytesIO()
@@ -80,8 +86,8 @@ class ToolArena:
         return dict(role=role, url='/assets/' + sha + '.png', sha256=sha,
                     width=im.width, height=im.height, **extra)
 
-    def render(self, state, view='isometric', angles=None):
-        return self.session.packet.renderer.rgb(state, view, (800, 600), angles=angles, supersample=1)[0]
+    def render(self, state, view='isometric', angles=None, focus='module'):
+        return self.sensors.render(state, view, angles, focus)
 
     def spectator_frame(self, action=None, feedback=None):
         scenes = {}
@@ -90,20 +96,25 @@ class ToolArena:
                                 target=self.image(self.render(self.session.goal, view), 'spectator-target')['url'])
         frame = dict(index=len(self.calls), environmentStep=len(self.session.records), scenes=scenes,
                      action=action, feedback=feedback, events=[dict(index=e['index'], atDecision=e['atDecision'],
-                     affected=[self.session.ep.actor_alias[a] for a in e['native'].get('affected', [])],
-                     description='系统移走一块已安装的积木', verified=e['effectiveIncidentVerified'])
+                     affected=[self.sensors.aliases.get(a,a) for a in e['native'].get('affected', [])],
+                     description='环境干扰：'+str(e['native'].get('family',e['native'].get('kind','库存变化'))), verified=e['effectiveIncidentVerified'])
                      for e in self.session.events], recordedAt=time.time())
         self.frames.append(frame)
         self.publish()
 
     def public_request(self):
         number = len(self.calls) + 1
-        handles = self.session.ep.observe()['handles']
-        return dict(protocol=PROTOCOL, episode=self.session.row['key'], decision=number, decisionBudget=self.cap,
-                    task='Build the pictured ' + self.session.row['title'] + ' on the white baseplate. You control all object parts.',
+        handles = self.sensors.handles()
+        return dict(protocol=PROTOCOL, episode='episode-'+self.session.run_id, decision=number, decisionBudget=self.cap,
+                    task='Complete the sole target: ' + self.session.row['title'],
+                    startingState='preassembled context; finish the indicated module' if self.session.ep.runtime.cert.get('fixed') or any(self.session.initial.values()) else 'empty white studded baseplate',
+                    targetContract=self.session.ep.observe().get('targetContract','Match the target physical assembly.'),
+                    physicalRules=['One physical part per attach/detach.', 'Any legal order is accepted.', 'Fixtures may support subassemblies; gravity, friction and snap force are not simulated.', 'No overlap; a straight insertion/removal path is required.'],
+                    inventoryPages=self.sensors.inventory_count, manualSteps=self.sensors.manual_count,
+                    inspectionOptions={'inventoryPage':'1-based; default 1','focus':['module','whole'],'candidatePages':'inspect partId and page'},
                     camera=dict(azimuthDegrees=self.azimuth, elevationDegrees=self.elevation),
                     actionHandles=handles, availableTools=TOOLS, lastToolResult=self.last_result,
-                    observationPolicy='No images are sent unless you called observe or recall on the previous turn.',
+                    observationPolicy='No images are sent unless you called observe, inspect or recall on the previous turn.',
                     disturbancePolicy='An environmental change may occur after a physical move without announcement.')
 
     def request(self):
@@ -134,21 +145,35 @@ class ToolArena:
         angles = (self.azimuth, self.elevation)
         out = []
         for role in args['show']:
-            if role == 'current': im = self.render(self.session.ep.state, view, angles)
-            elif role == 'target': im = self.render(self.session.goal, view, angles)
-            else: im = self.session.packet.inventory[0]
+            if role == 'current': im = self.render(self.session.ep.state, view, angles, args.get('focus','module'))
+            elif role == 'target': im = self.render(self.session.goal, view, angles, args.get('focus','module'))
+            else: im = self.sensors.inventory(args.get('inventoryPage',1))
             if isinstance(im, dict):
                 with Image.open(im['file']) as source: im = source.copy()
-            out.append(self.image(im, role, camera=dict(azimuthDegrees=self.azimuth, elevationDegrees=self.elevation)))
+            out.append(self.image(im, role, camera=dict(azimuthDegrees=self.azimuth, elevationDegrees=self.elevation), **({'page':args.get('inventoryPage',1),'pages':self.sensors.inventory_count} if role=='inventory' else {})))
         self.session.submit(dict(type='inspect', view='isometric'))
         self.archive[number] = out
         return dict(code='OBSERVED', camera=dict(azimuthDegrees=self.azimuth, elevationDegrees=self.elevation),
-                    images=out, environmentDecision=len(self.session.records))
+                    images=out, environmentDecision=len(self.session.records),
+                    **({'inventoryAvailability':self.sensors.availability()} if 'inventory' in args['show'] else {}))
 
     def execute(self, action, number):
         name, args = action['tool'], action['args']
-        if name == 'observe': return self.observe(args, number), self.archive[number]
+        if name in ('observe','inspect'):
+            try:
+                if name=='observe': return self.observe(args,number),self.archive[number]
+                if 'manualStep' in args:
+                    im=self.sensors.instruction(args['manualStep']);meta=dict(step=args['manualStep'],isTarget=False,referenceOnly=True);role='instruction-reference'
+                else:
+                    im,meta=self.sensors.candidates(args['partId'],args.get('page',1),'top' if self.elevation==90 else 'isometric',(self.azimuth,self.elevation));role='candidate-catalog'
+                self.session.submit(dict(type='inspect',view='isometric'))
+                images=[self.image(im,role,**meta)];self.archive[number]=images
+                return dict(code='OBSERVED',images=images,environmentDecision=len(self.session.records)),images
+            except (KeyError,ValueError,IndexError):
+                self.session.submit(dict(type='invalid'),parse_error=True)
+                return dict(code='INVALID_SENSOR_REQUEST'),[]
         if name == 'recall':
+            self.session.submit(dict(type='inspect',view='isometric'))
             images = self.archive.get(args['decision'])
             return (dict(code='HISTORY_AVAILABLE' if images else 'UNKNOWN_HISTORY_STEP',
                          historicalDecision=args['decision'], currentStateUnchanged=True,
@@ -172,11 +197,16 @@ class ToolArena:
             phase=self.phase, startedAt=self.started, updatedAt=time.time(), frames=self.frames,
             calls=self.calls, usage=self.transport.usage(),
             targetParts=sum(bool(v) for v in self.session.goal.values()), maxDecisions=self.cap,
-            result=result, fullModelControl=True, scriptedPrefix=0, autoRepair=0, resets=0,
-            formalBenchmarkResult=False, inputMode='model-requested observation images + tool JSON',
+            result=result, fullModelControl=not self.session.actor.startswith('scripted'), scriptedPrefix=0, autoRepair=0, resets=0,
+            formalBenchmarkResult=False,
+            evaluationScope='per-task run; aggregate eligibility requires normal gate and source admission',
+            evidenceType='scripted-validation' if self.session.actor.startswith('scripted') else 'api-model',
+            condition='normal' if getattr(self.session,'control',False) else 'incident',
+            track=self.session.row['evaluationMetadata']['track'], inputMode='model-requested observation images + tool JSON',
             spectatorNotice='Spectator camera images, event markers and score never enter model messages.')
         write_json(self.session.directory / 'spectator.json', state)
-        write_json(OUT / 'latest.json', dict(runId=self.session.directory.name))
+        if not self.session.directory.name.startswith('preview-'):
+            write_json(OUT / 'latest.json', dict(runId=self.session.directory.name))
 
     def result(self):
         out = self.session.result()
@@ -184,6 +214,7 @@ class ToolArena:
         out['inputVersion'] += '|' + PROTOCOL
         out['apiCalls'] = self.transport.usage()['calls']
         out['providerUsage'] = self.transport.usage()
+        out['repairPrerequisite']=getattr(self.session,'normal_gate',None)
         out['controllerMetrics'] = dict(decisions=len(self.calls), observeCalls=sum(
             c.get('modelOutput', {}).get('tool') == 'observe' for c in self.calls),
             recallCalls=sum(c.get('modelOutput', {}).get('tool') == 'recall' for c in self.calls),
@@ -205,6 +236,7 @@ class ToolArena:
                     error=dict(code=self.session.terminal, type=type(exc).__name__, message=str(exc)[:160])))
                 break
             action = parse(reply)
+            self.session._pending_observation=dict(decision=len(self.session.records)+1,packetSha256=digest(visible),imageHashes=[i['sha256'] for i in image_refs])
             output, images = self.execute(action, number)
             self.pending_images = images
             self.last_result = output
@@ -215,6 +247,7 @@ class ToolArena:
                     costUSD=self.transport.latest['result']['usage']['cost'],
                     inputTokens=self.transport.latest['result']['usage'].get('prompt_tokens'),
                     outputTokens=self.transport.latest['result']['usage'].get('completion_tokens')))
+            if self.session.actor.startswith('scripted'):call['providerReceipt']=None
             self.calls.append(call)
             # Old camera images are intentionally not kept in the next API
             # messages. The model can request a fresh view at any time.
