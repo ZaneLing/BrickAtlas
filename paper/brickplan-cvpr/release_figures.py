@@ -43,13 +43,7 @@ def save(fig,name,formats=('pdf','svg','png')):
   path=OUT/f'{name}.{ext}';fig.savefig(path,dpi=600,facecolor='white')
   if ext=='svg':path.write_text('\n'.join(line.rstrip() for line in path.read_text().splitlines())+'\n')
  manifest['figures'][name]=dict(pdfSha256=sha(OUT/f'{name}.pdf'),inches=list(fig.get_size_inches()),formats=list(formats));plt.close(fig);print('FIGURE',name,flush=True)
-fig=plt.figure(figsize=(7,2.10));heading(fig,.006,.99,'(a) Continuous assembly: the same target, a changed world')
-for i,s in enumerate(selection['dynamic']):
- panel(fig,(i/8+.003,.57,.119,.34),s['name'],s['label'],CORAL if s['kind']=='event' else TEAL if s['label']=='Finish' else INK,6.3)
- if i<7:arrow(fig,(i/8+.116,.73),(i/8+.132,.73),CORAL if selection['dynamic'][i+1]['kind']=='event' else TEAL)
-line(fig,(.005,.49),(.995,.49));heading(fig,.006,.455,'(b) Complete builds and contextual finishing tasks')
-for i,s in enumerate(selection['objects']):panel(fig,(i/8+.003,.075,.119,.30),s['name'],s['label'],fs=6.4)
-save(fig,'teaser')
+
 fig=plt.figure(figsize=(7,1.85))
 for i,s in enumerate(selection['errors']):
  x=i/8+.002;heading(fig,x+.06,.99,s['label'],TEAL if 'control' in s['name'] else INK,6.6)
@@ -117,6 +111,51 @@ def arena_panel(fig,box,name,label,color=INK):
  ax.set_xlim(cx-w/2,cx+w/2);ax.set_ylim(cy+h/2,cy-h/2)
  fig.text(box[0]+box[2]/2,box[1]-.005,label,ha='center',va='top',fontsize=6.0,color=color)
  return ax
+# Lead with a real successful assembly; every accepted move is present.
+fig=plt.figure(figsize=(7,2.10));heading(fig,.006,.99,'(a) A real model builds the car / Claude Sonnet 5.5 / archived Arena v2',fs=7.6)
+for i,name in enumerate(arena['normalRuns'][0]['frames']):
+ arena_panel(fig,(i/8+.003,.575,.119,.31),name,arena_specs[name]['label'])
+ if i<7:arrow(fig,(i/8+.117,.73),(i/8+.131,.73))
+line(fig,(.005,.49),(.995,.49));heading(fig,.006,.455,'(b) Current release / complete builds and contextual finishing tasks')
+for i,s in enumerate(selection['objects']):panel(fig,(i/8+.003,.075,.119,.30),s['name'],s['label'],fs=6.4)
+save(fig,'teaser')
+fig=plt.figure(figsize=(7,2.18))
+for j,run in enumerate(arena['normalRuns']):
+ top=.985-j*.48;y=top-.325
+ heading(fig,.005,top,('Car / Claude Sonnet 5.5' if j==0 else 'Chair / GPT-6.1 Sol')+' / actual successful normal build',fs=7.4)
+ for i,name in enumerate(run['frames']):
+  arena_panel(fig,(i/8+.003,y,.119,.255),name,arena_specs[name]['label'],TEAL if i==7 else INK)
+  if i<7:arrow(fig,(i/8+.117,y+.13),(i/8+.131,y+.13))
+ note=('6 accepted moves; 8 observations; 2 invalid requests; 17 decisions' if j==0 else
+       '7 accepted moves; 7 observations; 2 physical rejections; 17 decisions')
+ fig.text(.5,y-.077,note,ha='center',fontsize=6.6,color=MUTED)
+ if j==0:line(fig,(.005,.52),(.995,.52))
+fig.text(.5,.012,'Every accepted move is shown. Observations and rejected actions remain in the full JSON ledger.',ha='center',fontsize=6.5,color=MUTED)
+save(fig,'arena-normal-builds')
+audit=read(HERE/'evidence/pilot-error-audit.json');manifest['sources']['paper/brickplan-cvpr/evidence/pilot-error-audit.json']=sha(HERE/'evidence/pilot-error-audit.json')
+fig=plt.figure(figsize=(7,2.18));heading(fig,.006,.99,'Observed behavior / all valid latest pilot runs / archived Arena v2',fs=8)
+cols=['format','handle','connection','collision','path','wrongFinish','budget']
+labels=['Format','Handle','No connection','Collision','Blocked path','Wrong finish','Budget limit']
+groups=audit['groups'];values=np.array([[r['counts'].get(k,0) for k in cols] for r in groups]);ax=fig.add_axes((.245,.19,.745,.65))
+ax.imshow(values,cmap='OrRd',vmin=0,vmax=max(1,values.max()),aspect='auto');ax.set_xticks(range(7),labels,fontsize=6.5);ax.xaxis.tick_top();ax.tick_params(length=0,pad=5)
+ax.set_yticks(range(len(groups)),[r['label']+' (n='+str(r['validRuns'])+')' for r in groups],fontsize=6.4)
+for j in range(len(groups)):
+ for i in range(7):ax.text(i,j,str(values[j,i]),ha='center',va='center',fontsize=7,color='white' if values[j,i]>values.max()*.6 else INK)
+for spine in ax.spines.values():spine.set_visible(False)
+fig.text(.5,.09,'First five columns: action counts. Last two: episode counts. Different columns have different denominators.',ha='center',fontsize=6.6,color=MUTED)
+fig.text(.5,.015,'3 Qwen service failures excluded from ability counts; all 19 attempts (7 service failures) remain in the audit.',ha='center',fontsize=6.6,color=MUTED)
+save(fig,'pilot-error-map')
+fig=plt.figure(figsize=(7,1.90));heading(fig,.006,.99,'Three evidence channels / proposed for both static and dynamic tasks',fs=8)
+for i,(title,body) in enumerate([
+ ('T / Text','Current + target: part, color, pose\nStock: part handles and availability\nText previews / optional manual'),
+ ('I / Images','Current + target: matched views\nStock: labeled visual cards\nImage previews / optional manual'),
+ ('TI / Text + images','Both encodings of the same state\nSame timestamps and anonymous IDs\nNo error label or repair answer')]):
+ x=.006+i*.335;fig.patches.append(FancyBboxPatch((x,.34),.318,.48,boxstyle='round,pad=0.003',transform=fig.transFigure,fill=False,edgecolor=GRAY,lw=.8))
+ heading(fig,x+.01,.78,title,TEAL,7.6);fig.text(x+.01,.62,body,fontsize=6.9,va='top',linespacing=1.7)
+fig.text(.01,.24,'Static: supplied checkpoint. Dynamic: request evidence; retain history; hidden edits persist.',fontsize=7,color=INK)
+fig.text(.01,.12,'Shared: goal, stock, actions, budgets, scoring. Text coordinates disclose more than native RGB.',fontsize=7,color=CORAL)
+fig.text(.01,.02,'Matched-fact control: render the same ledger as image cards. This tests representation / OCR, not 3D perception.',fontsize=6.7,color=MUTED)
+save(fig,'modality-design')
 fig=plt.figure(figsize=(7,3.55))
 for j,run in enumerate(arena['runs']):
  for k,role in enumerate(['model','gt']):

@@ -32,6 +32,7 @@ def main():
         raise SystemExit('--study refers to an archived protocol. Current offline checks: scaling_release.arena_check and scaling_release.release_check.')
     # Counts and blank table schemas come only from the current checked release.
     subprocess.run([paper_python,str(HERE/'release_tables.py')],cwd=ROOT,check=True)
+    subprocess.run([paper_python,str(HERE/'pilot_analysis.py')],cwd=ROOT,check=True)
     if args.refresh_figures:
         subprocess.run([paper_python,str(HERE/'release_assets.py'),'--scenes'],cwd=ROOT,check=True)
         subprocess.run([paper_python,str(HERE/'arena_assets.py')],cwd=ROOT,check=True)

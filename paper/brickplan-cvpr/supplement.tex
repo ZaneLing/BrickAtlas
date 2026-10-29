@@ -22,6 +22,11 @@ The release distinguishes three layers: acquired sources, admitted executable co
 
 The authoritative files are the release manifest, object JSONL, static and dynamic question JSONL, and evaluator-private certificates. The paper snapshots these dependencies in \path{evidence/release-dataset.json}; selected figure states and case IDs are recorded in \path{evidence/release-render-states.json} and \path{evidence/release-figure-selection.json}. Figures are publication exports of exact geometry. Their cameras and lighting do not replace the model's native observations.
 
+\begin{figure*}[t]\centering
+\includegraphics[width=\textwidth]{figures-release/coverage.pdf}
+\caption{\textbf{Coverage without inflated independence.} Left: runnable objects by length. Middle: published static and dynamic questions by length. Right: selected family counts split by mode. These are dataset statistics, not measured difficulty or model performance. Detailed family and source tables accompany the release.}
+\label{fig:coverage}\end{figure*}
+
 \subsection{Historical records and exclusions}
 The historical browser preserves 8,997 catalogue records across versions. Only 4,685 are current checked questions; the remainder includes 1,983 retired-source or human-selection records, 2,265 historical records not rechecked, 31 withheld reference/visibility conditions, and 33 pending historical records. This is an archival inventory, not a claim of 8,997 unique valid tasks. Earlier counts such as 5,720 distinct records belong to their own contracts and selected populations.
 
@@ -82,7 +87,7 @@ Inventory contact sheets paginate at twelve parts. Live installed/available stat
 After attach or detach, feedback describes acceptance, physical rejection, resource rejection, or invalid parameters. No fresh scene image is attached automatically. The model can continue building without looking or spend a decision to observe. The spectator page's three-angle images are generated for review and are not implicitly delivered to the model.
 
 \subsection{Static adapter}
-Static tasks initially provide three matched current/target views and an inventory contact sheet. Responses use \texttt{type}, rather than the dynamic envelope's \texttt{tool} and \texttt{args}. For example, \texttt{\{``type'':``finish''\}} submits acceptance; inspect, attach, and detach expose the same underlying scene semantics. The different sensing policies are versioned. Claims that static and dynamic scores isolate only an intervention require an additional matched-sensor experiment.
+At each decision, static tasks provide three matched current/target views and an inventory contact sheet. Responses use \texttt{type}, rather than the dynamic envelope's \texttt{tool} and \texttt{args}. For example, \texttt{\{``type'':``finish''\}} submits acceptance; inspect, attach, and detach expose the same underlying scene semantics. The different sensing policies are versioned. Claims that static and dynamic scores isolate only an intervention require an additional matched-sensor experiment.
 
 \subsection{Public and evaluator-private data}
 The public model request may reveal anonymous inventory and placement handles, optional instructions, requested RGB, and neutral action feedback. It must not reveal error-family labels, hidden schedules, reference actions, private goal dictionaries, event counts, or evaluator success signals while the episode is active. Human review pages can show GT separately; they are explicitly answer-bearing surfaces. Trace exports record what the model actually saw rather than substituting spectator images.
@@ -129,6 +134,18 @@ The publication exporter replays every recorded action, checking before state, o
 
 Source trace hashes, selected state hashes, both normal-control IDs, and GT continuation actions are in \path{evidence/arena-traces.json}. The accompanying Chinese trace guide lists every public tool call and feedback. A statement about observation uses requested-image timestamps; a statement about repair uses actual state changes. Neither a camera request nor a verbal claim is independently scored as successful detection.
 
+\begin{figure*}[t]\centering
+\includegraphics[width=\textwidth]{figures-release/arena-normal-builds.pdf}
+\caption{\textbf{Actual successful assembly, one accepted move at a time.} Car: all six accepted placements; chair: all seven. Both finish at decision 17. The chair's last frame combines its final placement at 15 and unchanged finish at 17. Interleaved observations and rejected requests are preserved in the public decision ledger. These selected historical v2 successes demonstrate genuine model-built progress, not a success rate for the current release.}
+\label{fig:normal-builds}\end{figure*}
+
+\subsection{Complete pilot ledger and limits of attribution}
+The archival audit includes sixteen normal attempts and three incident attempts. For a per-condition view it selects the latest recorded normal attempt for each of four models and three objects, plus all three incidents: fifteen conditions, twelve valid. The other four attempts ended in service interruptions and remain in the all-attempt ledger. The three latest Qwen conditions also ended in service errors. None supplies an ability score. This is a descriptive reanalysis, not a retrospectively registered experiment.
+
+\input{tables/pilot-all}
+
+Invalid requests concern the output contract. Unregistered pose handles concern the candidate vocabulary; the historical summary grouped them under physical rejections, so this analysis explicitly reclassifies them without rewriting raw logs. NO\_CONNECTION, ENDPOINT\_COLLISION, and PATH\_BLOCKED record different geometric constraints. A rejected action leaves the arrangement unchanged and is not a brick actually installed in the wrong place. Endpoint residual, wrong finish, and decision exhaustion are separate outcomes; none uniquely identifies a perceptual or reasoning cause.
+
 \section{Additional Diagnostic Protocols}
 \subsection{Observation, progress, and stopping}
 For an effective event after decision $\tau$, define fresh-view delay as $\min\{t-\tau:t>\tau,\ a_t\text{ requests current RGB}\}$. A recall of an old image is not fresh. If no current view is requested before termination, record the observed window length and a censored indicator rather than inventing a numeric latency. Camera availability does not guarantee that the affected part is visible; visibility qualification is a separate field. This metric measures acquisition of evidence, not comprehension.
@@ -147,9 +164,66 @@ E29 compares a fresh solver with the continuing agent at the same realized fault
 
 E23 changes incident stage, magnitude, or spacing and rechecks feasibility. E27 uses genuinely unused sources. E28 bootstraps source groups with their correlated variants. With one run per condition, intervals describe source sampling, not repeated-generation variance. Report eligible coverage and common-qualified-object sensitivity alongside rankings.
 
+\begin{table*}[t]\centering\small
+\caption{\textbf{Additional evidence required for trustworthy interpretation (reserved).} Each result cell is unmeasured. Planned experiments E20--E32 have complete result sheets in the supplement.}
+\label{tab:validity-plan}
+\begin{tabularx}{\textwidth}{@{}YYrr@{}}\toprule
+Check & Primary quantity & Cases & Result\\\midrule
+E20: simple-policy controls & Completion and observation cost & --- & ---\\
+E22: active observation & Fresh-view delay; recovery within 4/8 decisions & --- & ---\\
+E24: alternative-order fairness & Verdict agreement after legal transformations & --- & ---\\
+E25: independent action review & False acceptance / false rejection & --- & ---\\
+E27: unused-source evaluation & Source-macro completion and recovery & --- & ---\\
+E29: matched faulty states & Fresh/continuing agent $\times$ sensing policy & --- & ---\\
+E30: trajectory and stopping & Mean/peak F1; stalls; wrong finish & --- & ---\\\bottomrule
+\end{tabularx}\end{table*}
+
+\section{Error Families and Mechanism Probes}
+A task's defect is a change in the world. A model error is observed behavior under that change. The two should not be conflated: the same missing part can be overlooked, localized incorrectly, reached by an invalid motion, deliberately postponed, or left unrepaired after budget exhaustion. The following demands are hypotheses to test with controlled probes, not internal-cause annotations.
+
+\begin{table*}[t]\centering\small
+\caption{\textbf{Different errors, different demands.} All named families occur in the current release. Repeated incidents are a scheduling family, and controls are not errors. A demand is not an exclusive cognitive diagnosis.}
+\begin{tabularx}{\textwidth}{@{}p{.19\textwidth}XX@{}}\toprule
+Family & Main observable demand & Separate evidence needed\\\midrule
+Missing & Find absent target content & Count and localize before repair\\
+Extra layer & Distinguish surplus from required support & Select excess without damaging correct content\\
+Wrong color & Bind an attribute to the correct location & Color/handle description then repair\\
+Wrong part & Distinguish shape and part identity & Type recognition, candidate grounding\\
+Offset & Align translations and connections & Pose choice then legal execution\\
+Rotated & Resolve orientation and contact direction & Rotation probe, collision/path verdict\\
+Left-right swap & Bind identity to side in a shared frame & Label both positions, then swap legally\\
+Swapped positions & Reconcile two occupied placements & Multi-part correspondence and ordering\\
+Repeat omission & Count separate repeated instances & Per-instance count and localization\\
+Repeated step & Identify duplicated installed content & Distinguish repetition from required symmetry\\
+Early cover & Preserve access to unfinished work & Open-cover / finish / restore sequence\\
+Buried repair & Reach an interior fault & Access ordering, collateral work, restoration\\
+Compound & Reconcile interacting edits & Component residual and complete recovery\\
+Multiple events & Update repeatedly without resetting & Event-wise recovery and retained repair\\
+Control & Accept an already correct state & False-repair and correct-finish rates\\\bottomrule
+\end{tabularx}\end{table*}
+
+E32 uses separate cloned checkpoints to test neutral scene description, discrepancy localization, legal-pose selection, access ordering, supplied-plan execution, state updating, and finish judgment. Primary episodes receive none of the probe answers. A supplied feasible plan that still fails exposes an execution/interface bottleneck under that assistance; it does not prove the original failure had only that cause. Successful textual description with failed repair narrows the hypothesis but still permits grounding, ordering, and stopping errors.
+
+\section{Text, Image, and Combined Evidence Protocol}
+The experimental axis crosses S0/S1/D0/D1/D2 with T/I/TI without creating new underlying questions. Modality is a run configuration, never an additional object or question count. The same candidate handles and legal action domain remain available. Target part descriptions must omit actor-to-target assignment when interchangeable identities are not part of the acceptance contract; otherwise text would hand out the placement solution.
+
+T uses neutral structured records: part type, color, position in declared units, orientation, and installed/available inventory status. Current and target are separate records with identical schemas. I uses native current/target views plus visual inventory and candidate cards; stock status appears in those cards, not as a separate textual state list. TI returns both channels generated from the same state and timestamp. Tool syntax and neutral feedback remain textual in every condition. Optional instructions and hypothetical placements must also follow the condition; disabling them in only one arm confounds the comparison.
+
+Static evidence is refreshed at each decision as in the existing static adapter. Dynamic initial requests contain only the common contract, handles, and budgets. An explicit observation fetches current/target/stock in the assigned representation; no move silently adds a fresh state. An incident changes the world but does not update the conversation until a requested observation. Recall remains historical. If a hidden edit changes stock, a fresh stock query is legitimate evidence; an unsolicited stock refresh would leak the event.
+
+\paragraph{Native interfaces versus matched facts.}
+Exact text is an oracle state description relative to native RGB: it can expose invisible parts and precise poses. The native T/I/TI experiment measures the utility of these interfaces, not equal-information perception. The matched-fact control instead uses one neutral ledger, serialized as text, rendered as readable image cards, or both. All facts, including hidden geometry and stock, are identical. This is a representation/OCR control and cannot replace the native 3D task. A view-limited caption alternative would need a separately validated visibility/uncertainty policy and is not silently assumed here.
+
+\paragraph{Validity and reporting.}
+Check T/I/TI against the same underlying state, target, candidate domain, and timestamp before model use. Inspect provider payloads to ensure T contains no images and strict I contains no machine-readable scene/stock ledger outside images. Neutral API schemas and image labels are allowed. No channel reveals incident metadata, reference actions, correctness-colored candidates, per-part goal assignment, or precomputed target differences. Modality failures are harness issues until resolved. Report payload size, tokens, images, query decisions, and cost without pretending text and image tokens are equal.
+
+E11 reports S1 exact repair, F1, damage, and S0 false repair by modality and family. E31 reports construction and normal-qualified one/repeated-event recovery, plus coverage and observation use. Each mode requires its own successful normal control; also compare the intersection of qualified objects to expose selection effects. E29 uses identical saved faulty states and remaining budgets, with history and sensing policy controlled, within each modality. Formal results remain blank: the release currently implements native RGB plus textual stock status; the three strict adapters and their payload audits are pending.
+
+
+
 \onecolumn
 \section{Planned Experiments and Empty Result Sheets}
-Thirty result sheets remain unmeasured; dashes are not zeros and JSON result fields are null. Pin exact model versions, inputs, decoding, and budgets before one run per condition. Tables identify protocols requiring further integration. No new API calls were made.
+Thirty-two result sheets remain unmeasured; dashes are not zeros and JSON result fields are null. Pin exact model versions, inputs, decoding, and budgets before one run per condition. Tables identify protocols requiring further integration. No new API calls were made.
 
 \input{tables/main-models}\input{tables/main-dynamic}\input{tables/main-paired}
 \clearpage
@@ -170,6 +244,8 @@ Thirty result sheets remain unmeasured; dashes are not zeros and JSON result fie
 \input{tables/visibility-audit}\input{tables/source-generalization}\input{tables/aggregation-uncertainty}
 \clearpage
 \input{tables/matched-transfer}\input{tables/trajectory-progress}
+\clearpage
+\input{tables/dynamic-modality}\input{tables/mechanism-probes}
 \clearpage
 \onecolumn
 \section{Complete Runnable Object Inventory}

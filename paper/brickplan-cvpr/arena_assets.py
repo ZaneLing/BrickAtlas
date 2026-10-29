@@ -1,4 +1,4 @@
-"""Replay two archived API traces and export faithful high-resolution figure states.
+"""Replay four archived API traces and export faithful high-resolution figure states.
 
 No provider calls. These are v2 qualitative development cases, never v3 results.
 The GT row shares the recorded prefix through the incident, then follows a
@@ -21,7 +21,7 @@ RUNS=[('car','obj-city-car','incident-anthropic-claude-sonnet-5-5-obj-city-car-2
 
 def main():
  cache=HERE/'build/arena-scenes';cache.mkdir(parents=True,exist_ok=True)
- specs=[];rows=[];engines={};sources={};ledger=[]
+ specs=[];rows=[];engines={};sources={};ledger=[];normal_rows=[];normal_ledger=[]
  def add(tag,role,state,label,decision=None):
   name=f'arena-{tag}-{role}-{len(specs):02d}'
   specs.append(dict(name=name,model=tag,group=tag,state=dict(state),label=label,decision=decision,
@@ -102,6 +102,36 @@ def main():
     p=ROOT/'deliverables/brickplan-dynamic-arena'/im['url'].lstrip('/')
     assert sha(p)==im['sha256'];sources[str(p.relative_to(ROOT))]=sha(p)
     io['actualInputs'].append(dict(role=im['role'],path=str(p.relative_to(ROOT)),sha256=sha(p)))
+ # Show every accepted construction move, not a hand-picked successful subset.
+ for tag,obj,_,normal in RUNS:
+  folder=ROOT/'deliverables/brickplan-dynamic-arena/runs'/normal
+  rp=folder/'record.private.json.gz';r=json.loads(gzip.decompress(rp.read_bytes()))
+  log=read(folder/'log.json');result=read(folder/'result.json')
+  for p in [rp,folder/'log.json',folder/'result.json']:sources[str(p.relative_to(ROOT))]=sha(p)
+  s=create(HERE/'build/arena-replay'/('normal-'+tag),'scripted:publication-replay',events=False,model_id=obj);s.autosave=False
+  accepted=[]
+  for rec in r['records']:
+   s.submit(rec['action']);actual=s.records[-1]
+   for field in ['before','afterOwnActionBeforeExternalChange','after','feedback','newEventIndices']:
+    assert actual[field]==rec[field],(normal,rec['decision'],field)
+   if rec['action']['type'] in ('attach','detach') and rec['feedback']['code']=='OK':accepted.append(rec)
+  assert s.ep.state==r['final'] and s.result()['success'] and not r['eventLedger']
+  assert len(accepted)==result['executionMetrics']['acceptedMoves']==(6 if tag=='car' else 7)
+  frames=[add(tag,'normal',r['initial'],'Start',0)]
+  for k,rec in enumerate(accepted):
+   frames.append(add(tag,'normal',rec['after'],f'd{rec["decision"]}: +1 part',rec['decision']))
+  if len(frames)==7:frames.append(add(tag,'normal',r['final'],'d17: finish',17))
+  else:specs[-1]['label']='d15 / finish d17'
+  assert len(frames)==8
+  normal_rows.append(dict(object=tag,runId=normal,model=result['model'],protocol='brick-atlas-tool-arena/2',
+      currentProtocolResult=False,exactReplayPassed=True,success=True,allAcceptedMovesShown=True,
+      acceptedMoveDecisions=[r['decision'] for r in accepted],frames=frames,
+      metrics=result['executionMetrics'],observations=result['controllerMetrics']['observeCalls']))
+  assert len(log['calls'])==len(r['records'])
+  for c,rec in zip(log['calls'],r['records']):
+   assert c['index']==rec['decision']
+   normal_ledger.append(dict(object=tag,decision=c['index'],modelOutput=c['modelOutput'],
+       feedback=c['environmentOutput']['code'],state=rec['after'],eventApplied=False))
  assets={};bounds=defaultdict(list);ground=defaultdict(list)
  for spec in specs:
   ren=engines[spec['model']];entries={**{a:a for a in ren.cert['fixed']},**spec['state']}
@@ -126,7 +156,8 @@ def main():
  write(cache/'scenes.json',manifest)
  write(HERE/'evidence/arena-traces.json',dict(schema='brick-atlas-qualitative-traces/1',apiCalls=0,
        scope='Purposively selected historical v2 cases, not current-release performance or causal effects.',
-       sources=sources,runs=rows,scenes=specs,groups=groups,decisionLedger=ledger,io=io))
- print('Verified two archived traces; exported',len(specs),'states; no API calls.')
+       sources=sources,runs=rows,normalRuns=normal_rows,scenes=specs,groups=groups,
+       decisionLedger=ledger,normalDecisionLedger=normal_ledger,io=io))
+ print('Verified four archived traces; exported',len(specs),'states; no API calls.')
 
 if __name__=='__main__':main()

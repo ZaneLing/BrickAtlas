@@ -38,6 +38,16 @@ def main():
   assert run['gtFrames'][:4]==run['modelFrames'][:4]
   assert len(run['gtFrames'])==len(run['modelFrames'])==8
   assert sum(r['object']==run['object'] for r in arena['decisionLedger'])==run['metrics']['decisions']
+ assert len(arena['normalRuns'])==2
+ for run in arena['normalRuns']:
+  assert run['success'] and run['exactReplayPassed'] and run['allAcceptedMovesShown']
+  assert not run['currentProtocolResult'] and len(run['frames'])==8
+  assert len(run['acceptedMoveDecisions'])==run['metrics']['acceptedMoves']
+  assert sum(x['object']==run['object'] for x in arena['normalDecisionLedger'])==run['metrics']['decisions']
+ audit=read(HERE/'evidence/pilot-error-audit.json');dependencies(audit['sources'])
+ assert audit['allAttempts']==19 and audit['selectedAttempts']==15 and audit['apiCalls']==0
+ assert audit['allServiceErrors']==7 and audit['selectedServiceErrors']==3 and not audit['currentProtocolResult']
+ assert all(x['success'] is None and x['fullPlacement'] is None for x in audit['runs'] if not x['valid'])
  for s in arena['scenes']:assert digest_state(s['state'])==s['stateSha256']
  prov=read(HERE/'figures-release/provenance.json');dependencies(prov['sources']);assert prov['typography']['family']=='Comic Sans MS'
  for name,x in prov['images'].items():
@@ -47,12 +57,16 @@ def main():
    assert x['pixels']==[3200,2400]
    assert read(p.with_suffix('.png.json'))['sha256']==x['sha256']
  for name,x in prov['figures'].items():assert digest(HERE/'figures-release'/f'{name}.pdf')==x['pdfSha256']
+ modality=read(HERE/'evidence/modality-study-contract.json')
+ assert modality['status']=='DESIGNED_NOT_IMPLEMENTED' and modality['apiCalls']==0
+ assert modality['baseQuestions']==len(questions) and modality['baseObjects']==len(models)
+ assert modality['modalities']==['T','I','TI'] and not modality['studies'][0]['equalInformation']
  results=read(HERE/'evidence/release-results-template.json');plan=read(HERE/'evidence/release-experiment-plan.json')
  literature=read(HERE/'evidence/literature-review.json')
  assert literature['count']==len(literature['items'])==15
  assert len({x['url'] for x in literature['items']})==15
  assert results['status']=='NOT_RUN' and results['apiCalls']==0 and results['repetitions']==1
- assert len(results['tables'])==30 and len(results['models'])==10
+ assert len(results['tables'])==32 and len(results['models'])==10
  assert plan['finalEvaluationIds'] is None and plan['allSourcesAuthoringExposed']
  for name,table in results['tables'].items():
   assert (HERE/'tables'/f'{name}.tex').is_file()
@@ -93,7 +107,7 @@ def main():
     if font[0] not in fontids:assert d.extract_font(font[0])[3];fontids.add(font[0])
   assert min(ppis)>=599,(name,'Embedded scene below 600 ppi',min(ppis))
   pdfs[name]=dict(pages=len(d),sha256=digest(p),minimumEmbeddedImagePpi=round(min(ppis)),embeddedFonts=len(fontids))
- out=dict(schema='brick-atlas-paper-verification/6',date='2026-10-29',status='PASS',pdfs=pdfs,bodyPages=10,questions=len(questions),models=len(models),taskTypes=snapshot['taskTypes'],figures=len(referenced),nativeScenes=len(scenes['scenes'])+len(arena['scenes']),archivedV2QualitativeRuns=2,figureFontAudit=fonts,plannedModels=10,unmeasuredResultTables=30,apiCalls=0,formalModelStudyComplete=False,humanQualificationComplete=False,independentPhysicsValidated=False)
+ out=dict(schema='brick-atlas-paper-verification/6',date='2026-10-29',status='PASS',pdfs=pdfs,bodyPages=10,questions=len(questions),models=len(models),taskTypes=snapshot['taskTypes'],figures=len(referenced),nativeScenes=len(scenes['scenes'])+len(arena['scenes']),archivedV2QualitativeRuns=4,figureFontAudit=fonts,plannedModels=10,unmeasuredResultTables=32,apiCalls=0,formalModelStudyComplete=False,humanQualificationComplete=False,independentPhysicsValidated=False)
  (HERE/'verification.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps({k:v for k,v in out.items() if k!='figureFontAudit'},indent=2))
 def digest_state(state):return hashlib.sha256(json.dumps(state,sort_keys=True).encode()).hexdigest()
 if __name__=='__main__':main()

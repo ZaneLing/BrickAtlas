@@ -1,0 +1,90 @@
+{
+  "schema": "brick-atlas-modality-study-design/1",
+  "status": "DESIGNED_NOT_IMPLEMENTED",
+  "apiCalls": 0,
+  "baseQuestions": 4685,
+  "baseObjects": 310,
+  "variantsDoNotIncreaseDatasetCounts": true,
+  "taskTypes": [
+    "S0",
+    "S1",
+    "D0",
+    "D1",
+    "D2"
+  ],
+  "modalities": [
+    "T",
+    "I",
+    "TI"
+  ],
+  "studies": [
+    {
+      "id": "native",
+      "T": "exact neutral symbolic scene state",
+      "I": "native scene views and visual status cards",
+      "TI": "both at the same timestamp",
+      "equalInformation": false,
+      "interpretation": "Interface utility including privileged state assistance; not a pure modality effect."
+    },
+    {
+      "id": "matched-facts",
+      "T": "serialized neutral fact ledger",
+      "I": "readable raster cards of exactly the same ledger",
+      "TI": "both encodings of the same ledger",
+      "equalInformation": true,
+      "interpretation": "Representation and OCR control; not native 3D perception."
+    }
+  ],
+  "sharedContract": [
+    "target",
+    "finite physical inventory",
+    "candidate handle domain",
+    "legality checks",
+    "decision cap",
+    "event policy",
+    "scoring",
+    "neutral rules and tool schemas"
+  ],
+  "sceneFields": [
+    "part type",
+    "color",
+    "position with declared units",
+    "orientation",
+    "installed/available status"
+  ],
+  "targetIdentityPolicy": "Type/color/pose multiset; no answer-bearing actor-to-goal mapping for interchangeable parts.",
+  "staticSchedule": "Updated evidence at each decision; one type action per response.",
+  "dynamicSchedule": "No initial scene evidence; observe/inspect requests only; physical actions give feedback only; recall preserves old timestamp.",
+  "toolEnvelope": {
+    "tool": "<one of observe, inspect, attach, detach, recall, finish>",
+    "args": {}
+  },
+  "strictImageBoundary": "Only neutral tools/rules/handles/feedback outside images; scene and stock facts inside visual cards.",
+  "forbiddenEvidence": [
+    "fault labels",
+    "hidden event schedule or count",
+    "reference repair actions",
+    "precomputed target differences",
+    "correctness-marked candidates",
+    "answer-bearing actor-to-goal mapping"
+  ],
+  "normalQualification": "Separate successful D0 within each modality; report intersection of qualified objects as sensitivity.",
+  "experiments": {
+    "static": "E11",
+    "dynamic": "E31",
+    "sameStateHistoryControl": "E29 within modality",
+    "mechanismProbes": "E32 on independent checkpoint copies"
+  },
+  "currentRuntime": "Arena v3 uses requested RGB plus textual inventory status. Strict T/I/TI adapters and payload checks are pending.",
+  "requiredGates": [
+    "state/target/inventory/timestamp agreement",
+    "anonymous candidate-domain agreement",
+    "no private labels or plan leakage",
+    "T contains no images",
+    "I contains no external scene ledger",
+    "manuals and candidate previews follow assigned channel",
+    "no unsolicited post-incident stock refresh",
+    "provider-request audit",
+    "scripted legal-sequence success"
+  ]
+}
