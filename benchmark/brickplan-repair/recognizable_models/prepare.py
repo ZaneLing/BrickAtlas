@@ -43,9 +43,9 @@ def complete_certificate(spec):
         sourceGeometryModified=False,
         contextRole='No preassembled source parts. Only the white environment baseplate is present initially.',
         scope='Every leaf part in the original LDraw model is an operable goal part. No unsupported source part is dropped.')
-    if any(r['part']['canonical']=='3003' for r in goals.values()):
+    if any(r['part']['canonical'] in ('3003','3003pe2') for r in goals.values()):
         cert['source']['collisionProxyRepairs']=[dict(part='3003',operation='Close one source-verified triangular stud cap; no vertex changes.',
-            sourceEvidence=['parts/3003.dat','parts/s/3003s01.dat','parts/s/3003s02.dat','p/stug-2x2.dat','p/stud.dat','p/4-4disc.dat'])]
+            sourceEvidence=['parts/3003pe2.dat','parts/3003.dat','parts/s/3003s01.dat','parts/s/3003s02.dat','p/stug-2x2.dat','p/stud.dat','p/4-4disc.dat'])]
     cert['boundary']='One rigid source part per action; connector, endpoint and straight-path qualification; no force or articulation claim.'
     return cert, mf
 

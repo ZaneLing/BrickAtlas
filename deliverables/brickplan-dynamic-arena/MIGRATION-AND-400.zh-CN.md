@@ -1,3 +1,5 @@
+> 本文是清理前的 400 来源历史快照。当前无小人模型库和新增题目请看 [最新整理](NO-FIGURES-AND-NEW-CASES.zh-CN.md)。
+
 # 动态 Arena 迁移与 400 个 LDraw 来源物件
 
 [打开本机题库与物件库](http://127.0.0.1:8810/library) · [查看已有 API 运行回放](http://127.0.0.1:8810/arena?run=incident-anthropic-claude-sonnet-5-5-obj-city-car-20261028-154133)

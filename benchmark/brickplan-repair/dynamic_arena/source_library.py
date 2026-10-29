@@ -102,6 +102,8 @@ def existing():
 
 
 def main():
+    if (OUT/'source-curation.json').exists():
+        raise SystemExit('Curation is active. Use dynamic_arena.curate_sources; the old fill-to-400 importer is disabled.')
     DEST.mkdir(parents=True,exist_ok=True);out=OUT/'source-library.json'
     prior=read(out) if out.exists() else dict(models=existing(),rejected=[])
     selected=prior['models'];seen={r['setNumber'] for r in selected};hashes={r.get('shapeHash') for r in selected}

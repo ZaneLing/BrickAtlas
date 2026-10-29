@@ -50,14 +50,15 @@ def mesh_for(stem: str):
     # Reflection changes handedness. Preserve outward normals for containment.
     if mesh.volume() < 0:
         mesh.topology.flipOrientation()
-    if stem in ("3022", "3003") and not mesh.topology.isClosed():
+    if stem in ("3022", "3003", "3003pe2") and not mesh.topology.isClosed():
         holes = mesh.topology.findHoleRepresentiveEdges()
         if len(holes) != 1:
             raise ValueError(f"{stem} repair contract changed: expected one triangular hole")
         ring = mesh.topology.getLeftRing(holes[0])
         points = [mesh.points[mesh.topology.org(edge)] for edge in ring]
         # Upstream has one missing triangle within the solid stud at (-10, 10).
-        # Original 3022.dat and 3003.dat -> s/3003s02.dat -> stug-2x2.dat
+        # Original 3022.dat, 3003.dat and eye-printed 3003pe2.dat
+        # share s/3003s02.dat -> stug-2x2.dat
         # reference stud.dat -> 4-4disc.dat, explicitly closing this top.
         # All three inset vertices must lie on y=-3.75 and inside radius 5.8.
         if len(points) != 3 or any(abs(p.y + 3.75) > 0.001

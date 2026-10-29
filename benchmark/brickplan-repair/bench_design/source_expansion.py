@@ -21,6 +21,11 @@ OUT=QUALITY/'source-expansion'
 REVIEW_ANGLES={'isometric':(35,30),'rear':(145,30),'left':(-55,15)}
 # Source indices are hand-selected after inspecting the complete model.
 SPECS=[
+ ('flag-top-1869','1869-1','积木旗帜：顶部完整一行',list(range(74,82)),'下方旗面已完成；补齐顶部从绿色边缘到红色区域的整行积木','wrong-color'),
+ ('helicopter-rotor-7609','7609-1','小直升机：主旋翼',[22,23,24,25,26],'机身和尾部已完成；补主旋翼转盘、两片桨叶与顶部盖片','offset'),
+ ('house-roof-7796','7796-1','小房屋：完整斜屋顶',[51,52,53,54,55],'墙体与烟囱已完成；安装五块屋顶斜砖，保留整栋房屋作为参照','wrong-color'),
+ ('christmas-treetop-561412','561412-1','圣诞树：树梢收尾',[15,16,17,18,19,20],'底部树冠与礼物已摆好；补上四片树叶、尖顶和顶部装饰','wrong-color'),
+ ('turkey-tail-40011','40011-1','火鸡：扇形尾羽',[9,10,11,12,19,23,24,27,28,30,31,38,39],'身体、头和翅膀已完成；补齐后侧展开的扇形尾羽，完整火鸡作为参照','wrong-color'),
  ('truck-cab-30024','30024-1','小卡车：车顶和排气管',list(range(36,48)),'驾驶室顶部的盖板、两根排气管和警示灯','rotated'),
  ('reindeer-antlers-30027','30027-1','驯鹿：鹿角收尾',[54,59,60,61,62,63,64,65],'头顶两侧的鹿角和中间连接板','offset'),
  ('wreath-leaves-30028','30028-1','节日花环：顶部叶片',[30,31,35,39,40],'花环上半圈的三块斜面叶片和两颗红果','wrong-color'),
@@ -192,6 +197,8 @@ def main():
     tasks=[]
     for mode in ['static','dynamic']:
         for i,meta in enumerate(previous['models']):
+            from bench_design.selection import retired
+            if retired(model=meta['id'],source='set:'+meta['sourceSetId'].split('-')[0]):continue
             row=next(c for c in previous['cases'] if c['model']==meta['id'] and c['mode']==mode and c['family']==meta['preferredFamily'])
             tasks.append(dict(code=f'N{(0 if mode=="static" else 100)+i+1:03}',caseId=row['id'],mode=mode,isNew=True))
     write(OUT/'review-tasks.json',dict(tasks=tasks))

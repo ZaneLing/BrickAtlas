@@ -42,11 +42,13 @@ def qualify(row):
 
 def load(cid,directory):
     mid=cid.split(':')[1];folder=DEST/mid;meta=read(folder/'metadata.json');case=next(c for c in read(folder/'cases.private.json.gz') if c['id']==cid)
+    from bench_design.selection import require_active
+    require_active(cid,mid,'set:'+meta['setNumber'].split('-')[0])
     cert=read(folder/'certificate.private.json.gz');ep=Episode(cert,case,41)
     from bench_design.source_expansion import guard_incidents
     guard_incidents(ep.runtime)
     packet=Packet(ep,read(folder/'manual.private.json.gz'),directory)
-    row=dict(key=cid,bank='A4',model=mid,title=meta['title'],mode='dynamic',case=case,family=case['family'],evaluationMetadata=dict(canonicalId=cid,taskType='D0' if not case['events'] else 'D1',track='whole-object-dynamic',source='set:'+meta['setNumber'].split('-')[0],model=mid))
+    row=dict(key=cid,bank='A4',model=mid,title=meta['title'],mode=case['mode'],case=case,family=case['family'],evaluationMetadata=dict(canonicalId=cid,taskType='S1' if case['mode']=='static' else 'D0' if not case['events'] else 'D1',track='whole-object-'+case['mode'],source='set:'+meta['setNumber'].split('-')[0],model=mid))
     return row,ep,packet,None
 
 
