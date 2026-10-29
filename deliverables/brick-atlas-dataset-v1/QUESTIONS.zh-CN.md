@@ -6071,7 +6071,6 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-bed--t3--control` | D0 | 正常、无错误 | 9 | 0 |
 | `D:obj-bed--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
 | `D:obj-bed--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
-| `D:obj-bed--t3--early_cover--v01` | D1 | 提前封口 | 10 | 1 |
 | `D:obj-bed--t3--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
 | `D:obj-bed--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
 | `D:obj-bed--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
@@ -6122,7 +6121,6 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-bench--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
 | `D:obj-bench--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
 | `D:obj-bench--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
-| `D:obj-bench--t3--early_cover--v01` | D1 | 提前封口 | 12 | 1 |
 | `D:obj-bench--t3--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
 | `D:obj-bench--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
 | `D:obj-bench--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 12 | 1 |
@@ -6133,7 +6131,6 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-bench--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
 | `D:obj-bench--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
 | `D:obj-bench--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
-| `D:obj-bench--t5--early_cover--v01` | D1 | 提前封口 | 12 | 1 |
 | `D:obj-bench--t5--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
 | `D:obj-bench--t5--extra_layer--v02` | D1 | 多装一层 | 12 | 1 |
 | `D:obj-bench--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
@@ -6305,7 +6302,6 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-bus--t3--wrong_color--v02` | D1 | 颜色错误 | 10 | 1 |
 | `D:obj-bus--t4--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
 | `D:obj-bus--t4--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
-| `D:obj-bus--t4--early_cover--v01` | D1 | 提前封口 | 9 | 1 |
 | `D:obj-bus--t4--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
 | `D:obj-bus--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
 | `D:obj-bus--t4--rotated_piece--v01` | D1 | 方向错误 | 10 | 1 |
@@ -6404,7 +6400,6 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-cargo-truck--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 18 | 1 |
 | `D:obj-cargo-truck--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
 | `D:obj-cargo-truck--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
-| `D:obj-cargo-truck--t5--early_cover--v01` | D1 | 提前封口 | 11 | 1 |
 | `D:obj-cargo-truck--t5--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
 | `D:obj-cargo-truck--t5--extra_layer--v02` | D1 | 多装一层 | 11 | 1 |
 | `D:obj-cargo-truck--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
@@ -6477,7 +6472,6 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-chair--t3--control` | D0 | 正常、无错误 | 7 | 0 |
 | `D:obj-chair--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 10 | 1 |
 | `D:obj-chair--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 10 | 1 |
-| `D:obj-chair--t3--early_cover--v01` | D1 | 提前封口 | 8 | 1 |
 | `D:obj-chair--t3--extra_layer--v01` | D1 | 多装一层 | 8 | 1 |
 | `D:obj-chair--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 8 | 1 |
 | `D:obj-chair--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 8 | 1 |
@@ -7913,7 +7907,6 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `E7:v7::v7-long-city-bus::static::early-cover::t21` | S1 | 提前封口 | 1 | 0 |
 | `E7:v7::v7-long-city-bus::static::early-cover::t20` | S1 | 提前封口 | 1 | 0 |
 | `E7:v7::v7-long-city-bus::static::control::t20` | S0 | 正常、无错误 | 0 | 0 |
-| `E7:v7::v7-long-city-bus::static::buried-repair::t21` | S1 | 拆上层返修 | 4 | 0 |
 | `E7:v7::v7-long-city-bus::static::buried-repair::t31` | S1 | 拆上层返修 | 10 | 0 |
 | `E7:v7::v7-long-city-bus::static::control::t31` | S0 | 正常、无错误 | 0 | 0 |
 | `E7:v7::v7-long-city-bus::static::left-right-swap::t13` | S1 | 左右装反 | 4 | 0 |

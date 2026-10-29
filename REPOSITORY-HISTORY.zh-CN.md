@@ -1,0 +1,215 @@
+# 历史仓库说明（截至 2026-10-23）
+
+以下正文保存旧版入口和旧统计，不代表当前正式题库。当前入口见 [README](README.zh-CN.md)。
+
+<p align="center">
+  <img src="web/docs/media/brick-atlas-mark.svg" width="760" alt="Brick Atlas 动态积木标识">
+</p>
+
+<h1 align="center">Brick Atlas</h1>
+
+<p align="center">
+  基于真实 LDraw 零件的可审计视觉证据跟随 Benchmark，以及用于检查数据的三维工作空间。
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> · <strong>简体中文</strong>
+</p>
+
+## 当前统一题单与评估方案（2026-10-23）
+
+本轮重新执行 **5,922 个保留运行条件，全部通过**。统一整理5,839条记录，去除119条同任务重复后为 **5,720题**；其中主候选5,452题（静态3,697、动态1,755），历史动态结构／裁切诊断268题单列。动态主组有63种操作配置：50个完整物件配置、13个明确收尾配置。
+
+[先看：题库组成、错误、等级、题型与GT图例](deliverables/brickplan-benchmark-spec/README.zh-CN.md) · [再看：静态／动态评估指标和分母](deliverables/brickplan-benchmark-spec/EVALUATION.zh-CN.md) · [63种配置配图列表](deliverables/brickplan-benchmark-spec/MODEL-LIST.zh-CN.md) · [逐题CSV](deliverables/brickplan-benchmark-spec/questions.csv)。当前规范题单在此目录，下文旧轮次统计保留作历史资料；新统计尚未回填旧论文或旧模型成绩。
+
+7个基本错误标签、过程标签、B/R/T结构分组和G1–G3排题等级已整理；等级尚未经过真人／模型成功率验证。10项计分回归检查通过。没有调用付费模型，逐题真人可读性、新来源社区测试和独立中途修复题仍待完善。
+
+## 完整物件与有明确用途的收尾部分（2026-10-23）
+
+新增 3 个完整 LDraw 小物件：12 块小船、13 块海上直升机、9 块迷你直升机；原文件零件无删减，全部从空白底板开始。12 个已有收尾模块重新展示完整主体、完整目标和本次待补位置。新增完整物件保存 46 个已验证条件（静态25、动态21），尚未并入下面的历史去重总数。任意空间裁切不再作为这组物件动态任务的选材方式；原有完整家具、车辆和机器仍保留。
+
+[完整图文清单](deliverables/brickplan-recognizable-models/README.zh-CN.md) · [以后怎么选模型](deliverables/brickplan-recognizable-models/选模型的规则.zh-CN.md) · [程序检查记录](deliverables/brickplan-recognizable-models/audit.json)。双击 `打开完整物件看图.command`，或访问启动后的 <http://127.0.0.1:8799/objects/index.html>。真人可读性待审查，付费模型调用为0。
+
+## 历史拼装与修复题库扩展（2026-10-23）
+
+按用户确认的范围，目前共 **5,793 道物理任务**：原题当前范围5,100道，扩展新增693道。扩展保存776条运行条件，其中83条复用旧题，不重复计数。保留5个需拼21–32块的新物件、3个新社区来源和47条多次干扰条件。调研整理18种情况，当前做H01–H11、H13；H12、H14–H17不做，H18待定。
+
+[完成报告与启动方法](deliverables/brickplan-expansion-v7/README.zh-CN.md) · [逐物件、逐题配图清单](deliverables/brickplan-expansion-v7/MODEL-CASE-CATALOG.zh-CN.md) · [人类错误来源与取舍](deliverables/brickplan-expansion-v7/human-error-research/README.zh-CN.md)。
+
+[全类别、全难度组题目图解：输入、输出与GT](deliverables/brickplan-question-showcase/README.zh-CN.md)：95个配图例子，覆盖全部92种现有组合，另附3个特殊诊断例子。[错误范围与H18库存核查](deliverables/brickplan-expansion-v7/HUMAN-ERROR-SCOPE.zh-CN.md)：目前显示全部零件目录，不是实时剩件清单。
+
+[题库公开展示预览](deliverables/brickplan-public-preview/README.zh-CN.md)：全部5,793题目录、95个完整图包、原生动作格式、独立参考答案及同行发布方式对照。双击`打开题库公开展示.command`，或访问启动后的 <http://127.0.0.1:8799/>。尚未上传公共平台。
+
+扩展条件已通过程序物理重放；可见性为机器检查，难度仍待真人／模型实测。本轮 API 花费为 0，扩展统计尚未回填下列 10 月 21 日论文，不能混用旧实验结果。
+
+## 当前静态修复与动态拼装论文（2026-10-21）
+
+[英文正文 PDF](paper/brickplan-cvpr/main.pdf) · [补充材料](paper/brickplan-cvpr/supplement.pdf) · [Overleaf 上传包](paper/brickplan-cvpr/brickplan-cvpr-overleaf.zip) · [这版改了什么、如何编译](paper/brickplan-cvpr/README.zh-CN.md)。
+
+已重写为 8 页正文、1 页参考文献和 6 页补充材料，配 8 幅原始几何生成的高清图。社区模块是 12 个物件 / 96 题；另有 3,292 道静态题和 1,872 道动态机制题，各自的检查和实验范围单独报告。目前正式模型与真人操作实验仍待完成，详见[离投稿还差什么](paper/brickplan-cvpr/SUBMISSION-READINESS.zh-CN.md)。
+
+[12 个物件与全部 case 明细](deliverables/brickplan-community-modules/MODEL-CASE-CATALOG.zh-CN.md) · [动态机制题库](deliverables/brickplan-dynamic-v6/README.zh-CN.md)。
+
+## 仓库导航
+
+| 内容 | 入口 |
+|---|---|
+| BrickPlan 2.3 历史规划论文 | [CVPR 正文](benchmark/brickplan-v2.3/paper.pdf) · [补充材料](benchmark/brickplan-v2.3/supplement.pdf) |
+| 独立 Overleaf 上传包 | [论文文件夹](deliverables/brickplan-paper/) · [源码 ZIP](deliverables/brickplan-paper/brickplan-cvpr-overleaf.zip) |
+| React 19 / Three.js 工作台源码 | [web/brickplan/](web/brickplan/README.md) |
+| 分类题库、历史模型回放与发布包 | [启动说明](benchmark/brickplan-v2.3/README.md) · [模型接入](benchmark/brickplan-v2.3/MODEL-INTEGRATION.md) · [数据卡](benchmark/brickplan-v2.3/DATASET-CARD.md) |
+| 冻结的 BrickPlan 2.2 | [独立版本](benchmark/brickplan-v2.2/README.md) |
+| 独立视觉修复论文与附录 | [paper/](paper/README.md) · [正文 PDF](paper/main.pdf) · [附录 PDF](paper/supplement.pdf) |
+| 网页源码、页面、前端配置与测试 | [web/](web/README.md) |
+| Benchmark data、版本及规模 | [benchmark/DATASETS.md](benchmark/DATASETS.md) |
+| Metrics 定义与实现 | [benchmark/METRICS.md](benchmark/METRICS.md) |
+| 当前复杂修复主任务 | [benchmark/visual-repair-v1/](benchmark/visual-repair-v1/) |
+| 语义评分与研究运行器 | [evaluate.py](benchmark/visual-repair-v1/evaluate.py) · [study.py](benchmark/visual-repair-v1/study.py) |
+| 历史原子视觉题 | [benchmark/ldraw-evidence-v3/](benchmark/ldraw-evidence-v3/) |
+| 模型清单及空白实验表 | [paper/experiments.json](paper/experiments.json) |
+| 全量与全模型 MVP 预算 | [benchmark/experiment-plans/](benchmark/experiment-plans/) |
+| 中间审稿、修改指导、旧论文 | [tem/](tem/README.md) |
+| 双 agent 独立审稿与精进 | [tem/agent-iterations/](tem/agent-iterations/README.md) |
+
+当前 `paper/brickplan-cvpr/` 已纳入 Git。其他 `paper/` 历史稿和 `tem/` 仍为本地归档；这些旧归档最后纳入 Git 的版本为 `8a2eaeb9`。
+
+此前规划版本为 **BrickPlan 2.3**：7 类题面、原生高清图像、扩充的真实来源，
+以及零件总数、型号与颜色库存严格相同的主评估几何配对。工作台从当前题库
+动态读取规模，详见[公开目录](benchmark/brickplan-v2.3/release/catalogue.json)。
+配对评分要求两侧的首次非法操作位置均正确，按来源、干预和起始状态分层统计。
+[来源与题目审计](benchmark/brickplan-v2.3/data/source-question-audit.json)
+和[库存捷径对照](benchmark/brickplan-v2.3/data/matched-controls.json)记录逐项核验结果及其适用范围。
+使用 `--port 8783` 启动对应服务后访问 `http://127.0.0.1:8783/`。
+静态诊断题初始提供多视角，`image-id-active` 单独计入视角获取成本。
+`/#case` 保留 2.1 历史任务及模型回复。大规模 VLM 与人类实验仍待进行。
+
+独立视觉修复任务是**视觉绑定＋最小结构修复**：从真实积木图匹配第三个终端，
+再结合连接图求全部最优恢复方案。每个构造包含视觉变化、视觉保持、
+故障变化和独立重编号，规模与分组见 [summary.json](benchmark/visual-repair-v1/summary.json)。
+旧 140 对原子题、219 图观察和 617 历史档案单独保存，不合并计算新任务规模。
+
+论文按“动机 → 任务定义 → 数据构建与人审 → 指标 → 实验设计”组织。
+计划覆盖 **15 个模型：13 个视觉语言模型、2 个纯文本模型**，正文结果单元格全部留空。
+真人资格审核和这轮模型实验尚未完成，现有算法审计与模型成绩分别标注。
+旧版封存的三个 OpenAI 模型协议继续独立保存。
+
+分析器按同一道题连接原子绑定、oracle 修复和多模态结果，报告“两个单项均正确时，
+组合条件仍失败”的比例、八种联合结果计数，以及修复和绑定的配对差值。
+完整集和按构造筛选的人审合格集分别保留分母；条件分母为空时保持未定义。
+论文共预留 212 个 `null` 结果字段。
+
+正文图示直接对应当前主任务：原生图像、结构输入、完整最优 GT 和匹配干预。
+附录给出分组台账、基线、语义证书及条件分解。颜色示例不再占据主图；
+之前三道复杂演示仍作为独立版本保留。详见[图示与溯源索引](paper/README.md)。
+
+运行 `npm run dev` 后，数据检查入口为
+`http://127.0.0.1:5173/benchmark/evidence-v3/index.html`，
+三维来源查看器为 `/benchmark`。检查入口包含答案；
+正式人审使用[独立盲审包](benchmark/ldraw-evidence-v3/QA-AND-RUN.md)。
+
+BrickPlan 的版本化论文与题库门户保留在 `benchmark/brickplan-v2.3/`。
+其他论文进入 `paper/`，网页进入 `web/`，中间产物与历史材料进入 `tem/`，
+数据及评估代码保留在 `benchmark/`。根目录旧审稿别名已移除，
+指向论文和中间产物的兼容链接也一并忽略。`paper/` 和 `tem/` 保留本地文件，
+停止 Git 跟踪。网页源码、Benchmark 数据、原生图像、审核包与评估代码继续纳入 Git；
+运行环境及恢复压缩包保留本地。
+
+## 功能演示
+
+### 1. 三维展开：0% → 100% → 0%
+
+https://github.com/user-attachments/assets/77e02f26-285b-4b47-a3f5-080b395bf07f
+
+### 2. 分步拼装
+
+https://github.com/user-attachments/assets/8f964a18-3408-4908-aced-dff1d4d4a31e
+
+### 3. Create：图片生成积木
+
+https://github.com/user-attachments/assets/46452ae9-0480-4387-ad05-a8f0d9dddd14
+
+### 4. 自由 DIY
+
+https://github.com/user-attachments/assets/175498ed-8c62-4598-a748-9ffaaef4f89b
+
+## 主要功能
+
+- 浏览 15 个来源可追溯的真实 LDraw 模型，支持高清物理渲染、旋转、缩放、平移、视角切换和三维展开。
+- 选择任意积木，查看零件编号、颜色、尺寸、子装配和三维形状；支持搜索、隐藏、隔离、同类高亮和 X-Ray。
+- 在中央三维画布中逐步播放拼装过程，并查看高清静态入位图、当前步骤零件和 PDF 说明书。
+- 在线拼装游戏显示可自由旋转的真实零件三维预览；同编号同颜色的零件可互换并自动匹配鼠标最近的合法槽位，90° 方向和每步位置仍会审核。
+- 无原始 STEP 的模型按结构接触依赖生成步骤，同一步零件只依赖已完成结构，不再先放悬空件、后续步骤才补支撑。
+- Compose 可将飞机、船、车辆、建筑、角色、动物、底板和散件组合成新场景。
+- DIY 提供 78 种零件、18 种颜色和 12 个小组件，支持旋转待放或已放置积木、自动叠放、碰撞与支撑检查、撤销和重做。
+- Create 默认先通过公开 TripoSR 或 Stable Fast 3D 服务生成真实 GLB 网格，再在 Worker 中体素化和积木化；也提供明确标注的本地深度、多视图备用方案。
+- 导出 PDF 拼装说明、BOM CSV、LDraw、JSON 和最高 12K 图片。
+- 整个界面支持中英文切换。
+
+桌面保留三栏工作区；手机和平板优先展示三维画布，下方提供控制面板与材料库。
+
+### 全空间升级
+
+- 首页第一行显示拼装/拆分动画，第二行显示自主 Assemble/DIY 自由组建，页面底层持续漂浮多种半透明积木。
+- 游玩空间新增搜索、分类/难度筛选、收藏及继续拼装。
+- Explore 保存显示偏好，Build 支持调整播放速度。
+- 拼装游戏支持撤回最后一块、重置确认、暂停指导动画和有效进度恢复。
+- DIY 新增精确坐标编辑、合法位置复制与作品快照。
+- Compose 新增撤销/重做、校验后的 JSON 导入、组件搜索、快照和 BOM。
+- Create 支持本地内嵌 GLB 导入、取消过期任务、资源释放及积木 JSON 导出。
+- 统一容量边界，保留损坏存档，离开页面立即补写未保存修改。
+
+逐模块实现、验证和功能边界见[全空间升级说明](web/docs/WORKSPACE_UPGRADE.md)。
+
+## 页面
+
+- `/` 两行四个实时动画、积木空间大厅与可筛选模型库
+- `/explore/:modelId` 模型探索
+- `/build/:modelId` 动态拼装说明
+- `/assemble` 分级手动拼装目录
+- `/assemble/:modelId` 带材料和方向校验的拼装游戏
+- `/compose` 组件、底板和散件组建
+- `/diy` 无限底板自由拼搭
+- `/create` 照片转三维网格再转积木
+
+## 本地运行
+
+需要 Node.js 22 或更新版本：
+
+```bash
+npm ci
+npm run dev
+```
+
+打开 `http://127.0.0.1:5173`。本地功能不需要数据库或私有后端。
+
+Create 默认使用可匿名调用的公开 TripoSR CPU 服务。官方 ZeroGPU 服务可在有匿名额度时使用，也可以在页面临时输入 Hugging Face Token 以获得更多额度；Token 只保存在当前页面内存中，不会写入项目或浏览器存储。照片只会在用户点击“生成真实三维网格”后发送到所选公开服务。
+
+## 图片转积木
+
+默认流程为：
+
+```text
+现实物品照片
+→ 公开 Image-to-3D 服务
+→ 真实 GLB 三角网格
+→ Worker 网格体素化
+→ 积木打包、步骤、BOM 和 LDraw
+```
+
+用户可以在原始网格和积木结果之间切换，并下载中间 GLB。公开服务不可用时会显示真实错误，不会把本地深度外壳伪装成网格结果。详细说明见 [图片转积木流程](web/docs/IMAGE_TO_BRICKS.md)。
+
+## 模型与许可
+
+模型资源来自 [LDraw Official Model Repository](https://library.ldraw.org/omr/sets)，项目保留每个模型的来源、作者、许可、下载地址和哈希记录。
+
+代码使用 MIT 许可证。模型与 LDraw 零件适用各自的许可证。Brick Atlas 是非官方社区项目，与 LEGO Group 无附属、赞助或认可关系。
+
+## 验证
+
+```bash
+npm run check
+npm run test:e2e -- --project=desktop-chrome
+npm audit
+```
+
+测试范围和已知限制见 [工程审计](web/docs/ENGINEERING_AUDIT.md)。

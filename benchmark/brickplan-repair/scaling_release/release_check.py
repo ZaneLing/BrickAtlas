@@ -53,7 +53,7 @@ def main():
     assert Image.open(pair[0]).size==Image.open(pair[1]).size
     differences.append(pair[0].read_bytes()!=pair[1].read_bytes())
     if q['taskType']=='S0':assert pair[0].read_bytes()==pair[1].read_bytes()
-   if q['taskType']=='S1' and not q.get('legacy'):assert any(differences),(q['id'],'Static error invisible in all three exported views')
+   if q['taskType']=='S1':assert any(differences),(q['id'],'Static error invisible in all three exported views')
    if q['mode']=='dynamic':
     event_base=OUT/q['eventImageBase'] if q.get('eventImageBase') else base
     for i in range(q['scheduledEvents']):

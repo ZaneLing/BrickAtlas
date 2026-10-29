@@ -28,22 +28,20 @@ def main():
         compiler = str(fallback)
     if not compiler:
         raise SystemExit('Install Tectonic or set TECTONIC to its executable path.')
-    # The old prepare_revision/build_figures scripts describe the historical
-    # snapshot. Do not let refresh silently restore its obsolete counts/plans.
-    for flag, script in [(args.study,'protocol_study.py'),
-                         (args.refresh_figures or args.refresh_typography,'update_current.py'),
-                         (args.refresh_figures,'make_current_tables.py'),
-                         (args.refresh_figures,'publication_scenes.py')]:
-        if flag:
-            subprocess.run([paper_python,str(HERE/script)],cwd=ROOT,check=True)
+    if args.study:
+        raise SystemExit('--study refers to an archived protocol. Current offline checks: scaling_release.arena_check and scaling_release.release_check.')
+    # Counts and blank table schemas come only from the current checked release.
+    subprocess.run([paper_python,str(HERE/'release_tables.py')],cwd=ROOT,check=True)
+    if args.refresh_figures:
+        subprocess.run([paper_python,str(HERE/'release_assets.py'),'--scenes'],cwd=ROOT,check=True)
     if args.refresh_figures:
         node = os.environ.get('BRICKPLAN_NODE') or shutil.which('node')
         local_node=ROOT/'.tools/node-v22.23.2-darwin-arm64/bin/node'
         if not node and local_node.exists():node=str(local_node)
         if not node:raise SystemExit('Publication rendering needs Node 22+; set BRICKPLAN_NODE.')
-        subprocess.run([node,str(HERE/'render_publication.mjs')],cwd=ROOT,check=True)
+        subprocess.run([node,str(HERE/'render_publication.mjs'),'--release'],cwd=ROOT,check=True)
     if args.refresh_figures or args.refresh_typography:
-        subprocess.run([paper_python,str(HERE/'design_figures.py')],cwd=ROOT,check=True)
+        subprocess.run([paper_python,str(HERE/'release_figures.py')],cwd=ROOT,check=True)
     (HERE/'build').mkdir(exist_ok=True)
     for name in ['main','supplement']:
         log = HERE/'build'/f'{name}-compile.txt'
@@ -59,12 +57,11 @@ def main():
     for name in ['main','supplement']:
         shutil.copyfile(HERE/'build'/f'{name}.pdf',HERE/f'{name}.pdf')
     # Portable LaTeX compilation package: no local data paths or private API logs.
-    names = ['main.tex','supplement.tex','static-inventory.tex',
-             'dynamic-inventory-1.tex','dynamic-inventory-2.tex','references.bib','cvpr.sty',
+    names = ['main.tex','supplement.tex','references.bib','cvpr.sty',
              'ieeenat_fullname.bst','template-provenance.json']
     # Include only figures referenced by the current TeX source.
     import re
-    tex = '\n'.join((HERE/n).read_text() for n in ['main.tex','supplement.tex'])
+    tex = '\n'.join(p.read_text() for p in [HERE/'main.tex',HERE/'supplement.tex',*sorted((HERE/'tables').glob('*.tex'))])
     figures = [HERE/p for p in sorted(set(re.findall(r'\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}',tex)))]
     with zipfile.ZipFile(HERE/'brickplan-cvpr-overleaf.zip','w',zipfile.ZIP_DEFLATED) as z:
         for p in [HERE/n for n in names] + figures + sorted((HERE/'tables').glob('*.tex')):
@@ -73,8 +70,9 @@ def main():
                    'Use pdfLaTeX/BibTeX or Tectonic. Figures are already included.\n'
                    'CVPR 2026 official style; 2027 venue/year label remains a draft.\n'
                    'Replace Draft with the assigned submission ID before submission.\n'
-                   'Dataset/metrics snapshot: 25 October 2026.\n'
-                   '5,720 distinct tasks; 5,452 main candidates; 268 diagnostic dynamic tasks.\n'
+                   'Dataset/metrics snapshot: 29 October 2026.\n'
+                   '310 runnable objects; 4,685 checked questions: 1,600 static + 3,085 dynamic.\n'
+                   'Normal-qualified recovery uses independent runs; causal forks remain a planned study.\n'
                    'Formal model and current-interface human experiments are not yet complete.\n')
     print('Published main.pdf, supplement.pdf, and brickplan-cvpr-overleaf.zip',flush=True)
 

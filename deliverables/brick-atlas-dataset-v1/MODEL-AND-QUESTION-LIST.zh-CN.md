@@ -271,16 +271,16 @@
 | 561412-1 · Christmas Tree | 完成图中标出的底部树冠与礼物已摆好；补上四片树叶、尖顶和顶部装饰；其余主体已完成；6 件 | short | 6 / 6 | 正常、无错误、少装／零件被拆走、方向错误、多装一层、提前封口、拆上层返修 | [全景与局部](previews/561412-1/overview.png) |
 | obj-airplane · 飞机 | 从白色凸点底板开始，拼好整个物件；8 件 | medium | 38 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、方向错误、位置偏移、颜色错误、用错零件、同次事件含多个错误 | [全景与局部](legacy/previews/obj-airplane/overview.png) |
 | obj-ambulance · 救护车 | 从白色凸点底板开始，拼好整个物件；10 件 | medium | 25 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、位置偏移、颜色错误、方向错误、用错零件 | [全景与局部](legacy/previews/obj-ambulance/overview.png) |
-| obj-bed · 单人床 | 从白色凸点底板开始，拼好整个物件；9 件 | medium | 39 / 0 | 正常、无错误、同次事件含多个错误、提前封口、多装一层、少装／零件被拆走、位置偏移、颜色错误、拆上层返修、方向错误、两个零件的位置装反、用错零件 | [全景与局部](legacy/previews/obj-bed/overview.png) |
-| obj-bench · 长椅 | 从白色凸点底板开始，拼好整个物件；11 件 | medium | 34 / 0 | 正常、无错误、拆上层返修、同次事件含多个错误、提前封口、多装一层、少装／零件被拆走、位置偏移、颜色错误、方向错误、用错零件 | [全景与局部](legacy/previews/obj-bench/overview.png) |
+| obj-bed · 单人床 | 从白色凸点底板开始，拼好整个物件；9 件 | medium | 38 / 0 | 正常、无错误、同次事件含多个错误、多装一层、少装／零件被拆走、位置偏移、颜色错误、拆上层返修、方向错误、两个零件的位置装反、用错零件 | [全景与局部](legacy/previews/obj-bed/overview.png) |
+| obj-bench · 长椅 | 从白色凸点底板开始，拼好整个物件；11 件 | medium | 32 / 0 | 正常、无错误、拆上层返修、同次事件含多个错误、多装一层、少装／零件被拆走、位置偏移、颜色错误、方向错误、用错零件 | [全景与局部](legacy/previews/obj-bench/overview.png) |
 | obj-bookshelf · 双层书架 | 从白色凸点底板开始，拼好整个物件；11 件 | medium | 47 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、方向错误、位置偏移、颜色错误、用错零件、同次事件含多个错误 | [全景与局部](legacy/previews/obj-bookshelf/overview.png) |
 | obj-bridge · 小桥 | 从白色凸点底板开始，拼好整个物件；15 件 | medium | 28 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、颜色错误、同次事件含多个错误、位置偏移、方向错误、用错零件 | [全景与局部](legacy/previews/obj-bridge/overview.png) |
 | obj-bunk-bed · 上下铺 | 从白色凸点底板开始，拼好整个物件；11 件 | medium | 23 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、颜色错误、同次事件含多个错误、位置偏移 | [全景与局部](legacy/previews/obj-bunk-bed/overview.png) |
-| obj-bus · 公共汽车 | 从白色凸点底板开始，拼好整个物件；8 件 | medium | 30 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、位置偏移、颜色错误、提前封口、方向错误、用错零件 | [全景与局部](legacy/previews/obj-bus/overview.png) |
+| obj-bus · 公共汽车 | 从白色凸点底板开始，拼好整个物件；8 件 | medium | 29 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、位置偏移、颜色错误、方向错误、用错零件 | [全景与局部](legacy/previews/obj-bus/overview.png) |
 | obj-cabinet · 矮柜 | 从白色凸点底板开始，拼好整个物件；8 件 | medium | 45 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、方向错误、位置偏移、颜色错误、用错零件、同次事件含多个错误 | [全景与局部](legacy/previews/obj-cabinet/overview.png) |
-| obj-cargo-truck · 货车 | 从白色凸点底板开始，拼好整个物件；10 件 | medium | 42 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、位置偏移、颜色错误、同次事件含多个错误、提前封口、方向错误、用错零件 | [全景与局部](legacy/previews/obj-cargo-truck/overview.png) |
+| obj-cargo-truck · 货车 | 从白色凸点底板开始，拼好整个物件；10 件 | medium | 41 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、位置偏移、颜色错误、同次事件含多个错误、方向错误、用错零件 | [全景与局部](legacy/previews/obj-cargo-truck/overview.png) |
 | obj-cash-register · 收银机 | 从白色凸点底板开始，拼好整个物件；6 件 | short | 19 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、位置偏移、颜色错误、同次事件含多个错误 | [全景与局部](legacy/previews/obj-cash-register/overview.png) |
-| obj-chair · 餐椅 | 从白色凸点底板开始，拼好整个物件；7 件 | short | 21 / 0 | 正常、无错误、同次事件含多个错误、提前封口、多装一层、少装／零件被拆走、位置偏移、颜色错误、拆上层返修、方向错误、用错零件 | [全景与局部](legacy/previews/obj-chair/overview.png) |
+| obj-chair · 餐椅 | 从白色凸点底板开始，拼好整个物件；7 件 | short | 20 / 0 | 正常、无错误、同次事件含多个错误、多装一层、少装／零件被拆走、位置偏移、颜色错误、拆上层返修、方向错误、用错零件 | [全景与局部](legacy/previews/obj-chair/overview.png) |
 | obj-city-car · 小汽车 | 从白色凸点底板开始，拼好整个物件；6 件 | short | 21 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、位置偏移、颜色错误、用错零件、同次事件含多个错误、方向错误 | [全景与局部](legacy/previews/obj-city-car/overview.png) |
 | obj-clock-tower · 钟楼 | 从白色凸点底板开始，拼好整个物件；13 件 | medium | 46 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、方向错误、位置偏移、颜色错误、用错零件、同次事件含多个错误 | [全景与局部](legacy/previews/obj-clock-tower/overview.png) |
 | obj-coffee-machine · 咖啡机 | 从白色凸点底板开始，拼好整个物件；9 件 | medium | 28 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、颜色错误、同次事件含多个错误、位置偏移 | [全景与局部](legacy/previews/obj-coffee-machine/overview.png) |
@@ -312,7 +312,7 @@
 | obj-traffic-light · 红绿灯 | 从白色凸点底板开始，拼好整个物件；8 件 | medium | 23 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、颜色错误、方向错误、位置偏移、用错零件 | [全景与局部](legacy/previews/obj-traffic-light/overview.png) |
 | obj-washing-machine · 洗衣机 | 从白色凸点底板开始，拼好整个物件；10 件 | medium | 50 / 0 | 正常、无错误、拆上层返修、多装一层、少装／零件被拆走、方向错误、位置偏移、颜色错误、用错零件、同次事件含多个错误、两个零件的位置装反 | [全景与局部](legacy/previews/obj-washing-machine/overview.png) |
 | v7-long-bookshelf · 四层书架 | 从白色凸点底板开始，拼好整个物件；21 件 | long | 23 / 24 | 正常、无错误、少装／零件被拆走、颜色错误、多装一层、位置偏移、方向错误、用错零件、提前封口、拆上层返修、重复结构漏装、连续多次干扰 | [全景与局部](legacy/previews/v7-long-bookshelf/overview.png) |
-| v7-long-city-bus · 带多排车窗的公共汽车 | 从白色凸点底板开始，拼好整个物件；32 件 | long | 23 / 25 | 正常、无错误、少装／零件被拆走、颜色错误、多装一层、位置偏移、用错零件、提前封口、拆上层返修、左右装反、重复结构漏装、连续多次干扰 | [全景与局部](legacy/previews/v7-long-city-bus/overview.png) |
+| v7-long-city-bus · 带多排车窗的公共汽车 | 从白色凸点底板开始，拼好整个物件；32 件 | long | 23 / 24 | 正常、无错误、少装／零件被拆走、颜色错误、多装一层、位置偏移、用错零件、提前封口、拆上层返修、左右装反、重复结构漏装、连续多次干扰 | [全景与局部](legacy/previews/v7-long-city-bus/overview.png) |
 | v7-long-cottage · 小屋：墙体与屋面 | 从白色凸点底板开始，拼好整个物件；24 件 | long | 23 / 22 | 正常、无错误、少装／零件被拆走、颜色错误、多装一层、位置偏移、方向错误、用错零件、提前封口、拆上层返修、重复结构漏装、连续多次干扰 | [全景与局部](legacy/previews/v7-long-cottage/overview.png) |
 | v7-long-gantry-press · 四柱冲压机 | 从白色凸点底板开始，拼好整个物件；24 件 | long | 25 / 26 | 正常、无错误、少装／零件被拆走、颜色错误、多装一层、位置偏移、方向错误、用错零件、提前封口、拆上层返修、左右装反、重复结构漏装、连续多次干扰 | [全景与局部](legacy/previews/v7-long-gantry-press/overview.png) |
 | v7-long-stone-bridge · 高桥墩步行桥 | 从白色凸点底板开始，拼好整个物件；25 件 | long | 23 / 26 | 正常、无错误、少装／零件被拆走、颜色错误、多装一层、位置偏移、方向错误、用错零件、提前封口、拆上层返修、重复结构漏装、连续多次干扰 | [全景与局部](legacy/previews/v7-long-stone-bridge/overview.png) |

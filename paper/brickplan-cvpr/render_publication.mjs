@@ -6,7 +6,8 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { createHash } from 'node:crypto';
 const here=dirname(fileURLToPath(import.meta.url)),root=resolve(here,'../..');
-const cache=resolve(here,'build/publication-scenes'),out=resolve(here,'figures-publication/native');mkdirSync(out,{recursive:true});
+const release=process.argv.includes('--release');
+const cache=resolve(here,release?'build/release-scenes':'build/publication-scenes'),out=resolve(here,release?'figures-release/native':'figures-publication/native');mkdirSync(out,{recursive:true});
 const manifest=JSON.parse(readFileSync(resolve(cache,'scenes.json')));
 const html=`<!doctype html><html><head><style>html,body{margin:0;background:white}canvas{display:block}</style>
 <script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js"}}</script></head><body><script type="module">

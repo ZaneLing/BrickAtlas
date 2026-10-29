@@ -19,14 +19,14 @@ def verified(folder):
  value=read(p)
  return bool(value.get('passed') and value.get('checksum')==checksum_for(folder))
 
-def one(number):
+def one(number,force=False):
  from expansion_v7.runtime import Episode,runtime,public_action,execute
  from dynamic_arena.source_library import flatten
  from dynamic_arena.curate_sources import FigureAudit
  folder=OUT/'private'/number;paths=[folder/n for n in ['metadata.json','certificate.private.json.gz','manual.private.json.gz','cases.private.json.gz']]
  from pathlib import Path
  checksum=checksum_for(folder);checkfile=folder/'check.json'
- if checkfile.exists():
+ if checkfile.exists() and not force:
   old=read(checkfile)
   if old.get('checksum')==checksum and old.get('passed'):return old
  meta,cert,manual,cases=map(read,paths);checks=[];errors=[]
@@ -88,9 +88,9 @@ def one(number):
  write(checkfile,out);return out
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--workers',type=int,default=3);a=p.parse_args();rows=[p.parent.name for p in (OUT/'private').glob('*/cases.private.json.gz')];results=[]
+ p=argparse.ArgumentParser();p.add_argument('--workers',type=int,default=3);p.add_argument('--force',action='store_true',help='Replay references even when cached checks are current');a=p.parse_args();rows=[p.parent.name for p in (OUT/'private').glob('*/cases.private.json.gz')];results=[]
  with ProcessPoolExecutor(max_workers=a.workers) as ex:
-  fs={ex.submit(one,n):n for n in rows}
+  fs={ex.submit(one,n,a.force):n for n in rows}
   for f in as_completed(fs):
    try:r=f.result()
    except Exception as e:r=dict(setNumber=fs[f],passed=False,error=str(e))
