@@ -34,12 +34,14 @@ def main():
     subprocess.run([paper_python,str(HERE/'release_tables.py')],cwd=ROOT,check=True)
     if args.refresh_figures:
         subprocess.run([paper_python,str(HERE/'release_assets.py'),'--scenes'],cwd=ROOT,check=True)
+        subprocess.run([paper_python,str(HERE/'arena_assets.py')],cwd=ROOT,check=True)
     if args.refresh_figures:
         node = os.environ.get('BRICKPLAN_NODE') or shutil.which('node')
         local_node=ROOT/'.tools/node-v22.23.2-darwin-arm64/bin/node'
         if not node and local_node.exists():node=str(local_node)
         if not node:raise SystemExit('Publication rendering needs Node 22+; set BRICKPLAN_NODE.')
         subprocess.run([node,str(HERE/'render_publication.mjs'),'--release'],cwd=ROOT,check=True)
+        subprocess.run([node,str(HERE/'render_publication.mjs'),'--arena'],cwd=ROOT,check=True)
     if args.refresh_figures or args.refresh_typography:
         subprocess.run([paper_python,str(HERE/'release_figures.py')],cwd=ROOT,check=True)
     (HERE/'build').mkdir(exist_ok=True)

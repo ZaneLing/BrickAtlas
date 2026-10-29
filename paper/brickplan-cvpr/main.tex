@@ -44,7 +44,10 @@ BrickGPT generates physically stable and buildable structures from text~\cite{pu
 SCANet introduces single-step assembly error correction using manual images and assembled components~\cite{wan2024scanet}. Break and Make lets an agent inspect and disassemble an object before rebuilding it with low-level actions~\cite{walsman2022breakmake}. We share the need to connect visual evidence with executable part operations. Our dynamic condition adds unannounced changes during the agent's own continuing trajectory, while the static condition starts directly from a state requiring acceptance or repair. Scores across these contracts are not interchangeable.
 
 \paragraph{Spatial reasoning and task scope.}
-LEGO-Puzzles tests multi-step spatial reasoning~\cite{tang2025legopuzzles}, and PhyBlock studies progressive physical understanding and planning through block assembly~\cite{ma2025phyblock}. These motivate structured analyses rather than a single pooled score. We additionally separate the amount of assembly, access-related rework, and repeated incidents. Length is a measurable descriptor; we do not equate it with empirically established difficulty.
+LEGO-Puzzles tests multi-step spatial reasoning~\cite{tang2025legopuzzles}, and PhyBlock studies progressive physical understanding and planning through block assembly~\cite{ma2025phyblock}. Spatial457 separates spatial capabilities and analyzes attribute bias~\cite{wang2025spatial457}. These motivate structured analyses rather than a single pooled score. We additionally separate the amount of assembly, access-related rework, and repeated incidents. Length is a measurable descriptor; we do not equate it with empirically established difficulty.
+
+\paragraph{Tools, embodiment, and recovery.}
+BC-Bench separates brick selection and pose estimation~\cite{liu2026brickcomposer}. BrickWright combines an assembly API with feasibility feedback and audits validator discrepancies~\cite{pun2026brickwright}. WorkBenchMark evaluates perception, planning, and manipulation in Duplo assembly~\cite{ma2026workbenchmark}; AssemblyBench tests part motion trajectories with physics-based execution~\cite{li2026assemblybench}. These motivate explicit interface assistance and independent action checks. AsgardBench studies visually grounded interactive planning with minimal feedback~\cite{tupini2026asgard}, while RoboRecover compares normal execution and recovery from deviations~\cite{li2026roborecover}. Our narrower contribution connects static repair and continuing recovery in the same brick world, with active sensing and explicit exposure gates. We do not claim the first interactive or recovery benchmark.
 
 \begin{table}[t]\centering\small
 \caption{\textbf{Related task contracts.} This comparison describes objectives and interaction, not a ranking of benchmark quality.}
@@ -91,6 +94,13 @@ An exact structural duplicate audit normalizes color, translation, and the 24 ax
 \section{Autonomous Assembly Arena}
 \subsection{State, goal, and legal actions}
 Let $s_t$ denote the actual arrangement and $G$ the acceptance target. Operable parts have anonymous inventory handles and registered placement handles. A placement signature $\sig(s)$ is a multiset of part type, color, and world pose. It ignores interchangeable actor identities. For the released exact-assembly tasks, valid completion requires an explicit finish, $\sig(s_T)=\sig(G)$, and the task's final connection constraints. Fixed scenery is excluded from placement metrics.
+
+The agent acts on its public history $h_t$, not the private scene state:
+\begin{equation}
+ a_t=\pi(h_t),\quad \widetilde{s}_{t+1}=T(s_t,a_t),\quad
+ s_{t+1}=J_t(\widetilde{s}_{t+1}).
+\end{equation}
+Here $J_t$ is identity unless an admissible incident is applied after a physical operation. An observation leaves the arrangement unchanged and returns the requested rendering; manipulation returns feedback. Thus $h_t$ can contain an outdated view of the present state. The scheduler reads the actual scene, while the acting model receives no incident label. This partial observability distinguishes a continuing episode from a list of independently answered snapshots.
 
 Each attach or detach moves one physical part. The engine checks compatible connections, overlap, and supported straight insertion or extraction paths. A rejected action leaves the scene unchanged. Reference action sequences demonstrate feasibility and support effort comparisons, but do not define the only correct order. A legal off-target placement can be undone later; it is not automatically an episode failure. Likewise, temporarily removing a correct cover is permissible when it enables repair.
 
@@ -173,10 +183,25 @@ Six scripted Arena episodes cover normal and incident runs on a complete cow, a 
 \caption{\textbf{Coverage without inflated independence.} Left: runnable objects by length. Middle: published static and dynamic questions by length. Right: selected family counts split by mode. These are dataset statistics, not measured difficulty or model performance. Detailed family and source tables accompany the release.}
 \label{fig:coverage}\end{figure*}
 
+\subsection{Qualitative Arena trajectories}
+\label{sec:traces}
+Figure~\ref{fig:arena-traces} compares two recorded API episodes with feasible reference continuations. These are deliberately selected development cases from Arena v2: one successful recovery and one wrong final submission. Both models previously completed their respective normal builds. We re-execute every logged action and reproduce every state transition, rejection, and incident; no new API calls are used. Their older handles and input contract prevent treating them as current v3 benchmark scores.
+
+\begin{figure*}[t]\centering
+\includegraphics[width=\textwidth]{figures-release/arena-trajectories.pdf}
+\caption{\textbf{Actual model behavior versus a feasible GT continuation.} Each row spans an episode using eight selected states; $d$ denotes the recorded model decision, including observations and invalid requests. Within each pair, the prefix and hidden removal are identical. The GT row then uses private state to restore the affected part and complete legally; it is neither a learned run nor a shortest-path claim. In the car, the model eventually restores the missing part and finishes. In the chair, it builds further, encounters blocked access, dismantles parts, and finishes with wrong geometry. State images are high-resolution exports with a shared camera, not substituted model inputs. Full decisions and actual requested RGB are provided separately. These archived v2 examples illustrate behavior, not current-release performance or an estimated causal effect.}
+\label{fig:arena-traces}\end{figure*}
+
+\paragraph{Successful recovery with wasted decisions.}
+In the car episode, Claude Sonnet 5.5 experiences a removal after decision 14, requests a new view at 15, makes an invalid request at 16 and a colliding placement at 17, then observes again. Decision 19 restores the missing target placement; observation and explicit finish follow. Its 21 decisions include nine observations, three format failures, and one physical rejection. Exact final success therefore coexists with inefficient intermediate behavior. A GT continuation from the same faulty state restores one part before finishing.
+
+\paragraph{Activity without correct recovery.}
+For the chair, GPT-6.1 Sol continues after a removal at decision 7, including a requested 90-degree view at 8. It later encounters blocked extraction, removes several installed parts, and rebuilds with a wrong-colored part. At its explicit finish on decision 30, five of seven target placements are correct, with one excess and two missing placements ($F_1=10/13$). The GT continuation repairs the removed part and completes the remaining target through legal placements. This trace supports a wrong-final-state diagnosis; it does not establish whether the model internally detected or understood the incident.
+
 \subsection{Questions for the model study}
 The main study asks whether static correction predicts recovery after successful normal assembly, and how this relationship changes with observation autonomy, access work, length, and repeated incidents. All models receive the same task IDs, budgets, target definitions, and tool permissions within a condition. One run per condition is planned. Account accessibility and exact served revisions must be recorded before results are collected.
 
-The inherited candidate roster comprises GPT-6.1 Sol, Claude Sonnet 5.5, Gemini 3.8 Flash, Claude Haiku 5.5, Qwen3.5-9B, Qwen3.5-27B, InternVL3.5-8B, Qwen2.5-VL-7B, Qwen2.5-VL-32B, and Gemma 3-12B. These are candidate labels, not claims of current availability, completed experiments, or frontier coverage. The supplement retains nineteen unmeasured result sheets, with identifiers and configuration fields to resolve before execution.
+The inherited candidate roster comprises GPT-6.1 Sol, Claude Sonnet 5.5, Gemini 3.8 Flash, Claude Haiku 5.5, Qwen3.5-9B, Qwen3.5-27B, InternVL3.5-8B, Qwen2.5-VL-7B, Qwen2.5-VL-32B, and Gemma 3-12B. These are candidate labels, not claims of current availability, completed experiments, or frontier coverage. The supplement retains thirty unmeasured result sheets, with identifiers and configuration fields to resolve before execution.
 
 \begin{table*}[t]\centering\small
 \caption{\textbf{Planned analyses and required evidence.} All model outcomes remain unmeasured. The supplementary result sheets separate implemented metrics from protocols requiring additional integration.}
@@ -198,10 +223,46 @@ Similarly, candidate handles and free coordinates pose different localization pr
 
 Human review has two roles. A simple GT review asks whether the target is legible, the defect is visible in available views, and the proposed repair is reasonable. A blind operation study gives only model-visible evidence and tools and measures actual performance. Agreement with a displayed solution is useful audit evidence but cannot substitute for blind recovery. Independent mechanical review must additionally examine occluded connections, extraction paths, and the consequences of removing supporting parts.
 
+\subsection{Diagnostic baselines and metric validity}
+Simple policies establish useful anchors before a model ranking: explicit finish without repair measures correct-control acceptance, a manual-only executor measures open-loop construction, and a periodic checker tests whether regular observation suffices. A privileged witness verifies solvability. Its private access disqualifies it from a fair comparison with learned policies; these baselines receive separate labels and currently unmeasured tables.
+
+An assistance ladder then supplies, separately, incident timing, the affected part, exact symbolic state, or a feasible repair plan. Gains indicate sensitivity to missing information under a changed contract, not a definitive decomposition of the model's internal error. For example, improvement with a named faulty part can reflect easier localization and easier planning together. A separate blind snapshot probe is needed for detection claims.
+
+The scorer also needs adversarial checks. Swapping independent actions or interchangeable part handles should preserve success. Removing and restoring a correct cover should affect effort without creating final damage. Wrong final geometry should fail despite a plausible narrative. Independent reviewers should classify both accepted and rejected actions, so false acceptance and false rejection are measured separately. These audits extend reference replay, which alone can share the generator's mistakes.
+
+\begin{table*}[t]\centering\small
+\caption{\textbf{Additional evidence required for trustworthy interpretation (reserved).} Each result cell is unmeasured. Planned experiments E20--E30 have complete result sheets in the supplement.}
+\label{tab:validity-plan}
+\begin{tabularx}{\textwidth}{@{}YYrr@{}}\toprule
+Check & Primary quantity & Cases & Result\\\midrule
+E20: simple-policy controls & Completion and observation cost & --- & ---\\
+E22: active observation & Fresh-view delay; recovery within 4/8 decisions & --- & ---\\
+E24: alternative-order fairness & Verdict agreement after legal transformations & --- & ---\\
+E25: independent action review & False acceptance / false rejection & --- & ---\\
+E27: unused-source evaluation & Source-macro completion and recovery & --- & ---\\
+E29: matched faulty states & Fresh/continuing agent $\times$ sensing policy & --- & ---\\
+E30: trajectory and stopping & Mean/peak F1; stalls; wrong finish & --- & ---\\\bottomrule
+\end{tabularx}\end{table*}
+
+\subsection{Process-level measures and controlled transfer}
+The additional result sheets extend endpoint scoring with observable behavior. For an effective event after decision $\tau$, fresh-view delay is the number of decisions until the next requested current image. Recalled evidence does not qualify. A run without a fresh view is censored at its observed endpoint; its delay is not zero. This measures evidence acquisition rather than detection. Recovery@4 and Recovery@8 instead use the event-specific state criterion, restricted to valid, exposed, normal-qualified events. Terminal states persist through the horizon, so an early unrepaired finish counts as failure. A subsequent incident before the horizon is censored and counted separately; retained recovery accompanies first recovery.
+
+For trajectory analysis, let $q_t$ be operable-placement F1 after decision $t$. The proposed summaries are
+\begin{equation}
+ Q_{\mathrm{mean}}=\frac{1}{T}\sum_{t=1}^{T}q_t,
+ \qquad Q_{\mathrm{peak}}=\max_{1\leq t\leq T}q_t.
+\end{equation}
+They accompany final success and episode length; averaging over a short failed attempt must not reward premature stopping. Wrong-finish rate uses explicit finishes as its denominator. A stall analysis counts accepted moves without reducing placement residual, splitting at external edits. Necessary access work can produce such a stall, so this is a descriptive measure conditioned on access type, not a verdict that a move was unnecessary. These postprocessing analyses are planned and not populated from the two selected examples.
+
+The central transfer experiment is a $2\times2$ design at the same realized faulty state: fresh solver versus continuing agent, crossed with active versus scheduled sensing. Both receive the same target, inventory, action domain, and remaining budget. Scheduled conditions use a common observation policy; active conditions have identical query permissions. The continuing agent retains its earlier history. A separate equal-total-budget analysis includes the cost of reaching that state. This distinguishes the cost of evidence acquisition from the effects of accumulated history without pretending that matching object names alone matches the tasks.
+
 \subsection{Limitations and submission status}
 The long stratum contains only twenty objects; 253 of 310 configurations are finishing tasks. Error support is uneven and all sources were exposed during authoring. Synthetic incidents do not estimate natural human error frequencies. Geometry checks share the implementation used for generation, so independent validation remains necessary. Model interfaces simplify pose selection through finite candidate handles, and the engine omits force dynamics and unrestricted articulation.
 
-The release provides executable tasks, traceable assets, and scoring contracts. A competitive empirical benchmark paper additionally needs current-interface model results, independent human readability and operation evidence, and external checks of the physical rules. The unmeasured tables are a concrete study plan, not evidence that these requirements have been met. Historical pilot traces are retained separately and are not transferred to the present interface.
+The release provides executable tasks, traceable assets, and scoring contracts. A competitive empirical benchmark paper additionally needs current-interface model results, independent human readability and operation evidence, and external checks of the physical rules. The unmeasured tables are a concrete study plan, not evidence that these requirements have been met. Historical pilot traces illustrate behavior in Sec.~\ref{sec:traces} and are not transferred to the present interface.
+
+\paragraph{Data provenance and responsible release.}
+Original source identifiers, attribution, and available license information accompany the object records. Redistribution requires a source-level rights check; a shared file format does not imply shared licensing. Public sources may overlap with pretraining, so source grouping cannot prove absence of contamination. Public review examples are separated from any future unused-source evaluation. Human studies should record consent and prior answer exposure, and publish anonymized judgments rather than participant identities. These are release obligations, not completed human experiments.
 
 \input{tables/release-main-results}
 
@@ -216,17 +277,8 @@ The static experiment uses the same selected objects where available but
 preserves its separate stage targets. Reusing an object does not make its
 static snapshot identical to a dynamic event checkpoint.
 
-\paragraph{Reporting a static-to-dynamic gap.}
-The first comparison is an object-level association between static repair
-and normal-qualified dynamic recovery. It is not a subtraction of pooled
-accuracies from different case distributions. For a direct within-state
-comparison, a later checkpoint study must save an actually realized fault
-state and offer the same target, inventory, candidate domain, and sensor
-permissions to a fresh static solver. The continuing agent additionally has
-its own history and has already spent budget. Both equal remaining budget
-and equal total budget are meaningful but different controls, and should be
-named separately. Without them, an apparent gap can reflect observation
-access or task selection as well as recovery ability.
+\paragraph{Object-level association.}
+Static repair and normal-qualified recovery can first be related across common objects. This association complements the matched-state experiment above; a subtraction of pooled scores from different case distributions does not isolate an autonomy effect.
 
 \paragraph{Qualification before interpretation.}
 Before comparing errors, report how many planned examples survive each
@@ -238,15 +290,8 @@ shrink the evaluated population and should not replace the full ledger.
 Source-macro weighting likewise complements, rather than erases, the
 observed per-question outcomes.
 
-\paragraph{Observations as part of behavior.}
-The Arena makes it possible to examine when an agent chooses to look:
-before covering a region, after a rejection, or after several successful
-moves. Such analyses use actual requested image timestamps and logged
-actions. They do not infer attention from private reasoning or equate
-frequent observation with good perception. A useful result should relate
-query cost to completed, exposed, and recovered episodes, while keeping
-the supervisor's extra review images out of the evidence available to the
-agent.
+\paragraph{Observation behavior.}
+Query timestamps reveal whether agents look before covering a region or after a rejected action. Interpret these behaviors jointly with recovery and cost; spectator images and unobserved internal reasoning supply no evidence of model perception.
 
 \section{Conclusion}
 \ours links static repair with autonomous recovery in a continuing brick world. The agent controls sensing and manipulation; hidden incidents alter actual progress without prescribing a repair sequence. The 310-object, 4,685-question release accepts legal alternative orders and makes construction, exposure, recovery, and validity explicit. Its reference checks support reproducible execution while preserving the distinction between dataset integrity and the independent empirical evidence still required.

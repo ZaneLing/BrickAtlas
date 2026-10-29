@@ -1,6 +1,6 @@
 # 现版图示索引
 
-所有现用图在 `figures-release/`，图中文字和标题使用 Comic Sans MS，PDF 内嵌字体。积木场景由当前题目的精确几何重新渲染为 3200 × 2400；示例不改变模型的真实输入。
+所有现用图在 `figures-release/`，图中文字和标题使用 Comic Sans MS，PDF 内嵌字体。积木场景由当前题目或明确标注的旧版轨迹的精确几何重新渲染为 3200 × 2400；示例不改变模型的真实输入。
 
 | 文件 | 内容 |
 |---|---|
@@ -14,4 +14,14 @@
 
 具体题目 ID 和原始状态见 `evidence/release-figure-selection.json`、`evidence/release-render-states.json`。文件哈希与字体证据见 `figures-release/provenance.json`。
 
-所有修复轨迹明确标为参考脚本。正式 API 模型没有在本版完成测试，因此不画虚假的模型雷达曲线或成功率。
+正式题库示意轨迹标为参考脚本。新增真实 API 轨迹独立标为旧版 v2 开发案例。正式 API 模型没有在本版完成测试，因此不画虚假的模型雷达曲线或成功率。
+
+| 新增文件 | 内容 |
+|---|---|
+| `arena-trajectories.pdf` | 四行，每行八格：小汽车模型／GT、椅子模型／GT。前缀及事故现场一致，之后比较真实模型与合法参考续接 |
+| `arena-input-output.pdf` | Markdown 中的宽版：真实 observe 请求、原始当前图和目标图、响应及信息边界 |
+| `arena-requested-views.pdf` | 补充材料中的紧凑版：原始当前图和目标图，配实际请求及响应说明 |
+
+轨迹高分辨率渲染为 3200 × 2400。可视白色凸点底板按 Arena 传感器的尺寸、凸点和变换生成；不改变实际状态。实际输入图保持原始 800 × 600 像素，不用放大图片冒充更高清的模型输入。GT 续接可用私有状态，不能当作模型的第二次运行。
+
+[完整步骤和 JSON](ARENA-TRAJECTORIES.zh-CN.md)；[旧版轨迹证据](evidence/arena-traces.json)。

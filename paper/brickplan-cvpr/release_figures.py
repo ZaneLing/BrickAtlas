@@ -1,4 +1,4 @@
-"""Compact publication panels sourced exclusively from the current release."""
+"""Current-release panels plus explicitly separated archived Arena examples."""
 from pathlib import Path
 from collections import Counter
 import hashlib,json
@@ -76,7 +76,7 @@ for i,s in enumerate(steps):
  panel(fig,(i/n+.003,.17,.96/n,.75),s['name'],s['label'].capitalize(),TEAL if i==n-1 else INK,6.5)
  if i<n-1:arrow(fig,((i+1)/n-.025,.52),((i+1)/n+.015,.52))
 heading(fig,.01,.99,'Reference actions; final geometry decides success',fs=7.2);save(fig,'static-repair')
-fig=plt.figure(figsize=(3.35,1.80));labels=['Same task / model / input / budget','Normal run succeeded','Valid run + all effective events','Final success → qualified recovery']
+fig=plt.figure(figsize=(3.35,1.80));labels=['Same task / model / input / budget','Normal run succeeded','Valid run + all effective events','Final success: qualified recovery']
 for i,t in enumerate(labels):
  y=.86-i*.20;fig.patches.append(FancyBboxPatch((.02,y-.13),.96,.14,boxstyle='round,pad=0.004',transform=fig.transFigure,facecolor='#f0f8f7' if i==3 else '#f5f7fa',edgecolor=GRAY,lw=.6));fig.text(.5,y-.06,t,ha='center',va='center',fontsize=7.2,color=TEAL if i==3 else INK)
  if i<3:arrow(fig,(.5,y-.13),(.5,y-.19))
@@ -97,4 +97,53 @@ for start in range(0,len(models),40):
   manifest['images'][str(p.relative_to(HERE)) if p.is_relative_to(HERE) else str(p.relative_to(ROOT))]=dict(sha256=sha(p),pixels=list(im_.size),source='release-overview')
   label=m['id'].removeprefix('sc-').removeprefix('obj-').replace('v7-long-','long-');fig.text(x+.0595,y-.004,label,ha='center',va='top',fontsize=5.7);fig.text(x+.0595,y-.032,('Whole' if m['scope']['kind']=='complete-object' else 'Finish')+f" · {m['activeParts']} parts",ha='center',va='top',fontsize=5.6,color=MUTED)
  save(fig,f'gallery-{start//40+1}',formats=('pdf',))
+# Two exact archived traces: four compact rows, eight states per row.
+arena=read(HERE/'evidence/arena-traces.json');manifest['sources']['paper/brickplan-cvpr/evidence/arena-traces.json']=sha(HERE/'evidence/arena-traces.json')
+arena_specs={s['name']:s for s in arena['scenes']};arena_crops={}
+def arena_panel(fig,box,name,label,color=INK):
+ p=OUT/'arena-native'/(name+'.png');a=np.asarray(Image.open(p).convert('RGB'));group=arena_specs[name]['group']
+ manifest['images'][str(p.relative_to(HERE))]=dict(sha256=sha(p),pixels=list(Image.open(p).size))
+ if group not in arena_crops:
+  rects=[]
+  for s in arena['scenes']:
+   if s['group']!=group:continue
+   b=np.asarray(Image.open(OUT/'arena-native'/(s['name']+'.png')).resize((400,300)));yy,xx=np.nonzero(b.min(2)<238)
+   if len(xx):rects.append((xx.min()*8,yy.min()*8,(xx.max()+1)*8,(yy.max()+1)*8))
+  arena_crops[group]=(min(x[0] for x in rects),min(x[1] for x in rects),max(x[2] for x in rects),max(x[3] for x in rects))
+ ax=fig.add_axes(box);ax.imshow(a,interpolation='none');ax.axis('off');l,t,r,b=arena_crops[group]
+ cx,cy=(l+r)/2,(t+b)/2;w,h=(r-l)*1.04,(b-t)*1.04;aspect=box[2]*fig.get_figwidth()/(box[3]*fig.get_figheight())
+ if w/h>aspect:h=w/aspect
+ else:w=h*aspect
+ ax.set_xlim(cx-w/2,cx+w/2);ax.set_ylim(cy+h/2,cy-h/2)
+ fig.text(box[0]+box[2]/2,box[1]-.005,label,ha='center',va='top',fontsize=6.0,color=color)
+ return ax
+fig=plt.figure(figsize=(7,3.55))
+for j,run in enumerate(arena['runs']):
+ for k,role in enumerate(['model','gt']):
+  row=j*2+k;top=.99-row*.242;y=top-.176
+  title=(('Car / Claude Sonnet 5.5' if j==0 else 'Chair / GPT-6.1 Sol')+' — recorded model' if k==0 else 'Same prefix + incident / feasible GT continuation')
+  heading(fig,.005,top,title,fs=7.1,color=INK if k==0 else TEAL)
+  for i,name in enumerate(run[role+'Frames']):
+   s=arena_specs[name];label=s['label'];color=CORAL if i==3 or ('wrong' in label or 'blocked' in label or 'rejected' in label) else TEAL if 'success' in label else INK
+   arena_panel(fig,(i/8+.003,y,.119,.140),name,label,color)
+   if i<7:arrow(fig,(i/8+.117,y+.075),(i/8+.131,y+.075),CORAL if i==2 else TEAL)
+  if row<3:line(fig,(.003,top-.222),(.995,top-.222))
+fig.text(.5,.014,'d = logged model decision · selected states, all decisions in the ledger · archival Arena v2, not a v3 score',ha='center',fontsize=6.6,color=MUTED)
+save(fig,'arena-trajectories')
+# Actual unmodified model-visible RGB; no upsampling or reviewer annotation.
+fig=plt.figure(figsize=(7,1.85));heading(fig,.005,.99,'An actual observation request and its returned evidence (archived car episode, d15)',fs=8)
+for i,im_ in enumerate(arena['io']['actualInputs']):
+ p=ROOT/im_['path'];a=Image.open(p).convert('RGB');manifest['images'][im_['path']]=dict(sha256=sha(p),pixels=list(a.size),source='actual-model-requested-RGB')
+ ax=fig.add_axes((.008+i*.177,.25,.165,.60));ax.imshow(a,interpolation='none');ax.axis('off');fig.text(.09+i*.177,.19,im_['role'].capitalize()+' · 800 × 600',ha='center',fontsize=6.8)
+heading(fig,.382,.82,'Request',TEAL,7.5)
+fig.text(.382,.69,'{"tool":"observe","args":{"view":"angled",\n "rotateDegrees":0,"show":["current","target","inventory"]}}',fontsize=6.8,va='top',linespacing=1.7)
+heading(fig,.382,.43,'Response / evidence boundary',TEAL,7.5)
+fig.text(.382,.31,'OBSERVED · camera azimuth 35°, elevation 30°\nAlso returns requested inventory; no event label or GT plan.\nThe model reads these images on its following decision.',fontsize=6.9,va='top',linespacing=1.6)
+save(fig,'arena-input-output')
+fig=plt.figure(figsize=(3.35,1.65));heading(fig,.015,.98,'Actual requested RGB / car d15 / Arena v2',fs=7.2)
+for i,im_ in enumerate(arena['io']['actualInputs']):
+ ax=fig.add_axes((.01+i*.50,.25,.475,.56));ax.imshow(Image.open(ROOT/im_['path']).convert('RGB'),interpolation='none');ax.axis('off')
+ fig.text(.25+i*.50,.20,im_['role'].capitalize()+' / 800 x 600',ha='center',fontsize=6.7)
+fig.text(.5,.055,'observe: current + target + inventory',ha='center',fontsize=7.0,color=TEAL)
+save(fig,'arena-requested-views')
 write(OUT/'provenance.json',manifest)

@@ -25,7 +25,7 @@ The authoritative files are the release manifest, object JSONL, static and dynam
 \subsection{Historical records and exclusions}
 The historical browser preserves 8,997 catalogue records across versions. Only 4,685 are current checked questions; the remainder includes 1,983 retired-source or human-selection records, 2,265 historical records not rechecked, 31 withheld reference/visibility conditions, and 33 pending historical records. This is an archival inventory, not a claim of 8,997 unique valid tasks. Earlier counts such as 5,720 distinct records belong to their own contracts and selected populations.
 
-The 31 withheld designed-object conditions remain in the failure ledger: eighteen do not reach every configured incident under the current reference twelve lack a verified effective change, and one static defect is invisible in all three default views. The current 1,605 retained designed-object questions are the successful subset. One community camper candidate is separately withheld because its original source color cannot be matched without guessing. User-retired buildings and minifigure-containing sources are excluded from admission. No exception is counted as a model failure.
+The 31 withheld designed-object conditions remain in the failure ledger: eighteen do not reach every configured incident under the current reference, twelve lack a verified effective change, and one static defect is invisible in all three default views. The current 1,605 retained designed-object questions are the successful subset. One community camper candidate is separately withheld because its original source color cannot be matched without guessing. User-retired buildings and minifigure-containing sources are excluded from admission. No exception is counted as a model failure.
 
 \subsection{Source grouping and overlap}
 There are 234 source groups among runnable objects. Authored alternate builds remain in the same group as their original set. Development, validation, and test labels separate source groups, but all current sources have been used during authoring. They therefore do not certify an untouched test distribution. Future external-source evaluation must declare newly acquired source IDs, keep them out of prompt and engine tuning, and report failures in qualification before sampling tasks.
@@ -117,10 +117,40 @@ Independent human checks must distinguish displayed-GT review from blind operati
 
 Independent mechanical checking should examine buried parts, interlocking geometry, conservative background collisions, extraction paths, and whether removing a support invalidates other parts. The present engine uses fixtures and does not simulate gravitational collapse or deformation. No program-only audit is labeled independent physical validation.
 
-\section{Planned Experiments and Empty Result Sheets}
-Nineteen result sheets remain unmeasured; dashes are not zeros. Machine-readable fields in \path{evidence/release-results-template.json} are null. The ten inherited candidate labels are shown below. Pin exact model versions, access, preprocessing, decoding, and budgets before one run per condition. No new API calls were made. Planned checkpoint, text-state, coordinate, detection, cross-agent, and shared-prefix studies require integration; their tables state these limits.
+\section{Archived API Examples and Reproducible Comparison}
+The main-paper examples are selected Arena v2 API episodes with successful independent normal controls, not current-release scores. The car has 21 decisions, nine observations, seven accepted moves, three format failures, one collision rejection, and a correct finish. The chair has 30 decisions, seven observations, seventeen accepted moves, five physical rejections, and a wrong finish (TP=5, FP=1, FN=2). Different objects and selected outcomes do not establish a model ranking.
 
-\clearpage
+The publication exporter replays every recorded action, checking before state, own-action state, post-incident state, feedback, and new event indices. It also checks the final outcome. For each GT row, the actual prefix is retained through the external removal. A privileged continuation restores the affected part, executes a legally checked target completion, and finishes. This is a feasible reference from the same faulty state, not a causal pair of two learned continuations. Displayed decision numbers locate selected frames; the full ledger preserves all omitted observations, invalid requests, and manipulations.
+
+\begin{figure}[t]\centering
+\includegraphics[width=\linewidth]{figures-release/arena-requested-views.pdf}
+\caption{\textbf{Actual model evidence.} Original requested RGB from the car's decision 15. The same call also requested inventory; the response was OBSERVED at azimuth $35^\circ$, elevation $30^\circ$. Hidden event labels and GT plans are absent. High-resolution trajectory images elsewhere are spectator exports, not these input bytes.}
+\end{figure}
+
+Source trace hashes, selected state hashes, both normal-control IDs, and GT continuation actions are in \path{evidence/arena-traces.json}. The accompanying Chinese trace guide lists every public tool call and feedback. A statement about observation uses requested-image timestamps; a statement about repair uses actual state changes. Neither a camera request nor a verbal claim is independently scored as successful detection.
+
+\section{Additional Diagnostic Protocols}
+\subsection{Observation, progress, and stopping}
+For an effective event after decision $\tau$, define fresh-view delay as $\min\{t-\tau:t>\tau,\ a_t\text{ requests current RGB}\}$. A recall of an old image is not fresh. If no current view is requested before termination, record the observed window length and a censored indicator rather than inventing a numeric latency. Camera availability does not guarantee that the affected part is visible; visibility qualification is a separate field. This metric measures acquisition of evidence, not comprehension.
+
+Recovery@k checks event recovery within $k$ subsequent decisions on valid, exposed, normal-qualified windows. Terminal states persist through the horizon: an early unrepaired finish is a failure, not an excluded short run. A new incident or technical stop before $k$ censors the window and must be counted separately. Report end-of-window recovery and recurrence alongside first recovery; repair can occur without another view.
+
+Let $q_t$ be operable-placement F1 after decision $t$. Mean and peak F1 accompany final success and episode length; a high average cannot excuse early termination. A stall spans accepted moves without reduced placement residual; observations are excluded and external edits split segments. Access work can count as a stall, so report access type and final recovery. Wrong-finish rate divides unacceptable explicit finishes by all explicit finishes, with counts. These remain planned trace analyses.
+
+\subsection{Independence, fairness, and controlled assistance}
+E24 tests transformations with known expected behavior. Reordering independent actions and swapping physically interchangeable handles preserve endpoint acceptance; deliberately wrong endpoints do not. Reversible access work changes effort while preserving final damage. For action adjudication (E25), independently valid and invalid actions form separate denominators: false rejection is engine rejection among independently valid actions, and false acceptance is engine acceptance among independently invalid actions. Reviewers must see geometry and proposed motion before seeing the engine verdict. Unresolved judgments remain outside both denominators and retain their own count.
+
+E21 discloses progressively more information: fault time, affected part, symbolic state, or repair plan. Such assistance changes the task and cannot uniquely diagnose internal reasoning. E20 compares simple policies with learned agents; privileged witnesses remain feasibility controls. New aggregate results stay blank until the common-task study is executed.
+
+\subsection{Matched-state transfer and source uncertainty}
+E29 compares a fresh solver with the continuing agent at the same realized fault, crossed with active and scheduled sensing. Match target, inventory, candidates, allowed views, and remaining decisions. The continuing agent retains its history; a separate equal-total-budget analysis includes reaching the checkpoint. This controls task differences before attributing a performance gap to autonomy.
+
+E23 changes incident stage, magnitude, or spacing and rechecks feasibility. E27 uses genuinely unused sources. E28 bootstraps source groups with their correlated variants. With one run per condition, intervals describe source sampling, not repeated-generation variance. Report eligible coverage and common-qualified-object sensitivity alongside rankings.
+
+\onecolumn
+\section{Planned Experiments and Empty Result Sheets}
+Thirty result sheets remain unmeasured; dashes are not zeros and JSON result fields are null. Pin exact model versions, inputs, decoding, and budgets before one run per condition. Tables identify protocols requiring further integration. No new API calls were made.
+
 \input{tables/main-models}\input{tables/main-dynamic}\input{tables/main-paired}
 \clearpage
 \input{tables/main-ablations}\input{tables/static-errors}\input{tables/dynamic-errors}
@@ -132,6 +162,14 @@ Nineteen result sheets remain unmeasured; dashes are not zeros. Machine-readable
 \input{tables/perception-probe}\input{tables/cross-recovery}\input{tables/visual-robustness}
 \clearpage
 \input{tables/strategy-budget}\input{tables/efficiency}\input{tables/human-panel}\input{tables/failures}
+\clearpage
+\input{tables/policy-baselines}\input{tables/diagnostic-assistance}\input{tables/observation-latency}
+\clearpage
+\input{tables/incident-dose}\input{tables/scorer-invariance}\input{tables/physical-agreement}
+\clearpage
+\input{tables/visibility-audit}\input{tables/source-generalization}\input{tables/aggregation-uncertainty}
+\clearpage
+\input{tables/matched-transfer}\input{tables/trajectory-progress}
 \clearpage
 \onecolumn
 \section{Complete Runnable Object Inventory}

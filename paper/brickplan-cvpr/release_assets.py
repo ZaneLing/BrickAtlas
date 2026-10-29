@@ -23,12 +23,13 @@ def snapshot():
 def scenes(models,questions):
  from bench_design.session import Session
  from dynamic_arena.sensors import Sensors
+ from publication_plate import add_plate
  from render import PALETTE
  PALETTE.update(dict(re.findall(r'CODE\s+(\d+)\s+VALUE\s+(#[0-9A-Fa-f]{6})',(ROOT/'assets-source/ldraw-library/locked/LDConfig.ldr').read_text())))
  cache=HERE/'build/release-scenes';cache.mkdir(parents=True,exist_ok=True);specs=[];engines={};sources={};selection={}
  def session(q):
   s=Session.open(q['id'],HERE/'build/scene-sessions'/hashlib.sha256(q['id'].encode()).hexdigest()[:12],'scripted:paper-geometry',control=q['taskType']=='D0');s.autosave=False
-  engines[q['id']]=(s,Sensors(s).renderer);return s
+  ren=Sensors(s).renderer;add_plate(ren);engines[q['id']]=(s,ren);return s
  def add(q,s,name,state,group,focus=False):
   specs.append(dict(name=name,caseId=q['id'],model=q['model'],state=dict(state),group=group,frameKeys=['_module_frame'] if focus and '_module_frame' in engines[q['id']][1].bounds else None))
  # Compact eight-object strip: all IDs must occur in this release.

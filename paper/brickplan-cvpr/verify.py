@@ -30,20 +30,33 @@ def main():
  for s in scenes['scenes']:
   assert s['caseId'] in ids,('Non-current figure case',s['caseId'])
   assert digest_state(s['state'])==s['stateSha256']
+ arena=read(HERE/'evidence/arena-traces.json');dependencies(arena['sources'])
+ assert arena['apiCalls']==0 and len(arena['runs'])==2
+ for run in arena['runs']:
+  assert run['protocol']=='brick-atlas-tool-arena/2' and not run['currentProtocolResult']
+  assert run['exactReplayPassed'] and run['normalSucceeded'] and run['gtSuccess'] and run['gtPrivileged']
+  assert run['gtFrames'][:4]==run['modelFrames'][:4]
+  assert len(run['gtFrames'])==len(run['modelFrames'])==8
+  assert sum(r['object']==run['object'] for r in arena['decisionLedger'])==run['metrics']['decisions']
+ for s in arena['scenes']:assert digest_state(s['state'])==s['stateSha256']
  prov=read(HERE/'figures-release/provenance.json');dependencies(prov['sources']);assert prov['typography']['family']=='Comic Sans MS'
  for name,x in prov['images'].items():
   p=HERE/name if name.startswith('figures-release/') else ROOT/name
   assert digest(p)==x['sha256'] and list(Image.open(p).size)==x['pixels'],name
-  if name.startswith('figures-release/native/'):
+  if name.startswith(('figures-release/native/','figures-release/arena-native/')):
    assert x['pixels']==[3200,2400]
    assert read(p.with_suffix('.png.json'))['sha256']==x['sha256']
  for name,x in prov['figures'].items():assert digest(HERE/'figures-release'/f'{name}.pdf')==x['pdfSha256']
  results=read(HERE/'evidence/release-results-template.json');plan=read(HERE/'evidence/release-experiment-plan.json')
+ literature=read(HERE/'evidence/literature-review.json')
+ assert literature['count']==len(literature['items'])==15
+ assert len({x['url'] for x in literature['items']})==15
  assert results['status']=='NOT_RUN' and results['apiCalls']==0 and results['repetitions']==1
- assert len(results['tables'])==19 and len(results['models'])==10
+ assert len(results['tables'])==30 and len(results['models'])==10
  assert plan['finalEvaluationIds'] is None and plan['allSourcesAuthoringExposed']
  for name,table in results['tables'].items():
   assert (HERE/'tables'/f'{name}.tex').is_file()
+  assert '\\input{tables/'+name+'}' in (HERE/'supplement.tex').read_text()
   assert all(v is None for row in table['rows'] for v in row['results'].values())
  for name,h in read(HERE/'template-provenance.json')['files'].items():assert digest(HERE/name)==h
  texpaths=[HERE/'main.tex',HERE/'supplement.tex',*sorted((HERE/'tables').glob('*.tex'))]
@@ -60,7 +73,7 @@ def main():
  pdfs={}
  for name in ['main','supplement']:
   p=HERE/'build'/f'{name}.pdf';d=fitz.open(p);log=(HERE/'build'/f'{name}.log').read_text(errors='replace')
-  assert not re.search(r'(Citation|Reference) .*undefined|Overfull \\[hv]box',log),(name,'Unresolved reference or overflow')
+  assert not re.search(r'(Citation|Reference) .*undefined|Overfull \\[hv]box|Missing character',log),(name,'Unresolved reference, overflow or missing glyph')
   text='\n'.join(page.get_text() for page in d);normalized=re.sub(r'\s+',' ',text)
   expected_total='Total '+str(len(models))+' '+' '.join(f'{snapshot["taskTypes"][t]:,}' for t in ['S0','S1','D0','D1','D2'])+' '+f'{len(questions):,}'
   assert expected_total in normalized,(name,'Dataset table total disagrees with release',expected_total)
@@ -70,7 +83,7 @@ def main():
   for m in results['models']:assert m['name'] in normalized,(name,m['name'])
   if name=='main':
    reference=[i+1 for i,page in enumerate(d) if page.get_text().lstrip().startswith('References') or re.search(r'\nReferences\n',page.get_text())]
-   assert reference and reference[0]<=9,('More than eight body pages',reference,len(d))
+   assert reference and reference[0]==11,('Draft must have ten body pages',reference,len(d))
   ppis=[];fontids=set()
   for page in d:
    assert abs(page.rect.width-612)<.1 and abs(page.rect.height-792)<.1
@@ -80,7 +93,7 @@ def main():
     if font[0] not in fontids:assert d.extract_font(font[0])[3];fontids.add(font[0])
   assert min(ppis)>=599,(name,'Embedded scene below 600 ppi',min(ppis))
   pdfs[name]=dict(pages=len(d),sha256=digest(p),minimumEmbeddedImagePpi=round(min(ppis)),embeddedFonts=len(fontids))
- out=dict(schema='brick-atlas-paper-verification/5',date='2026-10-29',status='PASS',pdfs=pdfs,questions=len(questions),models=len(models),taskTypes=snapshot['taskTypes'],figures=len(referenced),nativeScenes=len(scenes['scenes']),figureFontAudit=fonts,plannedModels=10,unmeasuredResultTables=19,apiCalls=0,formalModelStudyComplete=False,humanQualificationComplete=False,independentPhysicsValidated=False)
+ out=dict(schema='brick-atlas-paper-verification/6',date='2026-10-29',status='PASS',pdfs=pdfs,bodyPages=10,questions=len(questions),models=len(models),taskTypes=snapshot['taskTypes'],figures=len(referenced),nativeScenes=len(scenes['scenes'])+len(arena['scenes']),archivedV2QualitativeRuns=2,figureFontAudit=fonts,plannedModels=10,unmeasuredResultTables=30,apiCalls=0,formalModelStudyComplete=False,humanQualificationComplete=False,independentPhysicsValidated=False)
  (HERE/'verification.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps({k:v for k,v in out.items() if k!='figureFontAudit'},indent=2))
 def digest_state(state):return hashlib.sha256(json.dumps(state,sort_keys=True).encode()).hexdigest()
 if __name__=='__main__':main()
