@@ -26,7 +26,7 @@ Rendering requires the existing project geometry environment: NumPy, MeshLib, th
 
 The ZIP includes main/supplement TeX, their referenced figures, table sources, bibliography, and the recorded official CVPR style. Select `main.tex` or `supplement.tex` in Overleaf. The current draft deliberately has ten body pages; this is not a submission-length compliance claim. No geometry engine or model API is needed to compile those included assets.
 
-The style files are unchanged from the repository's recorded CVPR 2026 source. The 2027 venue label and Draft ID remain provisional; check the actual submission rules when preparing an upload.
+The style files are unchanged from the repository's recorded CVPR 2026 source. The 2027 venue label and Draft ID remain provisional. The published 2027 rules require an eight-page main paper and a separate LLM Usage Statement; template migration and submission-length editing remain pending.
 
 ## Historical scripts
 
@@ -35,3 +35,16 @@ The style files are unchanged from the repository's recorded CVPR 2026 source. T
 `publication_plate.py` exports the same white studded plate patch used by the Arena sensor, preserving its grid, board transform, stud radius and height. It changes only publication geometry. Archived inputs remain byte-identical; the two actual RGB images in the supplement are not relit or enlarged.
 
 `pilot_analysis.py` re-audits all 19 archived provider attempts, keeps service failures separate, and exports the 15 latest-condition ledger and descriptive error counts. It makes no provider calls. `MODEL-ERRORS-AND-MODALITIES.zh-CN.md` contains the normal-run decision ledger and the proposed T/I/TI study contract; strict modality adapters remain pending.
+
+## Standalone capability dossier
+
+`CAPABILITY-ATLAS-AND-REVIEW.zh-CN.md` links the six-case visual dossier and its internal readiness review. It combines explicitly labeled historical v2 runs, one current static run interrupted by a billing receipt error, and two reference-only tasks. These are not a current-release aggregate score.
+
+```bash
+PYTHONPATH=benchmark/brickplan-repair benchmark/.runtime/mlx-env/bin/python paper/brickplan-cvpr/capability_assets.py
+.tools/node-v22.23.2-darwin-arm64/bin/node paper/brickplan-cvpr/render_publication.mjs --capability
+benchmark/.runtime/mlx-env/bin/python paper/brickplan-cvpr/capability_atlas.py
+PYTHONPATH=benchmark/brickplan-repair benchmark/.runtime/mlx-env/bin/python paper/brickplan-cvpr/verify_capability_atlas.py
+```
+
+These commands make no model API calls. `capability_pilot.py` is a separate paid runner, refuses to overwrite its existing report, and uses the existing capped ledger. The new run's confirmed charge and unresolved reservation are recorded separately; an unavailable receipt is neither zero cost nor a model failure.

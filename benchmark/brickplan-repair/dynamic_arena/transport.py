@@ -123,6 +123,17 @@ class Transport:
             if status != '200':
                 raise RuntimeError('Provider HTTP ' + status + ': ' + body_text[:240])
             result = json.loads(body_text)
+            # Preserve the provider response before validating billing. An
+            # incomplete receipt must not erase a returned generation ID or
+            # model output needed for later reconciliation. No headers/key.
+            response_archive = self.directory / 'api' / (entry['id'] + '.response.private.json.gz')
+            with gzip.open(response_archive, 'wt', encoding='utf-8') as archive:
+                json.dump(result, archive, ensure_ascii=False)
+            entry['responseArchive'] = str(response_archive.relative_to(self.directory))
+            entry['responseSha256'] = hashlib.sha256(body_text.encode()).hexdigest()
+            if isinstance(result.get('id'), str):
+                entry['generationId'] = result['id']
+            write_json(self.ledger_path, self.ledger)
             cost = result.get('usage', {}).get('cost')
             if not isinstance(cost, (float, int)) or not math.isfinite(cost) or cost < 0 or not result.get('id'):
                 raise RuntimeError('API response missing a verifiable charge')

@@ -7,6 +7,7 @@
 - [Overleaf 上传包](brickplan-cvpr-overleaf.zip)
 - [正文源码](main.tex) / [补充材料源码](supplement.tex)
 - [最终编译与证据检查](verification.json)
+- **[最新：六个代表例子、真实模型证据与完备程度评审](CAPABILITY-ATLAS-AND-REVIEW.zh-CN.md)** / [三页高清图册](capability-atlas.pdf)
 
 ## 本版同步了什么
 
@@ -22,7 +23,7 @@
 
 程序能证明：正式题有可执行参考动作，当前图和目标图使用一致画布，正确中途阶段不会被强迫继续拼完整件，替代合法顺序可接受，未触发事故与技术故障分开统计。
 
-**还不能说明已经达到 CVPR 录取水平。** 本版正式模型结果、独立真人操作和独立机械可行性审查尚未完成。所有候选来源在出题时都见过，不能声称是未见来源测试。详见 [投稿前还要完成的事](SUBMISSION-READINESS.zh-CN.md)。
+**还不能说明已经达到 CVPR 录取水平。** 本版正式模型结果、独立真人操作和覆盖当前题库的独立拆装检查尚未完成。已有另一几何后端的抽样检查，不能代替全库验证。作者出题时看过来源不等于泄漏；还须记录哪些来源参与了模型或提示调试，才能支持未见来源的结论。详见 [投稿前还要完成的事](SUBMISSION-READINESS.zh-CN.md)。
 
 ## 构建
 
@@ -40,7 +41,7 @@ benchmark/.runtime/mlx-env/bin/python paper/brickplan-cvpr/build.py --refresh-fi
 
 仅重新排图中文字：`--refresh-typography`。当前构建器只使用 `release_assets.py`、`release_tables.py`、`release_figures.py` 、`arena_assets.py` 和现版索引；旧版轨迹使用独立证据文件，不进入现版题数。旧 `update_current.py`、`make_current_tables.py` 等属于历史稿，不再由默认构建调用。
 
-正文继续使用仓库已记录来源的 CVPR 官方样式。2027 年份和 Draft 投稿号仍为草稿标记，投稿时须核对当届要求；本次没有改动模板本体。
+正文继续使用仓库已记录来源的 CVPR 官方样式。2027 年份和 Draft 投稿号仍为草稿标记，模板本体尚未迁移到当届发布包；已核对 [2027 作者指南](https://cvpr.thecvf.com/Conferences/2027/AuthorGuidelines)，提交前需满足 8 页正文及单独的 LLM Usage Statement 要求。10 页工作稿按当前要求保留。
 
 ## 证据入口
 
@@ -51,7 +52,7 @@ benchmark/.runtime/mlx-env/bin/python paper/brickplan-cvpr/build.py --refresh-fi
 - `evidence/release-experiment-plan.json`：实验范围、每条件运行一次及未完成状态。
 - `evidence/release-model-inventory.json`：全部 310 个模型。
 
-旧 `current-*` 证据和 `figures-publication/` 等旧图仍可追溯，但不被现稿引用。本次没有新增付费 API 调用。
+旧 `current-*` 证据和 `figures-publication/` 等旧图仍可追溯，但不被现稿引用。下述两轮论文构建未调用付费 API；最新代表例子补测的调用和费用单列在文末。
 
 ## 本次扩充：Arena 过程、32 组实验与 15 篇论文对照
 
@@ -59,10 +60,16 @@ benchmark/.runtime/mlx-env/bin/python paper/brickplan-cvpr/build.py --refresh-fi
 - [15 篇相关论文与审稿问题逐项对照](RELATED-BENCHMARK-REVIEW.zh-CN.md)
 - [新增 11 组实验，用普通话说明做什么](EXPERIMENT-PLAN.zh-CN.md)
 
-模型案例来自旧版 Arena v2：小汽车成功、椅子错误完成。全部动作重新检查，与原日志一致。GT 从同一事故现场继续，使用答案信息；不把它当作模型成绩，不声称全局最少动作。新版正式结果仍留空。本次新增付费调用 0 次。
+模型案例来自旧版 Arena v2：小汽车成功、椅子错误完成。全部动作重新检查，与原日志一致。GT 从同一事故现场继续，使用答案信息；不把它当作模型成绩，不声称全局最少动作。新版正式结果仍留空。该轮论文构建新增付费调用 0 次。
 
 ## 本次增加：真实正常拼装与分类型错误分析
 
 [先看这份中文图文说明](MODEL-ERRORS-AND-MODALITIES.zh-CN.md)：两个模型真实拼好物件的全部安装步骤、完整 34 轮动作、19 次已有试跑审计，以及文字/图片/组合如何进入静态和动态题。
 
 正文首图现在展示模型真实拼好的小汽车；补充材料同时展示小汽车和椅子。错误统计区分格式、编号、连接、碰撞、拆卸路径、错误提交和服务故障。三种输入已形成明确实验设计，严格的三套运行适配器尚未接完，未虚构对照成绩。
+
+## 最新：代表能力图册与非成绩部分评审
+
+新增六类代表例子的独立图册，展示已完成、未完成、技术中断和模型尚未实测的情况；正文及补充 PDF 保持原工作稿。内部完备程度评为约 70–75 分，不是 CVPR 官方评分或录取概率。
+
+新增 GPT-6.1 Sol 书架补测：正确检查并拆下错色件，其他 13 个正确位置保留；第三次请求缺少可核验费用，停止运行，完成结果不适用。新增确认费用 $0.2568295，另有 $0.782538 未核实预留。详细来源、费用、图数、GT 步骤和重建命令均在 [中文图文说明](CAPABILITY-ATLAS-AND-REVIEW.zh-CN.md)。
