@@ -56,7 +56,11 @@ def one(number):
   assert goal_indices==set(meta['scope']['indices'])==set(cert['source']['moduleSourceIndices']),'Scope metadata/certificate mismatch'
   assert len(manual['actions'])==meta['activeParts']==len(goal_indices),'Manual length/metadata mismatch'
   assert len({c['id'] for c in cases})==len(cases)
-  assert sum(c['mode']=='static' for c in cases)==1
+  assert 2 <= sum(c['mode']=='static' for c in cases) <= 6
+  assert sum(c['mode']=='static' and c['family']=='control' for c in cases)==1
+  from expansion_v7.build import signature_key
+  rt0=runtime(cert)
+  assert len({signature_key(rt0,c) for c in cases if c['mode']=='static'})==sum(c['mode']=='static' for c in cases)
   rt=runtime(cert)
   for c in cases:
    assert not set(c['humanErrorIds']) & {'H12','H14','H15','H16','H17'}

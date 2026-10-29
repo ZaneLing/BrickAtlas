@@ -1,4 +1,4 @@
-"""Dynamic-first questions with one representative static repair per source."""
+"""Dynamic-first questions with distinct static repair families and a clean control."""
 from collections import Counter
 from copy import deepcopy
 import argparse,hashlib,fcntl
@@ -63,7 +63,7 @@ def build(number):
     d['visibilityCheck']=vs
     if add(d):break
    except AssertionError:continue
- # Exactly one static counterpart; prefer meaningful non-missing recovery.
+ # Seed a static counterpart; expand distinct error families and a control below.
  choices=sorted(paired,key=lambda d:(d['family']=='missing',-len(d['referenceEvents'][0]['recovery'])))
  d=choices[0];e=d['referenceEvents'][0];cp=d['events'][0]['minimumInstalled'];s=make(d['family'],'static',cp)
  s.update(initial=deepcopy(e['after']),goal=deepcopy(e['before']),referenceActions=deepcopy(e['recovery']),referenceIncident=e,visibilityCheck=d['visibilityCheck'],legalWitnessOnly=True,pairedDynamicId=d['id'])
@@ -73,7 +73,9 @@ def build(number):
  for a in s['referenceActions']:
   ep.step(public_action(ep,a));assert ep.feedback['code']=='OK'
  ep.step(dict(type='finish'));assert ep.score()['success'];s['referenceScore']=ep.score();add(s)
- meta.update(caseCount=len(cases),dynamicCases=sum(c['mode']=='dynamic' for c in cases),staticCases=1,families=sorted({c['family'] for c in cases}),humanValidated=False,apiModelEvaluated=False,questionStatus='machine-checked-human-review-pending',failedFamilies=rejected)
+ from scaling_release.static_bank import expand
+ cases=expand(cert,cases,rt.q)
+ meta.update(caseCount=len(cases),dynamicCases=sum(c['mode']=='dynamic' for c in cases),staticCases=sum(c['mode']=='static' for c in cases),families=sorted({c['family'] for c in cases}),humanValidated=False,apiModelEvaluated=False,questionStatus='machine-checked-human-review-pending',failedFamilies=rejected)
  write(folder/'certificate.private.json.gz',cert);write(folder/'manual.private.json.gz',dict(actions=normal,states=states));write(folder/'cases.private.json.gz',cases);write(folder/'metadata.json',meta)
  (folder/'status.json').unlink(missing_ok=True)
  # A normalized public design describes what is seen, never the hidden event schedule.

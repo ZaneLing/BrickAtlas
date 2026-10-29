@@ -30,6 +30,8 @@ def main():
 ## 2. 从哪里看
 
 - [直接看模型、局部图和题目](index.html)：每个模型有全景、操作范围、当前状态、验收目标和题目列表。
+- [题量变化说明](COUNT-CHANGES.zh-CN.md)：解释之前五千多题、上一轮精选子集和本次修正的关系。
+- [全部题目记录](all-questions.html)：包括当前可运行题和未在本轮复查的历史题，状态分开标注。
 - [全部模型总表](MODEL-AND-QUESTION-LIST.zh-CN.md)：每个模型的操作范围、件数、题量和错误类别。
 - [逐模型的全部题目与 GT 位置](QUESTIONS.zh-CN.md)。
 - [带图片的代表题](EXAMPLES.zh-CN.md)：输入、目标、错误和 GT 一起看。
@@ -49,7 +51,7 @@ def main():
 | D1 单次动态干扰 | 模型拼装中，环境造成一次合法的状态变化 | {types['D1']} |
 | D2 连续动态干扰 | 前后发生多次变化，检查恢复后能否继续完成 | {types['D2']} |
 
-新社区模型每个只留 **1 道静态代表题**，其中一部分是正确对照。动态题按这个模型实际能发生、能看见、能合法修好的错误来选；没有硬塞每一种错误。
+新社区模型按已验证的不同错误分别保留静态题，并增加一道正常对照：通常 **4–6 道**，可行错误较少的物件会更少。原有完整物件不再只选几个动态代表题，恢复通过当前复查的不同阶段和错误条件。没有硬塞每一种错误，也没有把相同物理状态换名重复计数。
 
 ### 长度和难度
 
@@ -78,6 +80,9 @@ deliverables/brick-atlas-dataset-v1/
 ├── README.zh-CN.md                       本说明
 ├── MODEL-AND-QUESTION-LIST.zh-CN.md       全模型表
 ├── QUESTIONS.zh-CN.md                    全部正式题目
+├── COUNT-CHANGES.zh-CN.md                旧题、精选子集与本次题量变化
+├── all-questions.html                   全部题目记录与状态检索
+├── all-questions.jsonl                  历史和当前记录（不全是合格题）
 ├── INPUT-OUTPUT-AND-METRICS.zh-CN.md      输入输出、规则、指标
 ├── release.json                         版本、实际数量、状态
 ├── models.jsonl                         一行一个可运行模型

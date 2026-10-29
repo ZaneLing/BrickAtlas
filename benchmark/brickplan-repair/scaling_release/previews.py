@@ -33,6 +33,12 @@ def one(number):
  for name,state in roles.items():
   for view in ['isometric','rear','top']:
    ren.rgb(state,view,size=(800,600),supersample=1,frame_keys=frame)[0].save(dest/f'{name}-{view}.png')
+ from scaling_release.static_bank import asset_key
+ for s in (c for c in cases if c['mode']=='static'):
+  target=dest/'static'/asset_key(s['id']);target.mkdir(parents=True,exist_ok=True)
+  for role,state in [('static-current',s['initial']),('static-target',s['goal'])]:
+   for view in ['isometric','rear','top']:
+    ren.rgb(state,view,size=(800,600),supersample=1,frame_keys=frame)[0].save(target/f'{role}-{view}.png')
  for c in cases:
   for i,e in enumerate(c.get('referenceEvents',[])):
    for role in ['before','after']:

@@ -17,6 +17,11 @@
 | `SC:112-2:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:112-2:dynamic:offset` | D1 | 位置偏移 | 8 | 1 |
 | `SC:112-2:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:112-2:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:112-2:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:112-2:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:112-2:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:112-2:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/112-2/cases.private.json.gz`，按题目 ID 查找。
 
@@ -36,6 +41,11 @@ GT：`private/112-2/cases.private.json.gz`，按题目 ID 查找。
 | `SC:126-1:dynamic:extra-layer` | D1 | 多装一层 | 16 | 1 |
 | `SC:126-1:dynamic:multiple-missing-then-offset` | D2 | 连续多次干扰 | 18 | 2 |
 | `SC:126-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:126-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:126-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:126-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:126-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:126-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/126-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -55,6 +65,11 @@ GT：`private/126-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:158-1:dynamic:buried-repair` | D1 | 拆上层返修 | 12 | 1 |
 | `SC:158-1:dynamic:multiple-missing-then-offset` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:158-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:158-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:158-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:158-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:158-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:158-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/158-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -73,6 +88,11 @@ GT：`private/158-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:311-1:dynamic:extra-layer` | D1 | 多装一层 | 6 | 1 |
 | `SC:311-1:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:311-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:311-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:311-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:311-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:311-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:311-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/311-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -88,6 +108,8 @@ GT：`private/311-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:345-1:dynamic:extra-layer` | D1 | 多装一层 | 5 | 1 |
 | `SC:345-1:dynamic:buried-repair` | D1 | 拆上层返修 | 8 | 1 |
 | `SC:345-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:345-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:345-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/345-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -107,6 +129,11 @@ GT：`private/345-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:390-2:dynamic:extra-layer` | D1 | 多装一层 | 13 | 1 |
 | `SC:390-2:dynamic:multiple-missing-then-offset` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:390-2:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:390-2:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:390-2:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:390-2:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:390-2:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:390-2:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/390-2/cases.private.json.gz`，按题目 ID 查找。
 
@@ -126,6 +153,11 @@ GT：`private/390-2/cases.private.json.gz`，按题目 ID 查找。
 | `SC:392-1:dynamic:buried-repair` | D1 | 拆上层返修 | 19 | 1 |
 | `SC:392-1:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 18 | 2 |
 | `SC:392-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:392-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:392-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:392-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:392-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:392-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/392-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -145,6 +177,11 @@ GT：`private/392-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:544-1:dynamic:wrong-color` | D1 | 颜色错误 | 10 | 1 |
 | `SC:544-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:544-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:544-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:544-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:544-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:544-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:544-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/544-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -164,6 +201,11 @@ GT：`private/544-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:544-1-alt-1808:dynamic:wrong-part` | D1 | 用错零件 | 20 | 1 |
 | `SC:544-1-alt-1808:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 20 | 2 |
 | `SC:544-1-alt-1808:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:544-1-alt-1808:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:544-1-alt-1808:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:544-1-alt-1808:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:544-1-alt-1808:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:544-1-alt-1808:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/544-1-alt-1808/cases.private.json.gz`，按题目 ID 查找。
 
@@ -183,6 +225,11 @@ GT：`private/544-1-alt-1808/cases.private.json.gz`，按题目 ID 查找。
 | `SC:544-1-alt-1809:dynamic:repeat-omission` | D1 | 重复结构漏装 | 15 | 1 |
 | `SC:544-1-alt-1809:dynamic:multiple-missing-then-early-cover` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:544-1-alt-1809:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:544-1-alt-1809:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:544-1-alt-1809:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:544-1-alt-1809:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:544-1-alt-1809:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:544-1-alt-1809:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
 
 GT：`private/544-1-alt-1809/cases.private.json.gz`，按题目 ID 查找。
 
@@ -202,6 +249,11 @@ GT：`private/544-1-alt-1809/cases.private.json.gz`，按题目 ID 查找。
 | `SC:600-1:dynamic:wrong-part` | D1 | 用错零件 | 12 | 1 |
 | `SC:600-1:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:600-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:600-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:600-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:600-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:600-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:600-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
 
 GT：`private/600-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -220,6 +272,11 @@ GT：`private/600-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:601-2:dynamic:extra-layer` | D1 | 多装一层 | 5 | 1 |
 | `SC:601-2:dynamic:buried-repair` | D1 | 拆上层返修 | 8 | 1 |
 | `SC:601-2:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:601-2:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:601-2:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:601-2:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:601-2:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:601-2:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/601-2/cases.private.json.gz`，按题目 ID 查找。
 
@@ -234,6 +291,7 @@ GT：`private/601-2/cases.private.json.gz`，按题目 ID 查找。
 | `SC:733-1-alt-1822:dynamic:control` | D0 | 正常、无错误 | 3 | 0 |
 | `SC:733-1-alt-1822:dynamic:buried-repair` | D1 | 拆上层返修 | 7 | 1 |
 | `SC:733-1-alt-1822:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:733-1-alt-1822:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/733-1-alt-1822/cases.private.json.gz`，按题目 ID 查找。
 
@@ -252,6 +310,11 @@ GT：`private/733-1-alt-1822/cases.private.json.gz`，按题目 ID 查找。
 | `SC:733-1-alt-1823:dynamic:wrong-part` | D1 | 用错零件 | 6 | 1 |
 | `SC:733-1-alt-1823:dynamic:rotated` | D1 | 方向错误 | 6 | 1 |
 | `SC:733-1-alt-1823:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:733-1-alt-1823:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:733-1-alt-1823:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:733-1-alt-1823:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:733-1-alt-1823:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:733-1-alt-1823:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/733-1-alt-1823/cases.private.json.gz`，按题目 ID 查找。
 
@@ -271,6 +334,11 @@ GT：`private/733-1-alt-1823/cases.private.json.gz`，按题目 ID 查找。
 | `SC:733-1-alt-1824:dynamic:wrong-color` | D1 | 颜色错误 | 11 | 1 |
 | `SC:733-1-alt-1824:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:733-1-alt-1824:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:733-1-alt-1824:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:733-1-alt-1824:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:733-1-alt-1824:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:733-1-alt-1824:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:733-1-alt-1824:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/733-1-alt-1824/cases.private.json.gz`，按题目 ID 查找。
 
@@ -289,6 +357,11 @@ GT：`private/733-1-alt-1824/cases.private.json.gz`，按题目 ID 查找。
 | `SC:850-1:dynamic:rotated` | D1 | 方向错误 | 5 | 1 |
 | `SC:850-1:dynamic:buried-repair` | D1 | 拆上层返修 | 7 | 1 |
 | `SC:850-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:850-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:850-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:850-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:850-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:850-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/850-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -308,6 +381,11 @@ GT：`private/850-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:850-1-alt-102:dynamic:offset` | D1 | 位置偏移 | 10 | 1 |
 | `SC:850-1-alt-102:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:850-1-alt-102:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:850-1-alt-102:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:850-1-alt-102:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:850-1-alt-102:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:850-1-alt-102:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:850-1-alt-102:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/850-1-alt-102/cases.private.json.gz`，按题目 ID 查找。
 
@@ -326,6 +404,11 @@ GT：`private/850-1-alt-102/cases.private.json.gz`，按题目 ID 查找。
 | `SC:850-1-alt-103:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:850-1-alt-103:dynamic:wrong-color` | D1 | 颜色错误 | 7 | 1 |
 | `SC:850-1-alt-103:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:850-1-alt-103:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:850-1-alt-103:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:850-1-alt-103:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:850-1-alt-103:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:850-1-alt-103:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/850-1-alt-103/cases.private.json.gz`，按题目 ID 查找。
 
@@ -344,6 +427,11 @@ GT：`private/850-1-alt-103/cases.private.json.gz`，按题目 ID 查找。
 | `SC:852-1:dynamic:early-cover` | D1 | 提前封口 | 8 | 1 |
 | `SC:852-1:dynamic:buried-repair` | D1 | 拆上层返修 | 11 | 1 |
 | `SC:852-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:852-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:852-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:852-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:852-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:852-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/852-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -362,6 +450,11 @@ GT：`private/852-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:1591-1:dynamic:rotated` | D1 | 方向错误 | 9 | 1 |
 | `SC:1591-1:dynamic:extra-layer` | D1 | 多装一层 | 8 | 1 |
 | `SC:1591-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:1591-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:1591-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:1591-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:1591-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:1591-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/1591-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -380,6 +473,11 @@ GT：`private/1591-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:1632-1:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:1632-1:dynamic:offset` | D1 | 位置偏移 | 6 | 1 |
 | `SC:1632-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:1632-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:1632-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:1632-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:1632-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:1632-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/1632-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -399,6 +497,11 @@ GT：`private/1632-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:1869-1:dynamic:offset` | D1 | 位置偏移 | 10 | 1 |
 | `SC:1869-1:dynamic:multiple-missing-then-left-right-swap` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:1869-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:1869-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:1869-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:1869-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:1869-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:1869-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/1869-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -417,6 +520,11 @@ GT：`private/1869-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:2130-1:dynamic:extra-layer` | D1 | 多装一层 | 8 | 1 |
 | `SC:2130-1:dynamic:early-cover` | D1 | 提前封口 | 8 | 1 |
 | `SC:2130-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:2130-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:2130-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:2130-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:2130-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:2130-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
 
 GT：`private/2130-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -436,6 +544,11 @@ GT：`private/2130-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:2132-1:dynamic:early-cover` | D1 | 提前封口 | 11 | 1 |
 | `SC:2132-1:dynamic:multiple-missing-then-offset` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:2132-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:2132-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:2132-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:2132-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:2132-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:2132-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/2132-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -455,6 +568,11 @@ GT：`private/2132-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:2133-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 14 | 1 |
 | `SC:2133-1:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:2133-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:2133-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:2133-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:2133-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:2133-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:2133-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
 
 GT：`private/2133-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -474,6 +592,11 @@ GT：`private/2133-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:3223-1:dynamic:rotated` | D1 | 方向错误 | 10 | 1 |
 | `SC:3223-1:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 10 | 2 |
 | `SC:3223-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:3223-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:3223-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:3223-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:3223-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:3223-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/3223-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -492,6 +615,11 @@ GT：`private/3223-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:3741-1:dynamic:repeated-step` | D1 | 步骤重复 | 6 | 1 |
 | `SC:3741-1:dynamic:wrong-color` | D1 | 颜色错误 | 7 | 1 |
 | `SC:3741-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:3741-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:3741-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:3741-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:3741-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:3741-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/3741-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -510,6 +638,11 @@ GT：`private/3741-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4016-1:dynamic:repeated-step` | D1 | 步骤重复 | 6 | 1 |
 | `SC:4016-1:dynamic:wrong-color` | D1 | 颜色错误 | 7 | 1 |
 | `SC:4016-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4016-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4016-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:4016-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:4016-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4016-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/4016-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -529,6 +662,11 @@ GT：`private/4016-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4017-1:dynamic:wrong-part` | D1 | 用错零件 | 15 | 1 |
 | `SC:4017-1:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:4017-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4017-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4017-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4017-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4017-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:4017-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4017-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -548,6 +686,11 @@ GT：`private/4017-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4018-1:dynamic:wrong-part` | D1 | 用错零件 | 14 | 1 |
 | `SC:4018-1:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:4018-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4018-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4018-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4018-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4018-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4018-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
 
 GT：`private/4018-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -566,6 +709,11 @@ GT：`private/4018-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4019-1:dynamic:wrong-part` | D1 | 用错零件 | 8 | 1 |
 | `SC:4019-1:dynamic:rotated` | D1 | 方向错误 | 8 | 1 |
 | `SC:4019-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4019-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4019-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4019-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4019-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:4019-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
 
 GT：`private/4019-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -585,6 +733,11 @@ GT：`private/4019-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4037-1:dynamic:buried-repair` | D1 | 拆上层返修 | 13 | 1 |
 | `SC:4037-1:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:4037-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4037-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4037-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4037-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4037-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:4037-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4037-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -604,6 +757,11 @@ GT：`private/4037-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4096-1-alt-1481:dynamic:wrong-color` | D1 | 颜色错误 | 14 | 1 |
 | `SC:4096-1-alt-1481:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 23 | 2 |
 | `SC:4096-1-alt-1481:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4096-1-alt-1481:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4096-1-alt-1481:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4096-1-alt-1481:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4096-1-alt-1481:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4096-1-alt-1481:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4096-1-alt-1481/cases.private.json.gz`，按题目 ID 查找。
 
@@ -622,6 +780,10 @@ GT：`private/4096-1-alt-1481/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4096-1-alt-1482:dynamic:wrong-color` | D1 | 颜色错误 | 10 | 1 |
 | `SC:4096-1-alt-1482:dynamic:multiple-missing-then-extra-layer` | D2 | 连续多次干扰 | 10 | 2 |
 | `SC:4096-1-alt-1482:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4096-1-alt-1482:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4096-1-alt-1482:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4096-1-alt-1482:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4096-1-alt-1482:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/4096-1-alt-1482/cases.private.json.gz`，按题目 ID 查找。
 
@@ -640,6 +802,11 @@ GT：`private/4096-1-alt-1482/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4096-1-alt-1484:dynamic:repeat-omission` | D1 | 重复结构漏装 | 7 | 1 |
 | `SC:4096-1-alt-1484:dynamic:repeated-step` | D1 | 步骤重复 | 6 | 1 |
 | `SC:4096-1-alt-1484:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4096-1-alt-1484:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4096-1-alt-1484:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:4096-1-alt-1484:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4096-1-alt-1484:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4096-1-alt-1484:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4096-1-alt-1484/cases.private.json.gz`，按题目 ID 查找。
 
@@ -659,6 +826,11 @@ GT：`private/4096-1-alt-1484/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4096-1-alt-1485:dynamic:repeat-omission` | D1 | 重复结构漏装 | 10 | 1 |
 | `SC:4096-1-alt-1485:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:4096-1-alt-1485:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4096-1-alt-1485:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4096-1-alt-1485:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4096-1-alt-1485:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4096-1-alt-1485:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:4096-1-alt-1485:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
 
 GT：`private/4096-1-alt-1485/cases.private.json.gz`，按题目 ID 查找。
 
@@ -678,6 +850,11 @@ GT：`private/4096-1-alt-1485/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4096-1-alt-1486:dynamic:offset` | D1 | 位置偏移 | 11 | 1 |
 | `SC:4096-1-alt-1486:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:4096-1-alt-1486:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4096-1-alt-1486:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4096-1-alt-1486:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4096-1-alt-1486:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4096-1-alt-1486:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4096-1-alt-1486:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4096-1-alt-1486/cases.private.json.gz`，按题目 ID 查找。
 
@@ -697,6 +874,11 @@ GT：`private/4096-1-alt-1486/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4096-1-alt-1487:dynamic:wrong-color` | D1 | 颜色错误 | 13 | 1 |
 | `SC:4096-1-alt-1487:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 18 | 2 |
 | `SC:4096-1-alt-1487:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:4096-1-alt-1487:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4096-1-alt-1487:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4096-1-alt-1487:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4096-1-alt-1487:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4096-1-alt-1487:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4096-1-alt-1487/cases.private.json.gz`，按题目 ID 查找。
 
@@ -711,6 +893,7 @@ GT：`private/4096-1-alt-1487/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4096-1-alt-1488:dynamic:control` | D0 | 正常、无错误 | 3 | 0 |
 | `SC:4096-1-alt-1488:dynamic:buried-repair` | D1 | 拆上层返修 | 7 | 1 |
 | `SC:4096-1-alt-1488:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4096-1-alt-1488:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4096-1-alt-1488/cases.private.json.gz`，按题目 ID 查找。
 
@@ -729,6 +912,11 @@ GT：`private/4096-1-alt-1488/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4096-1-alt-1489:dynamic:repeat-omission` | D1 | 重复结构漏装 | 8 | 1 |
 | `SC:4096-1-alt-1489:dynamic:repeated-step` | D1 | 步骤重复 | 7 | 1 |
 | `SC:4096-1-alt-1489:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4096-1-alt-1489:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4096-1-alt-1489:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:4096-1-alt-1489:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4096-1-alt-1489:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4096-1-alt-1489:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4096-1-alt-1489/cases.private.json.gz`，按题目 ID 查找。
 
@@ -747,6 +935,11 @@ GT：`private/4096-1-alt-1489/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4347-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:4347-1:dynamic:buried-repair` | D1 | 拆上层返修 | 7 | 1 |
 | `SC:4347-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4347-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4347-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4347-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4347-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4347-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4347-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -765,6 +958,11 @@ GT：`private/4347-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4347-1-alt-794:dynamic:offset` | D1 | 位置偏移 | 7 | 1 |
 | `SC:4347-1-alt-794:dynamic:rotated` | D1 | 方向错误 | 7 | 1 |
 | `SC:4347-1-alt-794:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4347-1-alt-794:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4347-1-alt-794:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4347-1-alt-794:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4347-1-alt-794:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4347-1-alt-794:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4347-1-alt-794/cases.private.json.gz`，按题目 ID 查找。
 
@@ -783,6 +981,11 @@ GT：`private/4347-1-alt-794/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4348-1:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:4348-1:dynamic:offset` | D1 | 位置偏移 | 8 | 1 |
 | `SC:4348-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4348-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4348-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4348-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4348-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4348-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/4348-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -801,6 +1004,11 @@ GT：`private/4348-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4404-1:dynamic:rotated` | D1 | 方向错误 | 6 | 1 |
 | `SC:4404-1:dynamic:buried-repair` | D1 | 拆上层返修 | 8 | 1 |
 | `SC:4404-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4404-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4404-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4404-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4404-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4404-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4404-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -817,6 +1025,9 @@ GT：`private/4404-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4487-1:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:4487-1:dynamic:buried-repair` | D1 | 拆上层返修 | 8 | 1 |
 | `SC:4487-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4487-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4487-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4487-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
 
 GT：`private/4487-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -834,6 +1045,10 @@ GT：`private/4487-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4488-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:4488-1:dynamic:rotated` | D1 | 方向错误 | 5 | 1 |
 | `SC:4488-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4488-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4488-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4488-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4488-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4488-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -853,6 +1068,11 @@ GT：`private/4488-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4489-1:dynamic:offset` | D1 | 位置偏移 | 13 | 1 |
 | `SC:4489-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:4489-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4489-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4489-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4489-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4489-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4489-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4489-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -872,6 +1092,11 @@ GT：`private/4489-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4491-1:dynamic:extra-layer` | D1 | 多装一层 | 10 | 1 |
 | `SC:4491-1:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:4491-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4491-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4491-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4491-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4491-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4491-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4491-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -891,6 +1116,11 @@ GT：`private/4491-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4492-1:dynamic:wrong-color` | D1 | 颜色错误 | 15 | 1 |
 | `SC:4492-1:dynamic:multiple-missing-then-extra-layer` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:4492-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:4492-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4492-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4492-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4492-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4492-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4492-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -907,6 +1137,9 @@ GT：`private/4492-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4495-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 5 | 1 |
 | `SC:4495-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:4495-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4495-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4495-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4495-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/4495-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -926,6 +1159,11 @@ GT：`private/4495-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4536-1:dynamic:wrong-color` | D1 | 颜色错误 | 10 | 1 |
 | `SC:4536-1:dynamic:multiple-missing-then-offset` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:4536-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4536-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4536-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4536-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4536-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4536-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/4536-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -945,6 +1183,11 @@ GT：`private/4536-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4837-1:dynamic:wrong-color` | D1 | 颜色错误 | 15 | 1 |
 | `SC:4837-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 18 | 2 |
 | `SC:4837-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4837-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4837-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4837-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4837-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4837-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4837-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -962,6 +1205,10 @@ GT：`private/4837-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4837-1-alt-522:dynamic:offset` | D1 | 位置偏移 | 8 | 1 |
 | `SC:4837-1-alt-522:dynamic:buried-repair` | D1 | 拆上层返修 | 10 | 1 |
 | `SC:4837-1-alt-522:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4837-1-alt-522:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4837-1-alt-522:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4837-1-alt-522:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4837-1-alt-522:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4837-1-alt-522/cases.private.json.gz`，按题目 ID 查找。
 
@@ -981,6 +1228,11 @@ GT：`private/4837-1-alt-522/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4837-1-alt-526:dynamic:buried-repair` | D1 | 拆上层返修 | 18 | 1 |
 | `SC:4837-1-alt-526:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:4837-1-alt-526:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:4837-1-alt-526:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4837-1-alt-526:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4837-1-alt-526:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4837-1-alt-526:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:4837-1-alt-526:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4837-1-alt-526/cases.private.json.gz`，按题目 ID 查找。
 
@@ -999,6 +1251,11 @@ GT：`private/4837-1-alt-526/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4838-1:dynamic:rotated` | D1 | 方向错误 | 9 | 1 |
 | `SC:4838-1:dynamic:buried-repair` | D1 | 拆上层返修 | 13 | 1 |
 | `SC:4838-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4838-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4838-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4838-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4838-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4838-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
 
 GT：`private/4838-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1017,6 +1274,11 @@ GT：`private/4838-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4838-1-alt-23:dynamic:rotated` | D1 | 方向错误 | 6 | 1 |
 | `SC:4838-1-alt-23:dynamic:buried-repair` | D1 | 拆上层返修 | 8 | 1 |
 | `SC:4838-1-alt-23:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4838-1-alt-23:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4838-1-alt-23:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4838-1-alt-23:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4838-1-alt-23:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4838-1-alt-23:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4838-1-alt-23/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1035,6 +1297,11 @@ GT：`private/4838-1-alt-23/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4838-1-alt-25:dynamic:rotated` | D1 | 方向错误 | 9 | 1 |
 | `SC:4838-1-alt-25:dynamic:buried-repair` | D1 | 拆上层返修 | 13 | 1 |
 | `SC:4838-1-alt-25:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:4838-1-alt-25:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4838-1-alt-25:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4838-1-alt-25:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4838-1-alt-25:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4838-1-alt-25:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4838-1-alt-25/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1054,6 +1321,11 @@ GT：`private/4838-1-alt-25/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4883-1-alt-1332:dynamic:offset` | D1 | 位置偏移 | 11 | 1 |
 | `SC:4883-1-alt-1332:dynamic:multiple-missing-then-early-cover` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:4883-1-alt-1332:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4883-1-alt-1332:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4883-1-alt-1332:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:4883-1-alt-1332:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4883-1-alt-1332:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4883-1-alt-1332:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4883-1-alt-1332/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1072,6 +1344,11 @@ GT：`private/4883-1-alt-1332/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4883-1-alt-1333:dynamic:offset` | D1 | 位置偏移 | 7 | 1 |
 | `SC:4883-1-alt-1333:dynamic:rotated` | D1 | 方向错误 | 7 | 1 |
 | `SC:4883-1-alt-1333:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4883-1-alt-1333:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4883-1-alt-1333:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4883-1-alt-1333:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4883-1-alt-1333:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4883-1-alt-1333:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4883-1-alt-1333/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1090,6 +1367,11 @@ GT：`private/4883-1-alt-1333/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4883-1-alt-1334:dynamic:buried-repair` | D1 | 拆上层返修 | 11 | 1 |
 | `SC:4883-1-alt-1334:dynamic:repeat-omission` | D1 | 重复结构漏装 | 9 | 1 |
 | `SC:4883-1-alt-1334:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4883-1-alt-1334:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4883-1-alt-1334:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4883-1-alt-1334:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:4883-1-alt-1334:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4883-1-alt-1334:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4883-1-alt-1334/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1109,6 +1391,11 @@ GT：`private/4883-1-alt-1334/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4883-1-alt-1335:dynamic:rotated` | D1 | 方向错误 | 14 | 1 |
 | `SC:4883-1-alt-1335:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:4883-1-alt-1335:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4883-1-alt-1335:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4883-1-alt-1335:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4883-1-alt-1335:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:4883-1-alt-1335:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4883-1-alt-1335:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4883-1-alt-1335/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1127,6 +1414,10 @@ GT：`private/4883-1-alt-1335/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4883-1-alt-1341:dynamic:offset` | D1 | 位置偏移 | 10 | 1 |
 | `SC:4883-1-alt-1341:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:4883-1-alt-1341:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4883-1-alt-1341:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4883-1-alt-1341:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4883-1-alt-1341:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4883-1-alt-1341:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4883-1-alt-1341/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1146,6 +1437,11 @@ GT：`private/4883-1-alt-1341/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4886-1:dynamic:rotated` | D1 | 方向错误 | 20 | 1 |
 | `SC:4886-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 21 | 2 |
 | `SC:4886-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4886-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4886-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4886-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4886-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4886-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4886-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1165,6 +1461,11 @@ GT：`private/4886-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4886-1-alt-800:dynamic:offset` | D1 | 位置偏移 | 16 | 1 |
 | `SC:4886-1-alt-800:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 17 | 2 |
 | `SC:4886-1-alt-800:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4886-1-alt-800:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4886-1-alt-800:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4886-1-alt-800:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4886-1-alt-800:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4886-1-alt-800:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4886-1-alt-800/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1183,6 +1484,11 @@ GT：`private/4886-1-alt-800/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4886-1-alt-801:dynamic:extra-layer` | D1 | 多装一层 | 4 | 1 |
 | `SC:4886-1-alt-801:dynamic:buried-repair` | D1 | 拆上层返修 | 7 | 1 |
 | `SC:4886-1-alt-801:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4886-1-alt-801:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4886-1-alt-801:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4886-1-alt-801:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:4886-1-alt-801:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4886-1-alt-801:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4886-1-alt-801/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1201,6 +1507,11 @@ GT：`private/4886-1-alt-801/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4888-1-alt-803:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:4888-1-alt-803:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:4888-1-alt-803:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4888-1-alt-803:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4888-1-alt-803:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4888-1-alt-803:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4888-1-alt-803:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4888-1-alt-803:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/4888-1-alt-803/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1219,6 +1530,11 @@ GT：`private/4888-1-alt-803/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4896-1-alt-1349:dynamic:repeated-step` | D1 | 步骤重复 | 7 | 1 |
 | `SC:4896-1-alt-1349:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:4896-1-alt-1349:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4896-1-alt-1349:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4896-1-alt-1349:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4896-1-alt-1349:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4896-1-alt-1349:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4896-1-alt-1349:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4896-1-alt-1349/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1238,6 +1554,11 @@ GT：`private/4896-1-alt-1349/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4903-1:dynamic:offset` | D1 | 位置偏移 | 11 | 1 |
 | `SC:4903-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:4903-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4903-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4903-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4903-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4903-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4903-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4903-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1256,6 +1577,11 @@ GT：`private/4903-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4904-1:dynamic:buried-repair` | D1 | 拆上层返修 | 10 | 1 |
 | `SC:4904-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 8 | 1 |
 | `SC:4904-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4904-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4904-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4904-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:4904-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4904-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
 
 GT：`private/4904-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1273,6 +1599,10 @@ GT：`private/4904-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4905-1:dynamic:repeated-step` | D1 | 步骤重复 | 4 | 1 |
 | `SC:4905-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:4905-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4905-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4905-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4905-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4905-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4905-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1289,6 +1619,9 @@ GT：`private/4905-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4911-1:dynamic:buried-repair` | D1 | 拆上层返修 | 7 | 1 |
 | `SC:4911-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:4911-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4911-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4911-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4911-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4911-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1307,6 +1640,11 @@ GT：`private/4911-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4914-1:dynamic:rotated` | D1 | 方向错误 | 6 | 1 |
 | `SC:4914-1:dynamic:buried-repair` | D1 | 拆上层返修 | 8 | 1 |
 | `SC:4914-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4914-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4914-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4914-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4914-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4914-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4914-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1325,6 +1663,11 @@ GT：`private/4914-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4915-1:dynamic:offset` | D1 | 位置偏移 | 7 | 1 |
 | `SC:4915-1:dynamic:rotated` | D1 | 方向错误 | 7 | 1 |
 | `SC:4915-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4915-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4915-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4915-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4915-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4915-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
 
 GT：`private/4915-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1343,6 +1686,11 @@ GT：`private/4915-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4917-1:dynamic:wrong-color` | D1 | 颜色错误 | 9 | 1 |
 | `SC:4917-1:dynamic:rotated` | D1 | 方向错误 | 9 | 1 |
 | `SC:4917-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4917-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4917-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4917-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4917-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4917-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4917-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1362,6 +1710,11 @@ GT：`private/4917-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4918-1:dynamic:offset` | D1 | 位置偏移 | 13 | 1 |
 | `SC:4918-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:4918-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4918-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4918-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4918-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4918-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4918-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4918-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1381,6 +1734,11 @@ GT：`private/4918-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4918-1-alt-98:dynamic:extra-layer` | D1 | 多装一层 | 9 | 1 |
 | `SC:4918-1-alt-98:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:4918-1-alt-98:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4918-1-alt-98:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4918-1-alt-98:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4918-1-alt-98:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4918-1-alt-98:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4918-1-alt-98:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4918-1-alt-98/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1400,6 +1758,11 @@ GT：`private/4918-1-alt-98/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4918-1-alt-100:dynamic:repeat-omission` | D1 | 重复结构漏装 | 14 | 1 |
 | `SC:4918-1-alt-100:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:4918-1-alt-100:static:buried-repair` | S1 | 拆上层返修 | 8 | 0 |
+| `SC:4918-1-alt-100:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4918-1-alt-100:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4918-1-alt-100:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4918-1-alt-100:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4918-1-alt-100:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4918-1-alt-100/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1417,6 +1780,10 @@ GT：`private/4918-1-alt-100/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4939-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:4939-1:dynamic:rotated` | D1 | 方向错误 | 5 | 1 |
 | `SC:4939-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4939-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4939-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4939-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4939-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
 
 GT：`private/4939-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1436,6 +1803,11 @@ GT：`private/4939-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4939-1-alt-1714:dynamic:offset` | D1 | 位置偏移 | 12 | 1 |
 | `SC:4939-1-alt-1714:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 17 | 2 |
 | `SC:4939-1-alt-1714:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:4939-1-alt-1714:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4939-1-alt-1714:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4939-1-alt-1714:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4939-1-alt-1714:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4939-1-alt-1714:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4939-1-alt-1714/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1452,6 +1824,9 @@ GT：`private/4939-1-alt-1714/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4948-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:4948-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:4948-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4948-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4948-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4948-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4948-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1470,6 +1845,11 @@ GT：`private/4948-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4953-1:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:4953-1:dynamic:wrong-part` | D1 | 用错零件 | 8 | 1 |
 | `SC:4953-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4953-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4953-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4953-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4953-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:4953-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4953-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1489,6 +1869,11 @@ GT：`private/4953-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4953-1-alt-1719:dynamic:buried-repair` | D1 | 拆上层返修 | 14 | 1 |
 | `SC:4953-1-alt-1719:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:4953-1-alt-1719:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4953-1-alt-1719:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4953-1-alt-1719:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4953-1-alt-1719:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4953-1-alt-1719:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:4953-1-alt-1719:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
 
 GT：`private/4953-1-alt-1719/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1507,6 +1892,11 @@ GT：`private/4953-1-alt-1719/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4954-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 9 | 1 |
 | `SC:4954-1:dynamic:wrong-color` | D1 | 颜色错误 | 9 | 1 |
 | `SC:4954-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:4954-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4954-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:4954-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4954-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4954-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4954-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1526,6 +1916,11 @@ GT：`private/4954-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4954-1-alt-1355:dynamic:offset` | D1 | 位置偏移 | 19 | 1 |
 | `SC:4954-1-alt-1355:dynamic:multiple-missing-then-left-right-swap` | D2 | 连续多次干扰 | 22 | 2 |
 | `SC:4954-1-alt-1355:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:4954-1-alt-1355:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4954-1-alt-1355:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:4954-1-alt-1355:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4954-1-alt-1355:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4954-1-alt-1355:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/4954-1-alt-1355/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1545,6 +1940,11 @@ GT：`private/4954-1-alt-1355/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4954-1-alt-1356:dynamic:offset` | D1 | 位置偏移 | 12 | 1 |
 | `SC:4954-1-alt-1356:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:4954-1-alt-1356:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4954-1-alt-1356:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4954-1-alt-1356:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4954-1-alt-1356:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4954-1-alt-1356:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4954-1-alt-1356:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4954-1-alt-1356/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1564,6 +1964,11 @@ GT：`private/4954-1-alt-1356/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4956-1:dynamic:offset` | D1 | 位置偏移 | 12 | 1 |
 | `SC:4956-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:4956-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4956-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4956-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4956-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4956-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4956-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4956-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1583,6 +1988,11 @@ GT：`private/4956-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4956-1-alt-1358:dynamic:wrong-part` | D1 | 用错零件 | 27 | 1 |
 | `SC:4956-1-alt-1358:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 28 | 2 |
 | `SC:4956-1-alt-1358:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4956-1-alt-1358:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4956-1-alt-1358:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4956-1-alt-1358:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4956-1-alt-1358:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:4956-1-alt-1358:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4956-1-alt-1358/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1602,6 +2012,11 @@ GT：`private/4956-1-alt-1358/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4956-1-alt-1359:dynamic:repeat-omission` | D1 | 重复结构漏装 | 28 | 1 |
 | `SC:4956-1-alt-1359:dynamic:multiple-missing-then-wrong-part` | D2 | 连续多次干扰 | 29 | 2 |
 | `SC:4956-1-alt-1359:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:4956-1-alt-1359:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4956-1-alt-1359:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4956-1-alt-1359:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:4956-1-alt-1359:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4956-1-alt-1359:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4956-1-alt-1359/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1620,6 +2035,11 @@ GT：`private/4956-1-alt-1359/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4993-1:dynamic:buried-repair` | D1 | 拆上层返修 | 11 | 1 |
 | `SC:4993-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 9 | 1 |
 | `SC:4993-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4993-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4993-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4993-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:4993-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4993-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4993-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1638,6 +2058,11 @@ GT：`private/4993-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4993-1-alt-1361:dynamic:offset` | D1 | 位置偏移 | 9 | 1 |
 | `SC:4993-1-alt-1361:dynamic:buried-repair` | D1 | 拆上层返修 | 11 | 1 |
 | `SC:4993-1-alt-1361:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4993-1-alt-1361:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4993-1-alt-1361:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4993-1-alt-1361:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4993-1-alt-1361:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4993-1-alt-1361:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4993-1-alt-1361/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1657,6 +2082,11 @@ GT：`private/4993-1-alt-1361/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4996-1:dynamic:buried-repair` | D1 | 拆上层返修 | 14 | 1 |
 | `SC:4996-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:4996-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:4996-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4996-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4996-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4996-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:4996-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4996-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1676,6 +2106,11 @@ GT：`private/4996-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:4996-1-alt-1364:dynamic:wrong-color` | D1 | 颜色错误 | 13 | 1 |
 | `SC:4996-1-alt-1364:dynamic:multiple-missing-then-left-right-swap` | D2 | 连续多次干扰 | 16 | 2 |
 | `SC:4996-1-alt-1364:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:4996-1-alt-1364:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:4996-1-alt-1364:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:4996-1-alt-1364:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:4996-1-alt-1364:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:4996-1-alt-1364:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/4996-1-alt-1364/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1693,6 +2128,10 @@ GT：`private/4996-1-alt-1364/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5521-1:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:5521-1:dynamic:offset` | D1 | 位置偏移 | 6 | 1 |
 | `SC:5521-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:5521-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5521-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5521-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5521-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5521-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1711,6 +2150,11 @@ GT：`private/5521-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5571-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 8 | 1 |
 | `SC:5571-1:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:5571-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:5571-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5571-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:5571-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:5571-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5571-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5571-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1729,6 +2173,11 @@ GT：`private/5571-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5761-1:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:5761-1:dynamic:wrong-color` | D1 | 颜色错误 | 7 | 1 |
 | `SC:5761-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:5761-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5761-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:5761-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:5761-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5761-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5761-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1748,6 +2197,11 @@ GT：`private/5761-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5762-1:dynamic:offset` | D1 | 位置偏移 | 14 | 1 |
 | `SC:5762-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 19 | 2 |
 | `SC:5762-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:5762-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5762-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:5762-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5762-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5762-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5762-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1767,6 +2221,11 @@ GT：`private/5762-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5762-1-alt-524:dynamic:repeated-step` | D1 | 步骤重复 | 13 | 1 |
 | `SC:5762-1-alt-524:dynamic:multiple-missing-then-early-cover` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:5762-1-alt-524:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:5762-1-alt-524:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5762-1-alt-524:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:5762-1-alt-524:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:5762-1-alt-524:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:5762-1-alt-524:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5762-1-alt-524/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1786,6 +2245,11 @@ GT：`private/5762-1-alt-524/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5762-1-alt-525:dynamic:buried-repair` | D1 | 拆上层返修 | 12 | 1 |
 | `SC:5762-1-alt-525:dynamic:multiple-missing-then-offset` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:5762-1-alt-525:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:5762-1-alt-525:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5762-1-alt-525:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5762-1-alt-525:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:5762-1-alt-525:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:5762-1-alt-525:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5762-1-alt-525/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1804,6 +2268,11 @@ GT：`private/5762-1-alt-525/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5764-1:dynamic:rotated` | D1 | 方向错误 | 6 | 1 |
 | `SC:5764-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 6 | 1 |
 | `SC:5764-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5764-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5764-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5764-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:5764-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:5764-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5764-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1823,6 +2292,11 @@ GT：`private/5764-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5765-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 16 | 1 |
 | `SC:5765-1:dynamic:multiple-missing-then-extra-layer` | D2 | 连续多次干扰 | 16 | 2 |
 | `SC:5765-1:static:buried-repair` | S1 | 拆上层返修 | 10 | 0 |
+| `SC:5765-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5765-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:5765-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:5765-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:5765-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5765-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1841,6 +2315,11 @@ GT：`private/5765-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5864-1:dynamic:extra-layer` | D1 | 多装一层 | 6 | 1 |
 | `SC:5864-1:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:5864-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:5864-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5864-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5864-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5864-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:5864-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5864-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1860,6 +2339,11 @@ GT：`private/5864-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5864-1-alt-570:dynamic:wrong-color` | D1 | 颜色错误 | 13 | 1 |
 | `SC:5864-1-alt-570:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 18 | 2 |
 | `SC:5864-1-alt-570:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:5864-1-alt-570:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5864-1-alt-570:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:5864-1-alt-570:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:5864-1-alt-570:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5864-1-alt-570:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5864-1-alt-570/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1879,6 +2363,11 @@ GT：`private/5864-1-alt-570/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5865-1:dynamic:offset` | D1 | 位置偏移 | 15 | 1 |
 | `SC:5865-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 16 | 2 |
 | `SC:5865-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:5865-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5865-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:5865-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5865-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5865-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5865-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1898,6 +2387,11 @@ GT：`private/5865-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5865-1-alt-1369:dynamic:wrong-part` | D1 | 用错零件 | 14 | 1 |
 | `SC:5865-1-alt-1369:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:5865-1-alt-1369:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5865-1-alt-1369:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5865-1-alt-1369:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:5865-1-alt-1369:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5865-1-alt-1369:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:5865-1-alt-1369:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5865-1-alt-1369/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1917,6 +2411,11 @@ GT：`private/5865-1-alt-1369/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5865-1-alt-1370:dynamic:early-cover` | D1 | 提前封口 | 10 | 1 |
 | `SC:5865-1-alt-1370:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:5865-1-alt-1370:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:5865-1-alt-1370:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5865-1-alt-1370:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5865-1-alt-1370:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5865-1-alt-1370:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:5865-1-alt-1370:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5865-1-alt-1370/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1936,6 +2435,11 @@ GT：`private/5865-1-alt-1370/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5866-1:dynamic:wrong-part` | D1 | 用错零件 | 12 | 1 |
 | `SC:5866-1:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:5866-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5866-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5866-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:5866-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5866-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:5866-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5866-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1953,6 +2457,10 @@ GT：`private/5866-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5866-1-alt-1716:dynamic:buried-repair` | D1 | 拆上层返修 | 8 | 1 |
 | `SC:5866-1-alt-1716:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:5866-1-alt-1716:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:5866-1-alt-1716:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5866-1-alt-1716:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:5866-1-alt-1716:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:5866-1-alt-1716:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/5866-1-alt-1716/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1971,6 +2479,11 @@ GT：`private/5866-1-alt-1716/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5866-1-alt-1717:dynamic:extra-layer` | D1 | 多装一层 | 7 | 1 |
 | `SC:5866-1-alt-1717:dynamic:buried-repair` | D1 | 拆上层返修 | 10 | 1 |
 | `SC:5866-1-alt-1717:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:5866-1-alt-1717:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5866-1-alt-1717:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5866-1-alt-1717:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5866-1-alt-1717:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:5866-1-alt-1717:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5866-1-alt-1717/cases.private.json.gz`，按题目 ID 查找。
 
@@ -1989,6 +2502,11 @@ GT：`private/5866-1-alt-1717/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5867-1:dynamic:rotated` | D1 | 方向错误 | 14 | 1 |
 | `SC:5867-1:dynamic:buried-repair` | D1 | 拆上层返修 | 16 | 1 |
 | `SC:5867-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:5867-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5867-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5867-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:5867-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:5867-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
 
 GT：`private/5867-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2008,6 +2526,11 @@ GT：`private/5867-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5891-1:dynamic:offset` | D1 | 位置偏移 | 15 | 1 |
 | `SC:5891-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 16 | 2 |
 | `SC:5891-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:5891-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5891-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:5891-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5891-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5891-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5891-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2027,6 +2550,11 @@ GT：`private/5891-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5891-1-alt-1372:dynamic:offset` | D1 | 位置偏移 | 13 | 1 |
 | `SC:5891-1-alt-1372:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:5891-1-alt-1372:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:5891-1-alt-1372:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5891-1-alt-1372:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:5891-1-alt-1372:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5891-1-alt-1372:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5891-1-alt-1372:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5891-1-alt-1372/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2046,6 +2574,11 @@ GT：`private/5891-1-alt-1372/cases.private.json.gz`，按题目 ID 查找。
 | `SC:5891-1-alt-1373:dynamic:extra-layer` | D1 | 多装一层 | 13 | 1 |
 | `SC:5891-1-alt-1373:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:5891-1-alt-1373:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:5891-1-alt-1373:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:5891-1-alt-1373:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:5891-1-alt-1373:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:5891-1-alt-1373:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:5891-1-alt-1373:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/5891-1-alt-1373/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2064,6 +2597,11 @@ GT：`private/5891-1-alt-1373/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6742-1:dynamic:buried-repair` | D1 | 拆上层返修 | 10 | 1 |
 | `SC:6742-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 8 | 1 |
 | `SC:6742-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:6742-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6742-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:6742-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:6742-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:6742-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/6742-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2083,6 +2621,11 @@ GT：`private/6742-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6742-1-alt-582:dynamic:buried-repair` | D1 | 拆上层返修 | 25 | 1 |
 | `SC:6742-1-alt-582:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 18 | 2 |
 | `SC:6742-1-alt-582:static:buried-repair` | S1 | 拆上层返修 | 10 | 0 |
+| `SC:6742-1-alt-582:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6742-1-alt-582:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:6742-1-alt-582:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:6742-1-alt-582:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:6742-1-alt-582:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/6742-1-alt-582/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2102,6 +2645,11 @@ GT：`private/6742-1-alt-582/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6742-1-alt-583:dynamic:extra-layer` | D1 | 多装一层 | 13 | 1 |
 | `SC:6742-1-alt-583:dynamic:multiple-missing-then-offset` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:6742-1-alt-583:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:6742-1-alt-583:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6742-1-alt-583:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:6742-1-alt-583:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:6742-1-alt-583:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:6742-1-alt-583:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/6742-1-alt-583/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2120,6 +2668,11 @@ GT：`private/6742-1-alt-583/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6743-1:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:6743-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 7 | 1 |
 | `SC:6743-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:6743-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6743-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:6743-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:6743-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:6743-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/6743-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2138,6 +2691,11 @@ GT：`private/6743-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6745-1:dynamic:wrong-color` | D1 | 颜色错误 | 9 | 1 |
 | `SC:6745-1:dynamic:offset` | D1 | 位置偏移 | 9 | 1 |
 | `SC:6745-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:6745-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6745-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:6745-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:6745-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:6745-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/6745-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2157,6 +2715,11 @@ GT：`private/6745-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6753-1:dynamic:offset` | D1 | 位置偏移 | 14 | 1 |
 | `SC:6753-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 17 | 2 |
 | `SC:6753-1:static:buried-repair` | S1 | 拆上层返修 | 8 | 0 |
+| `SC:6753-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6753-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:6753-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:6753-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:6753-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/6753-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2176,6 +2739,11 @@ GT：`private/6753-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6911-1:dynamic:offset` | D1 | 位置偏移 | 13 | 1 |
 | `SC:6911-1:dynamic:multiple-missing-then-left-right-swap` | D2 | 连续多次干扰 | 16 | 2 |
 | `SC:6911-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:6911-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6911-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:6911-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:6911-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:6911-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/6911-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2195,6 +2763,11 @@ GT：`private/6911-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6911-1-alt-585:dynamic:wrong-color` | D1 | 颜色错误 | 43 | 1 |
 | `SC:6911-1-alt-585:dynamic:multiple-missing-then-left-right-swap` | D2 | 连续多次干扰 | 46 | 2 |
 | `SC:6911-1-alt-585:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:6911-1-alt-585:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6911-1-alt-585:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:6911-1-alt-585:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:6911-1-alt-585:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:6911-1-alt-585:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/6911-1-alt-585/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2214,6 +2787,11 @@ GT：`private/6911-1-alt-585/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6911-1-alt-586:dynamic:repeat-omission` | D1 | 重复结构漏装 | 13 | 1 |
 | `SC:6911-1-alt-586:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:6911-1-alt-586:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:6911-1-alt-586:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6911-1-alt-586:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:6911-1-alt-586:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:6911-1-alt-586:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:6911-1-alt-586:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/6911-1-alt-586/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2233,6 +2811,11 @@ GT：`private/6911-1-alt-586/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6912-1:dynamic:wrong-color` | D1 | 颜色错误 | 12 | 1 |
 | `SC:6912-1:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:6912-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:6912-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6912-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:6912-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:6912-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:6912-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/6912-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2250,6 +2833,10 @@ GT：`private/6912-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6912-1-alt-1852:dynamic:offset` | D1 | 位置偏移 | 9 | 1 |
 | `SC:6912-1-alt-1852:dynamic:repeat-omission` | D1 | 重复结构漏装 | 9 | 1 |
 | `SC:6912-1-alt-1852:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:6912-1-alt-1852:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6912-1-alt-1852:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:6912-1-alt-1852:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:6912-1-alt-1852:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/6912-1-alt-1852/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2269,6 +2856,11 @@ GT：`private/6912-1-alt-1852/cases.private.json.gz`，按题目 ID 查找。
 | `SC:6912-1-alt-1853:dynamic:wrong-color` | D1 | 颜色错误 | 11 | 1 |
 | `SC:6912-1-alt-1853:dynamic:multiple-early-cover-then-wrong-color` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:6912-1-alt-1853:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:6912-1-alt-1853:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:6912-1-alt-1853:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:6912-1-alt-1853:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:6912-1-alt-1853:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:6912-1-alt-1853:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/6912-1-alt-1853/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2287,6 +2879,11 @@ GT：`private/6912-1-alt-1853/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7210-1:dynamic:early-cover` | D1 | 提前封口 | 5 | 1 |
 | `SC:7210-1:dynamic:buried-repair` | D1 | 拆上层返修 | 8 | 1 |
 | `SC:7210-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:7210-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7210-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:7210-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:7210-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:7210-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7210-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2305,6 +2902,11 @@ GT：`private/7210-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7218-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:7218-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:7218-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:7218-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7218-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:7218-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:7218-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:7218-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7218-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2324,6 +2926,11 @@ GT：`private/7218-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7219-1:dynamic:left-right-swap` | D1 | 左右装反 | 15 | 1 |
 | `SC:7219-1:dynamic:multiple-missing-then-extra-layer` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:7219-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:7219-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7219-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:7219-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:7219-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:7219-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7219-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2342,6 +2949,11 @@ GT：`private/7219-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7221-1-alt-180:dynamic:early-cover` | D1 | 提前封口 | 6 | 1 |
 | `SC:7221-1-alt-180:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:7221-1-alt-180:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:7221-1-alt-180:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7221-1-alt-180:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:7221-1-alt-180:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:7221-1-alt-180:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:7221-1-alt-180:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7221-1-alt-180/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2360,6 +2972,11 @@ GT：`private/7221-1-alt-180/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7223-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:7223-1:dynamic:rotated` | D1 | 方向错误 | 5 | 1 |
 | `SC:7223-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:7223-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7223-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:7223-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:7223-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:7223-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7223-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2379,6 +2996,11 @@ GT：`private/7223-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7223-1-alt-831:dynamic:offset` | D1 | 位置偏移 | 10 | 1 |
 | `SC:7223-1-alt-831:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:7223-1-alt-831:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:7223-1-alt-831:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7223-1-alt-831:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:7223-1-alt-831:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:7223-1-alt-831:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:7223-1-alt-831:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/7223-1-alt-831/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2394,6 +3016,8 @@ GT：`private/7223-1-alt-831/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7270-1:dynamic:extra-layer` | D1 | 多装一层 | 4 | 1 |
 | `SC:7270-1:dynamic:buried-repair` | D1 | 拆上层返修 | 7 | 1 |
 | `SC:7270-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:7270-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:7270-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7270-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2412,6 +3036,11 @@ GT：`private/7270-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7276-1:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:7276-1:dynamic:offset` | D1 | 位置偏移 | 8 | 1 |
 | `SC:7276-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:7276-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7276-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:7276-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:7276-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:7276-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7276-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2430,6 +3059,11 @@ GT：`private/7276-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7452-1:dynamic:early-cover` | D1 | 提前封口 | 5 | 1 |
 | `SC:7452-1:dynamic:buried-repair` | D1 | 拆上层返修 | 8 | 1 |
 | `SC:7452-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:7452-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7452-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:7452-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:7452-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:7452-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7452-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2448,6 +3082,11 @@ GT：`private/7452-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7453-1:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:7453-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 7 | 1 |
 | `SC:7453-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:7453-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7453-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:7453-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:7453-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:7453-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7453-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2463,6 +3102,8 @@ GT：`private/7453-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7601-1:dynamic:missing` | D1 | 少装／零件被拆走 | 5 | 1 |
 | `SC:7601-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 6 | 1 |
 | `SC:7601-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:7601-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7601-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
 
 GT：`private/7601-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2482,6 +3123,11 @@ GT：`private/7601-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7602-1:dynamic:buried-repair` | D1 | 拆上层返修 | 18 | 1 |
 | `SC:7602-1:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 17 | 2 |
 | `SC:7602-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:7602-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7602-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:7602-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:7602-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:7602-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7602-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2501,6 +3147,11 @@ GT：`private/7602-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7603-1:dynamic:left-right-swap` | D1 | 左右装反 | 12 | 1 |
 | `SC:7603-1:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:7603-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:7603-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7603-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:7603-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:7603-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:7603-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7603-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2519,6 +3170,11 @@ GT：`private/7603-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7608-1:dynamic:offset` | D1 | 位置偏移 | 7 | 1 |
 | `SC:7608-1:dynamic:wrong-part` | D1 | 用错零件 | 7 | 1 |
 | `SC:7608-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:7608-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7608-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:7608-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:7608-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:7608-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7608-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2537,6 +3193,11 @@ GT：`private/7608-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7609-1:dynamic:offset` | D1 | 位置偏移 | 7 | 1 |
 | `SC:7609-1:dynamic:early-cover` | D1 | 提前封口 | 6 | 1 |
 | `SC:7609-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:7609-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7609-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:7609-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:7609-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:7609-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7609-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2554,6 +3215,10 @@ GT：`private/7609-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7612-1:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:7612-1:dynamic:rotated` | D1 | 方向错误 | 6 | 1 |
 | `SC:7612-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:7612-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7612-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:7612-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:7612-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7612-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2572,6 +3237,11 @@ GT：`private/7612-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7796-1:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:7796-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 7 | 1 |
 | `SC:7796-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:7796-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7796-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:7796-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:7796-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:7796-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7796-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2590,6 +3260,11 @@ GT：`private/7796-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7801-1:dynamic:offset` | D1 | 位置偏移 | 6 | 1 |
 | `SC:7801-1:dynamic:wrong-part` | D1 | 用错零件 | 6 | 1 |
 | `SC:7801-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:7801-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7801-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:7801-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:7801-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:7801-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7801-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2608,6 +3283,11 @@ GT：`private/7801-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7803-1:dynamic:rotated` | D1 | 方向错误 | 7 | 1 |
 | `SC:7803-1:dynamic:extra-layer` | D1 | 多装一层 | 6 | 1 |
 | `SC:7803-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:7803-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7803-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:7803-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:7803-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:7803-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7803-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2626,6 +3306,11 @@ GT：`private/7803-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7808-1:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:7808-1:dynamic:offset` | D1 | 位置偏移 | 8 | 1 |
 | `SC:7808-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:7808-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7808-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:7808-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:7808-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:7808-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/7808-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2644,6 +3329,11 @@ GT：`private/7808-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:7911-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:7911-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:7911-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:7911-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:7911-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:7911-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:7911-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:7911-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/7911-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2662,6 +3352,11 @@ GT：`private/7911-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8020-1-alt-845:dynamic:early-cover` | D1 | 提前封口 | 8 | 1 |
 | `SC:8020-1-alt-845:dynamic:buried-repair` | D1 | 拆上层返修 | 13 | 1 |
 | `SC:8020-1-alt-845:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:8020-1-alt-845:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8020-1-alt-845:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:8020-1-alt-845:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:8020-1-alt-845:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:8020-1-alt-845:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8020-1-alt-845/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2678,6 +3373,9 @@ GT：`private/8020-1-alt-845/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8024-1:dynamic:repeated-step` | D1 | 步骤重复 | 5 | 1 |
 | `SC:8024-1:dynamic:offset` | D1 | 位置偏移 | 6 | 1 |
 | `SC:8024-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:8024-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8024-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:8024-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8024-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2696,6 +3394,11 @@ GT：`private/8024-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8029-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:8029-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:8029-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:8029-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8029-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:8029-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:8029-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:8029-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8029-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2712,6 +3415,9 @@ GT：`private/8029-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8033-1:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:8033-1:dynamic:buried-repair` | D1 | 拆上层返修 | 10 | 1 |
 | `SC:8033-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:8033-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8033-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:8033-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
 
 GT：`private/8033-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2730,6 +3436,11 @@ GT：`private/8033-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8054-1-alt-1132:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:8054-1-alt-1132:dynamic:offset` | D1 | 位置偏移 | 6 | 1 |
 | `SC:8054-1-alt-1132:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:8054-1-alt-1132:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8054-1-alt-1132:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:8054-1-alt-1132:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:8054-1-alt-1132:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:8054-1-alt-1132:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8054-1-alt-1132/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2748,6 +3459,11 @@ GT：`private/8054-1-alt-1132/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8119-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 8 | 1 |
 | `SC:8119-1:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:8119-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:8119-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8119-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:8119-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:8119-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:8119-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/8119-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2766,6 +3482,11 @@ GT：`private/8119-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8121-1:dynamic:repeated-step` | D1 | 步骤重复 | 7 | 1 |
 | `SC:8121-1:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:8121-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:8121-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8121-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:8121-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:8121-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:8121-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8121-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2785,6 +3506,11 @@ GT：`private/8121-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8123-1:dynamic:wrong-color` | D1 | 颜色错误 | 17 | 1 |
 | `SC:8123-1:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 18 | 2 |
 | `SC:8123-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:8123-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8123-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:8123-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:8123-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:8123-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8123-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2804,6 +3530,11 @@ GT：`private/8123-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8131-1:dynamic:rotated` | D1 | 方向错误 | 12 | 1 |
 | `SC:8131-1:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:8131-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:8131-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8131-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:8131-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:8131-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:8131-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
 
 GT：`private/8131-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2822,6 +3553,11 @@ GT：`private/8131-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8301-1:dynamic:left-right-swap` | D1 | 左右装反 | 10 | 1 |
 | `SC:8301-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 8 | 1 |
 | `SC:8301-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:8301-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8301-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:8301-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:8301-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:8301-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
 
 GT：`private/8301-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2836,6 +3572,7 @@ GT：`private/8301-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8419-1-alt-1427:dynamic:control` | D0 | 正常、无错误 | 4 | 0 |
 | `SC:8419-1-alt-1427:dynamic:buried-repair` | D1 | 拆上层返修 | 10 | 1 |
 | `SC:8419-1-alt-1427:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:8419-1-alt-1427:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8419-1-alt-1427/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2854,6 +3591,11 @@ GT：`private/8419-1-alt-1427/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8644-1:dynamic:buried-repair` | D1 | 拆上层返修 | 10 | 1 |
 | `SC:8644-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 8 | 1 |
 | `SC:8644-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:8644-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8644-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:8644-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:8644-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:8644-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8644-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2871,6 +3613,10 @@ GT：`private/8644-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8656-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:8656-1:dynamic:rotated` | D1 | 方向错误 | 5 | 1 |
 | `SC:8656-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:8656-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8656-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:8656-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:8656-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8656-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2886,6 +3632,8 @@ GT：`private/8656-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8815-1:dynamic:extra-layer` | D1 | 多装一层 | 4 | 1 |
 | `SC:8815-1:dynamic:buried-repair` | D1 | 拆上层返修 | 7 | 1 |
 | `SC:8815-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:8815-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:8815-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8815-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2904,6 +3652,11 @@ GT：`private/8815-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8837-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 5 | 1 |
 | `SC:8837-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:8837-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:8837-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8837-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:8837-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:8837-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:8837-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8837-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2922,6 +3675,11 @@ GT：`private/8837-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:8837-1-alt-1857:dynamic:rotated` | D1 | 方向错误 | 7 | 1 |
 | `SC:8837-1-alt-1857:dynamic:early-cover` | D1 | 提前封口 | 6 | 1 |
 | `SC:8837-1-alt-1857:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:8837-1-alt-1857:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:8837-1-alt-1857:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:8837-1-alt-1857:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:8837-1-alt-1857:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:8837-1-alt-1857:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/8837-1-alt-1857/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2937,6 +3695,8 @@ GT：`private/8837-1-alt-1857/cases.private.json.gz`，按题目 ID 查找。
 | `SC:9391-1:dynamic:missing` | D1 | 少装／零件被拆走 | 5 | 1 |
 | `SC:9391-1:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:9391-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:9391-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:9391-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/9391-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2954,6 +3714,9 @@ GT：`private/9391-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:9391-1-alt-987:dynamic:wrong-color` | D1 | 颜色错误 | 10 | 1 |
 | `SC:9391-1-alt-987:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:9391-1-alt-987:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:9391-1-alt-987:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:9391-1-alt-987:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:9391-1-alt-987:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/9391-1-alt-987/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2971,6 +3734,10 @@ GT：`private/9391-1-alt-987/cases.private.json.gz`，按题目 ID 查找。
 | `SC:9394-1-alt-991:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:9394-1-alt-991:dynamic:rotated` | D1 | 方向错误 | 5 | 1 |
 | `SC:9394-1-alt-991:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:9394-1-alt-991:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:9394-1-alt-991:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:9394-1-alt-991:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:9394-1-alt-991:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/9394-1-alt-991/cases.private.json.gz`，按题目 ID 查找。
 
@@ -2990,6 +3757,11 @@ GT：`private/9394-1-alt-991/cases.private.json.gz`，按题目 ID 查找。
 | `SC:9395-1:dynamic:repeated-step` | D1 | 步骤重复 | 15 | 1 |
 | `SC:9395-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 19 | 2 |
 | `SC:9395-1:static:buried-repair` | S1 | 拆上层返修 | 8 | 0 |
+| `SC:9395-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:9395-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:9395-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:9395-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:9395-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/9395-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3006,6 +3778,9 @@ GT：`private/9395-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:9397-1:dynamic:buried-repair` | D1 | 拆上层返修 | 14 | 1 |
 | `SC:9397-1:dynamic:wrong-color` | D1 | 颜色错误 | 10 | 1 |
 | `SC:9397-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:9397-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:9397-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:9397-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/9397-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3023,6 +3798,10 @@ GT：`private/9397-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10013-1:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:10013-1:dynamic:rotated` | D1 | 方向错误 | 8 | 1 |
 | `SC:10013-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:10013-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10013-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10013-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:10013-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/10013-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3042,6 +3821,11 @@ GT：`private/10013-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10014-1:dynamic:extra-layer` | D1 | 多装一层 | 9 | 1 |
 | `SC:10014-1:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:10014-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:10014-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10014-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10014-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:10014-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:10014-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
 
 GT：`private/10014-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3060,6 +3844,10 @@ GT：`private/10014-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10015-1:dynamic:offset` | D1 | 位置偏移 | 15 | 1 |
 | `SC:10015-1:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 16 | 2 |
 | `SC:10015-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:10015-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10015-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:10015-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:10015-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/10015-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3078,6 +3866,11 @@ GT：`private/10015-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10016-1:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:10016-1:dynamic:wrong-color` | D1 | 颜色错误 | 7 | 1 |
 | `SC:10016-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:10016-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10016-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:10016-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:10016-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:10016-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/10016-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3096,6 +3889,10 @@ GT：`private/10016-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10017-1:dynamic:offset` | D1 | 位置偏移 | 10 | 1 |
 | `SC:10017-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:10017-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:10017-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10017-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10017-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:10017-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/10017-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3115,6 +3912,11 @@ GT：`private/10017-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10124-1:dynamic:wrong-part` | D1 | 用错零件 | 12 | 1 |
 | `SC:10124-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:10124-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:10124-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10124-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10124-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:10124-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:10124-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/10124-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3134,6 +3936,11 @@ GT：`private/10124-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10170-1:dynamic:rotated` | D1 | 方向错误 | 16 | 1 |
 | `SC:10170-1:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 17 | 2 |
 | `SC:10170-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10170-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10170-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:10170-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:10170-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:10170-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/10170-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3150,6 +3957,8 @@ GT：`private/10170-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10175-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 10 | 1 |
 | `SC:10175-1:dynamic:multiple-repeat-omission-then-repeat-omission` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:10175-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:10175-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:10175-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
 
 GT：`private/10175-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3168,6 +3977,11 @@ GT：`private/10175-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10205-1:dynamic:offset` | D1 | 位置偏移 | 7 | 1 |
 | `SC:10205-1:dynamic:rotated` | D1 | 方向错误 | 7 | 1 |
 | `SC:10205-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:10205-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10205-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:10205-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10205-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:10205-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
 
 GT：`private/10205-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3187,6 +4001,11 @@ GT：`private/10205-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10226-1:dynamic:rotated` | D1 | 方向错误 | 17 | 1 |
 | `SC:10226-1:dynamic:multiple-wrong-color-then-rotated` | D2 | 连续多次干扰 | 19 | 2 |
 | `SC:10226-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:10226-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10226-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10226-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:10226-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:10226-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
 
 GT：`private/10226-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3201,6 +4020,7 @@ GT：`private/10226-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10241-1:dynamic:control` | D0 | 正常、无错误 | 3 | 0 |
 | `SC:10241-1:dynamic:buried-repair` | D1 | 拆上层返修 | 7 | 1 |
 | `SC:10241-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:10241-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/10241-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3216,6 +4036,8 @@ GT：`private/10241-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10242-1:dynamic:missing` | D1 | 少装／零件被拆走 | 5 | 1 |
 | `SC:10242-1:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:10242-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10242-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10242-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/10242-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3234,6 +4056,10 @@ GT：`private/10242-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10248-1:dynamic:left-right-swap` | D1 | 左右装反 | 17 | 1 |
 | `SC:10248-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 16 | 2 |
 | `SC:10248-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:10248-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10248-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:10248-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10248-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/10248-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3253,6 +4079,11 @@ GT：`private/10248-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10258-1:dynamic:rotated` | D1 | 方向错误 | 19 | 1 |
 | `SC:10258-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 20 | 2 |
 | `SC:10258-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:10258-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10258-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10258-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:10258-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:10258-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/10258-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3271,6 +4102,11 @@ GT：`private/10258-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10262-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 18 | 1 |
 | `SC:10262-1:dynamic:wrong-color` | D1 | 颜色错误 | 18 | 1 |
 | `SC:10262-1:static:buried-repair` | S1 | 拆上层返修 | 8 | 0 |
+| `SC:10262-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10262-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:10262-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:10262-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10262-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/10262-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3290,6 +4126,11 @@ GT：`private/10262-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10265-1:dynamic:rotated` | D1 | 方向错误 | 26 | 1 |
 | `SC:10265-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 27 | 2 |
 | `SC:10265-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:10265-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10265-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:10265-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:10265-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:10265-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/10265-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3308,6 +4149,11 @@ GT：`private/10265-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10267-1:dynamic:early-cover` | D1 | 提前封口 | 14 | 1 |
 | `SC:10267-1:dynamic:buried-repair` | D1 | 拆上层返修 | 19 | 1 |
 | `SC:10267-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:10267-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:10267-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:10267-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:10267-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:10267-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/10267-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3322,6 +4168,7 @@ GT：`private/10267-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:10315-1:dynamic:control` | D0 | 正常、无错误 | 4 | 0 |
 | `SC:10315-1:dynamic:buried-repair` | D1 | 拆上层返修 | 8 | 1 |
 | `SC:10315-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:10315-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
 
 GT：`private/10315-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3339,6 +4186,10 @@ GT：`private/10315-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:20006-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:20006-1:dynamic:rotated` | D1 | 方向错误 | 5 | 1 |
 | `SC:20006-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:20006-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:20006-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:20006-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:20006-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/20006-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3358,6 +4209,11 @@ GT：`private/20006-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:20011-1:dynamic:offset` | D1 | 位置偏移 | 10 | 1 |
 | `SC:20011-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:20011-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:20011-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:20011-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:20011-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:20011-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:20011-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/20011-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3376,6 +4232,11 @@ GT：`private/20011-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:20015-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:20015-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:20015-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:20015-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:20015-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:20015-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:20015-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:20015-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/20015-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3394,6 +4255,11 @@ GT：`private/20015-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:20019-1:dynamic:wrong-color` | D1 | 颜色错误 | 9 | 1 |
 | `SC:20019-1:dynamic:offset` | D1 | 位置偏移 | 9 | 1 |
 | `SC:20019-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:20019-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:20019-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:20019-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:20019-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:20019-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/20019-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3413,6 +4279,11 @@ GT：`private/20019-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21000-1:dynamic:wrong-part` | D1 | 用错零件 | 13 | 1 |
 | `SC:21000-1:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:21000-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21000-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21000-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:21000-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:21000-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:21000-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21000-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3431,6 +4302,10 @@ GT：`private/21000-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21001-1:dynamic:wrong-color` | D1 | 颜色错误 | 15 | 1 |
 | `SC:21001-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 24 | 2 |
 | `SC:21001-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:21001-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21001-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21001-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21001-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21001-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3445,6 +4320,7 @@ GT：`private/21001-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21003-1:dynamic:control` | D0 | 正常、无错误 | 3 | 0 |
 | `SC:21003-1:dynamic:buried-repair` | D1 | 拆上层返修 | 7 | 1 |
 | `SC:21003-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:21003-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21003-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3464,6 +4340,11 @@ GT：`private/21003-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21005-1:dynamic:extra-layer` | D1 | 多装一层 | 11 | 1 |
 | `SC:21005-1:dynamic:multiple-missing-then-offset` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:21005-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:21005-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21005-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:21005-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:21005-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:21005-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21005-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3482,6 +4363,11 @@ GT：`private/21005-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21009-1:dynamic:repeated-step` | D1 | 步骤重复 | 6 | 1 |
 | `SC:21009-1:dynamic:wrong-color` | D1 | 颜色错误 | 7 | 1 |
 | `SC:21009-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:21009-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21009-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21009-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:21009-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21009-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21009-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3499,6 +4385,10 @@ GT：`private/21009-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21010-1:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:21010-1:dynamic:offset` | D1 | 位置偏移 | 6 | 1 |
 | `SC:21010-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:21010-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21010-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21010-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:21010-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21010-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3518,6 +4408,11 @@ GT：`private/21010-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21011-1:dynamic:wrong-color` | D1 | 颜色错误 | 12 | 1 |
 | `SC:21011-1:dynamic:multiple-missing-then-extra-layer` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:21011-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:21011-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21011-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:21011-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21011-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21011-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21011-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3534,6 +4429,9 @@ GT：`private/21011-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21012-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:21012-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:21012-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21012-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21012-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:21012-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21012-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3553,6 +4451,11 @@ GT：`private/21012-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21013-1:dynamic:wrong-color` | D1 | 颜色错误 | 17 | 1 |
 | `SC:21013-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 22 | 2 |
 | `SC:21013-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:21013-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21013-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:21013-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21013-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:21013-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/21013-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3571,6 +4474,11 @@ GT：`private/21013-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21014-1:dynamic:offset` | D1 | 位置偏移 | 7 | 1 |
 | `SC:21014-1:dynamic:rotated` | D1 | 方向错误 | 7 | 1 |
 | `SC:21014-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21014-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21014-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21014-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:21014-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:21014-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21014-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3590,6 +4498,11 @@ GT：`private/21014-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21016-1:dynamic:offset` | D1 | 位置偏移 | 10 | 1 |
 | `SC:21016-1:dynamic:multiple-missing-then-extra-layer` | D2 | 连续多次干扰 | 10 | 2 |
 | `SC:21016-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:21016-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21016-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:21016-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21016-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21016-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/21016-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3609,6 +4522,11 @@ GT：`private/21016-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21017-1:dynamic:offset` | D1 | 位置偏移 | 26 | 1 |
 | `SC:21017-1:dynamic:multiple-missing-then-extra-layer` | D2 | 连续多次干扰 | 26 | 2 |
 | `SC:21017-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:21017-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21017-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:21017-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21017-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21017-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/21017-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3628,6 +4546,11 @@ GT：`private/21017-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21018-1:dynamic:wrong-color` | D1 | 颜色错误 | 14 | 1 |
 | `SC:21018-1:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:21018-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:21018-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21018-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:21018-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21018-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21018-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21018-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3647,6 +4570,11 @@ GT：`private/21018-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21020-1:dynamic:wrong-color` | D1 | 颜色错误 | 13 | 1 |
 | `SC:21020-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 16 | 2 |
 | `SC:21020-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:21020-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21020-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21020-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:21020-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21020-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21020-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3666,6 +4594,11 @@ GT：`private/21020-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21021-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 10 | 1 |
 | `SC:21021-1:dynamic:multiple-missing-then-rotated` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:21021-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:21021-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21021-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:21021-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:21021-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21021-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21021-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3684,6 +4617,11 @@ GT：`private/21021-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21022-1:dynamic:rotated` | D1 | 方向错误 | 8 | 1 |
 | `SC:21022-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 8 | 1 |
 | `SC:21022-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:21022-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21022-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21022-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:21022-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:21022-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
 
 GT：`private/21022-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3703,6 +4641,11 @@ GT：`private/21022-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21024-1:dynamic:rotated` | D1 | 方向错误 | 14 | 1 |
 | `SC:21024-1:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:21024-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:21024-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21024-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21024-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:21024-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:21024-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
 
 GT：`private/21024-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3722,6 +4665,11 @@ GT：`private/21024-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21033-1:dynamic:wrong-part` | D1 | 用错零件 | 14 | 1 |
 | `SC:21033-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:21033-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:21033-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21033-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21033-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:21033-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21033-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
 
 GT：`private/21033-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3741,6 +4689,11 @@ GT：`private/21033-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21035-1:dynamic:extra-layer` | D1 | 多装一层 | 26 | 1 |
 | `SC:21035-1:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 28 | 2 |
 | `SC:21035-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21035-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21035-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:21035-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:21035-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:21035-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21035-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3758,6 +4711,9 @@ GT：`private/21035-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21037-1:dynamic:wrong-color` | D1 | 颜色错误 | 10 | 1 |
 | `SC:21037-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 11 | 2 |
 | `SC:21037-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21037-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21037-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21037-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21037-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3777,6 +4733,11 @@ GT：`private/21037-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21041-1:dynamic:wrong-part` | D1 | 用错零件 | 14 | 1 |
 | `SC:21041-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:21041-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21041-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21041-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:21041-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21041-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:21041-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21041-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3796,6 +4757,11 @@ GT：`private/21041-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21042-1:dynamic:offset` | D1 | 位置偏移 | 22 | 1 |
 | `SC:21042-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 23 | 2 |
 | `SC:21042-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:21042-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21042-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21042-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:21042-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21042-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/21042-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3815,6 +4781,11 @@ GT：`private/21042-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21043-1:dynamic:wrong-color` | D1 | 颜色错误 | 17 | 1 |
 | `SC:21043-1:dynamic:multiple-missing-then-extra-layer` | D2 | 连续多次干扰 | 17 | 2 |
 | `SC:21043-1:static:buried-repair` | S1 | 拆上层返修 | 10 | 0 |
+| `SC:21043-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21043-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:21043-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21043-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21043-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21043-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3834,6 +4805,11 @@ GT：`private/21043-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21046-1:dynamic:offset` | D1 | 位置偏移 | 27 | 1 |
 | `SC:21046-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 32 | 2 |
 | `SC:21046-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:21046-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21046-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:21046-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21046-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:21046-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21046-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3853,6 +4829,11 @@ GT：`private/21046-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21303-1:dynamic:early-cover` | D1 | 提前封口 | 10 | 1 |
 | `SC:21303-1:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:21303-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21303-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21303-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:21303-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:21303-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:21303-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21303-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3870,6 +4851,10 @@ GT：`private/21303-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:21309-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:21309-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:21309-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:21309-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:21309-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:21309-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:21309-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/21309-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3889,6 +4874,11 @@ GT：`private/21309-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30024-1:dynamic:wrong-part` | D1 | 用错零件 | 14 | 1 |
 | `SC:30024-1:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:30024-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30024-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30024-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:30024-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:30024-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:30024-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30024-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3908,6 +4898,11 @@ GT：`private/30024-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30025-1:dynamic:wrong-color` | D1 | 颜色错误 | 14 | 1 |
 | `SC:30025-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 21 | 2 |
 | `SC:30025-1:static:buried-repair` | S1 | 拆上层返修 | 8 | 0 |
+| `SC:30025-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30025-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:30025-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:30025-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30025-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30025-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3926,6 +4921,11 @@ GT：`private/30025-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30026-1:dynamic:wrong-color` | D1 | 颜色错误 | 8 | 1 |
 | `SC:30026-1:dynamic:offset` | D1 | 位置偏移 | 8 | 1 |
 | `SC:30026-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:30026-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30026-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:30026-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30026-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:30026-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30026-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3945,6 +4945,11 @@ GT：`private/30026-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30027-1:dynamic:offset` | D1 | 位置偏移 | 10 | 1 |
 | `SC:30027-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 19 | 2 |
 | `SC:30027-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:30027-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30027-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:30027-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30027-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:30027-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30027-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3962,6 +4967,10 @@ GT：`private/30027-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30030-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:30030-1:dynamic:rotated` | D1 | 方向错误 | 5 | 1 |
 | `SC:30030-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30030-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30030-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:30030-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:30030-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30030-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3980,6 +4989,11 @@ GT：`private/30030-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30033-1:dynamic:offset` | D1 | 位置偏移 | 7 | 1 |
 | `SC:30033-1:dynamic:wrong-part` | D1 | 用错零件 | 7 | 1 |
 | `SC:30033-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30033-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30033-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:30033-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:30033-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:30033-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30033-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -3999,6 +5013,11 @@ GT：`private/30033-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30035-1:dynamic:buried-repair` | D1 | 拆上层返修 | 15 | 1 |
 | `SC:30035-1:dynamic:multiple-wrong-part-then-buried-repair` | D2 | 连续多次干扰 | 19 | 2 |
 | `SC:30035-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:30035-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30035-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:30035-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:30035-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:30035-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30035-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4017,6 +5036,10 @@ GT：`private/30035-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30050-1:dynamic:wrong-color` | D1 | 颜色错误 | 10 | 1 |
 | `SC:30050-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:30050-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:30050-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30050-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:30050-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30050-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30050-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4036,6 +5059,11 @@ GT：`private/30050-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30051-1:dynamic:wrong-color` | D1 | 颜色错误 | 10 | 1 |
 | `SC:30051-1:dynamic:multiple-buried-repair-then-wrong-color` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:30051-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:30051-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30051-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:30051-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:30051-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:30051-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/30051-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4054,6 +5082,11 @@ GT：`private/30051-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30053-1:dynamic:buried-repair` | D1 | 拆上层返修 | 8 | 1 |
 | `SC:30053-1:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:30053-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:30053-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30053-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:30053-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:30053-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30053-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30053-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4073,6 +5106,11 @@ GT：`private/30053-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30055-1:dynamic:offset` | D1 | 位置偏移 | 11 | 1 |
 | `SC:30055-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:30055-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:30055-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30055-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:30055-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30055-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:30055-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30055-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4091,6 +5129,11 @@ GT：`private/30055-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30056-1:dynamic:wrong-color` | D1 | 颜色错误 | 7 | 1 |
 | `SC:30056-1:dynamic:offset` | D1 | 位置偏移 | 7 | 1 |
 | `SC:30056-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:30056-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30056-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:30056-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:30056-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30056-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
 
 GT：`private/30056-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4109,6 +5152,11 @@ GT：`private/30056-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30161-1:dynamic:rotated` | D1 | 方向错误 | 6 | 1 |
 | `SC:30161-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 6 | 1 |
 | `SC:30161-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30161-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30161-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:30161-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:30161-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:30161-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30161-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4127,6 +5175,11 @@ GT：`private/30161-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30181-1:dynamic:early-cover` | D1 | 提前封口 | 8 | 1 |
 | `SC:30181-1:dynamic:buried-repair` | D1 | 拆上层返修 | 11 | 1 |
 | `SC:30181-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:30181-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30181-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:30181-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:30181-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:30181-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30181-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4145,6 +5198,11 @@ GT：`private/30181-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30190-1:dynamic:early-cover` | D1 | 提前封口 | 6 | 1 |
 | `SC:30190-1:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:30190-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:30190-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30190-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:30190-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:30190-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:30190-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
 
 GT：`private/30190-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4163,6 +5221,11 @@ GT：`private/30190-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30191-1:dynamic:repeated-step` | D1 | 步骤重复 | 10 | 1 |
 | `SC:30191-1:dynamic:wrong-color` | D1 | 颜色错误 | 11 | 1 |
 | `SC:30191-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:30191-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30191-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:30191-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:30191-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30191-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30191-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4181,6 +5244,11 @@ GT：`private/30191-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30192-1:dynamic:wrong-part` | D1 | 用错零件 | 9 | 1 |
 | `SC:30192-1:dynamic:extra-layer` | D1 | 多装一层 | 8 | 1 |
 | `SC:30192-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30192-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30192-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:30192-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:30192-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:30192-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30192-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4196,6 +5264,8 @@ GT：`private/30192-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30194-1:dynamic:missing` | D1 | 少装／零件被拆走 | 4 | 1 |
 | `SC:30194-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:30194-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30194-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30194-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30194-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4214,6 +5284,11 @@ GT：`private/30194-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30277-1:dynamic:extra-layer` | D1 | 多装一层 | 8 | 1 |
 | `SC:30277-1:dynamic:buried-repair` | D1 | 拆上层返修 | 11 | 1 |
 | `SC:30277-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:30277-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30277-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:30277-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:30277-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:30277-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30277-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4232,6 +5307,11 @@ GT：`private/30277-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30283-1:dynamic:offset` | D1 | 位置偏移 | 9 | 1 |
 | `SC:30283-1:dynamic:rotated` | D1 | 方向错误 | 9 | 1 |
 | `SC:30283-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30283-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30283-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:30283-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:30283-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:30283-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30283-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4250,6 +5330,11 @@ GT：`private/30283-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30300-1:dynamic:extra-layer` | D1 | 多装一层 | 5 | 1 |
 | `SC:30300-1:dynamic:early-cover` | D1 | 提前封口 | 5 | 1 |
 | `SC:30300-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:30300-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30300-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:30300-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:30300-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:30300-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30300-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4268,6 +5353,10 @@ GT：`private/30300-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30542-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 12 | 1 |
 | `SC:30542-1:dynamic:multiple-repeated-step-then-repeat-omission` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:30542-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:30542-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30542-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:30542-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:30542-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/30542-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4286,6 +5375,11 @@ GT：`private/30542-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:30571-1:dynamic:repeated-step` | D1 | 步骤重复 | 6 | 1 |
 | `SC:30571-1:dynamic:wrong-color` | D1 | 颜色错误 | 7 | 1 |
 | `SC:30571-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:30571-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:30571-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:30571-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:30571-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:30571-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/30571-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4305,6 +5399,11 @@ GT：`private/30571-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:31027-1:dynamic:rotated` | D1 | 方向错误 | 13 | 1 |
 | `SC:31027-1:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:31027-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:31027-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:31027-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:31027-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:31027-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:31027-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/31027-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4323,6 +5422,11 @@ GT：`private/31027-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:31028-1:dynamic:wrong-color` | D1 | 颜色错误 | 9 | 1 |
 | `SC:31028-1:dynamic:offset` | D1 | 位置偏移 | 9 | 1 |
 | `SC:31028-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:31028-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:31028-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:31028-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:31028-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:31028-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/31028-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4342,6 +5446,11 @@ GT：`private/31028-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:31037-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 15 | 1 |
 | `SC:31037-1:dynamic:multiple-rotated-then-repeat-omission` | D2 | 连续多次干扰 | 17 | 2 |
 | `SC:31037-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:31037-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:31037-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:31037-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:31037-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:31037-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/31037-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4361,6 +5470,11 @@ GT：`private/31037-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:31039-1:dynamic:wrong-color` | D1 | 颜色错误 | 11 | 1 |
 | `SC:31039-1:dynamic:multiple-missing-then-buried-repair` | D2 | 连续多次干扰 | 20 | 2 |
 | `SC:31039-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:31039-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:31039-1:static:buried-repair` | S1 | 拆上层返修 | 6 | 0 |
+| `SC:31039-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:31039-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:31039-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/31039-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4380,6 +5494,11 @@ GT：`private/31039-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:31040-1:dynamic:offset` | D1 | 位置偏移 | 12 | 1 |
 | `SC:31040-1:dynamic:multiple-missing-then-early-cover` | D2 | 连续多次干扰 | 12 | 2 |
 | `SC:31040-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:31040-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:31040-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:31040-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:31040-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:31040-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/31040-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4398,6 +5517,11 @@ GT：`private/31040-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:31045-1:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:31045-1:dynamic:offset` | D1 | 位置偏移 | 6 | 1 |
 | `SC:31045-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:31045-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:31045-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:31045-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:31045-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:31045-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/31045-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4416,6 +5540,11 @@ GT：`private/31045-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:31070-1:dynamic:offset` | D1 | 位置偏移 | 7 | 1 |
 | `SC:31070-1:dynamic:wrong-part` | D1 | 用错零件 | 7 | 1 |
 | `SC:31070-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:31070-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:31070-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:31070-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:31070-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:31070-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/31070-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4435,6 +5564,11 @@ GT：`private/31070-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:31072-1:dynamic:early-cover` | D1 | 提前封口 | 21 | 1 |
 | `SC:31072-1:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 23 | 2 |
 | `SC:31072-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:31072-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:31072-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:31072-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:31072-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:31072-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/31072-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4449,6 +5583,7 @@ GT：`private/31072-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:31092-1:dynamic:control` | D0 | 正常、无错误 | 3 | 0 |
 | `SC:31092-1:dynamic:buried-repair` | D1 | 拆上层返修 | 7 | 1 |
 | `SC:31092-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:31092-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/31092-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4468,6 +5603,11 @@ GT：`private/31092-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:40011-1:dynamic:wrong-part` | D1 | 用错零件 | 15 | 1 |
 | `SC:40011-1:dynamic:multiple-missing-then-repeated-step` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:40011-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:40011-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:40011-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:40011-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:40011-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:40011-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/40011-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4484,6 +5624,9 @@ GT：`private/40011-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:40138-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:40138-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 5 | 1 |
 | `SC:40138-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:40138-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:40138-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:40138-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/40138-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4501,6 +5644,10 @@ GT：`private/40138-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:40141-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:40141-1:dynamic:rotated` | D1 | 方向错误 | 5 | 1 |
 | `SC:40141-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:40141-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:40141-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:40141-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:40141-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/40141-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4520,6 +5667,11 @@ GT：`private/40141-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:40142-1:dynamic:rotated` | D1 | 方向错误 | 14 | 1 |
 | `SC:40142-1:dynamic:multiple-missing-then-wrong-color` | D2 | 连续多次干扰 | 15 | 2 |
 | `SC:40142-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:40142-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:40142-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:40142-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:40142-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:40142-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/40142-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4537,6 +5689,10 @@ GT：`private/40142-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:40144-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 7 | 1 |
 | `SC:40144-1:dynamic:wrong-color` | D1 | 颜色错误 | 7 | 1 |
 | `SC:40144-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:40144-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:40144-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:40144-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:40144-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/40144-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4556,6 +5712,11 @@ GT：`private/40144-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:41999-1:dynamic:wrong-color` | D1 | 颜色错误 | 15 | 1 |
 | `SC:41999-1:dynamic:multiple-buried-repair-then-wrong-color` | D2 | 连续多次干扰 | 23 | 2 |
 | `SC:41999-1:static:buried-repair` | S1 | 拆上层返修 | 8 | 0 |
+| `SC:41999-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:41999-1:static:left-right-swap` | S1 | 左右装反 | 4 | 0 |
+| `SC:41999-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:41999-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:41999-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/41999-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4574,6 +5735,11 @@ GT：`private/41999-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:42000-1:dynamic:wrong-color` | D1 | 颜色错误 | 5 | 1 |
 | `SC:42000-1:dynamic:offset` | D1 | 位置偏移 | 5 | 1 |
 | `SC:42000-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:42000-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:42000-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:42000-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:42000-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:42000-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/42000-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4592,6 +5758,11 @@ GT：`private/42000-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:42020-1:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:42020-1:dynamic:repeat-omission` | D1 | 重复结构漏装 | 7 | 1 |
 | `SC:42020-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:42020-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:42020-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:42020-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:42020-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:42020-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/42020-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4611,6 +5782,11 @@ GT：`private/42020-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:42023-1:dynamic:rotated` | D1 | 方向错误 | 12 | 1 |
 | `SC:42023-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 13 | 2 |
 | `SC:42023-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:42023-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:42023-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:42023-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:42023-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:42023-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
 
 GT：`private/42023-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4630,6 +5806,11 @@ GT：`private/42023-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:42023-1-alt-362:dynamic:wrong-color` | D1 | 颜色错误 | 17 | 1 |
 | `SC:42023-1-alt-362:dynamic:multiple-missing-then-early-cover` | D2 | 连续多次干扰 | 17 | 2 |
 | `SC:42023-1-alt-362:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:42023-1-alt-362:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:42023-1-alt-362:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:42023-1-alt-362:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:42023-1-alt-362:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:42023-1-alt-362:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/42023-1-alt-362/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4647,6 +5828,10 @@ GT：`private/42023-1-alt-362/cases.private.json.gz`，按题目 ID 查找。
 | `SC:42024-1:dynamic:wrong-color` | D1 | 颜色错误 | 6 | 1 |
 | `SC:42024-1:dynamic:offset` | D1 | 位置偏移 | 6 | 1 |
 | `SC:42024-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:42024-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:42024-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:42024-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:42024-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/42024-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4665,6 +5850,11 @@ GT：`private/42024-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:42076-1:dynamic:buried-repair` | D1 | 拆上层返修 | 9 | 1 |
 | `SC:42076-1:dynamic:wrong-color` | D1 | 颜色错误 | 7 | 1 |
 | `SC:42076-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:42076-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:42076-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:42076-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:42076-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:42076-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/42076-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4683,6 +5873,11 @@ GT：`private/42076-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:42084-1:dynamic:offset` | D1 | 位置偏移 | 6 | 1 |
 | `SC:42084-1:dynamic:rotated` | D1 | 方向错误 | 6 | 1 |
 | `SC:42084-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:42084-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:42084-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:42084-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:42084-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:42084-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/42084-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4702,6 +5897,11 @@ GT：`private/42084-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:42121-1:dynamic:offset` | D1 | 位置偏移 | 13 | 1 |
 | `SC:42121-1:dynamic:multiple-missing-then-repeat-omission` | D2 | 连续多次干扰 | 14 | 2 |
 | `SC:42121-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:42121-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:42121-1:static:repeated-step` | S1 | 步骤重复 | 1 | 0 |
+| `SC:42121-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
+| `SC:42121-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:42121-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/42121-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4721,6 +5921,11 @@ GT：`private/42121-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:75276-1:dynamic:wrong-color` | D1 | 颜色错误 | 18 | 1 |
 | `SC:75276-1:dynamic:multiple-missing-then-early-cover` | D2 | 连续多次干扰 | 18 | 2 |
 | `SC:75276-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:75276-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:75276-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:75276-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:75276-1:static:repeat-omission` | S1 | 重复结构漏装 | 2 | 0 |
+| `SC:75276-1:static:wrong-color` | S1 | 颜色错误 | 2 | 0 |
 
 GT：`private/75276-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4739,6 +5944,11 @@ GT：`private/75276-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:75895-1:dynamic:rotated` | D1 | 方向错误 | 8 | 1 |
 | `SC:75895-1:dynamic:buried-repair` | D1 | 拆上层返修 | 10 | 1 |
 | `SC:75895-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
+| `SC:75895-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:75895-1:static:offset` | S1 | 位置偏移 | 2 | 0 |
+| `SC:75895-1:static:wrong-part` | S1 | 用错零件 | 2 | 0 |
+| `SC:75895-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:75895-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
 
 GT：`private/75895-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4757,6 +5967,11 @@ GT：`private/75895-1/cases.private.json.gz`，按题目 ID 查找。
 | `SC:561412-1:dynamic:early-cover` | D1 | 提前封口 | 7 | 1 |
 | `SC:561412-1:dynamic:buried-repair` | D1 | 拆上层返修 | 10 | 1 |
 | `SC:561412-1:static:buried-repair` | S1 | 拆上层返修 | 4 | 0 |
+| `SC:561412-1:static:missing` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `SC:561412-1:static:rotated` | S1 | 方向错误 | 2 | 0 |
+| `SC:561412-1:static:extra-layer` | S1 | 多装一层 | 1 | 0 |
+| `SC:561412-1:static:early-cover` | S1 | 提前封口 | 1 | 0 |
+| `SC:561412-1:static:control` | S0 | 正常、无错误 | 0 | 0 |
 
 GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 
@@ -4770,10 +5985,42 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-airplane--t3--control` | D0 | 正常、无错误 | 8 | 0 |
 | `D:obj-airplane--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-airplane--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
 | `D:obj-airplane--t3--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
 | `D:obj-airplane--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
 | `D:obj-airplane--t3--rotated_piece--v01` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-airplane--t3--rotated_piece--v02` | D1 | 方向错误 | 10 | 1 |
 | `D:obj-airplane--t3--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-airplane--t3--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-airplane--t3--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-airplane--t3--wrong_part--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-airplane--t4--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-airplane--t4--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-airplane--t4--compound_fault--v01` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-airplane--t4--compound_fault--v02` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-airplane--t4--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-airplane--t4--extra_layer--v02` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-airplane--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-airplane--t4--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-airplane--t4--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-airplane--t4--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-airplane--t7--buried_wrong_color--v01` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-airplane--t7--compound_fault--v01` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-airplane--t7--compound_fault--v02` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-airplane--t7--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-airplane--t7--extra_layer--v02` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-airplane--t7--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-airplane--t7--removed_piece--v02` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-airplane--t7--rotated_piece--v01` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-airplane--t7--rotated_piece--v02` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-airplane--t7--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-airplane--t7--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-airplane--t7--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-airplane--t7--wrong_color--v02` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-airplane--t7--wrong_part--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-airplane--t7--wrong_part--v02` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-airplane--t7--wrong_size--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-airplane--t7--wrong_size--v02` | D1 | 用错零件 | 10 | 1 |
 
 参考操作：`legacy/checks/obj-airplane.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4787,10 +6034,29 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-ambulance--t3--control` | D0 | 正常、无错误 | 10 | 0 |
 | `D:obj-ambulance--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-ambulance--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
 | `D:obj-ambulance--t3--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
 | `D:obj-ambulance--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
 | `D:obj-ambulance--t3--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-ambulance--t3--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
 | `D:obj-ambulance--t3--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-ambulance--t3--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-ambulance--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-ambulance--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-ambulance--t5--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-ambulance--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-ambulance--t5--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-ambulance--t5--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-ambulance--t5--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-ambulance--t5--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-ambulance--t5--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-ambulance--t9--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-ambulance--t9--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-ambulance--t9--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-ambulance--t9--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-ambulance--t9--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-ambulance--t9--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-ambulance--t9--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
 
 参考操作：`legacy/checks/obj-ambulance.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4804,10 +6070,43 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-bed--t3--control` | D0 | 正常、无错误 | 9 | 0 |
 | `D:obj-bed--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-bed--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
 | `D:obj-bed--t3--early_cover--v01` | D1 | 提前封口 | 10 | 1 |
 | `D:obj-bed--t3--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
 | `D:obj-bed--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-bed--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
 | `D:obj-bed--t3--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-bed--t3--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-bed--t3--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-bed--t3--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-bed--t4--compound_fault--v01` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-bed--t4--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-bed--t4--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-bed--t4--extra_layer--v02` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-bed--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-bed--t4--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-bed--t4--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-bed--t4--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-bed--t4--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-bed--t4--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-bed--t8--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-bed--t8--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-bed--t8--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-bed--t8--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-bed--t8--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-bed--t8--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-bed--t8--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-bed--t8--rotated_piece--v01` | D1 | 方向错误 | 11 | 1 |
+| `D:obj-bed--t8--rotated_piece--v02` | D1 | 方向错误 | 11 | 1 |
+| `D:obj-bed--t8--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-bed--t8--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-bed--t8--swapped_positions--v01` | D1 | 两个零件的位置装反 | 13 | 1 |
+| `D:obj-bed--t8--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-bed--t8--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-bed--t8--wrong_part--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-bed--t8--wrong_part--v02` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-bed--t8--wrong_size--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-bed--t8--wrong_size--v02` | D1 | 用错零件 | 11 | 1 |
 
 参考操作：`legacy/checks/obj-bed.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4822,9 +6121,37 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-bench--t3--control` | D0 | 正常、无错误 | 11 | 0 |
 | `D:obj-bench--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
 | `D:obj-bench--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-bench--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
 | `D:obj-bench--t3--early_cover--v01` | D1 | 提前封口 | 12 | 1 |
 | `D:obj-bench--t3--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
 | `D:obj-bench--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bench--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bench--t3--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bench--t3--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bench--t3--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bench--t3--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bench--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-bench--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-bench--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-bench--t5--early_cover--v01` | D1 | 提前封口 | 12 | 1 |
+| `D:obj-bench--t5--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-bench--t5--extra_layer--v02` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-bench--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bench--t5--removed_piece--v02` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bench--t5--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bench--t5--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bench--t5--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bench--t5--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bench--t10--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-bench--t10--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-bench--t10--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-bench--t10--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bench--t10--rotated_piece--v01` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-bench--t10--rotated_piece--v02` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-bench--t10--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bench--t10--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bench--t10--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bench--t10--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
 
 参考操作：`legacy/checks/obj-bench.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4838,10 +6165,51 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-bookshelf--t3--control` | D0 | 正常、无错误 | 11 | 0 |
 | `D:obj-bookshelf--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-bookshelf--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
 | `D:obj-bookshelf--t3--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
 | `D:obj-bookshelf--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
 | `D:obj-bookshelf--t3--rotated_piece--v01` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-bookshelf--t3--rotated_piece--v02` | D1 | 方向错误 | 13 | 1 |
 | `D:obj-bookshelf--t3--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bookshelf--t3--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bookshelf--t3--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bookshelf--t3--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-bookshelf--t3--wrong_size--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-bookshelf--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-bookshelf--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-bookshelf--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-bookshelf--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-bookshelf--t5--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-bookshelf--t5--extra_layer--v02` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-bookshelf--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bookshelf--t5--removed_piece--v02` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bookshelf--t5--rotated_piece--v01` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-bookshelf--t5--rotated_piece--v02` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-bookshelf--t5--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bookshelf--t5--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bookshelf--t5--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bookshelf--t5--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bookshelf--t5--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-bookshelf--t5--wrong_part--v02` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-bookshelf--t5--wrong_size--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-bookshelf--t5--wrong_size--v02` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-bookshelf--t10--buried_wrong_color--v01` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-bookshelf--t10--buried_wrong_color--v02` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-bookshelf--t10--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-bookshelf--t10--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-bookshelf--t10--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-bookshelf--t10--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bookshelf--t10--removed_piece--v02` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bookshelf--t10--rotated_piece--v01` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-bookshelf--t10--rotated_piece--v02` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-bookshelf--t10--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bookshelf--t10--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bookshelf--t10--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bookshelf--t10--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bookshelf--t10--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-bookshelf--t10--wrong_part--v02` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-bookshelf--t10--wrong_size--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-bookshelf--t10--wrong_size--v02` | D1 | 用错零件 | 13 | 1 |
 
 参考操作：`legacy/checks/obj-bookshelf.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4855,10 +6223,32 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-bridge--t3--control` | D0 | 正常、无错误 | 15 | 0 |
 | `D:obj-bridge--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 21 | 1 |
+| `D:obj-bridge--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 21 | 1 |
 | `D:obj-bridge--t3--extra_layer--v01` | D1 | 多装一层 | 16 | 1 |
 | `D:obj-bridge--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 16 | 1 |
 | `D:obj-bridge--t3--wrong_color--v01` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-bridge--t7--buried_wrong_color--v01` | D1 | 拆上层返修 | 23 | 1 |
+| `D:obj-bridge--t7--buried_wrong_color--v02` | D1 | 拆上层返修 | 23 | 1 |
 | `D:obj-bridge--t7--compound_fault--v01` | D1 | 同次事件含多个错误 | 18 | 1 |
+| `D:obj-bridge--t7--compound_fault--v02` | D1 | 同次事件含多个错误 | 18 | 1 |
+| `D:obj-bridge--t7--extra_layer--v01` | D1 | 多装一层 | 16 | 1 |
+| `D:obj-bridge--t7--extra_layer--v02` | D1 | 多装一层 | 16 | 1 |
+| `D:obj-bridge--t7--removed_piece--v01` | D1 | 少装／零件被拆走 | 16 | 1 |
+| `D:obj-bridge--t7--removed_piece--v02` | D1 | 少装／零件被拆走 | 16 | 1 |
+| `D:obj-bridge--t7--shifted_piece--v01` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-bridge--t7--shifted_piece--v02` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-bridge--t7--wrong_color--v01` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-bridge--t7--wrong_color--v02` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-bridge--t14--buried_wrong_color--v01` | D1 | 拆上层返修 | 21 | 1 |
+| `D:obj-bridge--t14--buried_wrong_color--v02` | D1 | 拆上层返修 | 21 | 1 |
+| `D:obj-bridge--t14--extra_layer--v01` | D1 | 多装一层 | 16 | 1 |
+| `D:obj-bridge--t14--removed_piece--v01` | D1 | 少装／零件被拆走 | 16 | 1 |
+| `D:obj-bridge--t14--rotated_piece--v01` | D1 | 方向错误 | 17 | 1 |
+| `D:obj-bridge--t14--rotated_piece--v02` | D1 | 方向错误 | 17 | 1 |
+| `D:obj-bridge--t14--shifted_piece--v01` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-bridge--t14--shifted_piece--v02` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-bridge--t14--wrong_color--v01` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-bridge--t14--wrong_part--v01` | D1 | 用错零件 | 17 | 1 |
 
 参考操作：`legacy/checks/obj-bridge.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4872,10 +6262,27 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-bunk-bed--t3--control` | D0 | 正常、无错误 | 11 | 0 |
 | `D:obj-bunk-bed--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-bunk-bed--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
 | `D:obj-bunk-bed--t3--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
 | `D:obj-bunk-bed--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
 | `D:obj-bunk-bed--t3--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bunk-bed--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-bunk-bed--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 19 | 1 |
 | `D:obj-bunk-bed--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-bunk-bed--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-bunk-bed--t5--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-bunk-bed--t5--extra_layer--v02` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-bunk-bed--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bunk-bed--t5--removed_piece--v02` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bunk-bed--t5--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bunk-bed--t5--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-bunk-bed--t10--buried_wrong_color--v01` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-bunk-bed--t10--buried_wrong_color--v02` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-bunk-bed--t10--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-bunk-bed--t10--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-bunk-bed--t10--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bunk-bed--t10--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-bunk-bed--t10--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
 
 参考操作：`legacy/checks/obj-bunk-bed.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4889,10 +6296,34 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-bus--t3--control` | D0 | 正常、无错误 | 8 | 0 |
 | `D:obj-bus--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-bus--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 12 | 1 |
 | `D:obj-bus--t3--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
 | `D:obj-bus--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
 | `D:obj-bus--t3--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-bus--t3--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
 | `D:obj-bus--t3--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-bus--t3--wrong_color--v02` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-bus--t4--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-bus--t4--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-bus--t4--early_cover--v01` | D1 | 提前封口 | 9 | 1 |
+| `D:obj-bus--t4--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-bus--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-bus--t4--rotated_piece--v01` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-bus--t4--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-bus--t4--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-bus--t4--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-bus--t4--wrong_size--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-bus--t7--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-bus--t7--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-bus--t7--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-bus--t7--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-bus--t7--rotated_piece--v01` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-bus--t7--rotated_piece--v02` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-bus--t7--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-bus--t7--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-bus--t7--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-bus--t7--wrong_part--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-bus--t7--wrong_size--v01` | D1 | 用错零件 | 10 | 1 |
 
 参考操作：`legacy/checks/obj-bus.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4906,10 +6337,49 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-cabinet--t3--control` | D0 | 正常、无错误 | 8 | 0 |
 | `D:obj-cabinet--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-cabinet--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
 | `D:obj-cabinet--t3--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
 | `D:obj-cabinet--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
 | `D:obj-cabinet--t3--rotated_piece--v01` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-cabinet--t3--rotated_piece--v02` | D1 | 方向错误 | 10 | 1 |
 | `D:obj-cabinet--t3--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-cabinet--t3--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-cabinet--t3--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-cabinet--t3--wrong_part--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-cabinet--t3--wrong_size--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-cabinet--t4--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-cabinet--t4--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-cabinet--t4--compound_fault--v01` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-cabinet--t4--compound_fault--v02` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-cabinet--t4--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-cabinet--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-cabinet--t4--removed_piece--v02` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-cabinet--t4--rotated_piece--v01` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-cabinet--t4--rotated_piece--v02` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-cabinet--t4--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-cabinet--t4--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-cabinet--t4--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-cabinet--t4--wrong_color--v02` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-cabinet--t4--wrong_part--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-cabinet--t4--wrong_part--v02` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-cabinet--t4--wrong_size--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-cabinet--t7--buried_wrong_color--v01` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-cabinet--t7--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-cabinet--t7--compound_fault--v01` | D1 | 同次事件含多个错误 | 10 | 1 |
+| `D:obj-cabinet--t7--compound_fault--v02` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-cabinet--t7--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-cabinet--t7--extra_layer--v02` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-cabinet--t7--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-cabinet--t7--removed_piece--v02` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-cabinet--t7--rotated_piece--v01` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-cabinet--t7--rotated_piece--v02` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-cabinet--t7--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-cabinet--t7--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-cabinet--t7--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-cabinet--t7--wrong_color--v02` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-cabinet--t7--wrong_part--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-cabinet--t7--wrong_part--v02` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-cabinet--t7--wrong_size--v01` | D1 | 用错零件 | 10 | 1 |
 
 参考操作：`legacy/checks/obj-cabinet.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4923,10 +6393,46 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-cargo-truck--t3--control` | D0 | 正常、无错误 | 10 | 0 |
 | `D:obj-cargo-truck--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-cargo-truck--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
 | `D:obj-cargo-truck--t3--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
 | `D:obj-cargo-truck--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
 | `D:obj-cargo-truck--t3--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-cargo-truck--t3--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
 | `D:obj-cargo-truck--t3--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-cargo-truck--t3--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-cargo-truck--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-cargo-truck--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-cargo-truck--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-cargo-truck--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-cargo-truck--t5--early_cover--v01` | D1 | 提前封口 | 11 | 1 |
+| `D:obj-cargo-truck--t5--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-cargo-truck--t5--extra_layer--v02` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-cargo-truck--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-cargo-truck--t5--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-cargo-truck--t5--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-cargo-truck--t5--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-cargo-truck--t5--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-cargo-truck--t5--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-cargo-truck--t5--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-cargo-truck--t5--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-cargo-truck--t9--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-cargo-truck--t9--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-cargo-truck--t9--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-cargo-truck--t9--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-cargo-truck--t9--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-cargo-truck--t9--extra_layer--v02` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-cargo-truck--t9--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-cargo-truck--t9--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-cargo-truck--t9--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-cargo-truck--t9--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-cargo-truck--t9--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-cargo-truck--t9--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-cargo-truck--t9--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-cargo-truck--t9--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-cargo-truck--t9--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-cargo-truck--t9--wrong_part--v02` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-cargo-truck--t9--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-cargo-truck--t9--wrong_size--v02` | D1 | 用错零件 | 12 | 1 |
 
 参考操作：`legacy/checks/obj-cargo-truck.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4940,10 +6446,23 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-cash-register--t3--control` | D0 | 正常、无错误 | 6 | 0 |
 | `D:obj-cash-register--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-cash-register--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 12 | 1 |
 | `D:obj-cash-register--t3--extra_layer--v01` | D1 | 多装一层 | 7 | 1 |
 | `D:obj-cash-register--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 7 | 1 |
 | `D:obj-cash-register--t3--shifted_piece--v01` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-cash-register--t3--shifted_piece--v02` | D1 | 位置偏移 | 8 | 1 |
 | `D:obj-cash-register--t3--wrong_color--v01` | D1 | 颜色错误 | 8 | 1 |
+| `D:obj-cash-register--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-cash-register--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-cash-register--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 9 | 1 |
+| `D:obj-cash-register--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 9 | 1 |
+| `D:obj-cash-register--t5--extra_layer--v01` | D1 | 多装一层 | 7 | 1 |
+| `D:obj-cash-register--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 7 | 1 |
+| `D:obj-cash-register--t5--removed_piece--v02` | D1 | 少装／零件被拆走 | 7 | 1 |
+| `D:obj-cash-register--t5--shifted_piece--v01` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-cash-register--t5--shifted_piece--v02` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-cash-register--t5--wrong_color--v01` | D1 | 颜色错误 | 8 | 1 |
+| `D:obj-cash-register--t5--wrong_color--v02` | D1 | 颜色错误 | 8 | 1 |
 
 参考操作：`legacy/checks/obj-cash-register.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4957,10 +6476,25 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-chair--t3--control` | D0 | 正常、无错误 | 7 | 0 |
 | `D:obj-chair--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 10 | 1 |
+| `D:obj-chair--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 10 | 1 |
 | `D:obj-chair--t3--early_cover--v01` | D1 | 提前封口 | 8 | 1 |
 | `D:obj-chair--t3--extra_layer--v01` | D1 | 多装一层 | 8 | 1 |
 | `D:obj-chair--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 8 | 1 |
+| `D:obj-chair--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 8 | 1 |
 | `D:obj-chair--t3--shifted_piece--v01` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-chair--t3--shifted_piece--v02` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-chair--t3--wrong_color--v01` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-chair--t3--wrong_color--v02` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-chair--t6--buried_wrong_color--v01` | D1 | 拆上层返修 | 11 | 1 |
+| `D:obj-chair--t6--buried_wrong_color--v02` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-chair--t6--extra_layer--v01` | D1 | 多装一层 | 8 | 1 |
+| `D:obj-chair--t6--removed_piece--v01` | D1 | 少装／零件被拆走 | 8 | 1 |
+| `D:obj-chair--t6--rotated_piece--v01` | D1 | 方向错误 | 9 | 1 |
+| `D:obj-chair--t6--rotated_piece--v02` | D1 | 方向错误 | 9 | 1 |
+| `D:obj-chair--t6--shifted_piece--v01` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-chair--t6--shifted_piece--v02` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-chair--t6--wrong_color--v01` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-chair--t6--wrong_part--v01` | D1 | 用错零件 | 9 | 1 |
 
 参考操作：`legacy/checks/obj-chair.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4974,10 +6508,25 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-city-car--t3--control` | D0 | 正常、无错误 | 6 | 0 |
 | `D:obj-city-car--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 10 | 1 |
+| `D:obj-city-car--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 10 | 1 |
 | `D:obj-city-car--t3--extra_layer--v01` | D1 | 多装一层 | 7 | 1 |
 | `D:obj-city-car--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 7 | 1 |
 | `D:obj-city-car--t3--shifted_piece--v01` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-city-car--t3--shifted_piece--v02` | D1 | 位置偏移 | 8 | 1 |
 | `D:obj-city-car--t3--wrong_color--v01` | D1 | 颜色错误 | 8 | 1 |
+| `D:obj-city-car--t3--wrong_part--v01` | D1 | 用错零件 | 8 | 1 |
+| `D:obj-city-car--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-city-car--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-city-car--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 9 | 1 |
+| `D:obj-city-car--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 9 | 1 |
+| `D:obj-city-car--t5--extra_layer--v01` | D1 | 多装一层 | 7 | 1 |
+| `D:obj-city-car--t5--extra_layer--v02` | D1 | 多装一层 | 7 | 1 |
+| `D:obj-city-car--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 7 | 1 |
+| `D:obj-city-car--t5--rotated_piece--v01` | D1 | 方向错误 | 8 | 1 |
+| `D:obj-city-car--t5--shifted_piece--v01` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-city-car--t5--shifted_piece--v02` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-city-car--t5--wrong_color--v01` | D1 | 颜色错误 | 8 | 1 |
+| `D:obj-city-car--t5--wrong_part--v01` | D1 | 用错零件 | 8 | 1 |
 
 参考操作：`legacy/checks/obj-city-car.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -4991,10 +6540,50 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-clock-tower--t3--control` | D0 | 正常、无错误 | 13 | 0 |
 | `D:obj-clock-tower--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-clock-tower--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 19 | 1 |
 | `D:obj-clock-tower--t3--extra_layer--v01` | D1 | 多装一层 | 14 | 1 |
 | `D:obj-clock-tower--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 14 | 1 |
 | `D:obj-clock-tower--t3--rotated_piece--v01` | D1 | 方向错误 | 15 | 1 |
+| `D:obj-clock-tower--t3--rotated_piece--v02` | D1 | 方向错误 | 15 | 1 |
 | `D:obj-clock-tower--t3--shifted_piece--v01` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-clock-tower--t3--shifted_piece--v02` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-clock-tower--t3--wrong_color--v01` | D1 | 颜色错误 | 15 | 1 |
+| `D:obj-clock-tower--t3--wrong_part--v01` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-clock-tower--t3--wrong_size--v01` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-clock-tower--t6--buried_wrong_color--v01` | D1 | 拆上层返修 | 21 | 1 |
+| `D:obj-clock-tower--t6--buried_wrong_color--v02` | D1 | 拆上层返修 | 21 | 1 |
+| `D:obj-clock-tower--t6--compound_fault--v01` | D1 | 同次事件含多个错误 | 16 | 1 |
+| `D:obj-clock-tower--t6--compound_fault--v02` | D1 | 同次事件含多个错误 | 16 | 1 |
+| `D:obj-clock-tower--t6--extra_layer--v01` | D1 | 多装一层 | 14 | 1 |
+| `D:obj-clock-tower--t6--removed_piece--v01` | D1 | 少装／零件被拆走 | 14 | 1 |
+| `D:obj-clock-tower--t6--removed_piece--v02` | D1 | 少装／零件被拆走 | 14 | 1 |
+| `D:obj-clock-tower--t6--rotated_piece--v01` | D1 | 方向错误 | 15 | 1 |
+| `D:obj-clock-tower--t6--rotated_piece--v02` | D1 | 方向错误 | 15 | 1 |
+| `D:obj-clock-tower--t6--shifted_piece--v01` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-clock-tower--t6--shifted_piece--v02` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-clock-tower--t6--wrong_color--v01` | D1 | 颜色错误 | 15 | 1 |
+| `D:obj-clock-tower--t6--wrong_color--v02` | D1 | 颜色错误 | 15 | 1 |
+| `D:obj-clock-tower--t6--wrong_part--v01` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-clock-tower--t6--wrong_part--v02` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-clock-tower--t6--wrong_size--v01` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-clock-tower--t6--wrong_size--v02` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-clock-tower--t12--buried_wrong_color--v01` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-clock-tower--t12--buried_wrong_color--v02` | D1 | 拆上层返修 | 21 | 1 |
+| `D:obj-clock-tower--t12--compound_fault--v01` | D1 | 同次事件含多个错误 | 15 | 1 |
+| `D:obj-clock-tower--t12--compound_fault--v02` | D1 | 同次事件含多个错误 | 16 | 1 |
+| `D:obj-clock-tower--t12--extra_layer--v01` | D1 | 多装一层 | 14 | 1 |
+| `D:obj-clock-tower--t12--removed_piece--v01` | D1 | 少装／零件被拆走 | 14 | 1 |
+| `D:obj-clock-tower--t12--removed_piece--v02` | D1 | 少装／零件被拆走 | 14 | 1 |
+| `D:obj-clock-tower--t12--rotated_piece--v01` | D1 | 方向错误 | 15 | 1 |
+| `D:obj-clock-tower--t12--rotated_piece--v02` | D1 | 方向错误 | 15 | 1 |
+| `D:obj-clock-tower--t12--shifted_piece--v01` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-clock-tower--t12--shifted_piece--v02` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-clock-tower--t12--wrong_color--v01` | D1 | 颜色错误 | 15 | 1 |
+| `D:obj-clock-tower--t12--wrong_color--v02` | D1 | 颜色错误 | 15 | 1 |
+| `D:obj-clock-tower--t12--wrong_part--v01` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-clock-tower--t12--wrong_part--v02` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-clock-tower--t12--wrong_size--v01` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-clock-tower--t12--wrong_size--v02` | D1 | 用错零件 | 15 | 1 |
 
 参考操作：`legacy/checks/obj-clock-tower.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5008,10 +6597,32 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-coffee-machine--t3--control` | D0 | 正常、无错误 | 9 | 0 |
 | `D:obj-coffee-machine--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-coffee-machine--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 15 | 1 |
 | `D:obj-coffee-machine--t3--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
 | `D:obj-coffee-machine--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
 | `D:obj-coffee-machine--t3--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-coffee-machine--t4--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-coffee-machine--t4--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
 | `D:obj-coffee-machine--t4--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-coffee-machine--t4--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-coffee-machine--t4--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-coffee-machine--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-coffee-machine--t4--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-coffee-machine--t4--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-coffee-machine--t4--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-coffee-machine--t4--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-coffee-machine--t4--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-coffee-machine--t8--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-coffee-machine--t8--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-coffee-machine--t8--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-coffee-machine--t8--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-coffee-machine--t8--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-coffee-machine--t8--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-coffee-machine--t8--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-coffee-machine--t8--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-coffee-machine--t8--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-coffee-machine--t8--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-coffee-machine--t8--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
 
 参考操作：`legacy/checks/obj-coffee-machine.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5025,10 +6636,27 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-crane--t3--control` | D0 | 正常、无错误 | 9 | 0 |
 | `D:obj-crane--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-crane--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 15 | 1 |
 | `D:obj-crane--t3--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
 | `D:obj-crane--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
 | `D:obj-crane--t3--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-crane--t3--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-crane--t4--buried_wrong_color--v01` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-crane--t4--buried_wrong_color--v02` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-crane--t4--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-crane--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-crane--t4--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-crane--t8--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-crane--t8--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
 | `D:obj-crane--t8--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-crane--t8--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-crane--t8--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-crane--t8--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-crane--t8--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-crane--t8--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-crane--t8--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-crane--t8--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-crane--t8--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
 
 参考操作：`legacy/checks/obj-crane.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5043,9 +6671,43 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-desk--t3--control` | D0 | 正常、无错误 | 13 | 0 |
 | `D:obj-desk--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 19 | 1 |
 | `D:obj-desk--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 16 | 1 |
-| `D:obj-desk--t3--early_cover--v01` | D1 | 提前封口 | 14 | 1 |
+| `D:obj-desk--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 16 | 1 |
 | `D:obj-desk--t3--extra_layer--v01` | D1 | 多装一层 | 14 | 1 |
 | `D:obj-desk--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 14 | 1 |
+| `D:obj-desk--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 14 | 1 |
+| `D:obj-desk--t3--shifted_piece--v01` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-desk--t3--shifted_piece--v02` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-desk--t3--wrong_color--v01` | D1 | 颜色错误 | 15 | 1 |
+| `D:obj-desk--t3--wrong_color--v02` | D1 | 颜色错误 | 15 | 1 |
+| `D:obj-desk--t6--buried_wrong_color--v01` | D1 | 拆上层返修 | 21 | 1 |
+| `D:obj-desk--t6--buried_wrong_color--v02` | D1 | 拆上层返修 | 21 | 1 |
+| `D:obj-desk--t6--extra_layer--v01` | D1 | 多装一层 | 14 | 1 |
+| `D:obj-desk--t6--removed_piece--v01` | D1 | 少装／零件被拆走 | 14 | 1 |
+| `D:obj-desk--t6--rotated_piece--v01` | D1 | 方向错误 | 15 | 1 |
+| `D:obj-desk--t6--rotated_piece--v02` | D1 | 方向错误 | 15 | 1 |
+| `D:obj-desk--t6--shifted_piece--v01` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-desk--t6--shifted_piece--v02` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-desk--t6--wrong_color--v01` | D1 | 颜色错误 | 15 | 1 |
+| `D:obj-desk--t6--wrong_part--v01` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-desk--t6--wrong_size--v01` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-desk--t12--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-desk--t12--buried_wrong_color--v02` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-desk--t12--compound_fault--v01` | D1 | 同次事件含多个错误 | 15 | 1 |
+| `D:obj-desk--t12--compound_fault--v02` | D1 | 同次事件含多个错误 | 16 | 1 |
+| `D:obj-desk--t12--extra_layer--v01` | D1 | 多装一层 | 14 | 1 |
+| `D:obj-desk--t12--extra_layer--v02` | D1 | 多装一层 | 14 | 1 |
+| `D:obj-desk--t12--removed_piece--v01` | D1 | 少装／零件被拆走 | 14 | 1 |
+| `D:obj-desk--t12--removed_piece--v02` | D1 | 少装／零件被拆走 | 14 | 1 |
+| `D:obj-desk--t12--rotated_piece--v01` | D1 | 方向错误 | 15 | 1 |
+| `D:obj-desk--t12--rotated_piece--v02` | D1 | 方向错误 | 15 | 1 |
+| `D:obj-desk--t12--shifted_piece--v01` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-desk--t12--shifted_piece--v02` | D1 | 位置偏移 | 15 | 1 |
+| `D:obj-desk--t12--wrong_color--v01` | D1 | 颜色错误 | 15 | 1 |
+| `D:obj-desk--t12--wrong_color--v02` | D1 | 颜色错误 | 15 | 1 |
+| `D:obj-desk--t12--wrong_part--v01` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-desk--t12--wrong_part--v02` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-desk--t12--wrong_size--v01` | D1 | 用错零件 | 15 | 1 |
+| `D:obj-desk--t12--wrong_size--v02` | D1 | 用错零件 | 15 | 1 |
 
 参考操作：`legacy/checks/obj-desk.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5059,10 +6721,39 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-fire-engine--t3--control` | D0 | 正常、无错误 | 10 | 0 |
 | `D:obj-fire-engine--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-fire-engine--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
 | `D:obj-fire-engine--t3--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
 | `D:obj-fire-engine--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
 | `D:obj-fire-engine--t3--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-fire-engine--t3--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
 | `D:obj-fire-engine--t3--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-fire-engine--t3--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-fire-engine--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-fire-engine--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-fire-engine--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-fire-engine--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-fire-engine--t5--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-fire-engine--t5--extra_layer--v02` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-fire-engine--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-fire-engine--t5--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-fire-engine--t5--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-fire-engine--t5--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-fire-engine--t9--buried_wrong_color--v01` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-fire-engine--t9--buried_wrong_color--v02` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-fire-engine--t9--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-fire-engine--t9--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-fire-engine--t9--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-fire-engine--t9--extra_layer--v02` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-fire-engine--t9--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-fire-engine--t9--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-fire-engine--t9--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-fire-engine--t9--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-fire-engine--t9--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-fire-engine--t9--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-fire-engine--t9--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-fire-engine--t9--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-fire-engine--t9--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-fire-engine--t9--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
 
 参考操作：`legacy/checks/obj-fire-engine.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5076,10 +6767,43 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-forklift--t3--control` | D0 | 正常、无错误 | 15 | 0 |
 | `D:obj-forklift--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-forklift--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 19 | 1 |
 | `D:obj-forklift--t3--extra_layer--v01` | D1 | 多装一层 | 16 | 1 |
 | `D:obj-forklift--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 16 | 1 |
 | `D:obj-forklift--t3--shifted_piece--v01` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-forklift--t3--shifted_piece--v02` | D1 | 位置偏移 | 17 | 1 |
 | `D:obj-forklift--t3--wrong_color--v01` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-forklift--t3--wrong_color--v02` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-forklift--t3--wrong_part--v01` | D1 | 用错零件 | 17 | 1 |
+| `D:obj-forklift--t7--buried_wrong_color--v01` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-forklift--t7--buried_wrong_color--v02` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-forklift--t7--compound_fault--v01` | D1 | 同次事件含多个错误 | 18 | 1 |
+| `D:obj-forklift--t7--compound_fault--v02` | D1 | 同次事件含多个错误 | 18 | 1 |
+| `D:obj-forklift--t7--extra_layer--v01` | D1 | 多装一层 | 16 | 1 |
+| `D:obj-forklift--t7--extra_layer--v02` | D1 | 多装一层 | 16 | 1 |
+| `D:obj-forklift--t7--removed_piece--v01` | D1 | 少装／零件被拆走 | 16 | 1 |
+| `D:obj-forklift--t7--removed_piece--v02` | D1 | 少装／零件被拆走 | 16 | 1 |
+| `D:obj-forklift--t7--shifted_piece--v01` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-forklift--t7--shifted_piece--v02` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-forklift--t7--wrong_color--v01` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-forklift--t7--wrong_color--v02` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-forklift--t14--compound_fault--v01` | D1 | 同次事件含多个错误 | 18 | 1 |
+| `D:obj-forklift--t14--compound_fault--v02` | D1 | 同次事件含多个错误 | 18 | 1 |
+| `D:obj-forklift--t14--extra_layer--v01` | D1 | 多装一层 | 16 | 1 |
+| `D:obj-forklift--t14--removed_piece--v01` | D1 | 少装／零件被拆走 | 16 | 1 |
+| `D:obj-forklift--t14--removed_piece--v02` | D1 | 少装／零件被拆走 | 16 | 1 |
+| `D:obj-forklift--t14--rotated_piece--v01` | D1 | 方向错误 | 17 | 1 |
+| `D:obj-forklift--t14--rotated_piece--v02` | D1 | 方向错误 | 17 | 1 |
+| `D:obj-forklift--t14--shifted_piece--v01` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-forklift--t14--shifted_piece--v02` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-forklift--t14--swapped_positions--v01` | D1 | 两个零件的位置装反 | 19 | 1 |
+| `D:obj-forklift--t14--swapped_positions--v02` | D1 | 两个零件的位置装反 | 19 | 1 |
+| `D:obj-forklift--t14--wrong_color--v01` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-forklift--t14--wrong_color--v02` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-forklift--t14--wrong_part--v01` | D1 | 用错零件 | 17 | 1 |
+| `D:obj-forklift--t14--wrong_part--v02` | D1 | 用错零件 | 17 | 1 |
+| `D:obj-forklift--t14--wrong_size--v01` | D1 | 用错零件 | 17 | 1 |
+| `D:obj-forklift--t14--wrong_size--v02` | D1 | 用错零件 | 17 | 1 |
 
 参考操作：`legacy/checks/obj-forklift.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5094,9 +6818,35 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-fountain--t3--control` | D0 | 正常、无错误 | 8 | 0 |
 | `D:obj-fountain--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
 | `D:obj-fountain--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 10 | 1 |
+| `D:obj-fountain--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 11 | 1 |
 | `D:obj-fountain--t3--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
 | `D:obj-fountain--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-fountain--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 9 | 1 |
 | `D:obj-fountain--t3--rotated_piece--v01` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-fountain--t3--rotated_piece--v02` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-fountain--t3--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-fountain--t3--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-fountain--t3--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-fountain--t3--wrong_color--v02` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-fountain--t3--wrong_part--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-fountain--t3--wrong_part--v02` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-fountain--t3--wrong_size--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-fountain--t3--wrong_size--v02` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-fountain--t4--buried_wrong_color--v01` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-fountain--t4--buried_wrong_color--v02` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-fountain--t4--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-fountain--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-fountain--t4--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-fountain--t4--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-fountain--t4--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-fountain--t7--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-fountain--t7--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-fountain--t7--compound_fault--v01` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-fountain--t7--compound_fault--v02` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-fountain--t7--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-fountain--t7--extra_layer--v02` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-fountain--t7--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-fountain--t7--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
 
 参考操作：`legacy/checks/obj-fountain.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5110,10 +6860,40 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-gateway--t3--control` | D0 | 正常、无错误 | 15 | 0 |
 | `D:obj-gateway--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 21 | 1 |
+| `D:obj-gateway--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 21 | 1 |
 | `D:obj-gateway--t3--extra_layer--v01` | D1 | 多装一层 | 16 | 1 |
 | `D:obj-gateway--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 16 | 1 |
 | `D:obj-gateway--t3--rotated_piece--v01` | D1 | 方向错误 | 17 | 1 |
+| `D:obj-gateway--t3--rotated_piece--v02` | D1 | 方向错误 | 17 | 1 |
 | `D:obj-gateway--t3--shifted_piece--v01` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-gateway--t3--shifted_piece--v02` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-gateway--t3--wrong_color--v01` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-gateway--t3--wrong_part--v01` | D1 | 用错零件 | 17 | 1 |
+| `D:obj-gateway--t3--wrong_size--v01` | D1 | 用错零件 | 17 | 1 |
+| `D:obj-gateway--t7--buried_wrong_color--v01` | D1 | 拆上层返修 | 23 | 1 |
+| `D:obj-gateway--t7--buried_wrong_color--v02` | D1 | 拆上层返修 | 23 | 1 |
+| `D:obj-gateway--t7--compound_fault--v01` | D1 | 同次事件含多个错误 | 18 | 1 |
+| `D:obj-gateway--t7--compound_fault--v02` | D1 | 同次事件含多个错误 | 18 | 1 |
+| `D:obj-gateway--t7--extra_layer--v01` | D1 | 多装一层 | 16 | 1 |
+| `D:obj-gateway--t7--removed_piece--v01` | D1 | 少装／零件被拆走 | 16 | 1 |
+| `D:obj-gateway--t7--removed_piece--v02` | D1 | 少装／零件被拆走 | 16 | 1 |
+| `D:obj-gateway--t7--rotated_piece--v01` | D1 | 方向错误 | 17 | 1 |
+| `D:obj-gateway--t7--rotated_piece--v02` | D1 | 方向错误 | 17 | 1 |
+| `D:obj-gateway--t7--shifted_piece--v01` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-gateway--t7--shifted_piece--v02` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-gateway--t7--wrong_color--v01` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-gateway--t7--wrong_color--v02` | D1 | 颜色错误 | 17 | 1 |
+| `D:obj-gateway--t7--wrong_part--v01` | D1 | 用错零件 | 17 | 1 |
+| `D:obj-gateway--t7--wrong_part--v02` | D1 | 用错零件 | 17 | 1 |
+| `D:obj-gateway--t7--wrong_size--v01` | D1 | 用错零件 | 17 | 1 |
+| `D:obj-gateway--t7--wrong_size--v02` | D1 | 用错零件 | 17 | 1 |
+| `D:obj-gateway--t14--buried_wrong_color--v01` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-gateway--t14--buried_wrong_color--v02` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-gateway--t14--extra_layer--v01` | D1 | 多装一层 | 16 | 1 |
+| `D:obj-gateway--t14--removed_piece--v01` | D1 | 少装／零件被拆走 | 16 | 1 |
+| `D:obj-gateway--t14--shifted_piece--v01` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-gateway--t14--shifted_piece--v02` | D1 | 位置偏移 | 17 | 1 |
+| `D:obj-gateway--t14--wrong_color--v01` | D1 | 颜色错误 | 17 | 1 |
 
 参考操作：`legacy/checks/obj-gateway.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5127,10 +6907,21 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-helicopter--t3--control` | D0 | 正常、无错误 | 6 | 0 |
 | `D:obj-helicopter--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-helicopter--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 12 | 1 |
 | `D:obj-helicopter--t3--extra_layer--v01` | D1 | 多装一层 | 7 | 1 |
 | `D:obj-helicopter--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 7 | 1 |
 | `D:obj-helicopter--t3--shifted_piece--v01` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-helicopter--t3--shifted_piece--v02` | D1 | 位置偏移 | 8 | 1 |
 | `D:obj-helicopter--t3--wrong_color--v01` | D1 | 颜色错误 | 8 | 1 |
+| `D:obj-helicopter--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-helicopter--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-helicopter--t5--extra_layer--v01` | D1 | 多装一层 | 7 | 1 |
+| `D:obj-helicopter--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 7 | 1 |
+| `D:obj-helicopter--t5--rotated_piece--v01` | D1 | 方向错误 | 8 | 1 |
+| `D:obj-helicopter--t5--shifted_piece--v01` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-helicopter--t5--shifted_piece--v02` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-helicopter--t5--wrong_color--v01` | D1 | 颜色错误 | 8 | 1 |
+| `D:obj-helicopter--t5--wrong_part--v01` | D1 | 用错零件 | 8 | 1 |
 
 参考操作：`legacy/checks/obj-helicopter.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5144,10 +6935,45 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-house--t3--control` | D0 | 正常、无错误 | 11 | 0 |
 | `D:obj-house--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-house--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
 | `D:obj-house--t3--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
 | `D:obj-house--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
 | `D:obj-house--t3--rotated_piece--v01` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-house--t3--rotated_piece--v02` | D1 | 方向错误 | 13 | 1 |
 | `D:obj-house--t3--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-house--t3--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-house--t3--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-house--t3--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-house--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-house--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-house--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-house--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-house--t5--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-house--t5--extra_layer--v02` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-house--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-house--t5--removed_piece--v02` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-house--t5--rotated_piece--v01` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-house--t5--rotated_piece--v02` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-house--t5--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-house--t5--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-house--t5--swapped_positions--v01` | D1 | 两个零件的位置装反 | 15 | 1 |
+| `D:obj-house--t5--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-house--t5--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-house--t5--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-house--t5--wrong_size--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-house--t10--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-house--t10--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-house--t10--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-house--t10--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-house--t10--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-house--t10--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-house--t10--removed_piece--v02` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-house--t10--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-house--t10--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-house--t10--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-house--t10--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-house--t10--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-house--t10--wrong_part--v02` | D1 | 用错零件 | 13 | 1 |
 
 参考操作：`legacy/checks/obj-house.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5161,10 +6987,18 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-lamp--t3--control` | D0 | 正常、无错误 | 7 | 0 |
 | `D:obj-lamp--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 11 | 1 |
+| `D:obj-lamp--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 13 | 1 |
 | `D:obj-lamp--t3--extra_layer--v01` | D1 | 多装一层 | 8 | 1 |
 | `D:obj-lamp--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 8 | 1 |
 | `D:obj-lamp--t3--wrong_color--v01` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-lamp--t3--wrong_color--v02` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-lamp--t6--buried_wrong_color--v01` | D1 | 拆上层返修 | 11 | 1 |
+| `D:obj-lamp--t6--buried_wrong_color--v02` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-lamp--t6--extra_layer--v01` | D1 | 多装一层 | 8 | 1 |
+| `D:obj-lamp--t6--removed_piece--v01` | D1 | 少装／零件被拆走 | 8 | 1 |
 | `D:obj-lamp--t6--shifted_piece--v01` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-lamp--t6--shifted_piece--v02` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-lamp--t6--wrong_color--v01` | D1 | 颜色错误 | 9 | 1 |
 
 参考操作：`legacy/checks/obj-lamp.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5178,10 +7012,40 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-locomotive--t3--control` | D0 | 正常、无错误 | 11 | 0 |
 | `D:obj-locomotive--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-locomotive--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 15 | 1 |
 | `D:obj-locomotive--t3--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
 | `D:obj-locomotive--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
 | `D:obj-locomotive--t3--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-locomotive--t3--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
 | `D:obj-locomotive--t3--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-locomotive--t3--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-locomotive--t3--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-locomotive--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-locomotive--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-locomotive--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-locomotive--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-locomotive--t5--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-locomotive--t5--extra_layer--v02` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-locomotive--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-locomotive--t5--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-locomotive--t5--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-locomotive--t5--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-locomotive--t10--buried_wrong_color--v01` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-locomotive--t10--buried_wrong_color--v02` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-locomotive--t10--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-locomotive--t10--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-locomotive--t10--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-locomotive--t10--extra_layer--v02` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-locomotive--t10--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-locomotive--t10--removed_piece--v02` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-locomotive--t10--rotated_piece--v01` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-locomotive--t10--rotated_piece--v02` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-locomotive--t10--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-locomotive--t10--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-locomotive--t10--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-locomotive--t10--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-locomotive--t10--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-locomotive--t10--wrong_part--v02` | D1 | 用错零件 | 13 | 1 |
 
 参考操作：`legacy/checks/obj-locomotive.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5195,10 +7059,24 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-monitor--t3--control` | D0 | 正常、无错误 | 7 | 0 |
 | `D:obj-monitor--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-monitor--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 13 | 1 |
 | `D:obj-monitor--t3--extra_layer--v01` | D1 | 多装一层 | 8 | 1 |
 | `D:obj-monitor--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 8 | 1 |
 | `D:obj-monitor--t3--rotated_piece--v01` | D1 | 方向错误 | 9 | 1 |
+| `D:obj-monitor--t3--rotated_piece--v02` | D1 | 方向错误 | 9 | 1 |
 | `D:obj-monitor--t3--shifted_piece--v01` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-monitor--t3--shifted_piece--v02` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-monitor--t3--wrong_color--v01` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-monitor--t3--wrong_part--v01` | D1 | 用错零件 | 9 | 1 |
+| `D:obj-monitor--t6--buried_wrong_color--v01` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-monitor--t6--buried_wrong_color--v02` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-monitor--t6--extra_layer--v01` | D1 | 多装一层 | 8 | 1 |
+| `D:obj-monitor--t6--removed_piece--v01` | D1 | 少装／零件被拆走 | 8 | 1 |
+| `D:obj-monitor--t6--rotated_piece--v01` | D1 | 方向错误 | 9 | 1 |
+| `D:obj-monitor--t6--shifted_piece--v01` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-monitor--t6--shifted_piece--v02` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-monitor--t6--wrong_color--v01` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-monitor--t6--wrong_part--v01` | D1 | 用错零件 | 9 | 1 |
 
 参考操作：`legacy/checks/obj-monitor.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5212,10 +7090,27 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-motorboat--t3--control` | D0 | 正常、无错误 | 10 | 0 |
 | `D:obj-motorboat--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-motorboat--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
 | `D:obj-motorboat--t3--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
 | `D:obj-motorboat--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
 | `D:obj-motorboat--t3--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-motorboat--t3--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
 | `D:obj-motorboat--t3--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-motorboat--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-motorboat--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-motorboat--t5--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-motorboat--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-motorboat--t5--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-motorboat--t9--buried_wrong_color--v01` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-motorboat--t9--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-motorboat--t9--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-motorboat--t9--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-motorboat--t9--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-motorboat--t9--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-motorboat--t9--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-motorboat--t9--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-motorboat--t9--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-motorboat--t9--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
 
 参考操作：`legacy/checks/obj-motorboat.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5229,10 +7124,44 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-piano--t3--control` | D0 | 正常、无错误 | 10 | 0 |
 | `D:obj-piano--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-piano--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
 | `D:obj-piano--t3--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
 | `D:obj-piano--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
 | `D:obj-piano--t3--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-piano--t3--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
 | `D:obj-piano--t3--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-piano--t3--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-piano--t3--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-piano--t3--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-piano--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-piano--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-piano--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-piano--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-piano--t5--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-piano--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-piano--t5--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-piano--t5--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-piano--t5--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-piano--t5--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-piano--t5--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-piano--t5--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-piano--t5--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-piano--t5--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-piano--t5--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-piano--t9--buried_wrong_color--v01` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-piano--t9--buried_wrong_color--v02` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-piano--t9--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-piano--t9--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-piano--t9--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-piano--t9--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-piano--t9--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-piano--t9--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-piano--t9--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-piano--t9--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-piano--t9--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-piano--t9--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-piano--t9--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-piano--t9--wrong_part--v02` | D1 | 用错零件 | 12 | 1 |
 
 参考操作：`legacy/checks/obj-piano.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5246,10 +7175,41 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-pickup--t3--control` | D0 | 正常、无错误 | 9 | 0 |
 | `D:obj-pickup--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-pickup--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 13 | 1 |
 | `D:obj-pickup--t3--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
 | `D:obj-pickup--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
 | `D:obj-pickup--t3--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-pickup--t3--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
 | `D:obj-pickup--t3--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-pickup--t3--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-pickup--t3--wrong_part--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-pickup--t4--buried_wrong_color--v01` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-pickup--t4--buried_wrong_color--v02` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-pickup--t4--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-pickup--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-pickup--t4--rotated_piece--v01` | D1 | 方向错误 | 11 | 1 |
+| `D:obj-pickup--t4--rotated_piece--v02` | D1 | 方向错误 | 11 | 1 |
+| `D:obj-pickup--t4--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-pickup--t4--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-pickup--t4--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-pickup--t4--wrong_part--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-pickup--t4--wrong_size--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-pickup--t8--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-pickup--t8--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-pickup--t8--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-pickup--t8--extra_layer--v02` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-pickup--t8--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-pickup--t8--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-pickup--t8--rotated_piece--v01` | D1 | 方向错误 | 11 | 1 |
+| `D:obj-pickup--t8--rotated_piece--v02` | D1 | 方向错误 | 11 | 1 |
+| `D:obj-pickup--t8--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-pickup--t8--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-pickup--t8--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-pickup--t8--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-pickup--t8--wrong_part--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-pickup--t8--wrong_part--v02` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-pickup--t8--wrong_size--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-pickup--t8--wrong_size--v02` | D1 | 用错零件 | 11 | 1 |
 
 参考操作：`legacy/checks/obj-pickup.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5264,9 +7224,48 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-press--t3--control` | D0 | 正常、无错误 | 10 | 0 |
 | `D:obj-press--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
 | `D:obj-press--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-press--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
 | `D:obj-press--t3--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
 | `D:obj-press--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-press--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
 | `D:obj-press--t3--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-press--t3--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-press--t3--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-press--t3--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-press--t3--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-press--t3--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-press--t3--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-press--t3--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-press--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-press--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-press--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-press--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-press--t5--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-press--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-press--t5--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-press--t5--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-press--t5--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-press--t5--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-press--t5--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-press--t5--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-press--t5--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-press--t5--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-press--t5--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-press--t9--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-press--t9--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-press--t9--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-press--t9--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-press--t9--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-press--t9--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-press--t9--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-press--t9--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-press--t9--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-press--t9--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-press--t9--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-press--t9--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-press--t9--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-press--t9--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-press--t9--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
 
 参考操作：`legacy/checks/obj-press.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5280,10 +7279,41 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-rail-wagon--t3--control` | D0 | 正常、无错误 | 9 | 0 |
 | `D:obj-rail-wagon--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-rail-wagon--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 13 | 1 |
 | `D:obj-rail-wagon--t3--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
 | `D:obj-rail-wagon--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
 | `D:obj-rail-wagon--t3--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-rail-wagon--t3--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
 | `D:obj-rail-wagon--t3--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-rail-wagon--t3--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-rail-wagon--t3--wrong_part--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-rail-wagon--t4--buried_wrong_color--v01` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-rail-wagon--t4--buried_wrong_color--v02` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-rail-wagon--t4--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-rail-wagon--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-rail-wagon--t4--rotated_piece--v01` | D1 | 方向错误 | 11 | 1 |
+| `D:obj-rail-wagon--t4--rotated_piece--v02` | D1 | 方向错误 | 11 | 1 |
+| `D:obj-rail-wagon--t4--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-rail-wagon--t4--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-rail-wagon--t4--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-rail-wagon--t4--wrong_part--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-rail-wagon--t4--wrong_size--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-rail-wagon--t8--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-rail-wagon--t8--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-rail-wagon--t8--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-rail-wagon--t8--extra_layer--v02` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-rail-wagon--t8--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-rail-wagon--t8--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-rail-wagon--t8--rotated_piece--v01` | D1 | 方向错误 | 11 | 1 |
+| `D:obj-rail-wagon--t8--rotated_piece--v02` | D1 | 方向错误 | 11 | 1 |
+| `D:obj-rail-wagon--t8--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-rail-wagon--t8--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-rail-wagon--t8--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-rail-wagon--t8--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-rail-wagon--t8--wrong_part--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-rail-wagon--t8--wrong_part--v02` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-rail-wagon--t8--wrong_size--v01` | D1 | 用错零件 | 11 | 1 |
+| `D:obj-rail-wagon--t8--wrong_size--v02` | D1 | 用错零件 | 11 | 1 |
 
 参考操作：`legacy/checks/obj-rail-wagon.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5297,10 +7327,49 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-refrigerator--t3--control` | D0 | 正常、无错误 | 14 | 0 |
 | `D:obj-refrigerator--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 20 | 1 |
+| `D:obj-refrigerator--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 20 | 1 |
 | `D:obj-refrigerator--t3--extra_layer--v01` | D1 | 多装一层 | 15 | 1 |
 | `D:obj-refrigerator--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 15 | 1 |
 | `D:obj-refrigerator--t3--rotated_piece--v01` | D1 | 方向错误 | 16 | 1 |
+| `D:obj-refrigerator--t3--rotated_piece--v02` | D1 | 方向错误 | 16 | 1 |
 | `D:obj-refrigerator--t3--shifted_piece--v01` | D1 | 位置偏移 | 16 | 1 |
+| `D:obj-refrigerator--t3--shifted_piece--v02` | D1 | 位置偏移 | 16 | 1 |
+| `D:obj-refrigerator--t3--wrong_color--v01` | D1 | 颜色错误 | 16 | 1 |
+| `D:obj-refrigerator--t3--wrong_part--v01` | D1 | 用错零件 | 16 | 1 |
+| `D:obj-refrigerator--t3--wrong_size--v01` | D1 | 用错零件 | 16 | 1 |
+| `D:obj-refrigerator--t7--buried_wrong_color--v01` | D1 | 拆上层返修 | 22 | 1 |
+| `D:obj-refrigerator--t7--buried_wrong_color--v02` | D1 | 拆上层返修 | 22 | 1 |
+| `D:obj-refrigerator--t7--compound_fault--v01` | D1 | 同次事件含多个错误 | 17 | 1 |
+| `D:obj-refrigerator--t7--compound_fault--v02` | D1 | 同次事件含多个错误 | 17 | 1 |
+| `D:obj-refrigerator--t7--extra_layer--v01` | D1 | 多装一层 | 15 | 1 |
+| `D:obj-refrigerator--t7--removed_piece--v01` | D1 | 少装／零件被拆走 | 15 | 1 |
+| `D:obj-refrigerator--t7--removed_piece--v02` | D1 | 少装／零件被拆走 | 15 | 1 |
+| `D:obj-refrigerator--t7--rotated_piece--v01` | D1 | 方向错误 | 16 | 1 |
+| `D:obj-refrigerator--t7--rotated_piece--v02` | D1 | 方向错误 | 16 | 1 |
+| `D:obj-refrigerator--t7--shifted_piece--v01` | D1 | 位置偏移 | 16 | 1 |
+| `D:obj-refrigerator--t7--shifted_piece--v02` | D1 | 位置偏移 | 16 | 1 |
+| `D:obj-refrigerator--t7--wrong_color--v01` | D1 | 颜色错误 | 16 | 1 |
+| `D:obj-refrigerator--t7--wrong_color--v02` | D1 | 颜色错误 | 16 | 1 |
+| `D:obj-refrigerator--t7--wrong_part--v01` | D1 | 用错零件 | 16 | 1 |
+| `D:obj-refrigerator--t7--wrong_part--v02` | D1 | 用错零件 | 16 | 1 |
+| `D:obj-refrigerator--t7--wrong_size--v01` | D1 | 用错零件 | 16 | 1 |
+| `D:obj-refrigerator--t13--buried_wrong_color--v01` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-refrigerator--t13--buried_wrong_color--v02` | D1 | 拆上层返修 | 20 | 1 |
+| `D:obj-refrigerator--t13--compound_fault--v01` | D1 | 同次事件含多个错误 | 16 | 1 |
+| `D:obj-refrigerator--t13--compound_fault--v02` | D1 | 同次事件含多个错误 | 17 | 1 |
+| `D:obj-refrigerator--t13--extra_layer--v01` | D1 | 多装一层 | 15 | 1 |
+| `D:obj-refrigerator--t13--extra_layer--v02` | D1 | 多装一层 | 15 | 1 |
+| `D:obj-refrigerator--t13--removed_piece--v01` | D1 | 少装／零件被拆走 | 15 | 1 |
+| `D:obj-refrigerator--t13--removed_piece--v02` | D1 | 少装／零件被拆走 | 15 | 1 |
+| `D:obj-refrigerator--t13--rotated_piece--v01` | D1 | 方向错误 | 16 | 1 |
+| `D:obj-refrigerator--t13--rotated_piece--v02` | D1 | 方向错误 | 16 | 1 |
+| `D:obj-refrigerator--t13--shifted_piece--v01` | D1 | 位置偏移 | 16 | 1 |
+| `D:obj-refrigerator--t13--shifted_piece--v02` | D1 | 位置偏移 | 16 | 1 |
+| `D:obj-refrigerator--t13--wrong_color--v01` | D1 | 颜色错误 | 16 | 1 |
+| `D:obj-refrigerator--t13--wrong_color--v02` | D1 | 颜色错误 | 16 | 1 |
+| `D:obj-refrigerator--t13--wrong_part--v01` | D1 | 用错零件 | 16 | 1 |
+| `D:obj-refrigerator--t13--wrong_part--v02` | D1 | 用错零件 | 16 | 1 |
+| `D:obj-refrigerator--t13--wrong_size--v01` | D1 | 用错零件 | 16 | 1 |
 
 参考操作：`legacy/checks/obj-refrigerator.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5315,9 +7384,41 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-robot--t3--control` | D0 | 正常、无错误 | 10 | 0 |
 | `D:obj-robot--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
 | `D:obj-robot--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-robot--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
 | `D:obj-robot--t3--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
 | `D:obj-robot--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-robot--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
 | `D:obj-robot--t3--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-robot--t3--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-robot--t3--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-robot--t3--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-robot--t3--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-robot--t3--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-robot--t3--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-robot--t3--wrong_part--v02` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-robot--t3--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-robot--t3--wrong_size--v02` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-robot--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-robot--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-robot--t5--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-robot--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-robot--t5--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-robot--t5--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-robot--t5--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-robot--t5--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-robot--t5--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-robot--t9--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-robot--t9--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-robot--t9--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-robot--t9--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-robot--t9--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-robot--t9--extra_layer--v02` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-robot--t9--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-robot--t9--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-robot--t9--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-robot--t9--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-robot--t9--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-robot--t9--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
 
 参考操作：`legacy/checks/obj-robot.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5332,9 +7433,60 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-rocket--t3--control` | D0 | 正常、无错误 | 12 | 0 |
 | `D:obj-rocket--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 18 | 1 |
 | `D:obj-rocket--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 15 | 1 |
+| `D:obj-rocket--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 15 | 1 |
 | `D:obj-rocket--t3--extra_layer--v01` | D1 | 多装一层 | 13 | 1 |
 | `D:obj-rocket--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 13 | 1 |
+| `D:obj-rocket--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 13 | 1 |
 | `D:obj-rocket--t3--rotated_piece--v01` | D1 | 方向错误 | 14 | 1 |
+| `D:obj-rocket--t3--rotated_piece--v02` | D1 | 方向错误 | 14 | 1 |
+| `D:obj-rocket--t3--shifted_piece--v01` | D1 | 位置偏移 | 14 | 1 |
+| `D:obj-rocket--t3--shifted_piece--v02` | D1 | 位置偏移 | 14 | 1 |
+| `D:obj-rocket--t3--wrong_color--v01` | D1 | 颜色错误 | 14 | 1 |
+| `D:obj-rocket--t3--wrong_color--v02` | D1 | 颜色错误 | 14 | 1 |
+| `D:obj-rocket--t3--wrong_part--v01` | D1 | 用错零件 | 14 | 1 |
+| `D:obj-rocket--t3--wrong_part--v02` | D1 | 用错零件 | 14 | 1 |
+| `D:obj-rocket--t3--wrong_size--v01` | D1 | 用错零件 | 14 | 1 |
+| `D:obj-rocket--t3--wrong_size--v02` | D1 | 用错零件 | 14 | 1 |
+| `D:obj-rocket--t6--buried_wrong_color--v01` | D1 | 拆上层返修 | 20 | 1 |
+| `D:obj-rocket--t6--buried_wrong_color--v02` | D1 | 拆上层返修 | 20 | 1 |
+| `D:obj-rocket--t6--compound_fault--v01` | D1 | 同次事件含多个错误 | 15 | 1 |
+| `D:obj-rocket--t6--compound_fault--v02` | D1 | 同次事件含多个错误 | 15 | 1 |
+| `D:obj-rocket--t6--extra_layer--v01` | D1 | 多装一层 | 13 | 1 |
+| `D:obj-rocket--t6--extra_layer--v02` | D1 | 多装一层 | 13 | 1 |
+| `D:obj-rocket--t6--removed_piece--v01` | D1 | 少装／零件被拆走 | 13 | 1 |
+| `D:obj-rocket--t6--removed_piece--v02` | D1 | 少装／零件被拆走 | 13 | 1 |
+| `D:obj-rocket--t6--rotated_piece--v01` | D1 | 方向错误 | 14 | 1 |
+| `D:obj-rocket--t6--rotated_piece--v02` | D1 | 方向错误 | 14 | 1 |
+| `D:obj-rocket--t6--shifted_piece--v01` | D1 | 位置偏移 | 14 | 1 |
+| `D:obj-rocket--t6--shifted_piece--v02` | D1 | 位置偏移 | 14 | 1 |
+| `D:obj-rocket--t6--swapped_positions--v01` | D1 | 两个零件的位置装反 | 16 | 1 |
+| `D:obj-rocket--t6--swapped_positions--v02` | D1 | 两个零件的位置装反 | 16 | 1 |
+| `D:obj-rocket--t6--wrong_color--v01` | D1 | 颜色错误 | 14 | 1 |
+| `D:obj-rocket--t6--wrong_color--v02` | D1 | 颜色错误 | 14 | 1 |
+| `D:obj-rocket--t6--wrong_part--v01` | D1 | 用错零件 | 14 | 1 |
+| `D:obj-rocket--t6--wrong_part--v02` | D1 | 用错零件 | 14 | 1 |
+| `D:obj-rocket--t6--wrong_size--v01` | D1 | 用错零件 | 14 | 1 |
+| `D:obj-rocket--t6--wrong_size--v02` | D1 | 用错零件 | 14 | 1 |
+| `D:obj-rocket--t11--buried_wrong_color--v01` | D1 | 拆上层返修 | 20 | 1 |
+| `D:obj-rocket--t11--buried_wrong_color--v02` | D1 | 拆上层返修 | 20 | 1 |
+| `D:obj-rocket--t11--compound_fault--v01` | D1 | 同次事件含多个错误 | 15 | 1 |
+| `D:obj-rocket--t11--compound_fault--v02` | D1 | 同次事件含多个错误 | 15 | 1 |
+| `D:obj-rocket--t11--extra_layer--v01` | D1 | 多装一层 | 13 | 1 |
+| `D:obj-rocket--t11--extra_layer--v02` | D1 | 多装一层 | 13 | 1 |
+| `D:obj-rocket--t11--removed_piece--v01` | D1 | 少装／零件被拆走 | 13 | 1 |
+| `D:obj-rocket--t11--removed_piece--v02` | D1 | 少装／零件被拆走 | 13 | 1 |
+| `D:obj-rocket--t11--rotated_piece--v01` | D1 | 方向错误 | 14 | 1 |
+| `D:obj-rocket--t11--rotated_piece--v02` | D1 | 方向错误 | 14 | 1 |
+| `D:obj-rocket--t11--shifted_piece--v01` | D1 | 位置偏移 | 14 | 1 |
+| `D:obj-rocket--t11--shifted_piece--v02` | D1 | 位置偏移 | 14 | 1 |
+| `D:obj-rocket--t11--swapped_positions--v01` | D1 | 两个零件的位置装反 | 16 | 1 |
+| `D:obj-rocket--t11--swapped_positions--v02` | D1 | 两个零件的位置装反 | 16 | 1 |
+| `D:obj-rocket--t11--wrong_color--v01` | D1 | 颜色错误 | 14 | 1 |
+| `D:obj-rocket--t11--wrong_color--v02` | D1 | 颜色错误 | 14 | 1 |
+| `D:obj-rocket--t11--wrong_part--v01` | D1 | 用错零件 | 14 | 1 |
+| `D:obj-rocket--t11--wrong_part--v02` | D1 | 用错零件 | 14 | 1 |
+| `D:obj-rocket--t11--wrong_size--v01` | D1 | 用错零件 | 14 | 1 |
+| `D:obj-rocket--t11--wrong_size--v02` | D1 | 用错零件 | 14 | 1 |
 
 参考操作：`legacy/checks/obj-rocket.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5348,10 +7500,26 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-sofa--t3--control` | D0 | 正常、无错误 | 7 | 0 |
 | `D:obj-sofa--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-sofa--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 13 | 1 |
 | `D:obj-sofa--t3--extra_layer--v01` | D1 | 多装一层 | 8 | 1 |
 | `D:obj-sofa--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 8 | 1 |
 | `D:obj-sofa--t3--shifted_piece--v01` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-sofa--t3--shifted_piece--v02` | D1 | 位置偏移 | 9 | 1 |
 | `D:obj-sofa--t3--wrong_color--v01` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-sofa--t6--buried_wrong_color--v01` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-sofa--t6--compound_fault--v01` | D1 | 同次事件含多个错误 | 10 | 1 |
+| `D:obj-sofa--t6--compound_fault--v02` | D1 | 同次事件含多个错误 | 10 | 1 |
+| `D:obj-sofa--t6--extra_layer--v01` | D1 | 多装一层 | 8 | 1 |
+| `D:obj-sofa--t6--extra_layer--v02` | D1 | 多装一层 | 8 | 1 |
+| `D:obj-sofa--t6--removed_piece--v01` | D1 | 少装／零件被拆走 | 8 | 1 |
+| `D:obj-sofa--t6--removed_piece--v02` | D1 | 少装／零件被拆走 | 8 | 1 |
+| `D:obj-sofa--t6--rotated_piece--v01` | D1 | 方向错误 | 9 | 1 |
+| `D:obj-sofa--t6--rotated_piece--v02` | D1 | 方向错误 | 9 | 1 |
+| `D:obj-sofa--t6--shifted_piece--v01` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-sofa--t6--shifted_piece--v02` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-sofa--t6--wrong_color--v01` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-sofa--t6--wrong_color--v02` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-sofa--t6--wrong_part--v01` | D1 | 用错零件 | 9 | 1 |
 
 参考操作：`legacy/checks/obj-sofa.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5365,10 +7533,44 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-staircase--t3--control` | D0 | 正常、无错误 | 11 | 0 |
 | `D:obj-staircase--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-staircase--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
 | `D:obj-staircase--t3--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
 | `D:obj-staircase--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
 | `D:obj-staircase--t3--rotated_piece--v01` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-staircase--t3--rotated_piece--v02` | D1 | 方向错误 | 13 | 1 |
 | `D:obj-staircase--t3--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-staircase--t3--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-staircase--t3--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-staircase--t3--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-staircase--t3--wrong_size--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-staircase--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-staircase--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-staircase--t5--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-staircase--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-staircase--t5--rotated_piece--v01` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-staircase--t5--rotated_piece--v02` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-staircase--t5--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-staircase--t5--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-staircase--t5--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-staircase--t5--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-staircase--t5--wrong_size--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-staircase--t10--buried_wrong_color--v01` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-staircase--t10--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-staircase--t10--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-staircase--t10--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-staircase--t10--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-staircase--t10--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-staircase--t10--removed_piece--v02` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-staircase--t10--rotated_piece--v01` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-staircase--t10--rotated_piece--v02` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-staircase--t10--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-staircase--t10--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-staircase--t10--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-staircase--t10--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-staircase--t10--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-staircase--t10--wrong_part--v02` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-staircase--t10--wrong_size--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-staircase--t10--wrong_size--v02` | D1 | 用错零件 | 13 | 1 |
 
 参考操作：`legacy/checks/obj-staircase.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5382,10 +7584,21 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-stool--t3--control` | D0 | 正常、无错误 | 6 | 0 |
 | `D:obj-stool--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 9 | 1 |
-| `D:obj-stool--t3--early_cover--v01` | D1 | 提前封口 | 7 | 1 |
+| `D:obj-stool--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 9 | 1 |
 | `D:obj-stool--t3--extra_layer--v01` | D1 | 多装一层 | 7 | 1 |
 | `D:obj-stool--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 7 | 1 |
+| `D:obj-stool--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 7 | 1 |
 | `D:obj-stool--t3--shifted_piece--v01` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-stool--t3--shifted_piece--v02` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-stool--t3--wrong_color--v01` | D1 | 颜色错误 | 8 | 1 |
+| `D:obj-stool--t3--wrong_color--v02` | D1 | 颜色错误 | 8 | 1 |
+| `D:obj-stool--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 10 | 1 |
+| `D:obj-stool--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 10 | 1 |
+| `D:obj-stool--t5--extra_layer--v01` | D1 | 多装一层 | 7 | 1 |
+| `D:obj-stool--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 7 | 1 |
+| `D:obj-stool--t5--shifted_piece--v01` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-stool--t5--shifted_piece--v02` | D1 | 位置偏移 | 8 | 1 |
+| `D:obj-stool--t5--wrong_color--v01` | D1 | 颜色错误 | 8 | 1 |
 
 参考操作：`legacy/checks/obj-stool.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5399,10 +7612,17 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-streetlight--t3--control` | D0 | 正常、无错误 | 7 | 0 |
 | `D:obj-streetlight--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 11 | 1 |
+| `D:obj-streetlight--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 13 | 1 |
 | `D:obj-streetlight--t3--extra_layer--v01` | D1 | 多装一层 | 8 | 1 |
 | `D:obj-streetlight--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 8 | 1 |
 | `D:obj-streetlight--t3--wrong_color--v01` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-streetlight--t3--wrong_color--v02` | D1 | 颜色错误 | 9 | 1 |
+| `D:obj-streetlight--t6--buried_wrong_color--v01` | D1 | 拆上层返修 | 11 | 1 |
+| `D:obj-streetlight--t6--buried_wrong_color--v02` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-streetlight--t6--extra_layer--v01` | D1 | 多装一层 | 8 | 1 |
+| `D:obj-streetlight--t6--removed_piece--v01` | D1 | 少装／零件被拆走 | 8 | 1 |
 | `D:obj-streetlight--t6--shifted_piece--v01` | D1 | 位置偏移 | 9 | 1 |
+| `D:obj-streetlight--t6--wrong_color--v01` | D1 | 颜色错误 | 9 | 1 |
 
 参考操作：`legacy/checks/obj-streetlight.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5417,9 +7637,34 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 | `D:obj-table--t3--control` | D0 | 正常、无错误 | 9 | 0 |
 | `D:obj-table--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 13 | 1 |
 | `D:obj-table--t3--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
-| `D:obj-table--t3--early_cover--v01` | D1 | 提前封口 | 10 | 1 |
+| `D:obj-table--t3--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
 | `D:obj-table--t3--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
 | `D:obj-table--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-table--t3--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-table--t3--shifted_piece--v01` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-table--t3--shifted_piece--v02` | D1 | 位置偏移 | 11 | 1 |
+| `D:obj-table--t3--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-table--t3--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-table--t4--buried_wrong_color--v01` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-table--t4--buried_wrong_color--v02` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-table--t4--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-table--t4--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-table--t4--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-table--t4--extra_layer--v02` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-table--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-table--t4--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-table--t4--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-table--t4--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-table--t8--buried_wrong_color--v01` | D1 | 拆上层返修 | 13 | 1 |
+| `D:obj-table--t8--buried_wrong_color--v02` | D1 | 拆上层返修 | 17 | 1 |
+| `D:obj-table--t8--compound_fault--v01` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-table--t8--compound_fault--v02` | D1 | 同次事件含多个错误 | 11 | 1 |
+| `D:obj-table--t8--extra_layer--v01` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-table--t8--extra_layer--v02` | D1 | 多装一层 | 10 | 1 |
+| `D:obj-table--t8--removed_piece--v01` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-table--t8--removed_piece--v02` | D1 | 少装／零件被拆走 | 10 | 1 |
+| `D:obj-table--t8--wrong_color--v01` | D1 | 颜色错误 | 11 | 1 |
+| `D:obj-table--t8--wrong_color--v02` | D1 | 颜色错误 | 11 | 1 |
 
 参考操作：`legacy/checks/obj-table.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5433,10 +7678,39 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-tractor--t3--control` | D0 | 正常、无错误 | 11 | 0 |
 | `D:obj-tractor--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-tractor--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 15 | 1 |
 | `D:obj-tractor--t3--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
 | `D:obj-tractor--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
 | `D:obj-tractor--t3--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-tractor--t3--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
 | `D:obj-tractor--t3--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-tractor--t3--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-tractor--t3--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-tractor--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-tractor--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 19 | 1 |
+| `D:obj-tractor--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-tractor--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-tractor--t5--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-tractor--t5--extra_layer--v02` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-tractor--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-tractor--t5--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-tractor--t5--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-tractor--t10--buried_wrong_color--v01` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-tractor--t10--buried_wrong_color--v02` | D1 | 拆上层返修 | 15 | 1 |
+| `D:obj-tractor--t10--compound_fault--v01` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-tractor--t10--compound_fault--v02` | D1 | 同次事件含多个错误 | 14 | 1 |
+| `D:obj-tractor--t10--extra_layer--v01` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-tractor--t10--extra_layer--v02` | D1 | 多装一层 | 12 | 1 |
+| `D:obj-tractor--t10--removed_piece--v01` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-tractor--t10--removed_piece--v02` | D1 | 少装／零件被拆走 | 12 | 1 |
+| `D:obj-tractor--t10--rotated_piece--v01` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-tractor--t10--rotated_piece--v02` | D1 | 方向错误 | 13 | 1 |
+| `D:obj-tractor--t10--shifted_piece--v01` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-tractor--t10--shifted_piece--v02` | D1 | 位置偏移 | 13 | 1 |
+| `D:obj-tractor--t10--wrong_color--v01` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-tractor--t10--wrong_color--v02` | D1 | 颜色错误 | 13 | 1 |
+| `D:obj-tractor--t10--wrong_part--v01` | D1 | 用错零件 | 13 | 1 |
+| `D:obj-tractor--t10--wrong_size--v01` | D1 | 用错零件 | 13 | 1 |
 
 参考操作：`legacy/checks/obj-tractor.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5450,10 +7724,27 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-traffic-light--t3--control` | D0 | 正常、无错误 | 8 | 0 |
 | `D:obj-traffic-light--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-traffic-light--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
 | `D:obj-traffic-light--t3--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
 | `D:obj-traffic-light--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
 | `D:obj-traffic-light--t3--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-traffic-light--t3--wrong_color--v02` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-traffic-light--t4--buried_wrong_color--v01` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-traffic-light--t4--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-traffic-light--t4--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-traffic-light--t4--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
+| `D:obj-traffic-light--t4--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-traffic-light--t7--buried_wrong_color--v01` | D1 | 拆上层返修 | 12 | 1 |
+| `D:obj-traffic-light--t7--buried_wrong_color--v02` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-traffic-light--t7--extra_layer--v01` | D1 | 多装一层 | 9 | 1 |
+| `D:obj-traffic-light--t7--removed_piece--v01` | D1 | 少装／零件被拆走 | 9 | 1 |
 | `D:obj-traffic-light--t7--rotated_piece--v01` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-traffic-light--t7--rotated_piece--v02` | D1 | 方向错误 | 10 | 1 |
+| `D:obj-traffic-light--t7--shifted_piece--v01` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-traffic-light--t7--shifted_piece--v02` | D1 | 位置偏移 | 10 | 1 |
+| `D:obj-traffic-light--t7--wrong_color--v01` | D1 | 颜色错误 | 10 | 1 |
+| `D:obj-traffic-light--t7--wrong_part--v01` | D1 | 用错零件 | 10 | 1 |
+| `D:obj-traffic-light--t7--wrong_size--v01` | D1 | 用错零件 | 10 | 1 |
 
 参考操作：`legacy/checks/obj-traffic-light.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5467,10 +7758,54 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `D:obj-washing-machine--t3--control` | D0 | 正常、无错误 | 10 | 0 |
 | `D:obj-washing-machine--t3--buried_wrong_color--v01` | D1 | 拆上层返修 | 16 | 1 |
+| `D:obj-washing-machine--t3--buried_wrong_color--v02` | D1 | 拆上层返修 | 16 | 1 |
 | `D:obj-washing-machine--t3--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
 | `D:obj-washing-machine--t3--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
 | `D:obj-washing-machine--t3--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-washing-machine--t3--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
 | `D:obj-washing-machine--t3--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-washing-machine--t3--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-washing-machine--t3--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-washing-machine--t3--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-washing-machine--t3--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-washing-machine--t5--buried_wrong_color--v01` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-washing-machine--t5--buried_wrong_color--v02` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-washing-machine--t5--compound_fault--v01` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-washing-machine--t5--compound_fault--v02` | D1 | 同次事件含多个错误 | 13 | 1 |
+| `D:obj-washing-machine--t5--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-washing-machine--t5--extra_layer--v02` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-washing-machine--t5--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-washing-machine--t5--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-washing-machine--t5--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-washing-machine--t5--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-washing-machine--t5--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-washing-machine--t5--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-washing-machine--t5--swapped_positions--v01` | D1 | 两个零件的位置装反 | 14 | 1 |
+| `D:obj-washing-machine--t5--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-washing-machine--t5--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-washing-machine--t5--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-washing-machine--t5--wrong_part--v02` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-washing-machine--t5--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-washing-machine--t9--buried_wrong_color--v01` | D1 | 拆上层返修 | 14 | 1 |
+| `D:obj-washing-machine--t9--buried_wrong_color--v02` | D1 | 拆上层返修 | 18 | 1 |
+| `D:obj-washing-machine--t9--compound_fault--v01` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-washing-machine--t9--compound_fault--v02` | D1 | 同次事件含多个错误 | 12 | 1 |
+| `D:obj-washing-machine--t9--extra_layer--v01` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-washing-machine--t9--extra_layer--v02` | D1 | 多装一层 | 11 | 1 |
+| `D:obj-washing-machine--t9--removed_piece--v01` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-washing-machine--t9--removed_piece--v02` | D1 | 少装／零件被拆走 | 11 | 1 |
+| `D:obj-washing-machine--t9--rotated_piece--v01` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-washing-machine--t9--rotated_piece--v02` | D1 | 方向错误 | 12 | 1 |
+| `D:obj-washing-machine--t9--shifted_piece--v01` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-washing-machine--t9--shifted_piece--v02` | D1 | 位置偏移 | 12 | 1 |
+| `D:obj-washing-machine--t9--swapped_positions--v01` | D1 | 两个零件的位置装反 | 14 | 1 |
+| `D:obj-washing-machine--t9--swapped_positions--v02` | D1 | 两个零件的位置装反 | 14 | 1 |
+| `D:obj-washing-machine--t9--wrong_color--v01` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-washing-machine--t9--wrong_color--v02` | D1 | 颜色错误 | 12 | 1 |
+| `D:obj-washing-machine--t9--wrong_part--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-washing-machine--t9--wrong_part--v02` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-washing-machine--t9--wrong_size--v01` | D1 | 用错零件 | 12 | 1 |
+| `D:obj-washing-machine--t9--wrong_size--v02` | D1 | 用错零件 | 12 | 1 |
 
 参考操作：`legacy/checks/obj-washing-machine.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5484,12 +7819,51 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `E7:v7::v7-long-bookshelf::dynamic::control::t0` | D0 | 正常、无错误 | 21 | 0 |
 | `E7:v7::v7-long-bookshelf::dynamic::missing::t14` | D1 | 少装／零件被拆走 | 22 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::missing::t20` | D1 | 少装／零件被拆走 | 22 | 1 |
 | `E7:v7::v7-long-bookshelf::dynamic::wrong-color::t14` | D1 | 颜色错误 | 23 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::wrong-color::t20` | D1 | 颜色错误 | 23 | 1 |
 | `E7:v7::v7-long-bookshelf::dynamic::extra-layer::t7` | D1 | 多装一层 | 22 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::extra-layer::t14` | D1 | 多装一层 | 22 | 1 |
 | `E7:v7::v7-long-bookshelf::dynamic::offset::t14` | D1 | 位置偏移 | 23 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::offset::t20` | D1 | 位置偏移 | 23 | 1 |
 | `E7:v7::v7-long-bookshelf::dynamic::rotated::t14` | D1 | 方向错误 | 23 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::rotated::t20` | D1 | 方向错误 | 23 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::wrong-part::t14` | D1 | 用错零件 | 23 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::wrong-part::t20` | D1 | 用错零件 | 23 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::early-cover::t14` | D1 | 提前封口 | 22 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::early-cover::t4` | D1 | 提前封口 | 22 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::buried-repair::t7` | D1 | 拆上层返修 | 29 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::buried-repair::t14` | D1 | 拆上层返修 | 31 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::repeat-omission::t5` | D1 | 重复结构漏装 | 23 | 1 |
+| `E7:v7::v7-long-bookshelf::dynamic::repeat-omission::t10` | D1 | 重复结构漏装 | 23 | 1 |
 | `E7:v7::v7-long-bookshelf::dynamic::multiple::missingthen-wrong-color` | D2 | 连续多次干扰 | 24 | 2 |
+| `E7:v7::v7-long-bookshelf::dynamic::multiple::offsetthen-extra-layer` | D2 | 连续多次干扰 | 24 | 2 |
+| `E7:v7::v7-long-bookshelf::dynamic::multiple::wrong-partthen-missing` | D2 | 连续多次干扰 | 24 | 2 |
+| `E7:v7::v7-long-bookshelf::dynamic::multiple::missingthen-wrong-colorthen-offset` | D2 | 连续多次干扰 | 26 | 3 |
+| `E7:v7::v7-long-bookshelf::static::missing::t14` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `E7:v7::v7-long-bookshelf::static::control::t14` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-bookshelf::static::missing::t20` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `E7:v7::v7-long-bookshelf::static::control::t20` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-bookshelf::static::wrong-color::t14` | S1 | 颜色错误 | 2 | 0 |
+| `E7:v7::v7-long-bookshelf::static::wrong-color::t20` | S1 | 颜色错误 | 2 | 0 |
+| `E7:v7::v7-long-bookshelf::static::extra-layer::t7` | S1 | 多装一层 | 1 | 0 |
+| `E7:v7::v7-long-bookshelf::static::control::t7` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-bookshelf::static::extra-layer::t14` | S1 | 多装一层 | 1 | 0 |
+| `E7:v7::v7-long-bookshelf::static::offset::t14` | S1 | 位置偏移 | 2 | 0 |
+| `E7:v7::v7-long-bookshelf::static::offset::t20` | S1 | 位置偏移 | 2 | 0 |
+| `E7:v7::v7-long-bookshelf::static::rotated::t14` | S1 | 方向错误 | 2 | 0 |
+| `E7:v7::v7-long-bookshelf::static::rotated::t20` | S1 | 方向错误 | 2 | 0 |
+| `E7:v7::v7-long-bookshelf::static::wrong-part::t14` | S1 | 用错零件 | 2 | 0 |
+| `E7:v7::v7-long-bookshelf::static::wrong-part::t20` | S1 | 用错零件 | 2 | 0 |
+| `E7:v7::v7-long-bookshelf::static::early-cover::t14` | S1 | 提前封口 | 1 | 0 |
+| `E7:v7::v7-long-bookshelf::static::early-cover::t4` | S1 | 提前封口 | 1 | 0 |
+| `E7:v7::v7-long-bookshelf::static::control::t4` | S0 | 正常、无错误 | 0 | 0 |
 | `E7:v7::v7-long-bookshelf::static::buried-repair::t7` | S1 | 拆上层返修 | 8 | 0 |
+| `E7:v7::v7-long-bookshelf::static::buried-repair::t14` | S1 | 拆上层返修 | 10 | 0 |
+| `E7:v7::v7-long-bookshelf::static::repeat-omission::t5` | S1 | 重复结构漏装 | 2 | 0 |
+| `E7:v7::v7-long-bookshelf::static::control::t5` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-bookshelf::static::repeat-omission::t10` | S1 | 重复结构漏装 | 2 | 0 |
+| `E7:v7::v7-long-bookshelf::static::control::t10` | S0 | 正常、无错误 | 0 | 0 |
 
 参考操作：`legacy/checks/v7-long-bookshelf.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5503,12 +7877,52 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `E7:v7::v7-long-city-bus::dynamic::control::t0` | D0 | 正常、无错误 | 32 | 0 |
 | `E7:v7::v7-long-city-bus::dynamic::missing::t10` | D1 | 少装／零件被拆走 | 33 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::missing::t21` | D1 | 少装／零件被拆走 | 33 | 1 |
 | `E7:v7::v7-long-city-bus::dynamic::wrong-color::t10` | D1 | 颜色错误 | 34 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::wrong-color::t21` | D1 | 颜色错误 | 34 | 1 |
 | `E7:v7::v7-long-city-bus::dynamic::extra-layer::t10` | D1 | 多装一层 | 33 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::extra-layer::t21` | D1 | 多装一层 | 33 | 1 |
 | `E7:v7::v7-long-city-bus::dynamic::offset::t10` | D1 | 位置偏移 | 34 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::offset::t21` | D1 | 位置偏移 | 34 | 1 |
 | `E7:v7::v7-long-city-bus::dynamic::wrong-part::t10` | D1 | 用错零件 | 34 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::wrong-part::t21` | D1 | 用错零件 | 34 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::early-cover::t21` | D1 | 提前封口 | 33 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::early-cover::t20` | D1 | 提前封口 | 33 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::buried-repair::t21` | D1 | 拆上层返修 | 36 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::buried-repair::t31` | D1 | 拆上层返修 | 42 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::left-right-swap::t13` | D1 | 左右装反 | 36 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::left-right-swap::t14` | D1 | 左右装反 | 36 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::repeat-omission::t10` | D1 | 重复结构漏装 | 34 | 1 |
+| `E7:v7::v7-long-city-bus::dynamic::repeat-omission::t6` | D1 | 重复结构漏装 | 34 | 1 |
 | `E7:v7::v7-long-city-bus::dynamic::multiple::missingthen-wrong-color` | D2 | 连续多次干扰 | 35 | 2 |
+| `E7:v7::v7-long-city-bus::dynamic::multiple::offsetthen-extra-layer` | D2 | 连续多次干扰 | 35 | 2 |
+| `E7:v7::v7-long-city-bus::dynamic::multiple::wrong-partthen-missing` | D2 | 连续多次干扰 | 35 | 2 |
+| `E7:v7::v7-long-city-bus::dynamic::multiple::missingthen-wrong-colorthen-offset` | D2 | 连续多次干扰 | 37 | 3 |
+| `E7:v7::v7-long-city-bus::static::missing::t10` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `E7:v7::v7-long-city-bus::static::control::t10` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-city-bus::static::missing::t21` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `E7:v7::v7-long-city-bus::static::control::t21` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-city-bus::static::wrong-color::t10` | S1 | 颜色错误 | 2 | 0 |
+| `E7:v7::v7-long-city-bus::static::wrong-color::t21` | S1 | 颜色错误 | 2 | 0 |
+| `E7:v7::v7-long-city-bus::static::extra-layer::t10` | S1 | 多装一层 | 1 | 0 |
+| `E7:v7::v7-long-city-bus::static::extra-layer::t21` | S1 | 多装一层 | 1 | 0 |
+| `E7:v7::v7-long-city-bus::static::offset::t10` | S1 | 位置偏移 | 2 | 0 |
+| `E7:v7::v7-long-city-bus::static::offset::t21` | S1 | 位置偏移 | 2 | 0 |
+| `E7:v7::v7-long-city-bus::static::wrong-part::t10` | S1 | 用错零件 | 2 | 0 |
+| `E7:v7::v7-long-city-bus::static::wrong-part::t21` | S1 | 用错零件 | 2 | 0 |
+| `E7:v7::v7-long-city-bus::static::early-cover::t21` | S1 | 提前封口 | 1 | 0 |
+| `E7:v7::v7-long-city-bus::static::early-cover::t20` | S1 | 提前封口 | 1 | 0 |
+| `E7:v7::v7-long-city-bus::static::control::t20` | S0 | 正常、无错误 | 0 | 0 |
 | `E7:v7::v7-long-city-bus::static::buried-repair::t21` | S1 | 拆上层返修 | 4 | 0 |
+| `E7:v7::v7-long-city-bus::static::buried-repair::t31` | S1 | 拆上层返修 | 10 | 0 |
+| `E7:v7::v7-long-city-bus::static::control::t31` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-city-bus::static::left-right-swap::t13` | S1 | 左右装反 | 4 | 0 |
+| `E7:v7::v7-long-city-bus::static::control::t13` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-city-bus::static::left-right-swap::t14` | S1 | 左右装反 | 4 | 0 |
+| `E7:v7::v7-long-city-bus::static::control::t14` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-city-bus::static::repeat-omission::t10` | S1 | 重复结构漏装 | 2 | 0 |
+| `E7:v7::v7-long-city-bus::static::repeat-omission::t6` | S1 | 重复结构漏装 | 2 | 0 |
+| `E7:v7::v7-long-city-bus::static::control::t6` | S0 | 正常、无错误 | 0 | 0 |
 
 参考操作：`legacy/checks/v7-long-city-bus.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5522,12 +7936,49 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `E7:v7::v7-long-cottage::dynamic::control::t0` | D0 | 正常、无错误 | 24 | 0 |
 | `E7:v7::v7-long-cottage::dynamic::missing::t8` | D1 | 少装／零件被拆走 | 25 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::missing::t16` | D1 | 少装／零件被拆走 | 25 | 1 |
 | `E7:v7::v7-long-cottage::dynamic::wrong-color::t8` | D1 | 颜色错误 | 26 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::wrong-color::t16` | D1 | 颜色错误 | 26 | 1 |
 | `E7:v7::v7-long-cottage::dynamic::extra-layer::t8` | D1 | 多装一层 | 25 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::extra-layer::t16` | D1 | 多装一层 | 25 | 1 |
 | `E7:v7::v7-long-cottage::dynamic::offset::t8` | D1 | 位置偏移 | 26 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::offset::t16` | D1 | 位置偏移 | 26 | 1 |
 | `E7:v7::v7-long-cottage::dynamic::rotated::t8` | D1 | 方向错误 | 26 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::rotated::t16` | D1 | 方向错误 | 26 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::wrong-part::t8` | D1 | 用错零件 | 26 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::wrong-part::t16` | D1 | 用错零件 | 26 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::early-cover::t17` | D1 | 提前封口 | 25 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::early-cover::t18` | D1 | 提前封口 | 25 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::buried-repair::t8` | D1 | 拆上层返修 | 28 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::buried-repair::t16` | D1 | 拆上层返修 | 28 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::repeat-omission::t8` | D1 | 重复结构漏装 | 26 | 1 |
+| `E7:v7::v7-long-cottage::dynamic::repeat-omission::t16` | D1 | 重复结构漏装 | 26 | 1 |
 | `E7:v7::v7-long-cottage::dynamic::multiple::missingthen-wrong-color` | D2 | 连续多次干扰 | 27 | 2 |
+| `E7:v7::v7-long-cottage::dynamic::multiple::offsetthen-extra-layer` | D2 | 连续多次干扰 | 27 | 2 |
+| `E7:v7::v7-long-cottage::dynamic::multiple::wrong-partthen-missing` | D2 | 连续多次干扰 | 27 | 2 |
+| `E7:v7::v7-long-cottage::dynamic::multiple::missingthen-wrong-colorthen-offset` | D2 | 连续多次干扰 | 29 | 3 |
+| `E7:v7::v7-long-cottage::static::missing::t8` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `E7:v7::v7-long-cottage::static::control::t8` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-cottage::static::missing::t16` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `E7:v7::v7-long-cottage::static::control::t16` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-cottage::static::wrong-color::t8` | S1 | 颜色错误 | 2 | 0 |
+| `E7:v7::v7-long-cottage::static::wrong-color::t16` | S1 | 颜色错误 | 2 | 0 |
+| `E7:v7::v7-long-cottage::static::extra-layer::t8` | S1 | 多装一层 | 1 | 0 |
+| `E7:v7::v7-long-cottage::static::extra-layer::t16` | S1 | 多装一层 | 1 | 0 |
+| `E7:v7::v7-long-cottage::static::offset::t8` | S1 | 位置偏移 | 2 | 0 |
+| `E7:v7::v7-long-cottage::static::offset::t16` | S1 | 位置偏移 | 2 | 0 |
+| `E7:v7::v7-long-cottage::static::rotated::t8` | S1 | 方向错误 | 2 | 0 |
+| `E7:v7::v7-long-cottage::static::rotated::t16` | S1 | 方向错误 | 2 | 0 |
+| `E7:v7::v7-long-cottage::static::wrong-part::t8` | S1 | 用错零件 | 2 | 0 |
+| `E7:v7::v7-long-cottage::static::wrong-part::t16` | S1 | 用错零件 | 2 | 0 |
+| `E7:v7::v7-long-cottage::static::early-cover::t17` | S1 | 提前封口 | 1 | 0 |
+| `E7:v7::v7-long-cottage::static::control::t17` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-cottage::static::early-cover::t18` | S1 | 提前封口 | 1 | 0 |
+| `E7:v7::v7-long-cottage::static::control::t18` | S0 | 正常、无错误 | 0 | 0 |
 | `E7:v7::v7-long-cottage::static::buried-repair::t8` | S1 | 拆上层返修 | 4 | 0 |
+| `E7:v7::v7-long-cottage::static::buried-repair::t16` | S1 | 拆上层返修 | 4 | 0 |
+| `E7:v7::v7-long-cottage::static::repeat-omission::t8` | S1 | 重复结构漏装 | 2 | 0 |
+| `E7:v7::v7-long-cottage::static::repeat-omission::t16` | S1 | 重复结构漏装 | 2 | 0 |
 
 参考操作：`legacy/checks/v7-long-cottage.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5541,12 +7992,55 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `E7:v7::v7-long-gantry-press::dynamic::control::t0` | D0 | 正常、无错误 | 24 | 0 |
 | `E7:v7::v7-long-gantry-press::dynamic::missing::t8` | D1 | 少装／零件被拆走 | 25 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::missing::t16` | D1 | 少装／零件被拆走 | 25 | 1 |
 | `E7:v7::v7-long-gantry-press::dynamic::wrong-color::t8` | D1 | 颜色错误 | 26 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::wrong-color::t16` | D1 | 颜色错误 | 26 | 1 |
 | `E7:v7::v7-long-gantry-press::dynamic::extra-layer::t8` | D1 | 多装一层 | 25 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::extra-layer::t16` | D1 | 多装一层 | 25 | 1 |
 | `E7:v7::v7-long-gantry-press::dynamic::offset::t8` | D1 | 位置偏移 | 26 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::offset::t16` | D1 | 位置偏移 | 26 | 1 |
 | `E7:v7::v7-long-gantry-press::dynamic::rotated::t8` | D1 | 方向错误 | 26 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::rotated::t16` | D1 | 方向错误 | 26 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::wrong-part::t8` | D1 | 用错零件 | 26 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::wrong-part::t16` | D1 | 用错零件 | 26 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::early-cover::t18` | D1 | 提前封口 | 25 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::early-cover::t19` | D1 | 提前封口 | 25 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::buried-repair::t8` | D1 | 拆上层返修 | 28 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::buried-repair::t16` | D1 | 拆上层返修 | 28 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::left-right-swap::t16` | D1 | 左右装反 | 28 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::left-right-swap::t5` | D1 | 左右装反 | 28 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::repeat-omission::t8` | D1 | 重复结构漏装 | 26 | 1 |
+| `E7:v7::v7-long-gantry-press::dynamic::repeat-omission::t16` | D1 | 重复结构漏装 | 26 | 1 |
 | `E7:v7::v7-long-gantry-press::dynamic::multiple::missingthen-wrong-color` | D2 | 连续多次干扰 | 27 | 2 |
+| `E7:v7::v7-long-gantry-press::dynamic::multiple::offsetthen-extra-layer` | D2 | 连续多次干扰 | 27 | 2 |
+| `E7:v7::v7-long-gantry-press::dynamic::multiple::wrong-partthen-missing` | D2 | 连续多次干扰 | 27 | 2 |
+| `E7:v7::v7-long-gantry-press::dynamic::multiple::missingthen-wrong-colorthen-offset` | D2 | 连续多次干扰 | 29 | 3 |
+| `E7:v7::v7-long-gantry-press::static::missing::t8` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `E7:v7::v7-long-gantry-press::static::control::t8` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-gantry-press::static::missing::t16` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `E7:v7::v7-long-gantry-press::static::control::t16` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-gantry-press::static::wrong-color::t8` | S1 | 颜色错误 | 2 | 0 |
+| `E7:v7::v7-long-gantry-press::static::wrong-color::t16` | S1 | 颜色错误 | 2 | 0 |
+| `E7:v7::v7-long-gantry-press::static::extra-layer::t8` | S1 | 多装一层 | 1 | 0 |
+| `E7:v7::v7-long-gantry-press::static::extra-layer::t16` | S1 | 多装一层 | 1 | 0 |
+| `E7:v7::v7-long-gantry-press::static::offset::t8` | S1 | 位置偏移 | 2 | 0 |
+| `E7:v7::v7-long-gantry-press::static::offset::t16` | S1 | 位置偏移 | 2 | 0 |
+| `E7:v7::v7-long-gantry-press::static::rotated::t8` | S1 | 方向错误 | 2 | 0 |
+| `E7:v7::v7-long-gantry-press::static::rotated::t16` | S1 | 方向错误 | 2 | 0 |
+| `E7:v7::v7-long-gantry-press::static::wrong-part::t8` | S1 | 用错零件 | 2 | 0 |
+| `E7:v7::v7-long-gantry-press::static::wrong-part::t16` | S1 | 用错零件 | 2 | 0 |
+| `E7:v7::v7-long-gantry-press::static::early-cover::t18` | S1 | 提前封口 | 1 | 0 |
+| `E7:v7::v7-long-gantry-press::static::control::t18` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-gantry-press::static::early-cover::t19` | S1 | 提前封口 | 1 | 0 |
+| `E7:v7::v7-long-gantry-press::static::control::t19` | S0 | 正常、无错误 | 0 | 0 |
 | `E7:v7::v7-long-gantry-press::static::buried-repair::t8` | S1 | 拆上层返修 | 4 | 0 |
+| `E7:v7::v7-long-gantry-press::static::buried-repair::t16` | S1 | 拆上层返修 | 4 | 0 |
+| `E7:v7::v7-long-gantry-press::static::left-right-swap::t16` | S1 | 左右装反 | 4 | 0 |
+| `E7:v7::v7-long-gantry-press::static::left-right-swap::t5` | S1 | 左右装反 | 4 | 0 |
+| `E7:v7::v7-long-gantry-press::static::control::t5` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-gantry-press::static::repeat-omission::t8` | S1 | 重复结构漏装 | 2 | 0 |
+| `E7:v7::v7-long-gantry-press::static::repeat-omission::t16` | S1 | 重复结构漏装 | 2 | 0 |
+| `E7:v7::v7-long-gantry-press::static::control::t9` | S0 | 正常、无错误 | 0 | 0 |
 
 参考操作：`legacy/checks/v7-long-gantry-press.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。
 
@@ -5560,11 +8054,52 @@ GT：`private/561412-1/cases.private.json.gz`，按题目 ID 查找。
 |---|---|---|---:|---:|
 | `E7:v7::v7-long-stone-bridge::dynamic::control::t0` | D0 | 正常、无错误 | 25 | 0 |
 | `E7:v7::v7-long-stone-bridge::dynamic::missing::t8` | D1 | 少装／零件被拆走 | 26 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::missing::t16` | D1 | 少装／零件被拆走 | 26 | 1 |
 | `E7:v7::v7-long-stone-bridge::dynamic::wrong-color::t8` | D1 | 颜色错误 | 27 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::wrong-color::t16` | D1 | 颜色错误 | 27 | 1 |
 | `E7:v7::v7-long-stone-bridge::dynamic::extra-layer::t8` | D1 | 多装一层 | 26 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::extra-layer::t16` | D1 | 多装一层 | 26 | 1 |
 | `E7:v7::v7-long-stone-bridge::dynamic::offset::t24` | D1 | 位置偏移 | 27 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::offset::t3` | D1 | 位置偏移 | 27 | 1 |
 | `E7:v7::v7-long-stone-bridge::dynamic::rotated::t24` | D1 | 方向错误 | 27 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::rotated::t23` | D1 | 方向错误 | 27 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::wrong-part::t8` | D1 | 用错零件 | 27 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::wrong-part::t16` | D1 | 用错零件 | 27 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::early-cover::t17` | D1 | 提前封口 | 26 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::early-cover::t18` | D1 | 提前封口 | 26 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::buried-repair::t8` | D1 | 拆上层返修 | 29 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::buried-repair::t16` | D1 | 拆上层返修 | 29 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::repeat-omission::t8` | D1 | 重复结构漏装 | 27 | 1 |
+| `E7:v7::v7-long-stone-bridge::dynamic::repeat-omission::t3` | D1 | 重复结构漏装 | 27 | 1 |
 | `E7:v7::v7-long-stone-bridge::dynamic::multiple::missingthen-wrong-color` | D2 | 连续多次干扰 | 28 | 2 |
+| `E7:v7::v7-long-stone-bridge::dynamic::multiple::offsetthen-extra-layer` | D2 | 连续多次干扰 | 28 | 2 |
+| `E7:v7::v7-long-stone-bridge::dynamic::multiple::wrong-partthen-missing` | D2 | 连续多次干扰 | 28 | 2 |
+| `E7:v7::v7-long-stone-bridge::dynamic::multiple::missingthen-wrong-colorthen-offset` | D2 | 连续多次干扰 | 30 | 3 |
+| `E7:v7::v7-long-stone-bridge::static::missing::t8` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::control::t8` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::missing::t16` | S1 | 少装／零件被拆走 | 1 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::control::t16` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::wrong-color::t8` | S1 | 颜色错误 | 2 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::wrong-color::t16` | S1 | 颜色错误 | 2 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::extra-layer::t8` | S1 | 多装一层 | 1 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::extra-layer::t16` | S1 | 多装一层 | 1 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::offset::t24` | S1 | 位置偏移 | 2 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::control::t24` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::offset::t3` | S1 | 位置偏移 | 2 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::control::t3` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::rotated::t24` | S1 | 方向错误 | 2 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::rotated::t23` | S1 | 方向错误 | 2 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::control::t23` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::wrong-part::t8` | S1 | 用错零件 | 2 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::wrong-part::t16` | S1 | 用错零件 | 2 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::early-cover::t17` | S1 | 提前封口 | 1 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::control::t17` | S0 | 正常、无错误 | 0 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::early-cover::t18` | S1 | 提前封口 | 1 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::control::t18` | S0 | 正常、无错误 | 0 | 0 |
 | `E7:v7::v7-long-stone-bridge::static::buried-repair::t8` | S1 | 拆上层返修 | 4 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::buried-repair::t16` | S1 | 拆上层返修 | 4 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::repeat-omission::t8` | S1 | 重复结构漏装 | 2 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::repeat-omission::t3` | S1 | 重复结构漏装 | 2 | 0 |
+| `E7:v7::v7-long-stone-bridge::static::control::t6` | S0 | 正常、无错误 | 0 | 0 |
 
 参考操作：`legacy/checks/v7-long-stone-bridge.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。

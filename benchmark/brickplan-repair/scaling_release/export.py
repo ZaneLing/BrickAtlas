@@ -8,6 +8,8 @@ from expansion_v7.build import read,write
 NAMES={'control':'正常、无错误','missing':'少装／零件被拆走','wrong-color':'颜色错误','wrong-part':'用错零件','offset':'位置偏移','rotated':'方向错误','extra-layer':'多装一层','early-cover':'提前封口','buried-repair':'拆上层返修','left-right-swap':'左右装反','repeat-omission':'重复结构漏装','repeated-step':'步骤重复'}
 ALIASES={'none':'control','removed_piece':'missing','wrong_color':'wrong-color','shifted_piece':'offset','rotated_piece':'rotated','wrong_part':'wrong-part','extra_layer':'extra-layer','early_cover':'early-cover','buried_wrong_color':'buried-repair','compound_fault':'compound'}
 NAMES.update(multiple='连续多次干扰',compound='同次事件含多个错误')
+ALIASES.update(wrong_size='wrong-part',swapped_positions='swapped-positions')
+NAMES['swapped-positions']='两个零件的位置装反'
 
 def family_name(value):
  return 'multiple' if value.startswith('multiple-') else ALIASES.get(value,value)
@@ -64,6 +66,11 @@ def main():
  for m in models:m['scopeDescriptionZh']=scope_text(m['scope'])
  for q in questions:
   q['assetFamily']=q['family'];q['nativeFamily']=q['family'];q['family']=family_name(q['family']);q['familyZh']=NAMES.get(q['family'],q['familyZh'])
+  from scaling_release.static_bank import asset_key
+  if q.get('legacy'):
+   field='imageBase' if q['mode']=='static' else 'eventImageBase'
+   q[field]=f'legacy/previews/{q["model"]}/cases/{asset_key(q["id"])}/'
+  elif q['mode']=='static':q['imageBase']=f'previews/{q["setNumber"]}/static/{asset_key(q["id"])}/'
  for m in legacy_models:
   p=OUT/'legacy/checks'/f'{m["id"]}.json'
   if p.exists():

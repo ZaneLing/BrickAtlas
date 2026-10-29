@@ -23,6 +23,10 @@ class Witness:
         self.s=s;self.calls=0;self.latest=None;self.seen=0;self.pending_observation=False
         case=s.ep.case
         if s.row['bank']=='QI':self.queue=deepcopy(case['normalReferenceActions'] if s.control else case['referenceActions']);self.scripted_events=True
+        elif s.row.get('evaluationMetadata',{}).get('taskType')=='S0':
+            # A correct intermediate stage is already complete. An empty
+            # reference must not fall through to the full-object manual.
+            self.queue=[];self.scripted_events=True
         elif not s.control and case.get('referenceActions'):
             self.queue=deepcopy(case['referenceActions']);self.scripted_events=True
         else:

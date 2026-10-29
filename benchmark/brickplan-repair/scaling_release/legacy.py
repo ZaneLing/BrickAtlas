@@ -5,7 +5,7 @@ from scaling_release import ROOT,OUT
 from expansion_v7.build import read,write
 
 
-def collect():
+def collect(include_unchecked=False):
  rows=[json.loads(s) for s in (ROOT/'deliverables/brickplan-benchmark-spec/questions.jsonl').read_text().splitlines()]
  groups=defaultdict(list)
  for r in rows:
@@ -14,15 +14,12 @@ def collect():
  for mid,rs in sorted(groups.items()):
   normal=next((r for r in rs if r['taskType']=='D0'),None)
   if normal is None:continue
-  selected=[normal];families=set()
-  for r in rs:
-   if r['mode']=='dynamic' and r['taskType']=='D1' and r['family'] not in families:
-    selected.append(r);families.add(r['family'])
-   if len(families)==5:break
-  multi=next((r for r in rs if r['taskType']=='D2'),None)
-  static=next((r for r in rs if r['mode']=='static' and r.get('family')=='buried-repair'),None)
-  if multi:selected.append(multi)
-  if static:selected.append(static)
+  selected=[normal]+[r for r in rs if r['id']!=normal['id']]
+  if not include_unchecked:
+   check=OUT/'legacy/checks'/f'{mid}.json'
+   good={r['id'] for r in read(check)['questions'] if r['success']} if check.exists() else set()
+   selected=[r for r in selected if r['id'] in good]
+   if normal['id'] not in good:continue
   n=normal['activeParts'];level='short' if n<=7 else 'medium' if n<=15 else 'long'
   m=dict(id=mid,setNumber=mid,title=normal['title'],sourceModelName=None,sourceGroup=normal['source'],sourceUrl=None,category=normal['source'].split(':')[-1],sourceParts=n,activeParts=n,scope=dict(kind='complete-object',description='既有完整物件，从白色凸点底板开始'),difficulty=level,difficultyBasis='active parts only; human difficulty not calibrated',split='development',authoringExposed=True,humanValidated=False,modelEvaluated=False,status='legacy-machine-checked',dynamicCases=sum(r['mode']=='dynamic' for r in selected),staticCases=sum(r['mode']=='static' for r in selected),figures='designed from ordinary bricks; no minifigure inventory',preview=f'legacy/previews/{mid}/overview.png',legacy=True)
   models.append(m)
@@ -36,7 +33,7 @@ def collect():
    if verified:q.update(referenceMoves=verified['moves'],scheduledEvents=verified['eventsApplied'])
  category_map={**{k:'furniture-object' for k in ['beds','seating','storage','tables','screens','appliances','instruments','lighting','signals','water-features']},**{k:'house-building' for k in ['spans','towers','buildings','stairs']},**{k:'robot-machine' for k in ['lifting-machines','counter-machines','frame-machines','humanoid','utility-vehicles']},'road-vehicles':'road-vehicle','rail-vehicles':'railway','watercraft':'boat'}
  for m in models:m['category']=category_map.get(m['category'],m['category'])
- write(OUT/'legacy/index.json',dict(models=models,questions=questions,policy='Up to seven dynamic and one static representative per existing complete designed object; all historical cases remain in their original banks. No cropped diagnostics counted as new objects.'))
+ write(OUT/'legacy/index.json',dict(models=models,questions=questions,policy='All distinct previously accepted conditions for retained complete designed objects; no representative-family cap. No cropped diagnostics counted as new objects.'))
  return models,questions
 
 if __name__=='__main__':
