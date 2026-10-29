@@ -15,7 +15,7 @@ spec=importlib.util.spec_from_file_location('ldraw_pixels',ROOT/'benchmark/brick
 ldraw=importlib.util.module_from_spec(spec);spec.loader.exec_module(ldraw)
 VIEWS={'isometric':(35,30),'front':(0,0),'rear':(180,0),'left':(-90,0),'right':(90,0),'top':(0,90),'bottom':(0,-90)}
 PALETTE={'0':'#202326','1':'#0055bf','4':'#c91a09','7':'#9ba19d','14':'#f2cd37','15':'#ffffff','71':'#a0a5a9','72':'#6c6e68'}
-FONT=ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc',14) if Path('/System/Library/Fonts/Helvetica.ttc').exists() else ImageFont.load_default(size=14)
+FONT=ImageFont.truetype('/System/Library/Fonts/Supplemental/Comic Sans MS.ttf',14) if Path('/System/Library/Fonts/Supplemental/Comic Sans MS.ttf').exists() else ImageFont.load_default(size=14)
 
 def rgb(h):return np.array([int(h.lstrip('#')[i:i+2],16) for i in (0,2,4)],dtype=float)
 

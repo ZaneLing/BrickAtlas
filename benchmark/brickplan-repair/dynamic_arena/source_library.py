@@ -54,7 +54,8 @@ def flatten(raw):
 def acquire(row):
     number=row['setNumber'];folder=DEST/number
     try:
-        raw=fetch(row['sourceUrl'],folder/'page.html');doc=Document(raw).root;options=[]
+        page=ROOT/row['cachedPage'] if row.get('cachedPage') else folder/'page.html'
+        raw=fetch(row['sourceUrl'],page);doc=Document(raw).root;options=[]
         for a in doc.all('a'):
             url=a.attrs.get('href','')
             if not (url.startswith('https://library.ldraw.org/library/omr/') or url.startswith('https://library.ldraw.org/media/omr_models/')) or not urlparse(url).path.lower().endswith(('.mpd','.ldr')):continue
@@ -65,9 +66,12 @@ def acquire(row):
             thumb=next((i.attrs.get('src') for i in doc.all('img') if '/omr_models/'+urlparse(url).path.split('/')[-2]+'/' in i.attrs.get('src','')),None)
             options.append((0 if 'Main Model' in label else 1,url,thumb,label))
         if not options:raise ValueError('No complete source model listed')
-        _,url,thumb,label=sorted(options)[0];name=Path(unquote(urlparse(url).path)).name
+        if row.get('selectedModelUrl'):options=[o for o in options if o[1]==row['selectedModelUrl']]
+        if not options:raise ValueError('Selected model is not a complete listed OMR file')
+        _,url,thumb,label=sorted(options)[0];source_model_name=label.split('Author:')[0].strip();name=Path(unquote(urlparse(url).path)).name
         raw=fetch(url,folder/name);instances,author,license_=flatten(raw)
-        if not 4<=len(instances)<=250:raise ValueError(f'Complete model has {len(instances)} parts; outside 4–250 source intake range')
+        limit=row.get('maxSourceParts',250)
+        if not 4<=len(instances)<=limit:raise ValueError(f'Complete model has {len(instances)} parts; outside 4–{limit} source intake range')
         shape=hashlib.sha256(json.dumps(sorted((p['partNumber'],p['colorCode'],p['originalMatrix']) for p in instances),separators=(',',':')).encode()).hexdigest()
         mid='arena-omr-'+number
         thumbnail=None
@@ -82,7 +86,7 @@ def acquire(row):
             except Exception:pass
         manifest=dict(schema='brick-atlas-omr-source/1',model=dict(id=mid,setNumber=number,title=row['title'],author=author,license=license_,sourceUrl=row['sourceUrl'],downloadUrl=url),sourceFile=str((folder/name).relative_to(ROOT)),sourceHash=hashlib.sha256(raw).hexdigest(),instances=instances,instancesDropped=0,sourceGeometryModified=False)
         write(folder/'manifest.json',manifest)
-        return dict(id=mid,setNumber=number,title=row['title'],parts=len(instances),theme=row['theme'],author=author,license=license_,sourceUrl=row['sourceUrl'],downloadUrl=url,sourceFile=manifest['sourceFile'],sourceHash=manifest['sourceHash'],shapeHash=shape,sourceCompleteness={k:re.search(k+r'\s+(Yes|No)',label).group(1) if re.search(k+r'\s+(Yes|No)',label) else None for k in ['Missing Parts','Missing Patterns','Missing Stickers']},manifest=str((folder/'manifest.json').relative_to(ROOT)),thumbnail=thumbnail,status='source-complete-awaiting-assembly-check',arenaTaskCount=0,completeObject=True)
+        return dict(id=mid,setNumber=number,title=row['title'],sourceModelName=source_model_name,parts=len(instances),theme=row['theme'],author=author,license=license_,sourceUrl=row['sourceUrl'],downloadUrl=url,sourceFile=manifest['sourceFile'],sourceHash=manifest['sourceHash'],shapeHash=shape,sourceCompleteness={k:re.search(k+r'\s+(Yes|No)',label).group(1) if re.search(k+r'\s+(Yes|No)',label) else None for k in ['Missing Parts','Missing Patterns','Missing Stickers']},manifest=str((folder/'manifest.json').relative_to(ROOT)),thumbnail=thumbnail,status='source-complete-awaiting-assembly-check',arenaTaskCount=0,completeObject=True)
     except Exception as e:return dict(setNumber=number,rejected=str(e)[:200])
 
 

@@ -28,7 +28,7 @@ def main():
     rows=read(OUT/'catalogue.json')['cases'];groups={}
     known=source_rows();missing=[]
     for r in rows:
-        if not r['caseId'].startswith(('QX:','QN:','QI:','A4:')) and r['caseId'] not in known:missing.append(r['caseId'])
+        if not r['caseId'].startswith(('QX:','QN:','QI:','A4:','SC:')) and r['caseId'] not in known:missing.append(r['caseId'])
         groups.setdefault((r['caseId'].split(':')[0],r['model']),r)
     results=[]
     with ProcessPoolExecutor(max_workers=2) as pool:

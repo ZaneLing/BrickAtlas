@@ -28,6 +28,14 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed = urlparse(self.path)
         try:
+            if parsed.path in ('/dataset','/dataset/'):
+                self.send_response(302);self.send_header('Location','/dataset/index.html');self.end_headers();return
+            if parsed.path.startswith('/dataset/'):
+                from scaling_release import OUT as DATASET
+                relative=parsed.path.removeprefix('/dataset/');path=(DATASET/relative).resolve()
+                if not path.is_relative_to(DATASET.resolve()) or path.suffix not in ('.html','.js','.png','.md','.jsonl','.json') or any(p in path.parts for p in ('private','withheld')):return self.send_error(404)
+                mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.md':'text/plain; charset=utf-8','.jsonl':'application/x-ndjson','.json':'application/json'}[path.suffix]
+                return self.send(path.read_bytes(),mime)
             if parsed.path in ('/', '/arena'):
                 return self.send(Path(__file__).with_name('arena.html').read_bytes(), 'text/html; charset=utf-8')
             if parsed.path == '/library':
@@ -37,7 +45,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send((OUT/name).read_bytes(),'application/json')
             if parsed.path.startswith('/source-thumbnail/'):
                 number=parsed.path.removeprefix('/source-thumbnail/')
-                if not re.fullmatch(r'\d+-\d+',number): return self.send_error(400)
+                if not re.fullmatch(r'\d+-\d+(?:-alt-\d+)?',number): return self.send_error(400)
                 from dynamic_arena import ROOT
                 rows=json.loads((OUT/'source-library.json').read_text())['models']
                 row=next((r for r in rows if r['setNumber']==number),None)

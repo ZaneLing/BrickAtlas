@@ -30,6 +30,10 @@ DIVERSITY_HOLD={'2134-1':'与本轮小牛的身体结构相近，优先保留已
 def category(row):
     title=row['title'].lower()
     if 'Star Wars' in row.get('theme',''):return 'spacecraft'
+    if 'Architecture' in row.get('theme',''):return 'house-building'
+    caption=(row.get('sourceModelName') or '').lower()
+    if caption and caption!='main model' and any(re.search(p,caption) for _,p in RULES):title=caption
+    if re.search(r'\b(?:house|hotel|cafe|school|apartment|building|cottage|castle)\b',title):return 'house-building'
     if 'cherry picker' in title:return 'robot-machine'
     if 'racer' in title:return 'road-vehicle'
     for cat,pat in RULES:
@@ -42,10 +46,11 @@ class FigureAudit:
         self.names=set(self.zip.namelist())
     @lru_cache(maxsize=None)
     def library(self,name):
-        path=ROOT/'assets-source/ldraw-library/locked/parts'/name
-        if path.exists():return path.read_text(errors='replace')
-        key='ldraw/parts/'+name
-        if key in self.names:return self.zip.read(key).decode('utf8',errors='replace')
+        for relative in ('parts/'+name,'p/'+name,name):
+            path=ROOT/'assets-source/ldraw-library/locked'/relative
+            if path.exists():return path.read_text(errors='replace')
+            key='ldraw/'+relative
+            if key in self.names:return self.zip.read(key).decode('utf8',errors='replace')
         return None
     def audit(self,row):
         mf=read(ROOT/row['manifest']);embedded={};source=row.get('sourceFile') or mf.get('sourceFile')
@@ -60,7 +65,7 @@ class FigureAudit:
             if name in seen:return
             seen.add(name)
             raw='\n'.join(embedded[name]) if name in embedded else self.library(name)
-            if raw is None:return
+            if raw is None:unresolved.append(name);return
             desc=next((l[2:].strip() for l in raw.splitlines() if l.startswith('0 ') and not l.startswith(('0 Name:','0 Author:','0 !'))),'')
             if BODY.search(desc):evidence.append(dict(part=name,description=desc));return
             # Follow aliases and assemblies, not merely top-level names.

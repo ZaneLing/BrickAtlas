@@ -46,6 +46,9 @@ def load(case_id,directory,diagnostic=False):
 
 
 def _load(case_id,directory,diagnostic=False):
+    if case_id.startswith('SC:'):
+        from scaling_release.load import load as load_scaling
+        return load_scaling(case_id,directory)
     if case_id.startswith('A4:'):
         from dynamic_arena.qualify_sources import load as load_arena_source
         return load_arena_source(case_id,directory)

@@ -135,7 +135,7 @@ class ToolArena:
         readable = dict(model=self.model, messages=[*self.history, dict(role='user', content=[
             dict(type='text', value=visible), *[dict(type='image_url', image_url=dict(
                 url=a['url'], sha256=a['sha256'], detail='high', role=a['role'])) for a in image_refs]])],
-            system=SYSTEM, binaryImagePolicy='URLs and hashes shown here; full base64 request is stored in api/*.request.json.gz')
+            system=SYSTEM, binaryImagePolicy=('Scripted validation: image bytes are available through the verified asset URLs; no provider API request was sent.' if self.session.actor.startswith('scripted') else 'URLs and hashes shown here; full base64 request is stored in api/*.request.json.gz'))
         return provider, readable, visible, image_refs
 
     def observe(self, args, number):
@@ -215,6 +215,8 @@ class ToolArena:
         out['apiCalls'] = self.transport.usage()['calls']
         out['providerUsage'] = self.transport.usage()
         out['repairPrerequisite']=getattr(self.session,'normal_gate',None)
+        from scaling_release.arena_metrics import normal_qualified_recovery
+        out['normalQualifiedRecovery']=normal_qualified_recovery(out)
         out['controllerMetrics'] = dict(decisions=len(self.calls), observeCalls=sum(
             c.get('modelOutput', {}).get('tool') == 'observe' for c in self.calls),
             recallCalls=sum(c.get('modelOutput', {}).get('tool') == 'recall' for c in self.calls),

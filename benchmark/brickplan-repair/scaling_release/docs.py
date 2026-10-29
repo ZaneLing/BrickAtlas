@@ -1,0 +1,122 @@
+"""Generate readable delivery documents from the actual release indexes."""
+from collections import Counter
+import json
+from scaling_release import ROOT,OUT
+from expansion_v7.build import read
+
+def main():
+ r=read(OUT/'release.json');c=r['counts'];models=[json.loads(s) for s in (OUT/'models.jsonl').read_text().splitlines()];qs=[json.loads(s) for mode in ['dynamic','static'] for s in (OUT/'questions'/f'{mode}.jsonl').read_text().splitlines()]
+ types=Counter(q['taskType'] for q in qs);families=Counter(q['familyZh'] for q in qs);levels=Counter((q['difficulty'],q['mode']) for q in qs)
+ text=f'''# Brick Atlas 数据集交付说明
+
+## 1. 这次交付什么
+
+**主清单包含 {c['runnableModels']} 个物件模型、{c['dynamicQuestions']} 道动态题、{c['staticQuestions']} 道静态题。**
+
+| 项目 | 数量／状态 |
+|---|---:|
+| 社区模型，已配题并通过程序检查 | {c['qualifiedCommunityModels']} |
+| 之前设计的完整物件，保留并重新检查 | {c['retainedDesignedModels']} |
+| 从空白凸点底板开始拼完整物件 | {c['wholeObjectModels']} |
+| 主体已拼好，完成明确的收尾区域 | {c['finishingStageModels']} |
+| 动态题 | {c['dynamicQuestions']} |
+| 静态题 | {c['staticQuestions']} |
+| 模型 API 测试／费用 | 本轮未调用，$0 |
+
+社区来源库另有 {c['sourceModels']} 条完整模型记录，来自 {c['distinctSourceSets']} 个原套装，包含 {c['officialAlternates']} 个原作者的不同替代拼法。**来源库数量不算可运行模型数量。** 没通过拆装、可见性或最后检查的来源，保留原因，不进入主清单。
+
+替代拼法必须确实是另一个完整造型；同一套装的所有造型归入同一个来源组。没有把裁剪区域、换颜色、错误版本或题目数量当作新模型。旧模型继续保留，不用新增社区模型替换掉它们。
+
+## 2. 从哪里看
+
+- [直接看模型、局部图和题目](index.html)：每个模型有全景、操作范围、当前状态、验收目标和题目列表。
+- [全部模型总表](MODEL-AND-QUESTION-LIST.zh-CN.md)：每个模型的操作范围、件数、题量和错误类别。
+- [逐模型的全部题目与 GT 位置](QUESTIONS.zh-CN.md)。
+- [带图片的代表题](EXAMPLES.zh-CN.md)：输入、目标、错误和 GT 一起看。
+- [输入、输出与评分说明](INPUT-OUTPUT-AND-METRICS.zh-CN.md)。
+- [本机查看、复查和环境说明](RUN.zh-CN.md)。
+- [程序检查结果](checks/release-check.json)。原始逐题记录在 `checks/` 和 `private/模型编号/check.json`。
+
+本机服务启动后也可以打开：<http://127.0.0.1:8810/dataset/>。网页是看题和看答案用的，里面的错误标签、GT、干扰时机不会发给做题模型。
+
+## 3. 题目怎么分
+
+| 题型 | 作用 | 题数 |
+|---|---|---:|
+| S0 静态正常对照 | 当前已经正确，应直接结束 | {types['S0']} |
+| S1 静态修复 | 给当前图和本阶段唯一目标，找错并修复 | {types['S1']} |
+| D0 正常动态拼装 | 模型自主观察、操作，过程中不干扰 | {types['D0']} |
+| D1 单次动态干扰 | 模型拼装中，环境造成一次合法的状态变化 | {types['D1']} |
+| D2 连续动态干扰 | 前后发生多次变化，检查恢复后能否继续完成 | {types['D2']} |
+
+新社区模型每个只留 **1 道静态代表题**，其中一部分是正确对照。动态题按这个模型实际能发生、能看见、能合法修好的错误来选；没有硬塞每一种错误。
+
+### 长度和难度
+
+| 操作长度 | 模型数 | 动态题 | 静态题 |
+|---|---:|---:|---:|
+| 短：3–7 件 | {c['byDifficulty'].get('short',0)} | {levels['short','dynamic']} | {levels['short','static']} |
+| 中：8–15 件 | {c['byDifficulty'].get('medium',0)} | {levels['medium','dynamic']} | {levels['medium','static']} |
+| 长：16 件及以上 | {c['byDifficulty'].get('long',0)} | {levels['long','dynamic']} | {levels['long','static']} |
+
+这里数的是本题可操作的零件，不是背景里整个套装的件数。**长不等于一定难。** 遮挡、需要拆掉多少正确件才能返修、事故次数和实际完成表现，要分开分析；目前尚未经过真人表现校准。
+
+### 错误类别
+
+| 类别 | 题数 |
+|---|---:|
+'''
+ text+='\n'.join(f'| {k} | {v} |' for k,v in sorted(families.items()))
+ text+='''
+
+H12、H14–H17 没有加入新题。库存信息通过观察库存接口获取；库存替代的既有专项题仍保留在 `deliverables/brickplan-quality-round/inventory-equivalence/`，沿用原有 Arena 入口，不算成新的社区物件。
+
+## 4. 数据放在哪里
+
+```text
+deliverables/brick-atlas-dataset-v1/
+├── README.zh-CN.md                       本说明
+├── MODEL-AND-QUESTION-LIST.zh-CN.md       全模型表
+├── QUESTIONS.zh-CN.md                    全部正式题目
+├── INPUT-OUTPUT-AND-METRICS.zh-CN.md      输入输出、规则、指标
+├── release.json                         版本、实际数量、状态
+├── models.jsonl                         一行一个可运行模型
+├── sources.jsonl                        来源库，包含暂不采用的来源与原因
+├── questions/
+│   ├── dynamic.jsonl                    动态题主清单
+│   └── static.jsonl                     静态题主清单
+├── designs/                             每个社区模型的出题设计
+├── previews/                            全景、局部、多视角、事件示意
+├── private/                             裁判使用的场景、GT、事件与回放检查
+├── legacy/                              之前的完整物件、图片与复查记录
+├── withheld/                            被退回的数据与原因（不属于主题库）
+└── checks/                              来源、去重、回放、接口与图片检查
+```
+
+原始 MPD/LDR、零件文件和作者授权信息留在仓库的 `assets-source/`，派生模型清单在 `web/public/models/`。题目不是只靠截图存储：原几何、可操作范围、初始状态、目标、候选操作、隐藏事件和参考修复都有机器可读记录。原作者、下载地址和许可证随来源保存。
+
+## 5. 已检查和还需要检查的事
+
+- 已检查：原文件的零件、颜色、位置没有被偷偷替换；没有小人身体部件；所有原模型零件都保留。
+- 已检查：正常参考拼装、所有发布题目的参考修复、事件触发数、结束验收；可找到替代合法顺序的模型，也检查了另一种顺序。
+- 已检查：当前图和目标图使用相同画布与相机；事件必须在支持的视角里看得见；网页图片与对应题目版本一致。
+- 已检查：实际 Arena 的观察、安装、拆卸、日志和结果；正常与干扰分支均有程序动作回放。
+- 仍待真人确认：物件是否容易认、局部是否清楚、题意和参考修复是否合理。程序检查不能代替这些判断。
+- 仍待独立物理验证：当前判断采用现有连接、碰撞和直线拆装检查；不模拟重力、摩擦、卡扣力度，也不能声称已经覆盖任意复杂动作。
+- 仍待真实模型实验：这次没有模型准确率结果。所有成功回放都标为程序参考动作，不是 API 模型做对。
+
+开发、验证、测试标签按原始来源统一分组；但这些模型都参与过数据整理，不能把其中的 `test` 直接称为“从未见过的新来源测试集”。正式论文还需要另取一批未参与调试的新来源。
+
+历史题和原始检查记录仍在原目录。Arena 的 `catalogue.json` 对应当前主清单；`catalogue-all-conditions.json` 保留可用的历史条件，旧链接仍可打开。历史重复条件不再扩大主清单的模型数或题数。
+'''
+ (OUT/'README.zh-CN.md').write_text(text)
+ lines=['# 全部正式题目','','只列入主清单中已经通过检查的题目。GT 是合法参考解，不要求模型照它的顺序做。','']
+ for m in models:
+  lines += [f'## {m["setNumber"]} · {m["title"]}','',f'操作范围：{m["scopeDescriptionZh"]}。操作 {m["activeParts"]} 件；原物件 {m["sourceParts"]} 件。', '',f'[全景与操作范围]({m["preview"]}) · [打开交互展示](index.html#{m["id"]})','','| 题目 ID | 题型 | 错误／任务 | 参考动作数 | 事故数 |','|---|---|---|---:|---:|']
+  for q in qs:
+   if q['model']==m['id']:lines.append(f'| `{q["id"]}` | {q["taskType"]} | {q["familyZh"]} | {q["referenceMoves"]} | {q["scheduledEvents"]} |')
+  lines+=['',f'GT：`private/{m["setNumber"]}/cases.private.json.gz`，按题目 ID 查找。' if not m.get('legacy') else f'参考操作：`legacy/checks/{m["id"]}.json`；原始 GT 通过统一 `bench_design.run_episode.load` 接口读取。','']
+ (OUT/'QUESTIONS.zh-CN.md').write_text('\n'.join(lines))
+ print('Delivery Markdown generated')
+
+if __name__=='__main__':main()

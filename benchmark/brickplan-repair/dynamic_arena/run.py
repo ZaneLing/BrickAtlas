@@ -30,8 +30,11 @@ def preview(cid,normal=True):
 
 def task_digest(s,budget):
     from hashlib import sha256
+    from dynamic_arena import ROOT
     implementation={name:sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
                     for name in ['tool_arena.py','sensors.py','plate_render.py']}
+    for name in ['benchmark/brickplan-repair/eval/render.py','benchmark/brickplan-repair/expansion_v7/run_episode.py','benchmark/brickplan-repair/community_modules/run_episode.py','benchmark/brickplan-repair/expansion_v7/runtime.py','benchmark/brickplan-v1/geometry.py']:
+        implementation[name]=sha256((ROOT/name).read_bytes()).hexdigest()
     return digest(dict(initial=s.initial,goal=s.goal,certificate=s.ep.runtime.cert,
         inventory=sorted(getattr(s.ep.runtime,'available',[])),budget=budget,
         protocol=PROTOCOL,system=SYSTEM,tools=TOOLS,implementation=implementation))
