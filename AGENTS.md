@@ -17,6 +17,8 @@
 
 ## Experiment readiness — 2026-10-30
 
+- The expanded batch uses `unified_agent.experiment_batch` and `deliverables/brick-atlas-experiments-v3/plan.json`: each of the same four backbones has 50 static checkpoints and 50 normal builds, plus qualified incidents and separately labelled prior missing conditions. Current input protocol is `/4`, profile `visual-memory-pull-v4`; use the current per-model certificates and ledgers in that directory. See its `RUN.zh-CN.md`. The earlier v2/v3 notes below describe historical batches, not permission to merge their scores.
+
 - The Ark/Aliyun pilot in `deliverables/brick-atlas-ark-pilot-v1` is complete and uses the historical v2 input. Preserve its original scores and receipts. Its `completed.json` prevents new paid requests in that directory.
 - New shared visual-agent experiments use `unified_agent.run` and the v3 profile, with static manuals restricted to the public target stage. Use a new output directory and current interface certificate; never reuse the v2 scores as v3 results. For Ark batch tools, set `BRICK_ARK_PILOT_OUT` to a new directory under this project's `deliverables/` and supply its plan. See `deliverables/brick-atlas-ark-pilot-v1/RUN.zh-CN.md`.
 - Every run requires a current API certificate from `unified_agent.readiness` and a fresh case check before spending on a task.

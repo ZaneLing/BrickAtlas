@@ -54,14 +54,24 @@ def probe(model,cap,ledger,refresh=False,root=None,transport_factory=PaidTranspo
         transport=transport_factory(directory,cap,model,ledger_path=ledger,max_output=config['maxOutputTokensPerDecision'],
             reasoning_mode=config['reasoningMode'],timeout=config['requestTimeoutSeconds'])
         a=VisualAgent(s,transport,config);a.spectator_frame=lambda *args:None
-        for i in range(2):
-            if i:
+        for i in range(3):
+            if i==1:
                 # Explicit scripted sensor setup for the API check; no physical
                 # actions, no private witness, and never benchmark evidence.
                 a.execute(dict(tool='observe',args=dict(view='angled',rotateDegrees=90,show=['current'])),100)
                 a.execute(dict(tool='observe',args=dict(view='top',rotateDegrees=0,show=['current','inventory'])),101)
                 first=a.sensors.handles()[0]['id']
                 a.execute(dict(tool='inspect',args=dict(partId=first,page=1)),102)
+            elif i==2:
+                # Large public packet and long legal dialogue. This checks
+                # provider input/TPM support, not the ability to solve a case.
+                s=open_session('E7:v7::v7-long-bookshelf::dynamic::multiple::missingthen-wrong-color',directory,model,True);s.autosave=False
+                a=VisualAgent(s,transport,for_session(s));a.spectator_frame=lambda *args:None
+                a.execute(dict(tool='inspect',args=dict(manualStep=1)),100)
+                a.execute(dict(tool='observe',args=dict(view='angled',rotateDegrees=90,show=['target'])),101)
+                for _ in range(config['textHistoryTurns']):
+                    a.history.extend([dict(role='assistant',content=json.dumps(dict(tool='inspect',args=dict(manualStep=1),plan=['Review the public instruction before selecting a placement.']*6,notes='Public interface-check memory. '*35))),
+                        dict(role='user',content=json.dumps(dict(toolResult=dict(code='OBSERVED',stateChanged=False))))])
             provider,readable,visible,images=a.request()
             wanted=dict(tool='observe',args=dict(view='angled',rotateDegrees=90,show=['current','inventory'])) if i==0 else dict(tool='observe',args=dict(view='top',rotateDegrees=0,show=['current']))
             instruction='API INTERFACE CHECK ONLY, not an assembly trial. Read the supplied images and tool contract. Return exactly this tool call as JSON, optionally adding short plan/notes: '+json.dumps(wanted)+'. Do not solve or install anything.'

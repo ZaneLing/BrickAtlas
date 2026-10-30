@@ -89,3 +89,45 @@ class Sensors:
             raise ValueError('No such manual step for this task target; later construction stages are unavailable')
         asset = self.s.packet.manual_page(step)
         with Image.open(asset['file']) as im: return im.copy()
+
+    def instruction_identity(self, step):
+        """Identify the part pictured in an optional public manual step.
+
+        No target pose ID, legality, fault or repair witness is returned.
+        """
+        actions = self.manual['actions'] if self.manual else getattr(self.s.packet,'module',{}).get('manual',[])
+        actor = actions[step-1].get('actor') if 1 <= step <= self.manual_count else None
+        return dict(referencePartId=self.aliases.get(actor),
+            meaning='Handle of the part pictured in this optional construction step; not a required repair action or required order.')
+
+    def _scene_mask(self, state, view, angles=None):
+        frame=['_module_frame'] if '_module_frame' in self.renderer.bounds else None
+        return self.renderer.rgb(state,view,size=(800,600),angles=angles,frame_keys=frame,supersample=1)
+
+    def _outline(self, image, mask, actor):
+        selection=Image.fromarray(np.uint8(mask==self.renderer.ids[actor])*255)
+        border=Image.fromarray(np.uint8(np.maximum(0,np.asarray(selection.filter(ImageFilter.MaxFilter(5))).astype(int)-np.asarray(selection).astype(int))))
+        image.paste((0,151,164),(0,0),border)
+        return image
+
+    def candidate_detail(self, public, candidate, view, angles=None):
+        actor=self.reverse[public]
+        key=next((k for k in self.keys(actor) if self.poses[k]==candidate),None)
+        if key is None:raise ValueError('Candidate does not belong to this part; inspect its candidate catalogue first')
+        current,_=self._scene_mask(self.ep.state,view,angles)
+        proposed,mask=self._scene_mask({**self.ep.state,actor:key},view,angles)
+        self._outline(proposed,mask,actor)
+        image=Image.new('RGB',(1600,636),'white');draw=ImageDraw.Draw(image)
+        image.paste(current,(0,36));image.paste(proposed,(800,36))
+        draw.text((10,8),'CURRENT',font=FONT,fill='#17283a')
+        draw.text((810,8),'HYPOTHETICAL '+public+' / '+candidate,font=FONT,fill='#17283a')
+        return image,dict(partId=public,candidate=candidate,view=view,hypothetical=True,
+            legalityOrCorrectnessShown=False,panels=[dict(role='current',rectangle=[0,36,800,636]),dict(role='hypothetical',rectangle=[800,36,1600,636])])
+
+    def identify(self, point, view):
+        image,mask=self._scene_mask(self.ep.state,view)
+        picked=int(mask[min(599,int(point[1]*600)),min(799,int(point[0]*800))])
+        actor=next((a for a,idx in self.renderer.ids.items() if idx==picked and a in self.aliases),None)
+        if actor is not None:self._outline(image,mask,actor)
+        return image,dict(view=view,point=point,partId=self.aliases.get(actor),
+            visibleSurfaceOnly=True,noHiddenPartOrTargetLookup=True)

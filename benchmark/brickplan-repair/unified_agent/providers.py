@@ -77,7 +77,7 @@ def total(ledger):
 
 class PaidTransport:
     def __init__(self,directory,cap=1.5,model=MODELS[0],ledger_path=None,max_output=8192,reasoning_mode='off-when-supported',timeout=180):
-        if not 0<cap<=10:raise ValueError('Invalid dollar cap')
+        if not isinstance(cap,(int,float)) or not math.isfinite(cap) or not 0<cap<=1000:raise ValueError('Invalid experiment accounting cap')
         self.directory=Path(directory);self.directory.mkdir(parents=True,exist_ok=True)
         self.model=model;self.route=route(model);self.inference_model=inference_model(model);self.latest=None;self.max_output=max_output;self.cap=cap
         if reasoning_mode not in ('off-when-supported','low'):raise ValueError('Unknown reasoning policy')
@@ -242,6 +242,9 @@ class PaidTransport:
                 costUSD=cost,costBasis=self.price['basis'],nativeCurrency=self.price['currency'],latencySeconds=round(time.time()-started,3),archiveId=uid)
             write_json(folder/(uid+'.private.json'),self.latest)
             if cost>reserve:raise RuntimeError('Provider exceeded reserved ceiling')
+            returned_model=result.get('model')
+            if self.route['provider']=='ark' and returned_model and returned_model!=self.route['model']:
+                raise GenerationError('API_MODEL_MISMATCH','Endpoint returned a different backbone: '+str(returned_model))
             choices=result.get('choices',[])
             if len(choices)!=1:raise GenerationError('API_CHOICES','Expected exactly one provider choice')
             choice=choices[0];finish=choice.get('finish_reason')

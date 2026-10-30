@@ -28,6 +28,21 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed = urlparse(self.path)
         try:
+            if parsed.path in ('/experiments','/experiments/'):
+                from unified_agent import __file__ as agent_file
+                return self.send(Path(agent_file).with_name('experiment_viewer.html').read_bytes(),'text/html; charset=utf-8')
+            if parsed.path == '/api/experiment-report':
+                from unified_agent.experiment_batch import merged
+                return self.send(json.dumps(merged(),ensure_ascii=False).encode(),'application/json')
+            if parsed.path.startswith('/experiment-results/'):
+                from unified_agent.experiment_batch import OUT as SERIES
+                path=(SERIES/parsed.path.removeprefix('/experiment-results/')).resolve()
+                allowed=path.is_relative_to(SERIES.resolve()) and (
+                    (path.parent==SERIES and path.name in ('index.html','README.zh-CN.md','metrics.json','plan.json','REPAIRS.zh-CN.md','report.pdf'))
+                    or path.parent==SERIES/'plots' or path.parent==SERIES/'checks')
+                mime={'.html':'text/html; charset=utf-8','.md':'text/plain; charset=utf-8','.txt':'text/plain; charset=utf-8','.json':'application/json','.png':'image/png','.svg':'image/svg+xml','.pdf':'application/pdf'}.get(path.suffix)
+                if not allowed or not mime:return self.send_error(404)
+                return self.send(path.read_bytes(),mime)
             if parsed.path in ('/ark','/ark/'):
                 from unified_agent import __file__ as agent_file
                 return self.send(Path(agent_file).with_name('ark_viewer.html').read_bytes(),'text/html; charset=utf-8')

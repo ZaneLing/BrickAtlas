@@ -14,7 +14,7 @@ from dynamic_arena.demo import create, CASE_ID, TITLE
 from dynamic_arena.sensors import Sensors
 from dynamic_arena.transport import Transport, write_json
 
-PROTOCOL = 'brick-atlas-tool-arena/6'
+PROTOCOL = 'brick-atlas-tool-arena/7'
 SYSTEM = '''You control one continuous LEGO assembly episode. The starting scene may be an empty white studded baseplate or a preassembled object with a named section to finish. Match the sole target; all physically legal assembly orders are accepted. Call exactly ONE tool per JSON response, with only tool and args. Use observe for current/target/inventory images, inspect for a part's neutral candidate positions or an optional instruction page, attach or detach to move one physical part, recall to retrieve a previously requested image, and finish to submit. No image is supplied automatically after a move. Observation is your responsibility. Environment changes may happen without announcement; feedback only describes your requested action. Choose observations, plan, build, recheck and repair autonomously. Anonymous handles do not encode answers. A candidate preview is hypothetical, not a legality or correctness label. Inventory is finite; one handle represents one physical part. For tasks explicitly allowing equivalent assemblies, match the stated colored volume and connections, not the illustrated seams. The manual provides a possible construction order, never a required order. Return a direct JSON object, for example {"tool":"observe","args":{"view":"angled","rotateDegrees":0,"show":["current","target","inventory"]}}.'''
 
 from dynamic_arena.contract import TOOLS,validate
@@ -82,7 +82,10 @@ class ToolArena:
                     targetContract=self.session.ep.observe().get('targetContract','Match the target physical assembly.'),
                     physicalRules=['One physical part per attach/detach.', 'Any legal order is accepted.', 'Fixtures may support subassemblies; gravity, friction and snap force are not simulated.', 'No overlap; a straight insertion/removal path is required.'],
                     inventoryPages=self.sensors.inventory_count, manualSteps=self.sensors.manual_count,
-                    inspectionOptions={'inventoryPage':'1-based; default 1','focus':['module','whole'],'candidatePages':'inspect partId and page'},
+                    inspectionOptions={'inventoryPage':'1-based; default 1','focus':['module','whole'],
+                        'candidatePages':'inspect partId and page; optional view is isometric, rear or top',
+                        'enlargedCandidate':'inspect partId and candidate for a full-size current/proposed comparison',
+                        'identifyVisiblePart':'inspect point [x,y] and view (isometric/rear/top). Coordinates are normalized within the whole 800x600 current scene; returns the visible part handle only.'},
                     camera=dict(azimuthDegrees=self.azimuth, elevationDegrees=self.elevation),
                     actionHandles=handles, availableTools=TOOLS, lastToolResult=self.last_result,
                     observationPolicy='No images are sent unless requested. Current and target share one matched canvas when both requested. Inventory and candidate queries return ONE page; other angles, pages, manual and history require separate requests.',
@@ -149,12 +152,18 @@ class ToolArena:
             try:
                 if name=='observe': return self.observe(args,number),self.archive[number]
                 if 'manualStep' in args:
-                    im=self.sensors.instruction(args['manualStep']);meta=dict(step=args['manualStep'],isTarget=False,referenceOnly=True);role='instruction-reference'
+                    im=self.sensors.instruction(args['manualStep']);meta=dict(step=args['manualStep'],isTarget=False,referenceOnly=True,**self.sensors.instruction_identity(args['manualStep']));role='instruction-reference'
+                elif 'point' in args:
+                    im,meta=self.sensors.identify(args['point'],args.get('view','isometric'));role='current-part-inspection'
+                elif 'candidate' in args:
+                    view=args.get('view','top' if self.elevation==90 else 'isometric')
+                    im,meta=self.sensors.candidate_detail(args['partId'],args['candidate'],view,None if 'view' in args else (self.azimuth,self.elevation));role='candidate-detail'
                 else:
-                    im,meta=self.sensors.candidates(args['partId'],args.get('page',1),'top' if self.elevation==90 else 'isometric',(self.azimuth,self.elevation));role='candidate-catalog'
+                    view=args.get('view','top' if self.elevation==90 else 'isometric')
+                    im,meta=self.sensors.candidates(args['partId'],args.get('page',1),view,None if 'view' in args else (self.azimuth,self.elevation));role='candidate-catalog'
                 self.session.submit(dict(type='inspect',view='isometric'))
                 images=[self.image(im,role,**meta)];self.archive[number]=images
-                return dict(code='OBSERVED',images=images,environmentDecision=len(self.session.records)),images
+                return dict(code='OBSERVED',images=images,environmentDecision=len(self.session.records),inspection=meta),images
             except (KeyError,ValueError,IndexError) as exc:
                 self.session.submit(dict(type='invalid'),parse_error=False)
                 return dict(code='INVALID_SENSOR_REQUEST',message=str(exc),stateChanged=False,
