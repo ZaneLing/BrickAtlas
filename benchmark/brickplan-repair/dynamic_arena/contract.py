@@ -2,12 +2,22 @@
 import json,re
 from copy import deepcopy
 
-VERSION='brick-atlas-tool-contract/3'
+VERSION='brick-atlas-tool-contract/4'
 SPECS={
  'observe':dict(required=[],defaults=dict(view='angled',rotateDegrees=0,show=['current']),
    optional=['view','rotateDegrees','show','inventoryPage','focus'],
+   arguments=dict(view={'enum':['angled','isometric','top'],'meaning':'angled retains camera azimuth; isometric is an observe-only alias of angled; top changes elevation to 90 degrees'},
+     rotateDegrees={'type':'integer','multipleOf':90,'meaning':'RELATIVE turn from the current camera, NOT an absolute azimuth. To turn halfway use 180, even when the reported azimuth is 35 or 215.'},
+     show={'items':['current','target','inventory']},inventoryPage={'type':'integer','minimum':1},focus={'enum':['module','whole']}),
    example=dict(tool='observe',args=dict(rotateDegrees=90,show=['current','inventory']))),
- 'inspect':dict(required='partId OR manualStep OR point, never combined',defaults=dict(page=1),optional=['partId','page','manualStep','candidate','point','view'],
+ 'inspect':dict(required='partId OR manualStep OR point, never combined',defaults={},optional=['partId','page','manualStep','candidate','point','view'],
+   modes=[{'args':['partId','page','view'],'default':'page=1; omit view to follow the current camera'},
+     {'args':['partId','candidate','view'],'rule':'one enlarged hypothetical preview; OMIT page; omit view to follow the current camera'},
+     {'args':['manualStep'],'rule':'manualStep alone; 1-based public instruction page'},
+     {'args':['point','view'],'rule':'point=[x,y] in 0..1, NOT pixels; use the full 800x600 current scene in the named fixed preset. Omitted view means the fixed isometric preset, NOT the latest rotated camera.'}],
+   arguments=dict(view={'enum':['isometric','rear','top'],'meaning':'fixed renderer preset; angled is NOT an inspect view. These are the same three presets in the initial current packet.'},
+     point={'type':'array','length':2,'numberRange':[0,1],'meaning':'x=0 left, x=1 right; y=0 top, y=1 bottom. Example image center [0.5,0.5].'},
+     page={'type':'integer','minimum':1,'rule':'only with partId, never with candidate'},manualStep={'type':'integer','minimum':1}),
    example=dict(tool='inspect',args=dict(partId='PART_ID_FROM_INVENTORY',page=1))),
  'attach':dict(required=['partId','candidate'],optional=[],example=dict(tool='attach',args=dict(partId='PART_ID_FROM_INVENTORY',candidate='POSITION_ID_FROM_REQUESTED_PAGE'))),
  'detach':dict(required=['partId'],optional=[],example=dict(tool='detach',args=dict(partId='PART_ID_FROM_INVENTORY'))),
@@ -15,9 +25,10 @@ SPECS={
  'finish':dict(required=[],optional=[],example=dict(tool='finish',args={})),
 }
 TOOLS=dict(version=VERSION,tools=SPECS,
- values=dict(view=['angled','top'],show=['current','target','inventory'],focus=['module','whole'],scope=['current','prefix']),
+ values=dict(observeView=['angled','isometric','top'],inspectView=['isometric','rear','top'],show=['current','target','inventory'],focus=['module','whole'],scope=['current','prefix']),
  normalization=['Omitted observe fields use angled, 0 degrees and current scene.',
-  'isometric is an alias of angled. Rotations are multiples of 90 degrees, normalized modulo 360.',
+  'For observe ONLY, isometric is an alias of angled. rotateDegrees is a RELATIVE turn in multiples of 90, normalized modulo 360. The reported camera azimuth is not a rotateDegrees argument.',
+  'For inspect ONLY, view selects a fixed isometric/rear/top preset. There is no global view enum shared by the tools.',
   'Integer strings are accepted for page, manualStep, inventoryPage, decision and rotateDegrees.',
   'Part IDs and candidate IDs are exact strings; no guessed IDs or actions.',
   'One complete JSON object in a code fence or after prose is accepted. Multiple objects, broken JSON and truncated generation are never guessed or executed.',

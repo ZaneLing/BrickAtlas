@@ -1,13 +1,24 @@
 """Check concrete UI-contract faults found in the previous paid pilot."""
 import json,tempfile,unittest
 from pathlib import Path
-from dynamic_arena.contract import validate
+from dynamic_arena.contract import validate,TOOLS
 from dynamic_arena.demo import create
 from dynamic_arena.run import NoProvider
 from unified_agent.agent import VisualAgent
 
 
 class InterfaceV4Checks(unittest.TestCase):
+    def test_published_camera_names_and_conditional_defaults(self):
+        # The former global view list advertised names the point tool rejected.
+        self.assertNotIn('view',TOOLS['values'])
+        for view in TOOLS['tools']['observe']['arguments']['view']['enum']:
+            self.assertTrue(validate(dict(tool='observe',args=dict(view=view,rotateDegrees=90)))['valid'])
+        for view in TOOLS['tools']['inspect']['arguments']['view']['enum']:
+            self.assertTrue(validate(dict(tool='inspect',args=dict(point=[.5,.5],view=view)))['valid'])
+        self.assertNotIn('page',TOOLS['tools']['inspect']['defaults'])
+        self.assertIn('RELATIVE',TOOLS['tools']['observe']['arguments']['rotateDegrees']['meaning'])
+        self.assertFalse(validate(dict(tool='observe',args=dict(rotateDegrees=35)))['valid'])
+
     def test_complete_final_json_only(self):
         action={'tool':'finish','args':{}}
         for value in ['Explanation first.\n'+json.dumps(action),'```json\n'+json.dumps(action)+'\n```']:

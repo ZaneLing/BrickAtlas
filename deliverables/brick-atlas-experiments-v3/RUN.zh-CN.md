@@ -7,7 +7,7 @@
 - 上一批缺失/中断条件：Sol 12 个、Seed Pro 8 个，另列补测。
 - 静态也使用统一视觉 Agent 的观察和拆装工具。本批不是一次性静态问答实验。
 - 50 个物件、49 个原始来源组。完整题单、抽样规则与每个条件的来源见 `plan.json`。
-- 新接口版本为 `brick-atlas-unified-visual-agent/4`，输入策略为 `visual-memory-pull-v4`。历史实验不改分。
+- 新接口版本为 `brick-atlas-unified-visual-agent/5`，输入策略为 `visual-memory-pull-v5`。v4发现参数说明歧义，作为接口排查数据保留；所有条件（包括v4成功题）用v5统一重跑。账本累计，不清零，历史实验不改分。
 
 ## 运行命令
 

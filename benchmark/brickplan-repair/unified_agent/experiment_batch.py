@@ -9,7 +9,7 @@ from unified_agent import ROOT,PROTOCOL
 from unified_agent.ark_batch import MODELS,IsolatedViewerAgent
 from unified_agent.providers import PaidTransport,total
 from unified_agent.failures import ProviderError
-from unified_agent.readiness import probe
+from unified_agent.readiness import probe,source_digest
 from unified_agent.run import execute
 from dynamic_arena.transport import write_json
 
@@ -49,7 +49,7 @@ def merged():
     for model in MODELS:
         path=OUT/'preflight'/slug(model)/'certificate.json'
         if path.exists():
-            c=json.loads(path.read_text());api.append(dict(model=model,passed=c['passed'],inferenceModel=c['inferenceModel'],error=c.get('error',{}).get('code'),
+            c=json.loads(path.read_text());current=c['sourceSha256']==source_digest();api.append(dict(model=model,passed=c['passed'] and current,inferenceModel=c['inferenceModel'],error=c.get('error',{}).get('code') if current else 'REFRESH_REQUIRED',
                 errorMessage=c.get('error',{}).get('message'),passedProbes=len(c.get('probes',[])),checkedAt=c['checkedAt'],checkType='image-history-contract',requiredProbes=3))
         elif model in hello:
             c=hello[model];api.append(dict(model=model,passed=False,inferenceModel=c['inferenceModel'],error=c.get('error',{}).get('code'),
@@ -60,11 +60,11 @@ def merged():
             ledger=json.loads(path.read_text());costs[model]=dict(estimateCNY=sum(c.get('nativeCost',0) for c in ledger['charges']),
                 requests=len(ledger['charges']),uncertain=sum(c['status'] in ('pending','uncertain') for c in ledger['charges']))
     return dict(protocol=PROTOCOL,runs=runs,notRun=missing,apiStatus=api,costs=costs,
-        pendingModels=[m for m in MODELS if not any(p['model']==m and p.get('finishedAt') for p in reports)],
+        pendingModels=[m for m in MODELS if not any(p['model']==m and p.get('finishedAt') and p['protocol']==PROTOCOL for p in reports)],
         plannedBaseRuns=sum(len(j) for j in plan['jobs'].values()),
         activeRuns=[p['activeRun'] for p in reports if p.get('activeRun')],
         workers=[{k:p.get(k) for k in ('model','finishedAt','blockedReason','startedAt')} for p in reports],
-        allWorkersFinished=len(reports)==len(MODELS) and all(p.get('finishedAt') for p in reports))
+        allWorkersFinished=len(reports)==len(MODELS) and all(p.get('finishedAt') and p['protocol']==PROTOCOL for p in reports))
 
 
 def main():
@@ -86,14 +86,16 @@ def main():
     if a.preflight_only:return
     if not cert['passed']:
         report['blockedReason']=cert.get('error');write_json(path,report);return
-    report.pop('blockedReason',None);report.pop('finishedAt',None);write_json(path,report)
-    done={(r['caseId'],r['arenaBranch']) for r in report['runs']}
-    done.update((r['caseId'],r['condition']) for r in report['notRun'])
+    report.pop('blockedReason',None);report.pop('finishedAt',None);report['protocol']=PROTOCOL;write_json(path,report)
+    # A documented interface revision reruns every condition under that common
+    # version. Prior attempts remain intact, including successful ones.
+    done={(r['caseId'],r['arenaBranch']) for r in report['runs'] if r['inputVersion']==PROTOCOL}
+    done.update((r['caseId'],r['condition']) for r in report['notRun'] if r.get('inputVersion')==PROTOCOL)
     def run(job,condition,normal=None):
         cid=job['caseId'];key=(cid,condition)
-        if key in done:return next((r for r in report['runs'] if (r['caseId'],r['arenaBranch'])==key),None)
+        if key in done:return next((r for r in report['runs'] if (r['caseId'],r['arenaBranch'])==key and r['inputVersion']==PROTOCOL),None)
         if condition=='incident' and (not normal or normal.get('success') is not True):
-            report['notRun'].append(dict(model=a.model,caseId=cid,condition=condition,group=job['group'],objectTitle=job['title'],reason='normal_not_successful'))
+            report['notRun'].append(dict(model=a.model,caseId=cid,condition=condition,group=job['group'],objectTitle=job['title'],reason='normal_not_successful',inputVersion=PROTOCOL))
             done.add(key);write_json(path,report);return
         result=execute(cid,a.model,condition,cap,normal['agentProfile'] if normal else None,normal,
             ledger_path=ledger_path(a.model),report_path=path,certificate_root=OUT,

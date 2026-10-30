@@ -45,13 +45,13 @@ def main():
             try:
                 sha,hashes=archives[uid];assert sha==rec['requestBodySha256'];assert hashes==c['inputImageHashes'];counts['matchedReceipts']+=1
             except Exception as exc:issues.append(dict(run=r['arenaRunId'],decision=c['index'],error='Receipt/image mismatch: '+str(exc)))
-        groups[r['caseId'],r['arenaBranch']].append(dict(model=r['model'],runId=r['arenaRunId'],contract=r['agentContractSha256'],
+        groups[r['caseId'],r['arenaBranch'],r['inputVersion']].append(dict(model=r['model'],runId=r['arenaRunId'],contract=r['agentContractSha256'],
             profile=r['agentProfile'],initialImages=log['calls'][0]['inputImageHashes'] if log['calls'] else []))
     comparisons=[]
-    for (cid,arm),rs in groups.items():
+    for (cid,arm,version),rs in groups.items():
         if len({r['model'] for r in rs})<2:continue
         same=len({r['contract'] for r in rs})==1 and all(r['profile']==rs[0]['profile'] and r['initialImages']==rs[0]['initialImages'] for r in rs)
-        comparisons.append(dict(caseId=cid,arm=arm,models=[r['model'] for r in rs],same=same))
+        comparisons.append(dict(caseId=cid,arm=arm,inputVersion=version,models=[r['model'] for r in rs],same=same))
         if not same:issues.append(dict(caseId=cid,arm=arm,error='Cross-backbone initial input/profile/contract mismatch'))
     result=dict(passed=not issues,checkedAt=time.time(),counts=counts,actualReturnedModelBindings={m:sorted(v) for m,v in bindings.items()},
         crossBackboneComparisons=comparisons,issues=issues,apiCalls=0,

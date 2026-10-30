@@ -44,6 +44,7 @@ def main():
     add(time.strftime('%Y-%m-%d %H:%M')+'  |  '+('最终报告' if data['complete'] else '进行中快照，尚非最终结果'))
     add('1. 实验安排','Heading1')
     add('四个模型使用同一视觉 Agent。每个模型50道静态阶段题、50道正常拼装题；正常成功后另跑同题事故分支。补测上一批 Sol 未运行和 Seed 中断的条件，单独保存。')
+    add('主表采用统一v5输入。v4发现工具参数说明歧义，全部条件统一重跑；旧记录保留作接口排查，费用保留，不与v5成绩混合。','SmallCJK')
     add(f"50个物件，{plan['sourceGroups']}个来源组；长度分组{plan['selectedLengths']}。长度不是已经验证的人类难度。静态同样使用工具操作，不是一次性问答。")
     statuses={s['model']:s for s in data['apiStatus']}
     table(['模型','静态/50','正常/50','接口状态'],[[s['label'],s['newSampleCompleted']['static'],s['newSampleCompleted']['normal'],
@@ -94,6 +95,7 @@ def main():
     rows=[]
     labels={'GPT-6.1 Sol':'Sol','Seed 2.1 Pro':'Seed','DeepSeek V4.1 Flash':'DS','Qwen3.8 Flash':'Qwen'}
     for r in data['rows']:
+        if r['inputVersion']!=data['inputVersion']:continue
         rows.append([('补' if r['group']!='new-sample' else '')+str(r['sampleIndex']),r['object'],labels[r['label']],r['taskType'],
             '成功' if r['success'] else '未完成' if r['success'] is False else 'INT',f"{r['f1']:.2f}",
             f"{r['moves']}/{r['manipulations']}",r['calls'],f"{r['cny']:.3f}"])

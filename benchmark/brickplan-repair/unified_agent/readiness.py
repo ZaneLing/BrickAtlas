@@ -30,7 +30,7 @@ def require(model,config,root=None):
     if not c.get('passed') or c['sourceSha256']!=source_digest() or not 0<=time.time()-c['checkedAt']<=86400:
         raise ValueError('API preflight failed, expired or code changed; rerun interface check')
     if c.get('inferenceModel',inference_model(model))!=inference_model(model):raise ValueError('Inference endpoint differs from certificate')
-    for field in ('maxOutputTokensPerDecision','reasoningMode','requestTimeoutSeconds'):
+    for field in ('name','outputContract','maxOutputTokensPerDecision','reasoningMode','requestTimeoutSeconds'):
         if c['profile'][field]!=config[field]:raise ValueError('API generation configuration differs from preflight: '+field)
     return dict(certificate=str(path.relative_to(ROOT)),sha256=hashlib.sha256(path.read_bytes()).hexdigest(),checkedAt=c['checkedAt'])
 

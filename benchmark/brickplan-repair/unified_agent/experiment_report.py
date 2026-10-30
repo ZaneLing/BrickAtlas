@@ -10,7 +10,7 @@ import numpy as np
 from PIL import Image
 from dynamic_arena import OUT as ARENA
 from dynamic_arena.transport import write_json
-from unified_agent.experiment_batch import OUT,MODELS,merged,ledger_path
+from unified_agent.experiment_batch import OUT,MODELS,merged,ledger_path,PROTOCOL
 from unified_agent.ark_report import rows as old_rows,summary as model_summary,table,fmt,SHORT,ARMS
 
 
@@ -18,7 +18,7 @@ def collect():
     report=merged();data=old_rows(report);by_id={r['arenaRunId']:r for r in report['runs']}
     for row in data:
         raw=by_id[row['runId']]
-        row.update(group=raw['sampleGroup'],family=raw['errorFamily'],sampleIndex=raw['sampleIndex'],
+        row.update(group=raw['sampleGroup'],family=raw['errorFamily'],sampleIndex=raw['sampleIndex'],inputVersion=raw['inputVersion'],
             goalSatisfied=raw['stateMetrics']['finalEquivalent'] and raw['stateMetrics']['finalConstraintsSatisfied'],
             url='http://127.0.0.1:8832/experiments?run='+row['runId'])
         log=json.loads((ARENA/'runs'/row['runId']/'log.json').read_text())
@@ -33,7 +33,8 @@ def collect():
     # Keep every attempt in data. Aggregates use the latest archived attempt
     # for each registered condition, never a success-selected attempt.
     latest={}
-    for row in data:latest[row['model'],row['caseId'],row['arm']]=row
+    for row in data:
+        if row['inputVersion']==PROTOCOL:latest[row['model'],row['caseId'],row['arm']]=row
     primary=[r for r in latest.values() if r['group']=='new-sample']
     stats=model_summary(primary,charges)
     for stat in stats:
@@ -59,6 +60,8 @@ def collect():
 
 def make_plots(primary,stats,plan):
     folder=OUT/'plots';folder.mkdir(exist_ok=True)
+    for name in ['actual-trajectories','model-vs-reference-1','model-vs-reference-2']:
+        for ext in ['png','svg','pdf']:(folder/(name+'.'+ext)).unlink(missing_ok=True)
     font=Path('/System/Library/Fonts/Supplemental/Comic Sans MS.ttf')
     if font.exists():font_manager.fontManager.addfont(str(font));plt.rcParams['font.family']='Comic Sans MS'
     plt.rcParams.update({'font.size':9,'axes.spines.top':False,'axes.spines.right':False,'svg.fonttype':'none','pdf.fonttype':42,'savefig.dpi':240})
@@ -176,7 +179,8 @@ def markdown_report(report,data,primary,stats,charges,plan):
         '[本机逐步回放](http://127.0.0.1:8832/experiments) · [指标 JSON](metrics.json) · [输入与程序修复](REPAIRS.zh-CN.md)','',
         '## 1. 这次测什么','',
         '四个模型使用同一视觉 Agent、同一题单、观察规则和预算。每个模型50道静态阶段题、50道正常拼装题。正常拼装通过后，另跑同题事故分支；未通过时不把事故修复记为失败。上一批 Sol 缺项、Seed 中断题另列补测。',
-        '静态题也允许模型调用观察与拆装工具，不是一次性静态选择题。静态与动态不保证目标和现场完全配对，本批不能量化纯粹的动态额外难度。','',
+        '静态题也允许模型调用观察与拆装工具，不是一次性静态选择题。静态与动态不保证目标和现场完全配对，本批不能量化纯粹的动态额外难度。',
+        '当前统一输入版本：'+PROTOCOL+'。v4运行时发现view和分页的公共说明存在歧义，已作为接口排查记录保留；包括成功题在内，所有条件都用v5统一重跑，主表仅含v5，不挑成功结果。两版本费用全部保留。','',
         f"新样本：{plan['independentObjects']}个物件、{plan['sourceGroups']}个原始来源组；短/中/长为{plan['selectedLengths']}。这里是过程长度分组，不能直接等同于人类难度。",'',
         '## 2. 新样本结果','', '### 运行进度与接口状态','']
     statuses={s['model']:s for s in report['apiStatus']}
@@ -221,10 +225,11 @@ def markdown_report(report,data,primary,stats,charges,plan):
         '- 只对明确未生成内容的429有限重试，等待时不改变题目状态；权限错误和未知计费请求不盲重试。',
         '- 原始响应中的模型版本要与配置匹配，防止接入点指向别的模型而被误标。',
         '- 旧实验不改分；新输入、补测和新增样本分开保存。','',
+        '- v5把观察和点选的view取值逐工具列明；明确旋转是相对角度、点选坐标是0到1、放大候选时不带page。动作规则和单题预算保持一致。','',
         '本批曾出现长段解释达到2048输出token上限，完整动作尚未返回。这类记录保留为截断，不执行、不计入拼装能力分母，也不自动重复生成。统一额度不能保证永不截断；若提高额度，需要给全部模型另设同一实验条件。','',
         '这些修正解决接口和操作可用性问题，不代表已证明所有题目都适合真人、所有拆装都符合真实力学。','',
         '## 7. 上一批补测','']
-    supplements=[r for r in data if r['group']!='new-sample']
+    supplements=[r for r in data if r['group']!='new-sample' and r['inputVersion']==PROTOCOL]
     md+=table(['物件','模型','分支','结果','F1','API请求','CNY'],[[r['object'],r['label'],r['arm'],'成功' if r['success'] else '未完成' if r['success'] is False else r['terminal'],fmt(r['f1']),r['calls'],fmt(r['cny'],4)] for r in supplements])
     md+=['','补测使用修正后的输入，不能直接与旧输入成绩合并成同一设置的均值。','', '## 8. 真实操作轨迹与剩余问题','']
     if (OUT/'plots/actual-trajectories.png').exists():md+=['![模型实际动作过程](plots/actual-trajectories.png)','']
@@ -234,7 +239,8 @@ def markdown_report(report,data,primary,stats,charges,plan):
     md+=['若正常拼装未通过，就没有该条件下的动态修复证据。动作被拒可能涉及位置或顺序判断；不能只根据拒绝码认定模型不懂物理。候选预览可读性仍需真人盲操作，拆装合法性仍需独立验证。',
         '目前参考路径可执行和图片可见性检查来自同一实现；不能当成独立验证。按家族/长度的样本量较小，结果不支持正式模型排名或显著性结论。','',
         '## 9. 逐题记录','']
-    md+=table(['编号','物件','模型','题型/错误','结果','F1','动作/尝试','输入/输出token','CNY','回放'],[[r['sampleIndex'],r['object'],r['label'],r['taskType']+'/'+r['family'],'成功' if r['success'] else '未完成' if r['success'] is False else r['terminal'],fmt(r['f1']),f"{r['moves']}/{r['manipulations']}",f"{r['inputTokens']}/{r['outputTokens']}",fmt(r['cny'],4),f"[查看]({r['url']})"] for r in data])
+    md+=table(['编号','物件','模型','题型/错误','结果','F1','动作/尝试','输入/输出token','CNY','回放'],[[r['sampleIndex'],r['object'],r['label'],r['taskType']+'/'+r['family'],'成功' if r['success'] else '未完成' if r['success'] is False else r['terminal'],fmt(r['f1']),f"{r['moves']}/{r['manipulations']}",f"{r['inputTokens']}/{r['outputTokens']}",fmt(r['cny'],4),f"[查看]({r['url']})"] for r in data if r['inputVersion']==PROTOCOL])
+    md+=['', '旧v4接口排查记录共'+str(sum(r['inputVersion']!=PROTOCOL for r in data))+'次，完整保存在metrics.json的rows中，并标注inputVersion；不混入当前主表。','']
     md+=['','## 10. 文件','', '`metrics.json` 保存完整指标；`workers/` 保存模型报告；`ledgers/`保存请求用量；`plots/`保存PNG/SVG/PDF；原始模型输入输出和场景图保存在各个 arena run 中。','']
     return '\n'.join(md)
 
@@ -242,7 +248,7 @@ def markdown_report(report,data,primary,stats,charges,plan):
 def main():
     report,data,primary,stats,charges=collect();plan=json.loads((OUT/'plan.json').read_text())
     make_plots(primary,stats,plan)
-    metrics=dict(generatedAt=time.time(),complete=report['allWorkersFinished'],rows=data,primaryRows=primary,summary=stats,
+    metrics=dict(generatedAt=time.time(),complete=report['allWorkersFinished'],inputVersion=PROTOCOL,rows=data,primaryRows=primary,summary=stats,
         notRun=report['notRun'],apiStatus=report['apiStatus'],workers=report['workers'],planSha256=hashlib.sha256((OUT/'plan.json').read_bytes()).hexdigest())
     write_json(OUT/'metrics.json',metrics);write_json(OUT/'combined-report.json',report)
     md=markdown_report(report,data,primary,stats,charges,plan);(OUT/'README.zh-CN.md').write_text(md)
