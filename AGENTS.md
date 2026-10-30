@@ -1,5 +1,11 @@
 # Project instructions
 
+## Current experiment batch — Ark only, 2026-10-30
+
+- The user's latest instruction restricts the new small-batch experiment to Ark API using `ARK_API_KEY`. This overrides the older provider preferences below for this batch, including DeepSeek and Qwen if selected.
+- Use only `https://ark.cn-beijing.volces.com/api/v3` for this batch. Do not fall back to OpenRouter, Aliyun or DeepSeek's direct API. Preserve the older experiments and their original provider labels.
+- A model appearing in the Ark catalogue is not proof of enabled image inference or a known price. Verify image/JSON compatibility and Ark-specific prices before including it in paid task runs.
+
 ## Model API routing — explicit user preference, 2026-10-30
 
 - Call DeepSeek through its official API using `DEEPSEEK_API_KEY` from the project `.env` or process environment.
