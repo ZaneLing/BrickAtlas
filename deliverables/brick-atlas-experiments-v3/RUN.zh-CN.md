@@ -44,6 +44,8 @@ PYTHONPATH=benchmark/brickplan-repair benchmark/.runtime/mlx-env/bin/python -m u
 
 `report.pdf`、`README.zh-CN.md`、`index.html`、`metrics.json` 和 `plots/` 都显示已归档结果。只有四个模型的任务列表都结束，才标记全部完成。报告中没有结果的格子是未运行、未满足前置条件或技术中断，不是模型得零分。
 
+`experiment_monitor` 当前每约三分钟更新已归档结果的报告。它只在单次孤立截断后继续尚未运行的题目，不重复截断题、不增加预算；连续两次截断、权限/限流失败、程序错误、费用停止或计费不确定时均不自动放行。`monitor.json` 记录进度与继续执行的原因。
+
 ## 原始证据在哪里
 
 - `workers/`：逐模型进度和结果。

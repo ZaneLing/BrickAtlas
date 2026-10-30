@@ -49,7 +49,7 @@ def merged():
     for model in MODELS:
         path=OUT/'preflight'/slug(model)/'certificate.json'
         if path.exists():
-            c=json.loads(path.read_text());current=c['sourceSha256']==source_digest();api.append(dict(model=model,passed=c['passed'] and current,inferenceModel=c['inferenceModel'],error=c.get('error',{}).get('code') if current else 'REFRESH_REQUIRED',
+            c=json.loads(path.read_text());current=c['sourceSha256']==source_digest();api.append(dict(model=model,passed=c['passed'] and current,inferenceModel=c['inferenceModel'],error=c.get('error',{}).get('code') or (None if current else 'REFRESH_REQUIRED'),certificateCurrent=current,
                 errorMessage=c.get('error',{}).get('message'),passedProbes=len(c.get('probes',[])),checkedAt=c['checkedAt'],checkType='image-history-contract',requiredProbes=3))
         elif model in hello:
             c=hello[model];api.append(dict(model=model,passed=False,inferenceModel=c['inferenceModel'],error=c.get('error',{}).get('code'),

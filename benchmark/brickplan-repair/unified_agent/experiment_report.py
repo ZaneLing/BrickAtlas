@@ -13,6 +13,11 @@ from dynamic_arena.transport import write_json
 from unified_agent.experiment_batch import OUT,MODELS,merged,ledger_path,PROTOCOL
 from unified_agent.ark_report import rows as old_rows,summary as model_summary,table,fmt,SHORT,ARMS
 
+def api_status_text(status):
+    if status['passed']:return '多图和长历史检查通过'
+    return {'API_FORBIDDEN':'权限拒绝：403（hello也失败）','API_RATE_LIMIT':'每分钟token限额：429（大输入未通过）',
+        'REFRESH_REQUIRED':'输入说明已更新，需重新检查','NOT_CHECKED':'尚未检查'}.get(status.get('error'),str(status.get('error')))
+
 
 def collect():
     report=merged();data=old_rows(report);by_id={r['arenaRunId']:r for r in report['runs']}
@@ -186,7 +191,7 @@ def markdown_report(report,data,primary,stats,charges,plan):
     statuses={s['model']:s for s in report['apiStatus']}
     md+=table(['模型','静态已归档/计划','正常拼装已归档/计划','事故已归档','接口检查'],[
         [s['label'],f"{s['newSampleCompleted']['static']}/50",f"{s['newSampleCompleted']['normal']}/50",s['newSampleCompleted']['incident'],
-         '图像/历史/接口检查通过' if statuses[s['model']]['passed'] else str(statuses[s['model']].get('error'))+'；已通过'+str(statuses[s['model']]['passedProbes'])+'/3项图像检查'] for s in stats])
+         api_status_text(statuses[s['model']])] for s in stats])
     md+=['','“已归档”包括明确记录的技术中断。未运行不是0分。hello通过只证明短文本调用可用，不能证明实际多图和长历史输入可用。','', '### 完成结果','']
     md+=table(['模型','静态正常','静态故障','正常拼装','合格事故修复','技术中断'],[[s['label'],*(ratio(s[k]) for k in ['control','repair','normal','incident']),s['technical']] for s in stats])
     md+=['','分数是成功数/有效分母。API中断、截断、程序错误和费用停止不进入能力分母；模型用完该题决策预算仍未完成，计入端到端未完成。格式错误单独保留，不能全归因为视觉识别。','',

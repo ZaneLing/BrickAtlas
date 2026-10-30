@@ -11,6 +11,7 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,Table,TableStyle,Image,PageBreak,KeepTogether
 from unified_agent.experiment_batch import OUT
+from unified_agent.experiment_report import api_status_text
 
 
 def main():
@@ -48,7 +49,7 @@ def main():
     add(f"50个物件，{plan['sourceGroups']}个来源组；长度分组{plan['selectedLengths']}。长度不是已经验证的人类难度。静态同样使用工具操作，不是一次性问答。")
     statuses={s['model']:s for s in data['apiStatus']}
     table(['模型','静态/50','正常/50','接口状态'],[[s['label'],s['newSampleCompleted']['static'],s['newSampleCompleted']['normal'],
-        '多图与长历史通过' if statuses[s['model']]['passed'] else statuses[s['model']].get('error','未检查')] for s in data['summary']],[125,65,65,width-255])
+        api_status_text(statuses[s['model']])] for s in data['summary']],[125,65,65,width-255])
     table(['模型','静态正常','静态故障','正常拼装','事故修复','技术中断'],[[s['label'],*[ratio(s[k]) for k in ['control','repair','normal','incident']],s['technical']] for s in data['summary']], [113,78,78,78,91,width-438])
     add('分数为成功数/有效分母。接口失败、截断、程序错误不当作能力失败。用完该题决策预算而没有完成，计为端到端未完成。正常前置未通过，事故修复记为不适用。','SmallCJK')
     picture('success-rates',220)
