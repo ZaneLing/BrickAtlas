@@ -28,6 +28,23 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed = urlparse(self.path)
         try:
+            if parsed.path in ('/ark','/ark/'):
+                from unified_agent import __file__ as agent_file
+                return self.send(Path(agent_file).with_name('ark_viewer.html').read_bytes(),'text/html; charset=utf-8')
+            if parsed.path == '/api/ark-report':
+                from unified_agent.ark_batch import combined_report
+                return self.send(json.dumps(combined_report(),ensure_ascii=False).encode(),'application/json')
+            if parsed.path.startswith('/ark-results/'):
+                from unified_agent.ark_batch import OUT as PILOT
+                path=(PILOT/parsed.path.removeprefix('/ark-results/')).resolve()
+                allowed=path.is_relative_to(PILOT.resolve()) and (
+                    (path.parent==PILOT and path.name in ('index.html','README.zh-CN.md','RUN.zh-CN.md','metrics.json','plan.json','INPUT-FIX.zh-CN.md'))
+                    or path.parent==PILOT/'plots'
+                    or (path.parent==PILOT/'checks' and path.name in ('unit-tests.txt','selected-cases.json','evidence-audit.json','fairness-audit.json','final-visual-audit.json','static-manual-scope.json')))
+                if not allowed:return self.send_error(404)
+                mime={'.html':'text/html; charset=utf-8','.md':'text/plain; charset=utf-8','.txt':'text/plain; charset=utf-8','.json':'application/json','.png':'image/png','.svg':'image/svg+xml','.pdf':'application/pdf'}.get(path.suffix)
+                if not mime:return self.send_error(404)
+                return self.send(path.read_bytes(),mime)
             if parsed.path in ('/agent','/agent/'):
                 from unified_agent import __file__ as agent_file
                 return self.send(Path(agent_file).with_name('viewer.html').read_bytes(),'text/html; charset=utf-8')
@@ -85,7 +102,9 @@ class Handler(BaseHTTPRequestHandler):
                 if runid.startswith('agent-') or archive_id:
                     if not re.fullmatch(r'[0-9a-f]{32}',archive_id):return self.send_error(404,'No provider receipt')
                     suffix='.request.json.gz' if parsed.path=='/api/raw-request' else '.response.private.json.gz'
-                    return self.send(gzip.decompress((directory/'api'/(archive_id+suffix)).read_bytes()),'application/json')
+                    archive=directory/'api'/(archive_id+suffix)
+                    if parsed.path=='/api/raw-response' and not archive.exists():archive=directory/'api'/(archive_id+'.error.json.gz')
+                    return self.send(gzip.decompress(archive.read_bytes()),'application/json')
                 ledger_name = ('unified-ledger.private.json' if runid.startswith('arena-') else 'normal-pilot-ledger.private.json' if
                     runid.startswith(('normal-', 'incident-')) else 'api-ledger.private.json')
                 ledger = json.loads((OUT / ledger_name).read_text())

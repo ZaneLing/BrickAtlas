@@ -19,24 +19,27 @@ def gate(normal,agent):
         and normal.get('inputVersion')==PROTOCOL and normal.get('agentContractSha256')==agent.contract_sha)
 
 
-def execute(cid,model,condition,cap,configuration,normal=None,ledger_path=None,report_path=None):
+def execute(cid,model,condition,cap,configuration,normal=None,ledger_path=None,report_path=None,certificate_root=None,transport_factory=PaidTransport,agent_factory=VisualAgent):
     runid='agent-'+condition+'-'+re.sub('[^a-z0-9]+','-',model.lower()).strip('-')+'-'+time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:4]
     directory=ARENA_OUT/'runs'/runid
-    session=open_session(cid,directory,model,condition=='normal')
+    if condition=='static':
+        from bench_design.session import Session
+        session=Session.open(cid,directory,model,control=False)
+    else:session=open_session(cid,directory,model,condition=='normal')
     configuration=configuration or for_session(session)
     from unified_agent.readiness import require
     from unified_agent.casecheck import checked
-    prerequisite=require(model,configuration)
+    prerequisite=require(model,configuration,root=certificate_root)
     case_check=checked(cid,condition=='normal',images=True)
     if not case_check['passed']:raise ValueError('Case preflight failed: '+str(case_check))
     if case_check['moves']>configuration['maxActions'] or case_check['moves']+1>configuration['maxDecisions']:
         raise ValueError('Declared agent budget is below a verified feasible path')
     setup_error=None
-    try:transport=PaidTransport(directory,cap,model,max_output=configuration['maxOutputTokensPerDecision'],ledger_path=ledger_path,
+    try:transport=transport_factory(directory,cap,model,max_output=configuration['maxOutputTokensPerDecision'],ledger_path=ledger_path,
         reasoning_mode=configuration['reasoningMode'],timeout=configuration['requestTimeoutSeconds'])
     except Exception as exc:
         transport=NoProvider();transport.model=model;setup_error=str(exc)[:300]
-    agent=VisualAgent(session,transport,configuration)
+    agent=agent_factory(session,transport,configuration)
     if condition=='incident':
         if not gate(normal,agent):raise ValueError('Successful same-case, same-backbone, same-profile normal run is required')
         if not scheduled_of(session.ep):raise ValueError('Case has no incident schedule')
@@ -54,6 +57,7 @@ def execute(cid,model,condition,cap,configuration,normal=None,ledger_path=None,r
         write_json(directory/'log.json',dict(protocol=PROTOCOL,calls=[],result=result));session.save()
     else:result=agent.run()
     result.update(arenaProtocol=PROTOCOL,arenaBranch=condition,arenaRunId=runid,actor=model,apiPreflight=prerequisite,casePreflight=case_check)
+    if condition=='static':result['experimentArm']='static-checkpoint-shared-agent'
     for name in ['result.json','log.json','spectator.json']:
         path=directory/name
         value=result if name=='result.json' else json.loads(path.read_text())

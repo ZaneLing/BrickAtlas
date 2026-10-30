@@ -30,11 +30,25 @@ def env(name, fallback=None):
 
 def route(model):
     bare=model.split('/',1)[-1]
+    if model.startswith('ark/'):
+        return dict(provider='ark',model=bare,baseURL='https://ark.cn-beijing.volces.com/api/v3',keyEnv='ARK_API_KEY')
     if model.startswith('deepseek/') or bare.startswith('deepseek-'):
         return dict(provider='deepseek',model=bare,baseURL='https://api.deepseek.com',keyEnv='DEEPSEEK_API_KEY')
     if model.startswith('qwen/') or bare.startswith(('qwen','qvq')):
         return dict(provider='aliyun',model=bare,baseURL='https://dashscope.aliyuncs.com/compatible-mode/v1',keyEnv='ALIYUN_API_KEY')
     return dict(provider='openrouter',model=model,baseURL='https://openrouter.ai/api/v1',keyEnv='OPENROUTER_API_KEY')
+
+
+def inference_model(model):
+    """Account-specific endpoint mapping, explicitly supplied by the user."""
+    names={'ark/gpt-6-1-sol-260929':'ARK_SOL_ENDPOINT',
+        'ark/doubao-seed-2-1-pro-260915':'ARK_SEED_PRO_ENDPOINT',
+        'ark/deepseek-v4-1-flash-261017':'ARK_DEEPSEEK_ENDPOINT'}
+    value=env(names[model]) if model in names else None
+    if value:
+        if not value.startswith('ep-') or not all(c.isalnum() or c=='-' for c in value):raise ValueError('Invalid Ark endpoint ID')
+        return value
+    return route(model)['model']
 
 
 def http(url,secret=None,body=None,timeout=180):
@@ -65,7 +79,7 @@ class PaidTransport:
     def __init__(self,directory,cap=1.5,model=MODELS[0],ledger_path=None,max_output=8192,reasoning_mode='off-when-supported',timeout=180):
         if not 0<cap<=10:raise ValueError('Invalid dollar cap')
         self.directory=Path(directory);self.directory.mkdir(parents=True,exist_ok=True)
-        self.model=model;self.route=route(model);self.latest=None;self.max_output=max_output;self.cap=cap
+        self.model=model;self.route=route(model);self.inference_model=inference_model(model);self.latest=None;self.max_output=max_output;self.cap=cap
         if reasoning_mode not in ('off-when-supported','low'):raise ValueError('Unknown reasoning policy')
         self.reasoning_mode=reasoning_mode;self.timeout=timeout
         self.ledger_path=Path(ledger_path or LEDGER)
@@ -76,7 +90,7 @@ class PaidTransport:
             schema='brick-atlas-provider-ledger/1',capUSD=cap,
             authorization='User requested autonomous multi-backbone Arena pilot, 2026-10-30',charges=[])
         self.ledger['capUSD']=min(cap,self.ledger['capUSD'])
-        provider=self.route['provider'];self.parameters=[];self.budget_factor=.2 if provider=='aliyun' else 1.
+        provider=self.route['provider'];self.parameters=[];self.budget_factor=.2 if provider in ('aliyun','ark') else 1.
         if provider=='openrouter':
             catalog=http(self.route['baseURL']+'/models',timeout=25)
             self.catalogue=next((x for x in catalog['data'] if x['id']==model),None)
@@ -87,6 +101,24 @@ class PaidTransport:
             if self.input_price>2e-6 or self.output_price>10e-6:raise ValueError('Outside pilot price range')
             self.reasoning=({'effort':'low'} if model=='openai/gpt-6.1-sol' or reasoning_mode=='low' else {'enabled':False}) if 'reasoning' in self.parameters else None
             self.price=dict(inputPerMillion=self.input_price*1e6,outputPerMillion=self.output_price*1e6,currency='USD',basis='provider usage.cost')
+        elif provider=='ark':
+            catalog=http(self.route['baseURL']+'/models',self.secret,timeout=25)
+            self.catalogue=next((x for x in catalog['data'] if x['id']==self.route['model']),None)
+            if not self.catalogue:raise ProviderError('API_MODEL_NOT_FOUND','Model absent from Ark catalogue: '+self.route['model'])
+            prices={'doubao-seed-2-1-pro-260915':(6.,30.),'deepseek-v4-1-flash-261017':(2.,8.),'gpt-6-1-sol-260929':(15.,75.)}
+            if self.route['model'] not in prices:raise ValueError('Ark account price not verified for '+self.route['model'])
+            pin,pout=prices[self.route['model']]
+            self.input_price=pin/1e6;self.output_price=pout/1e6
+            self.reasoning={'effort':'low'} if reasoning_mode=='low' else {'enabled':False}
+            self.price=dict(inputPerMillion=pin,outputPerMillion=pout,currency='CNY',
+                basis='Ark regular-online peak list price, no cache discount; upper usage estimate, not invoice',
+                source='https://docs.volcengine.com/docs/ark/model-pricing?lang=zh&redirect=1',
+                budgetAccounting='CNY x 0.20 accounting units; global 8 units = CNY 40, not FX')
+            if self.route['model'].startswith('gpt-6-1-sol'):
+                self.reasoning={'effort':'low'}
+                self.price.update(basis='PROVISIONAL only: OpenAI native USD 2/10 per million x assumed 7.5 CNY/USD; Ark price unknown, user authorized running anyway',
+                    source='https://developers.openai.com/api/docs/models/gpt-6.1-sol',arkPriceVerified=False,
+                    authorization='2026-10-30: ark别管价格，用就行了')
         elif provider=='deepseek':
             catalog=http(self.route['baseURL']+'/models',self.secret,timeout=25)
             self.catalogue=next((x for x in catalog['data'] if x['id']==self.route['model']),None)
@@ -111,7 +143,7 @@ class PaidTransport:
                 fxReference='ECB 2026-10-27 EUR/USD 1.1150 and EUR/CNY 7.4343 imply about 0.15 USD/CNY; budget uses 0.20',
                 fxSource='https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html',
                 source='https://dashscope.aliyuncs.com/api/v1/models?model='+quote(self.route['model']))
-        write_json(self.directory/'provider.json',dict(**self.route,price=self.price,catalogue=self.catalogue,checkedAt=time.time(),maxOutputTokens=max_output,reasoning=self.reasoning,reasoningMode=reasoning_mode,requestTimeoutSeconds=timeout))
+        write_json(self.directory/'provider.json',dict(**self.route,inferenceModel=self.inference_model,price=self.price,catalogue=self.catalogue,checkedAt=time.time(),maxOutputTokens=max_output,reasoning=self.reasoning,reasoningMode=reasoning_mode,requestTimeoutSeconds=timeout))
 
     def __call__(self,payload):
         self.ledger_path.parent.mkdir(parents=True,exist_ok=True)
@@ -149,13 +181,24 @@ class PaidTransport:
         reserve=((chars+images*16384)*self.input_price+(self.max_output+10)*self.output_price)*self.budget_factor
         if self.route['provider']=='openrouter':reserve+=images*.005
         if total(self.ledger)+reserve>self.ledger['capUSD']:raise CostLimit('Global pilot money ceiling reached before request')
-        body=dict(model=self.route['model'],messages=payload['messages'],max_tokens=self.max_output,
+        body=dict(model=self.inference_model,messages=payload['messages'],max_tokens=self.max_output,
                   response_format={'type':'json_object'},stream=False)
         if self.route['provider']=='openrouter':
             body['provider']=dict(sort='price',allow_fallbacks=False,require_parameters=True,data_collection='deny',
                 max_price=dict(prompt=self.input_price*1e6,completion=self.output_price*1e6,image=.005))
             if self.reasoning:body['reasoning']=self.reasoning
             if 'temperature' in self.parameters and self.model!='openai/gpt-6.1-sol':body['temperature']=0
+        elif self.route['provider']=='ark':
+            # DeepSeek's Ark catalogue does not advertise JSON mode. The same
+            # strict public JSON action contract is still enforced locally.
+            if self.route['model'].startswith('deepseek-'):body.pop('response_format')
+            if self.route['model'].startswith('gpt-6-1-sol'):
+                body.pop('max_tokens');body['max_completion_tokens']=self.max_output
+                body['reasoning_effort']='low'
+            else:
+                body['thinking']={'type':'enabled' if self.reasoning_mode=='low' else 'disabled'}
+                if self.reasoning_mode=='low':body['reasoning_effort']='low'
+                body['temperature']=0
         elif self.route['provider']=='deepseek':
             if self.reasoning_mode=='low':body.update(thinking={'type':'enabled'},reasoning_effort='low')
             else:body.update(thinking={'type':'disabled'},reasoning_effort='none')

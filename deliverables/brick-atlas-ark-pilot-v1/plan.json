@@ -1,34 +1,41 @@
 {
   "schema": "brick-atlas-ark-pilot-plan/1",
   "createdAt": 1793360147.807586,
-  "status": "proposed; no paid generation requests sent",
-  "provider": "ark",
+  "status": "authorized; preflight pending",
+  "provider": "ark plus explicitly authorized aliyun Qwen",
   "baseURL": "https://ark.cn-beijing.volces.com/api/v3",
   "keyEnvironment": "ARK_API_KEY",
   "allowProviderFallback": false,
   "repeats": 1,
   "models": [
     {
-      "id": "doubao-seed-2-1-lite-260915",
-      "label": "Doubao Seed 2.1 Lite",
-      "inputCnyPerMillion": 0.8,
-      "outputCnyPerMillion": 2.7,
-      "admission": "catalogue image+JSON supported; paid preflight still pending"
+      "id": "ark/gpt-6-1-sol-260929",
+      "label": "GPT-6.1 Sol",
+      "provider": "ark",
+      "inputCnyPerMillion": 15,
+      "outputCnyPerMillion": 75,
+      "arkPriceVerified": false,
+      "priceBasis": "Provisional: OpenAI native USD 2/10 x assumed 7.5 CNY/USD. User explicitly authorized Ark without confirmed price."
     },
     {
-      "id": "doubao-seed-2-1-pro-260915",
-      "label": "Doubao Seed 2.1 Pro",
-      "inputCnyPerMillion": 6.0,
-      "outputCnyPerMillion": 30.0,
-      "admission": "catalogue image+JSON supported; paid preflight still pending"
+      "id": "ark/doubao-seed-2-1-pro-260915",
+      "label": "Seed 2.1 Pro",
+      "provider": "ark",
+      "inputCnyPerMillion": 6,
+      "outputCnyPerMillion": 30
     },
     {
-      "id": "deepseek-v4-1-flash-261017",
+      "id": "ark/deepseek-v4-1-flash-261017",
       "label": "DeepSeek V4.1 Flash",
-      "inputCnyPerMillion": 2.0,
-      "outputCnyPerMillion": 8.0,
-      "admission": "conditional: image documentation conflicts with catalogue text-only and JSON false; require image/schema preflight",
-      "priceBasis": "peak regular-online list price; off-peak lower"
+      "provider": "ark",
+      "inputCnyPerMillion": 2,
+      "outputCnyPerMillion": 8
+    },
+    {
+      "id": "qwen/qwen3.8-flash",
+      "label": "Qwen3.8 Flash",
+      "provider": "aliyun",
+      "priceBasis": "Authenticated Aliyun model catalogue, maximum published tier; stored before calls"
     }
   ],
   "objects": [
@@ -98,115 +105,27 @@
     }
   ],
   "groups": {
-    "staticModel": 24,
-    "dynamicVisualAgentNormal": 12,
-    "dynamicVisualAgentIncidentMax": 12,
-    "capabilityEpisodesMax": 48,
-    "additionalInterfaceChecks": 6
+    "staticCheckpointSharedAgent": 32,
+    "dynamicVisualAgentNormal": 16,
+    "dynamicVisualAgentIncidentMax": 16,
+    "capabilityEpisodesMax": 64,
+    "additionalInterfaceChecks": 8
   },
-  "scope": "Static model and unified dynamic visual agent; direct-controller and T/I/TI ablations remain in the later study, not silently merged",
+  "scope": "All four backbones: 8 static checkpoints + 4 normal builds + up to 4 qualified incident episodes. Same shared visual agent in all settings; one-shot static and direct dynamic LLM remain separate future groups.",
   "sameInputProtocol": "existing RGB evidence + text tool/inventory metadata; not strict image-only or full symbolic TI",
   "maxGenerationTokensPerRequest": 8192,
   "thinking": "off when supported; verify Ark actual parameter semantics before running",
   "budget": {
     "currency": "CNY",
-    "recommendedHardCap": 40,
-    "expectedRange": [
-      15,
-      35
-    ],
     "interfaceCheckAllowanceWithinCap": 1,
     "includesFailures": true,
     "includesCacheDiscount": false,
     "regularOnlinePricing": true,
     "noOfflineBatchDiscount": true,
-    "unusedIncidentBudgetNotReassigned": true
-  },
-  "estimate": {
-    "lower": {
-      "rows": [
-        {
-          "model": "doubao-seed-2-1-lite-260915",
-          "requests": 160,
-          "inputTokens": 1280000,
-          "outputTokens": 32000,
-          "costCNY": 1.1104
-        },
-        {
-          "model": "doubao-seed-2-1-pro-260915",
-          "requests": 160,
-          "inputTokens": 1280000,
-          "outputTokens": 32000,
-          "costCNY": 8.64
-        },
-        {
-          "model": "deepseek-v4-1-flash-261017",
-          "requests": 160,
-          "inputTokens": 1280000,
-          "outputTokens": 32000,
-          "costCNY": 2.816
-        }
-      ],
-      "inputTokens": 3840000,
-      "outputTokens": 96000,
-      "costCNY": 12.5664
-    },
-    "central": {
-      "rows": [
-        {
-          "model": "doubao-seed-2-1-lite-260915",
-          "requests": 220,
-          "inputTokens": 1980000,
-          "outputTokens": 88000,
-          "costCNY": 1.8216
-        },
-        {
-          "model": "doubao-seed-2-1-pro-260915",
-          "requests": 220,
-          "inputTokens": 1980000,
-          "outputTokens": 88000,
-          "costCNY": 14.52
-        },
-        {
-          "model": "deepseek-v4-1-flash-261017",
-          "requests": 220,
-          "inputTokens": 1980000,
-          "outputTokens": 88000,
-          "costCNY": 4.664
-        }
-      ],
-      "inputTokens": 5940000,
-      "outputTokens": 264000,
-      "costCNY": 21.0056
-    },
-    "upper": {
-      "rows": [
-        {
-          "model": "doubao-seed-2-1-lite-260915",
-          "requests": 260,
-          "inputTokens": 3120000,
-          "outputTokens": 130000,
-          "costCNY": 2.847
-        },
-        {
-          "model": "doubao-seed-2-1-pro-260915",
-          "requests": 260,
-          "inputTokens": 3120000,
-          "outputTokens": 130000,
-          "costCNY": 22.62
-        },
-        {
-          "model": "deepseek-v4-1-flash-261017",
-          "requests": 260,
-          "inputTokens": 3120000,
-          "outputTokens": 130000,
-          "costCNY": 7.28
-        }
-      ],
-      "inputTokens": 9360000,
-      "outputTokens": 390000,
-      "costCNY": 32.747
-    }
+    "unusedIncidentBudgetNotReassigned": true,
+    "accountingCapCNY": 40,
+    "actualArkSolChargeKnown": false,
+    "hardInvoiceCapClaim": false
   },
   "assumptions": {
     "requestRangePerBackbone": [
@@ -225,12 +144,11 @@
     "maxTokenBudgetIsNotExpectedConsumption": true
   },
   "prerequisites": [
-    "Implement isolated Ark-only adapter and hard CNY ledger; reject other inference hosts before reading their keys.",
-    "Verify Ark image/JSON compatibility and per-model generation settings with two diagnostic calls each.",
-    "If DeepSeek image/schema probe fails, exclude it and keep two Doubao models; no undeclared substitute.",
-    "Run fresh case/image/GT feasibility checks before paid task calls.",
-    "Normal success gates each incident branch.",
-    "Report API/truncation/client-cap stops separately and retain all costs."
+    "Exact routes: three Ark models and explicitly authorized Aliyun Qwen. No fallback.",
+    "Two image/schema interface checks per backbone.",
+    "Fresh image/GT feasibility check for every episode.",
+    "Same-case/backbone/profile successful normal build before incident.",
+    "Service/schema/truncation/cost-stop separate from physical failures."
   ],
   "metrics": [
     "static success and unnecessary disassembly",
@@ -247,5 +165,14 @@
     "https://docs.volcengine.com/docs/ark/model-pricing?lang=zh&redirect=1"
   ],
   "visionSource": "https://docs.volcengine.com/docs/ark/image-understanding?lang=zh",
-  "catalogueObservation": "Authenticated read-only GET /models succeeded; catalogue visibility does not establish account inference permissions"
+  "catalogueObservation": "Authenticated read-only GET /models succeeded; catalogue visibility does not establish account inference permissions",
+  "updatedAt": 1793360900.736562,
+  "routes": {
+    "GPT-6.1 Sol": "Ark",
+    "Seed 2.1 Pro": "Ark",
+    "DeepSeek V4.1 Flash": "Ark",
+    "Qwen3.8 Flash": "Aliyun"
+  },
+  "seedThrottleSeconds": 65,
+  "seedThrottleReason": "Endpoint TPM rejection observed in interface checks. Waiting changes wall time, not prompts or task budgets."
 }

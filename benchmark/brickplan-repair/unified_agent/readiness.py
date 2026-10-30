@@ -7,7 +7,7 @@ from dynamic_arena.contract import validate
 from unified_agent import ROOT,RUN_OUT,PROTOCOL
 from unified_agent.agent import VisualAgent
 from unified_agent.profile import for_session
-from unified_agent.providers import PaidTransport,MODELS,total
+from unified_agent.providers import PaidTransport,MODELS,total,inference_model
 from unified_agent.failures import describe
 
 FILES=['unified_agent/agent.py','unified_agent/profile.py','unified_agent/providers.py','unified_agent/failures.py',
@@ -20,37 +20,38 @@ def source_digest():
     return hashlib.sha256(b''.join((base/n).read_bytes() for n in FILES)).hexdigest()
 
 
-def certificate_path(model):return RUN_OUT/'preflight'/model.replace('/','--')/'certificate.json'
+def certificate_path(model,root=None):return Path(root or RUN_OUT)/'preflight'/model.replace('/','--')/'certificate.json'
 
 
-def require(model,config):
-    path=certificate_path(model)
+def require(model,config,root=None):
+    path=certificate_path(model,root)
     if not path.exists():raise ValueError('Missing API preflight; run python -m unified_agent.readiness --models '+model)
     c=json.loads(path.read_text())
     if not c.get('passed') or c['sourceSha256']!=source_digest() or not 0<=time.time()-c['checkedAt']<=86400:
         raise ValueError('API preflight failed, expired or code changed; rerun interface check')
+    if c.get('inferenceModel',inference_model(model))!=inference_model(model):raise ValueError('Inference endpoint differs from certificate')
     for field in ('maxOutputTokensPerDecision','reasoningMode','requestTimeoutSeconds'):
         if c['profile'][field]!=config[field]:raise ValueError('API generation configuration differs from preflight: '+field)
     return dict(certificate=str(path.relative_to(ROOT)),sha256=hashlib.sha256(path.read_bytes()).hexdigest(),checkedAt=c['checkedAt'])
 
 
-def probe(model,cap,ledger,refresh=False):
-    certificate=certificate_path(model);base=certificate.parent
+def probe(model,cap,ledger,refresh=False,root=None,transport_factory=PaidTransport):
+    certificate=certificate_path(model,root);base=certificate.parent
     if certificate.exists():
         previous=json.loads(certificate.read_text())
         if not refresh:
-            if previous.get('passed') and previous['sourceSha256']==source_digest() and 0<=time.time()-previous['checkedAt']<=86400:
-                print(model,'CACHED PASS (no API call)',flush=True);return previous
+            if previous['sourceSha256']==source_digest() and previous.get('inferenceModel',inference_model(model))==inference_model(model) and 0<=time.time()-previous['checkedAt']<=86400:
+                print(model,'CACHED '+('PASS' if previous.get('passed') else 'BLOCKED')+' (no API call)',flush=True);return previous
             raise ValueError('Preflight failed/expired/changed; use --refresh to archive and recheck')
         write_json(base/'history'/(str(int(previous['checkedAt']))+'-'+uuid.uuid4().hex[:6]+'.json'),previous)
     directory=base/('attempt-'+time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:6])
     directory.mkdir(parents=True,exist_ok=True)
-    result=dict(model=model,protocol=PROTOCOL,sourceSha256=source_digest(),checkedAt=time.time(),passed=False,
+    result=dict(model=model,inferenceModel=inference_model(model),protocol=PROTOCOL,sourceSha256=source_digest(),checkedAt=time.time(),passed=False,
         purpose='API/schema/image receipt checks; no assembly competence claim',probes=[],apiConfigurationPinned=True,archiveDirectory=str(directory.relative_to(ROOT)))
     try:
         s=open_session(CHECK_CASE,directory,model,True);s.autosave=False
         config=for_session(s);result['profile']=config
-        transport=PaidTransport(directory,cap,model,ledger_path=ledger,max_output=config['maxOutputTokensPerDecision'],
+        transport=transport_factory(directory,cap,model,ledger_path=ledger,max_output=config['maxOutputTokensPerDecision'],
             reasoning_mode=config['reasoningMode'],timeout=config['requestTimeoutSeconds'])
         a=VisualAgent(s,transport,config);a.spectator_frame=lambda *args:None
         for i in range(2):

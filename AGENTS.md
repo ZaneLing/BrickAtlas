@@ -3,8 +3,8 @@
 ## Current experiment batch — Ark only, 2026-10-30
 
 - The user's latest instruction restricts the new small-batch experiment to Ark API using `ARK_API_KEY`. This overrides the older provider preferences below for this batch, including DeepSeek and Qwen if selected.
-- Use only `https://ark.cn-beijing.volces.com/api/v3` for this batch. Do not fall back to OpenRouter, Aliyun or DeepSeek's direct API. Preserve the older experiments and their original provider labels.
-- A model appearing in the Ark catalogue is not proof of enabled image inference or a known price. Verify image/JSON compatibility and Ark-specific prices before including it in paid task runs.
+- Use `https://ark.cn-beijing.volces.com/api/v3` for Sol, Seed Pro and DeepSeek in this batch. The user's later instruction explicitly adds Qwen through Aliyun, with the same cases and budgets. No OpenRouter or DeepSeek direct fallback. Preserve older experiments and their original provider labels.
+- A model appearing in the Ark catalogue is not proof of enabled image inference. Verify image/JSON compatibility before task runs. The user explicitly authorized Sol without an Ark price on 2026-10-30 ("ark别管价格，用就行了"). Record its token usage and label any monetary conversion as provisional, not an Ark invoice or guaranteed monetary cap.
 
 ## Model API routing — explicit user preference, 2026-10-30
 

@@ -1,0 +1,4168 @@
+{
+  "protocol": "brick-atlas-unified-visual-agent/2",
+  "profile": {
+    "name": "visual-memory-pull-v2",
+    "initialViews": [
+      "isometric",
+      "rear",
+      "top"
+    ],
+    "initialInventoryPage": 1,
+    "targetRetention": "all three target views every decision",
+    "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+    "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+    "catalogueMemory": "latest inventory page and latest candidate/manual page",
+    "textHistoryTurns": 8,
+    "planItems": 6,
+    "planItemCharacters": 160,
+    "notesCharacters": 1200,
+    "maxActions": 72,
+    "maxObservations": 68,
+    "maxDecisions": 68,
+    "maxOutputTokensPerDecision": 8192,
+    "maxGeneratedTokens": 557056,
+    "reasoningPolicy": "off-when-supported; required-thinking models use low; all reported generation tokens count",
+    "reasoningMode": "off-when-supported",
+    "requestTimeoutSeconds": 180,
+    "outputContract": "brick-atlas-tool-contract/2",
+    "truncationPolicy": "stop without executing; exclude from assembly score",
+    "preflightRequired": true,
+    "retries": 0,
+    "scriptedPrefix": 0,
+    "automaticRepair": false,
+    "nativeComputeEqualityClaim": false,
+    "budgetRule": "public inventory count; capped at native task limits; identical for all backbones",
+    "publicInventoryParts": 21
+  },
+  "initialImages": [
+    {
+      "role": "target",
+      "url": "/assets/29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6.png",
+      "sha256": "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+      "width": 800,
+      "height": 600,
+      "view": "isometric",
+      "camera": {
+        "preset": "isometric"
+      },
+      "observedAfterDecision": 0,
+      "focus": "module"
+    },
+    {
+      "role": "target",
+      "url": "/assets/132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da.png",
+      "sha256": "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+      "width": 800,
+      "height": 600,
+      "view": "rear",
+      "camera": {
+        "preset": "rear"
+      },
+      "observedAfterDecision": 0,
+      "focus": "module"
+    },
+    {
+      "role": "target",
+      "url": "/assets/f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86.png",
+      "sha256": "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+      "width": 800,
+      "height": 600,
+      "view": "top",
+      "camera": {
+        "preset": "top"
+      },
+      "observedAfterDecision": 0,
+      "focus": "module"
+    },
+    {
+      "role": "current",
+      "url": "/assets/c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9.png",
+      "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+      "width": 800,
+      "height": 600,
+      "view": "isometric",
+      "camera": {
+        "preset": "isometric"
+      },
+      "observedAfterDecision": 0,
+      "focus": "module"
+    },
+    {
+      "role": "current",
+      "url": "/assets/e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2.png",
+      "sha256": "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+      "width": 800,
+      "height": 600,
+      "view": "rear",
+      "camera": {
+        "preset": "rear"
+      },
+      "observedAfterDecision": 0,
+      "focus": "module"
+    },
+    {
+      "role": "current",
+      "url": "/assets/a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875.png",
+      "sha256": "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+      "width": 800,
+      "height": 600,
+      "view": "top",
+      "camera": {
+        "preset": "top"
+      },
+      "observedAfterDecision": 0,
+      "focus": "module"
+    },
+    {
+      "role": "inventory",
+      "url": "/assets/c7f8e415315fe61ecb07ad579583066985108491de3a2d67c16491ad827bc5b3.png",
+      "sha256": "c7f8e415315fe61ecb07ad579583066985108491de3a2d67c16491ad827bc5b3",
+      "width": 1600,
+      "height": 912,
+      "page": 1,
+      "pages": 2,
+      "observedAfterDecision": 0
+    }
+  ],
+  "calls": [
+    {
+      "index": 1,
+      "modelInput": {
+        "model": "ark/doubao-seed-2-1-pro-260915",
+        "system": "You operate a continuous LEGO assembly Arena. Match the sole TARGET with any physically legal assembly order. You control every action and every extra observation. The initial packet contains three current views, the same three target views, and inventory page 1. After an action NO new scene image is sent automatically: call observe to inspect what is really there. An unannounced environment change may occur after a physical move. Action success only says your requested move was legal; it does not certify that the scene still matches your expectations.\nUse observe to change camera or inspect stock, inspect to view neutral placement candidates or an optional instruction step, attach/detach to move ONE physical part, recall to retrieve an old observation, and finish to submit the final state. Each partId is one physical part; parts and stock are finite. Candidate previews are hypothetical; they do not say a placement is legal or correct. Position IDs do not encode the answer. A manual is a possible order, never a mandatory one. For a task permitting equivalent assemblies, use its explicit target contract.\nYour memory is maintained in the same way every turn: all target views, the latest two requested scene observations, the latest inventory page, the latest candidate/manual page, recent tool dialogue, and YOUR short plan and notes. Images have capture timestamps and can be stale. A recalled or remembered image is not a new observation. Additional pages, angles and instructions are available through tools. No hidden state, evaluator score, or suggested action is supplied.\nReply with exactly one JSON object containing tool and args; plan and notes are optional updates. plan is at most 6 short next-step items (160 characters each). notes is at most 1200 characters of concise operational facts/uncertainties you want to retain. Do not write an essay or private reasoning trace. Provided plan/notes replace the previous values; omitted fields preserve memory. Long memory is trimmed at the published limits. observe with empty args means current scene, angled view, 0 degree rotation; isometric is accepted as an alias of angled. Example: {\"tool\":\"inspect\",\"args\":{\"partId\":\"PART_ID_FROM_INVENTORY\",\"page\":1},\"plan\":[\"Locate a legal base placement\",\"Build and visually verify\"],\"notes\":\"I have not installed any pieces yet.\"}. Tool errors are feedback; decide your next step yourself.",
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "value": {
+                  "protocol": "brick-atlas-unified-visual-agent/2",
+                  "episode": "episode-a436401859534ad79436479f8b536567",
+                  "decision": 1,
+                  "task": "Complete the sole target: Airplane",
+                  "startingState": "preassembled current scene; match the sole target",
+                  "targetContract": "Match the target physical assembly.",
+                  "physicalRules": [
+                    "One physical part per attach/detach.",
+                    "Any legal order is accepted.",
+                    "Fixtures may support subassemblies; gravity, friction and snap force are not simulated.",
+                    "No overlap; a straight insertion/removal path is required."
+                  ],
+                  "inventoryPages": 2,
+                  "manualSteps": 8,
+                  "inspectionOptions": {
+                    "inventoryPage": "1-based; default 1",
+                    "focus": [
+                      "module",
+                      "whole"
+                    ],
+                    "candidatePages": "inspect partId and page"
+                  },
+                  "camera": {
+                    "azimuthDegrees": 35,
+                    "elevationDegrees": 30
+                  },
+                  "actionHandles": [
+                    {
+                      "id": "A001",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A002",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A003",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A004",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A005",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A006",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A007",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A008",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A009",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A010",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A011",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A012",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A013",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A014",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A015",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A016",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A017",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A018",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A019",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A020",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A021",
+                      "candidateCount": 24
+                    }
+                  ],
+                  "availableTools": {
+                    "version": "brick-atlas-tool-contract/2",
+                    "tools": {
+                      "observe": {
+                        "required": [],
+                        "defaults": {
+                          "view": "angled",
+                          "rotateDegrees": 0,
+                          "show": [
+                            "current"
+                          ]
+                        },
+                        "optional": [
+                          "view",
+                          "rotateDegrees",
+                          "show",
+                          "inventoryPage",
+                          "focus"
+                        ],
+                        "example": {
+                          "tool": "observe",
+                          "args": {
+                            "rotateDegrees": 90,
+                            "show": [
+                              "current",
+                              "inventory"
+                            ]
+                          }
+                        }
+                      },
+                      "inspect": {
+                        "required": "partId OR manualStep, never both",
+                        "defaults": {
+                          "page": 1
+                        },
+                        "optional": [
+                          "partId",
+                          "page",
+                          "manualStep"
+                        ],
+                        "example": {
+                          "tool": "inspect",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY",
+                            "page": 1
+                          }
+                        }
+                      },
+                      "attach": {
+                        "required": [
+                          "partId",
+                          "candidate"
+                        ],
+                        "optional": [],
+                        "example": {
+                          "tool": "attach",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY",
+                            "candidate": "POSITION_ID_FROM_REQUESTED_PAGE"
+                          }
+                        }
+                      },
+                      "detach": {
+                        "required": [
+                          "partId"
+                        ],
+                        "optional": [],
+                        "example": {
+                          "tool": "detach",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY"
+                          }
+                        }
+                      },
+                      "recall": {
+                        "required": [
+                          "decision"
+                        ],
+                        "optional": [
+                          "scope"
+                        ],
+                        "defaults": {
+                          "scope": "current"
+                        },
+                        "example": {
+                          "tool": "recall",
+                          "args": {
+                            "decision": 0
+                          }
+                        }
+                      },
+                      "finish": {
+                        "required": [],
+                        "optional": [],
+                        "example": {
+                          "tool": "finish",
+                          "args": {}
+                        }
+                      }
+                    },
+                    "values": {
+                      "view": [
+                        "angled",
+                        "top"
+                      ],
+                      "show": [
+                        "current",
+                        "target",
+                        "inventory"
+                      ],
+                      "focus": [
+                        "module",
+                        "whole"
+                      ],
+                      "scope": [
+                        "current",
+                        "prefix"
+                      ]
+                    },
+                    "normalization": [
+                      "Omitted observe fields use angled, 0 degrees and current scene.",
+                      "isometric is an alias of angled. Rotations are multiples of 90 degrees, normalized modulo 360.",
+                      "Integer strings are accepted for page, manualStep, inventoryPage, decision and rotateDegrees.",
+                      "Part IDs and candidate IDs are exact strings; no guessed IDs or actions.",
+                      "Omitted plan/notes keep previous memory. Memory limits do not invalidate a physical action."
+                    ],
+                    "note": "Examples demonstrate syntax only. Their IDs and placements are not recommendations for this task."
+                  },
+                  "lastToolResult": null,
+                  "disturbancePolicy": "An environmental change may occur after a physical move without announcement.",
+                  "profile": {
+                    "name": "visual-memory-pull-v2",
+                    "initialViews": [
+                      "isometric",
+                      "rear",
+                      "top"
+                    ],
+                    "initialInventoryPage": 1,
+                    "targetRetention": "all three target views every decision",
+                    "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+                    "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+                    "catalogueMemory": "latest inventory page and latest candidate/manual page",
+                    "textHistoryTurns": 8,
+                    "planItems": 6,
+                    "planItemCharacters": 160,
+                    "notesCharacters": 1200,
+                    "maxActions": 72,
+                    "maxObservations": 68,
+                    "maxDecisions": 68,
+                    "maxOutputTokensPerDecision": 8192,
+                    "maxGeneratedTokens": 557056,
+                    "reasoningPolicy": "off-when-supported; required-thinking models use low; all reported generation tokens count",
+                    "reasoningMode": "off-when-supported",
+                    "requestTimeoutSeconds": 180,
+                    "outputContract": "brick-atlas-tool-contract/2",
+                    "truncationPolicy": "stop without executing; exclude from assembly score",
+                    "preflightRequired": true,
+                    "retries": 0,
+                    "scriptedPrefix": 0,
+                    "automaticRepair": false,
+                    "nativeComputeEqualityClaim": false,
+                    "budgetRule": "public inventory count; capped at native task limits; identical for all backbones",
+                    "publicInventoryParts": 21
+                  },
+                  "observationPolicy": "initial views, then only agent-requested images; no automatic scene after a move",
+                  "memory": {
+                    "plan": [],
+                    "notes": "",
+                    "inventorySnapshot": [
+                      {
+                        "partId": "A001",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A002",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A003",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A004",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A005",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A006",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A007",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A008",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A009",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A010",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A011",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A012",
+                        "status": "available"
+                      }
+                    ],
+                    "inventoryCapturedAfterDecision": 0
+                  },
+                  "budget": {
+                    "decisionsRemaining": 68,
+                    "actionsRemaining": 72,
+                    "observationRequestsRemaining": 68,
+                    "generatedTokensRemaining": 557056
+                  },
+                  "responseSchema": {
+                    "required": [
+                      "tool"
+                    ],
+                    "tool": "one available tool",
+                    "args": "object; omitted means empty object",
+                    "plan": "optional list, up to 6 short operational steps",
+                    "notes": "optional operational notes, max 1200 characters"
+                  },
+                  "visualMemoryPolicy": "Same image pixels are retained; capture time is explicit. Old images are NOT refreshed when the world changes.",
+                  "pagination": {
+                    "inventoryItemsPerPage": 12,
+                    "candidateItemsPerPage": 12
+                  }
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6.png",
+                  "sha256": "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da.png",
+                  "sha256": "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86.png",
+                  "sha256": "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9.png",
+                  "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2.png",
+                  "sha256": "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875.png",
+                  "sha256": "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "inventory",
+                  "sha256": "c7f8e415315fe61ecb07ad579583066985108491de3a2d67c16491ad827bc5b3",
+                  "width": 1600,
+                  "height": 912,
+                  "page": 1,
+                  "pages": 2,
+                  "observedAfterDecision": 0,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "inventory",
+                  "url": "/assets/c7f8e415315fe61ecb07ad579583066985108491de3a2d67c16491ad827bc5b3.png",
+                  "sha256": "c7f8e415315fe61ecb07ad579583066985108491de3a2d67c16491ad827bc5b3",
+                  "width": 1600,
+                  "height": 912,
+                  "page": 1,
+                  "pages": 2,
+                  "observedAfterDecision": 0,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              }
+            ]
+          }
+        ],
+        "binaryImagePolicy": "Exact PNG bytes are in raw API requests; these URLs and hashes identify the same pixels."
+      },
+      "modelOutputRaw": "{\"tool\":\"observe\",\"args\":{\"view\":\"angled\",\"rotateDegrees\":0,\"show\":[\"current\",\"inventory\"],\"inventoryPage\":2},\"plan\":[\"Inspect remaining parts on inventory page 2\",\"Review manual order and identify next missing piece\",\"Attach missing parts one at a time\",\"Verify final views against target\"],\"notes\":\"Starting scene is a red cross-like base with a black/red wheel assembly underneath. Target adds red slopes/bricks and two light-gray cockpit/window pieces. Inventory page 1 shows A001-A012 available; need page 2 for A013-A021.\"}",
+      "modelOutput": {
+        "tool": "observe",
+        "args": {
+          "view": "angled",
+          "rotateDegrees": 0,
+          "show": [
+            "current",
+            "inventory"
+          ],
+          "inventoryPage": 2
+        },
+        "plan": [
+          "Inspect remaining parts on inventory page 2",
+          "Review manual order and identify next missing piece",
+          "Attach missing parts one at a time",
+          "Verify final views against target"
+        ],
+        "notes": "Starting scene is a red cross-like base with a black/red wheel assembly underneath. Target adds red slopes/bricks and two light-gray cockpit/window pieces. Inventory page 1 shows A001-A012 available; need page 2 for A013-A021."
+      },
+      "environmentOutput": {
+        "code": "OBSERVED",
+        "images": [
+          {
+            "role": "current",
+            "url": "/assets/c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9.png",
+            "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+            "width": 800,
+            "height": 600,
+            "view": "isometric",
+            "camera": {
+              "azimuthDegrees": 35,
+              "elevationDegrees": 30
+            },
+            "observedAfterDecision": 0,
+            "focus": "module"
+          },
+          {
+            "role": "inventory",
+            "url": "/assets/c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558.png",
+            "sha256": "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+            "width": 1600,
+            "height": 912,
+            "page": 2,
+            "pages": 2,
+            "observedAfterDecision": 0
+          }
+        ],
+        "camera": {
+          "azimuthDegrees": 35,
+          "elevationDegrees": 30
+        },
+        "environmentDecision": 1,
+        "inventoryAvailability": [
+          {
+            "partId": "A013",
+            "status": "available"
+          },
+          {
+            "partId": "A014",
+            "status": "available"
+          },
+          {
+            "partId": "A015",
+            "status": "available"
+          },
+          {
+            "partId": "A016",
+            "status": "available"
+          },
+          {
+            "partId": "A017",
+            "status": "available"
+          },
+          {
+            "partId": "A018",
+            "status": "available"
+          },
+          {
+            "partId": "A019",
+            "status": "available"
+          },
+          {
+            "partId": "A020",
+            "status": "available"
+          },
+          {
+            "partId": "A021",
+            "status": "available"
+          }
+        ],
+        "syntaxNormalization": []
+      },
+      "outputValidation": {
+        "action": {
+          "tool": "observe",
+          "args": {
+            "view": "angled",
+            "rotateDegrees": 0,
+            "show": [
+              "current",
+              "inventory"
+            ],
+            "inventoryPage": 2
+          },
+          "plan": [
+            "Inspect remaining parts on inventory page 2",
+            "Review manual order and identify next missing piece",
+            "Attach missing parts one at a time",
+            "Verify final views against target"
+          ],
+          "notes": "Starting scene is a red cross-like base with a black/red wheel assembly underneath. Target adds red slopes/bricks and two light-gray cockpit/window pieces. Inventory page 1 shows A001-A012 available; need page 2 for A013-A021."
+        },
+        "valid": true,
+        "jsonError": false,
+        "errors": [],
+        "normalizations": [],
+        "example": {
+          "tool": "observe",
+          "args": {
+            "rotateDegrees": 90,
+            "show": [
+              "current",
+              "inventory"
+            ]
+          }
+        }
+      },
+      "memoryAfter": {
+        "plan": [
+          "Inspect remaining parts on inventory page 2",
+          "Review manual order and identify next missing piece",
+          "Attach missing parts one at a time",
+          "Verify final views against target"
+        ],
+        "notes": "Starting scene is a red cross-like base with a black/red wheel assembly underneath. Target adds red slopes/bricks and two light-gray cockpit/window pieces. Inventory page 1 shows A001-A012 available; need page 2 for A013-A021."
+      },
+      "inputImageHashes": [
+        "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+        "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+        "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+        "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+        "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+        "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+        "c7f8e415315fe61ecb07ad579583066985108491de3a2d67c16491ad827bc5b3"
+      ],
+      "inputImagePixels": 4339200,
+      "requestBytes": 173319,
+      "requestContextSha256": "2be451355d6c622ca72194f1ecdf0f7fe9c9964fba257213dc86884c32f7393e",
+      "providerReceipt": {
+        "id": "0217933635041386b0a1eddf4bd1f76946157a932bdcd174194ba",
+        "archiveId": "73ad1d5f7936498d85a7cada773f293c",
+        "requestBodySha256": "4fb9700434d015877b337ff10305309ef52aa712ce26ab93739808bb7106fc26",
+        "costUSD": 0.015649200000000002,
+        "costBasis": "Ark regular-online peak list price, no cache discount; upper usage estimate, not invoice",
+        "nativeCurrency": "CNY",
+        "inputTokens": 12386,
+        "outputTokens": 131,
+        "reasoningTokens": 0,
+        "finishReason": "stop",
+        "latencySeconds": 6.594
+      }
+    },
+    {
+      "index": 2,
+      "modelInput": {
+        "model": "ark/doubao-seed-2-1-pro-260915",
+        "system": "You operate a continuous LEGO assembly Arena. Match the sole TARGET with any physically legal assembly order. You control every action and every extra observation. The initial packet contains three current views, the same three target views, and inventory page 1. After an action NO new scene image is sent automatically: call observe to inspect what is really there. An unannounced environment change may occur after a physical move. Action success only says your requested move was legal; it does not certify that the scene still matches your expectations.\nUse observe to change camera or inspect stock, inspect to view neutral placement candidates or an optional instruction step, attach/detach to move ONE physical part, recall to retrieve an old observation, and finish to submit the final state. Each partId is one physical part; parts and stock are finite. Candidate previews are hypothetical; they do not say a placement is legal or correct. Position IDs do not encode the answer. A manual is a possible order, never a mandatory one. For a task permitting equivalent assemblies, use its explicit target contract.\nYour memory is maintained in the same way every turn: all target views, the latest two requested scene observations, the latest inventory page, the latest candidate/manual page, recent tool dialogue, and YOUR short plan and notes. Images have capture timestamps and can be stale. A recalled or remembered image is not a new observation. Additional pages, angles and instructions are available through tools. No hidden state, evaluator score, or suggested action is supplied.\nReply with exactly one JSON object containing tool and args; plan and notes are optional updates. plan is at most 6 short next-step items (160 characters each). notes is at most 1200 characters of concise operational facts/uncertainties you want to retain. Do not write an essay or private reasoning trace. Provided plan/notes replace the previous values; omitted fields preserve memory. Long memory is trimmed at the published limits. observe with empty args means current scene, angled view, 0 degree rotation; isometric is accepted as an alias of angled. Example: {\"tool\":\"inspect\",\"args\":{\"partId\":\"PART_ID_FROM_INVENTORY\",\"page\":1},\"plan\":[\"Locate a legal base placement\",\"Build and visually verify\"],\"notes\":\"I have not installed any pieces yet.\"}. Tool errors are feedback; decide your next step yourself.",
+        "messages": [
+          {
+            "role": "assistant",
+            "content": "{\"tool\":\"observe\",\"args\":{\"view\":\"angled\",\"rotateDegrees\":0,\"show\":[\"current\",\"inventory\"],\"inventoryPage\":2},\"plan\":[\"Inspect remaining parts on inventory page 2\",\"Review manual order and identify next missing piece\",\"Attach missing parts one at a time\",\"Verify final views against target\"],\"notes\":\"Starting scene is a red cross-like base with a black/red wheel assembly underneath. Target adds red slopes/bricks and two light-gray cockpit/window pieces. Inventory page 1 shows A001-A012 available; need page 2 for A013-A021.\"}"
+          },
+          {
+            "role": "user",
+            "content": "{\"toolResult\": {\"code\": \"OBSERVED\", \"camera\": {\"azimuthDegrees\": 35, \"elevationDegrees\": 30}, \"environmentDecision\": 1, \"inventoryAvailability\": [{\"partId\": \"A013\", \"status\": \"available\"}, {\"partId\": \"A014\", \"status\": \"available\"}, {\"partId\": \"A015\", \"status\": \"available\"}, {\"partId\": \"A016\", \"status\": \"available\"}, {\"partId\": \"A017\", \"status\": \"available\"}, {\"partId\": \"A018\", \"status\": \"available\"}, {\"partId\": \"A019\", \"status\": \"available\"}, {\"partId\": \"A020\", \"status\": \"available\"}, {\"partId\": \"A021\", \"status\": \"available\"}], \"syntaxNormalization\": []}}"
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "value": {
+                  "protocol": "brick-atlas-unified-visual-agent/2",
+                  "episode": "episode-a436401859534ad79436479f8b536567",
+                  "decision": 2,
+                  "task": "Complete the sole target: Airplane",
+                  "startingState": "preassembled current scene; match the sole target",
+                  "targetContract": "Match the target physical assembly.",
+                  "physicalRules": [
+                    "One physical part per attach/detach.",
+                    "Any legal order is accepted.",
+                    "Fixtures may support subassemblies; gravity, friction and snap force are not simulated.",
+                    "No overlap; a straight insertion/removal path is required."
+                  ],
+                  "inventoryPages": 2,
+                  "manualSteps": 8,
+                  "inspectionOptions": {
+                    "inventoryPage": "1-based; default 1",
+                    "focus": [
+                      "module",
+                      "whole"
+                    ],
+                    "candidatePages": "inspect partId and page"
+                  },
+                  "camera": {
+                    "azimuthDegrees": 35,
+                    "elevationDegrees": 30
+                  },
+                  "actionHandles": [
+                    {
+                      "id": "A001",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A002",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A003",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A004",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A005",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A006",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A007",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A008",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A009",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A010",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A011",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A012",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A013",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A014",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A015",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A016",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A017",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A018",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A019",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A020",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A021",
+                      "candidateCount": 24
+                    }
+                  ],
+                  "availableTools": {
+                    "version": "brick-atlas-tool-contract/2",
+                    "tools": {
+                      "observe": {
+                        "required": [],
+                        "defaults": {
+                          "view": "angled",
+                          "rotateDegrees": 0,
+                          "show": [
+                            "current"
+                          ]
+                        },
+                        "optional": [
+                          "view",
+                          "rotateDegrees",
+                          "show",
+                          "inventoryPage",
+                          "focus"
+                        ],
+                        "example": {
+                          "tool": "observe",
+                          "args": {
+                            "rotateDegrees": 90,
+                            "show": [
+                              "current",
+                              "inventory"
+                            ]
+                          }
+                        }
+                      },
+                      "inspect": {
+                        "required": "partId OR manualStep, never both",
+                        "defaults": {
+                          "page": 1
+                        },
+                        "optional": [
+                          "partId",
+                          "page",
+                          "manualStep"
+                        ],
+                        "example": {
+                          "tool": "inspect",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY",
+                            "page": 1
+                          }
+                        }
+                      },
+                      "attach": {
+                        "required": [
+                          "partId",
+                          "candidate"
+                        ],
+                        "optional": [],
+                        "example": {
+                          "tool": "attach",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY",
+                            "candidate": "POSITION_ID_FROM_REQUESTED_PAGE"
+                          }
+                        }
+                      },
+                      "detach": {
+                        "required": [
+                          "partId"
+                        ],
+                        "optional": [],
+                        "example": {
+                          "tool": "detach",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY"
+                          }
+                        }
+                      },
+                      "recall": {
+                        "required": [
+                          "decision"
+                        ],
+                        "optional": [
+                          "scope"
+                        ],
+                        "defaults": {
+                          "scope": "current"
+                        },
+                        "example": {
+                          "tool": "recall",
+                          "args": {
+                            "decision": 0
+                          }
+                        }
+                      },
+                      "finish": {
+                        "required": [],
+                        "optional": [],
+                        "example": {
+                          "tool": "finish",
+                          "args": {}
+                        }
+                      }
+                    },
+                    "values": {
+                      "view": [
+                        "angled",
+                        "top"
+                      ],
+                      "show": [
+                        "current",
+                        "target",
+                        "inventory"
+                      ],
+                      "focus": [
+                        "module",
+                        "whole"
+                      ],
+                      "scope": [
+                        "current",
+                        "prefix"
+                      ]
+                    },
+                    "normalization": [
+                      "Omitted observe fields use angled, 0 degrees and current scene.",
+                      "isometric is an alias of angled. Rotations are multiples of 90 degrees, normalized modulo 360.",
+                      "Integer strings are accepted for page, manualStep, inventoryPage, decision and rotateDegrees.",
+                      "Part IDs and candidate IDs are exact strings; no guessed IDs or actions.",
+                      "Omitted plan/notes keep previous memory. Memory limits do not invalidate a physical action."
+                    ],
+                    "note": "Examples demonstrate syntax only. Their IDs and placements are not recommendations for this task."
+                  },
+                  "lastToolResult": {
+                    "code": "OBSERVED",
+                    "images": [
+                      {
+                        "role": "current",
+                        "url": "/assets/c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9.png",
+                        "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+                        "width": 800,
+                        "height": 600,
+                        "view": "isometric",
+                        "camera": {
+                          "azimuthDegrees": 35,
+                          "elevationDegrees": 30
+                        },
+                        "observedAfterDecision": 0,
+                        "focus": "module"
+                      },
+                      {
+                        "role": "inventory",
+                        "url": "/assets/c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558.png",
+                        "sha256": "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+                        "width": 1600,
+                        "height": 912,
+                        "page": 2,
+                        "pages": 2,
+                        "observedAfterDecision": 0
+                      }
+                    ],
+                    "camera": {
+                      "azimuthDegrees": 35,
+                      "elevationDegrees": 30
+                    },
+                    "environmentDecision": 1,
+                    "inventoryAvailability": [
+                      {
+                        "partId": "A013",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A014",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A015",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A016",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A017",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A018",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A019",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A020",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A021",
+                        "status": "available"
+                      }
+                    ],
+                    "syntaxNormalization": []
+                  },
+                  "disturbancePolicy": "An environmental change may occur after a physical move without announcement.",
+                  "profile": {
+                    "name": "visual-memory-pull-v2",
+                    "initialViews": [
+                      "isometric",
+                      "rear",
+                      "top"
+                    ],
+                    "initialInventoryPage": 1,
+                    "targetRetention": "all three target views every decision",
+                    "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+                    "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+                    "catalogueMemory": "latest inventory page and latest candidate/manual page",
+                    "textHistoryTurns": 8,
+                    "planItems": 6,
+                    "planItemCharacters": 160,
+                    "notesCharacters": 1200,
+                    "maxActions": 72,
+                    "maxObservations": 68,
+                    "maxDecisions": 68,
+                    "maxOutputTokensPerDecision": 8192,
+                    "maxGeneratedTokens": 557056,
+                    "reasoningPolicy": "off-when-supported; required-thinking models use low; all reported generation tokens count",
+                    "reasoningMode": "off-when-supported",
+                    "requestTimeoutSeconds": 180,
+                    "outputContract": "brick-atlas-tool-contract/2",
+                    "truncationPolicy": "stop without executing; exclude from assembly score",
+                    "preflightRequired": true,
+                    "retries": 0,
+                    "scriptedPrefix": 0,
+                    "automaticRepair": false,
+                    "nativeComputeEqualityClaim": false,
+                    "budgetRule": "public inventory count; capped at native task limits; identical for all backbones",
+                    "publicInventoryParts": 21
+                  },
+                  "observationPolicy": "initial views, then only agent-requested images; no automatic scene after a move",
+                  "memory": {
+                    "plan": [
+                      "Inspect remaining parts on inventory page 2",
+                      "Review manual order and identify next missing piece",
+                      "Attach missing parts one at a time",
+                      "Verify final views against target"
+                    ],
+                    "notes": "Starting scene is a red cross-like base with a black/red wheel assembly underneath. Target adds red slopes/bricks and two light-gray cockpit/window pieces. Inventory page 1 shows A001-A012 available; need page 2 for A013-A021.",
+                    "inventorySnapshot": [
+                      {
+                        "partId": "A013",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A014",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A015",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A016",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A017",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A018",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A019",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A020",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A021",
+                        "status": "available"
+                      }
+                    ],
+                    "inventoryCapturedAfterDecision": 0
+                  },
+                  "budget": {
+                    "decisionsRemaining": 67,
+                    "actionsRemaining": 72,
+                    "observationRequestsRemaining": 67,
+                    "generatedTokensRemaining": 556925
+                  },
+                  "responseSchema": {
+                    "required": [
+                      "tool"
+                    ],
+                    "tool": "one available tool",
+                    "args": "object; omitted means empty object",
+                    "plan": "optional list, up to 6 short operational steps",
+                    "notes": "optional operational notes, max 1200 characters"
+                  },
+                  "visualMemoryPolicy": "Same image pixels are retained; capture time is explicit. Old images are NOT refreshed when the world changes.",
+                  "pagination": {
+                    "inventoryItemsPerPage": 12,
+                    "candidateItemsPerPage": 12
+                  }
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6.png",
+                  "sha256": "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da.png",
+                  "sha256": "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86.png",
+                  "sha256": "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9.png",
+                  "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2.png",
+                  "sha256": "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875.png",
+                  "sha256": "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "inventory",
+                  "sha256": "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+                  "width": 1600,
+                  "height": 912,
+                  "page": 2,
+                  "pages": 2,
+                  "observedAfterDecision": 0,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "inventory",
+                  "url": "/assets/c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558.png",
+                  "sha256": "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+                  "width": 1600,
+                  "height": 912,
+                  "page": 2,
+                  "pages": 2,
+                  "observedAfterDecision": 0,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              }
+            ]
+          }
+        ],
+        "binaryImagePolicy": "Exact PNG bytes are in raw API requests; these URLs and hashes identify the same pixels."
+      },
+      "modelOutputRaw": "{\"tool\":\"inspect\",\"args\":{\"manualStep\":1},\"plan\":\"Inspect manual steps to map missing A013-A021 pieces and legal build order.\"}",
+      "modelOutput": {
+        "tool": "invalid",
+        "args": {}
+      },
+      "environmentOutput": {
+        "code": "INVALID_TOOL_REQUEST",
+        "environmentDecision": 2,
+        "stateChanged": false,
+        "syntaxNormalization": [],
+        "validationErrors": [
+          "plan must be a list of strings."
+        ],
+        "example": {
+          "tool": "inspect",
+          "args": {
+            "partId": "PART_ID_FROM_INVENTORY",
+            "page": 1
+          }
+        }
+      },
+      "outputValidation": {
+        "action": {
+          "tool": "invalid",
+          "args": {}
+        },
+        "valid": false,
+        "jsonError": false,
+        "errors": [
+          "plan must be a list of strings."
+        ],
+        "normalizations": [],
+        "example": {
+          "tool": "inspect",
+          "args": {
+            "partId": "PART_ID_FROM_INVENTORY",
+            "page": 1
+          }
+        }
+      },
+      "memoryAfter": {
+        "plan": [
+          "Inspect remaining parts on inventory page 2",
+          "Review manual order and identify next missing piece",
+          "Attach missing parts one at a time",
+          "Verify final views against target"
+        ],
+        "notes": "Starting scene is a red cross-like base with a black/red wheel assembly underneath. Target adds red slopes/bricks and two light-gray cockpit/window pieces. Inventory page 1 shows A001-A012 available; need page 2 for A013-A021."
+      },
+      "inputImageHashes": [
+        "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+        "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+        "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+        "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+        "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+        "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+        "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558"
+      ],
+      "inputImagePixels": 4339200,
+      "requestBytes": 171491,
+      "requestContextSha256": "9af036a327be064114d1d5be1b4160d5155fb5ff3e42b450a7fc2551ec9a8e42",
+      "providerReceipt": {
+        "id": "021793363584113c023b1fb2f77c622a3f5432d0f622268b77bbe",
+        "archiveId": "69ea21b43a3e45aea5670c842238d71a",
+        "requestBodySha256": "a636bae5d3d982065680d2651cabb93ac5f5fab36519fc525852c6e6d5767907",
+        "costUSD": 0.0162336,
+        "costBasis": "Ark regular-online peak list price, no cache discount; upper usage estimate, not invoice",
+        "nativeCurrency": "CNY",
+        "inputTokens": 13338,
+        "outputTokens": 38,
+        "reasoningTokens": 0,
+        "finishReason": "stop",
+        "latencySeconds": 3.955
+      }
+    },
+    {
+      "index": 3,
+      "modelInput": {
+        "model": "ark/doubao-seed-2-1-pro-260915",
+        "system": "You operate a continuous LEGO assembly Arena. Match the sole TARGET with any physically legal assembly order. You control every action and every extra observation. The initial packet contains three current views, the same three target views, and inventory page 1. After an action NO new scene image is sent automatically: call observe to inspect what is really there. An unannounced environment change may occur after a physical move. Action success only says your requested move was legal; it does not certify that the scene still matches your expectations.\nUse observe to change camera or inspect stock, inspect to view neutral placement candidates or an optional instruction step, attach/detach to move ONE physical part, recall to retrieve an old observation, and finish to submit the final state. Each partId is one physical part; parts and stock are finite. Candidate previews are hypothetical; they do not say a placement is legal or correct. Position IDs do not encode the answer. A manual is a possible order, never a mandatory one. For a task permitting equivalent assemblies, use its explicit target contract.\nYour memory is maintained in the same way every turn: all target views, the latest two requested scene observations, the latest inventory page, the latest candidate/manual page, recent tool dialogue, and YOUR short plan and notes. Images have capture timestamps and can be stale. A recalled or remembered image is not a new observation. Additional pages, angles and instructions are available through tools. No hidden state, evaluator score, or suggested action is supplied.\nReply with exactly one JSON object containing tool and args; plan and notes are optional updates. plan is at most 6 short next-step items (160 characters each). notes is at most 1200 characters of concise operational facts/uncertainties you want to retain. Do not write an essay or private reasoning trace. Provided plan/notes replace the previous values; omitted fields preserve memory. Long memory is trimmed at the published limits. observe with empty args means current scene, angled view, 0 degree rotation; isometric is accepted as an alias of angled. Example: {\"tool\":\"inspect\",\"args\":{\"partId\":\"PART_ID_FROM_INVENTORY\",\"page\":1},\"plan\":[\"Locate a legal base placement\",\"Build and visually verify\"],\"notes\":\"I have not installed any pieces yet.\"}. Tool errors are feedback; decide your next step yourself.",
+        "messages": [
+          {
+            "role": "assistant",
+            "content": "{\"tool\":\"observe\",\"args\":{\"view\":\"angled\",\"rotateDegrees\":0,\"show\":[\"current\",\"inventory\"],\"inventoryPage\":2},\"plan\":[\"Inspect remaining parts on inventory page 2\",\"Review manual order and identify next missing piece\",\"Attach missing parts one at a time\",\"Verify final views against target\"],\"notes\":\"Starting scene is a red cross-like base with a black/red wheel assembly underneath. Target adds red slopes/bricks and two light-gray cockpit/window pieces. Inventory page 1 shows A001-A012 available; need page 2 for A013-A021.\"}"
+          },
+          {
+            "role": "user",
+            "content": "{\"toolResult\": {\"code\": \"OBSERVED\", \"camera\": {\"azimuthDegrees\": 35, \"elevationDegrees\": 30}, \"environmentDecision\": 1, \"inventoryAvailability\": [{\"partId\": \"A013\", \"status\": \"available\"}, {\"partId\": \"A014\", \"status\": \"available\"}, {\"partId\": \"A015\", \"status\": \"available\"}, {\"partId\": \"A016\", \"status\": \"available\"}, {\"partId\": \"A017\", \"status\": \"available\"}, {\"partId\": \"A018\", \"status\": \"available\"}, {\"partId\": \"A019\", \"status\": \"available\"}, {\"partId\": \"A020\", \"status\": \"available\"}, {\"partId\": \"A021\", \"status\": \"available\"}], \"syntaxNormalization\": []}}"
+          },
+          {
+            "role": "assistant",
+            "content": "{\"tool\":\"inspect\",\"args\":{\"manualStep\":1},\"plan\":\"Inspect manual steps to map missing A013-A021 pieces and legal build order.\"}"
+          },
+          {
+            "role": "user",
+            "content": "{\"toolResult\": {\"code\": \"INVALID_TOOL_REQUEST\", \"environmentDecision\": 2, \"stateChanged\": false, \"syntaxNormalization\": [], \"validationErrors\": [\"plan must be a list of strings.\"], \"example\": {\"tool\": \"inspect\", \"args\": {\"partId\": \"PART_ID_FROM_INVENTORY\", \"page\": 1}}}}"
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "value": {
+                  "protocol": "brick-atlas-unified-visual-agent/2",
+                  "episode": "episode-a436401859534ad79436479f8b536567",
+                  "decision": 3,
+                  "task": "Complete the sole target: Airplane",
+                  "startingState": "preassembled current scene; match the sole target",
+                  "targetContract": "Match the target physical assembly.",
+                  "physicalRules": [
+                    "One physical part per attach/detach.",
+                    "Any legal order is accepted.",
+                    "Fixtures may support subassemblies; gravity, friction and snap force are not simulated.",
+                    "No overlap; a straight insertion/removal path is required."
+                  ],
+                  "inventoryPages": 2,
+                  "manualSteps": 8,
+                  "inspectionOptions": {
+                    "inventoryPage": "1-based; default 1",
+                    "focus": [
+                      "module",
+                      "whole"
+                    ],
+                    "candidatePages": "inspect partId and page"
+                  },
+                  "camera": {
+                    "azimuthDegrees": 35,
+                    "elevationDegrees": 30
+                  },
+                  "actionHandles": [
+                    {
+                      "id": "A001",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A002",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A003",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A004",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A005",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A006",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A007",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A008",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A009",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A010",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A011",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A012",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A013",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A014",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A015",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A016",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A017",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A018",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A019",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A020",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A021",
+                      "candidateCount": 24
+                    }
+                  ],
+                  "availableTools": {
+                    "version": "brick-atlas-tool-contract/2",
+                    "tools": {
+                      "observe": {
+                        "required": [],
+                        "defaults": {
+                          "view": "angled",
+                          "rotateDegrees": 0,
+                          "show": [
+                            "current"
+                          ]
+                        },
+                        "optional": [
+                          "view",
+                          "rotateDegrees",
+                          "show",
+                          "inventoryPage",
+                          "focus"
+                        ],
+                        "example": {
+                          "tool": "observe",
+                          "args": {
+                            "rotateDegrees": 90,
+                            "show": [
+                              "current",
+                              "inventory"
+                            ]
+                          }
+                        }
+                      },
+                      "inspect": {
+                        "required": "partId OR manualStep, never both",
+                        "defaults": {
+                          "page": 1
+                        },
+                        "optional": [
+                          "partId",
+                          "page",
+                          "manualStep"
+                        ],
+                        "example": {
+                          "tool": "inspect",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY",
+                            "page": 1
+                          }
+                        }
+                      },
+                      "attach": {
+                        "required": [
+                          "partId",
+                          "candidate"
+                        ],
+                        "optional": [],
+                        "example": {
+                          "tool": "attach",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY",
+                            "candidate": "POSITION_ID_FROM_REQUESTED_PAGE"
+                          }
+                        }
+                      },
+                      "detach": {
+                        "required": [
+                          "partId"
+                        ],
+                        "optional": [],
+                        "example": {
+                          "tool": "detach",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY"
+                          }
+                        }
+                      },
+                      "recall": {
+                        "required": [
+                          "decision"
+                        ],
+                        "optional": [
+                          "scope"
+                        ],
+                        "defaults": {
+                          "scope": "current"
+                        },
+                        "example": {
+                          "tool": "recall",
+                          "args": {
+                            "decision": 0
+                          }
+                        }
+                      },
+                      "finish": {
+                        "required": [],
+                        "optional": [],
+                        "example": {
+                          "tool": "finish",
+                          "args": {}
+                        }
+                      }
+                    },
+                    "values": {
+                      "view": [
+                        "angled",
+                        "top"
+                      ],
+                      "show": [
+                        "current",
+                        "target",
+                        "inventory"
+                      ],
+                      "focus": [
+                        "module",
+                        "whole"
+                      ],
+                      "scope": [
+                        "current",
+                        "prefix"
+                      ]
+                    },
+                    "normalization": [
+                      "Omitted observe fields use angled, 0 degrees and current scene.",
+                      "isometric is an alias of angled. Rotations are multiples of 90 degrees, normalized modulo 360.",
+                      "Integer strings are accepted for page, manualStep, inventoryPage, decision and rotateDegrees.",
+                      "Part IDs and candidate IDs are exact strings; no guessed IDs or actions.",
+                      "Omitted plan/notes keep previous memory. Memory limits do not invalidate a physical action."
+                    ],
+                    "note": "Examples demonstrate syntax only. Their IDs and placements are not recommendations for this task."
+                  },
+                  "lastToolResult": {
+                    "code": "INVALID_TOOL_REQUEST",
+                    "environmentDecision": 2,
+                    "stateChanged": false,
+                    "syntaxNormalization": [],
+                    "validationErrors": [
+                      "plan must be a list of strings."
+                    ],
+                    "example": {
+                      "tool": "inspect",
+                      "args": {
+                        "partId": "PART_ID_FROM_INVENTORY",
+                        "page": 1
+                      }
+                    }
+                  },
+                  "disturbancePolicy": "An environmental change may occur after a physical move without announcement.",
+                  "profile": {
+                    "name": "visual-memory-pull-v2",
+                    "initialViews": [
+                      "isometric",
+                      "rear",
+                      "top"
+                    ],
+                    "initialInventoryPage": 1,
+                    "targetRetention": "all three target views every decision",
+                    "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+                    "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+                    "catalogueMemory": "latest inventory page and latest candidate/manual page",
+                    "textHistoryTurns": 8,
+                    "planItems": 6,
+                    "planItemCharacters": 160,
+                    "notesCharacters": 1200,
+                    "maxActions": 72,
+                    "maxObservations": 68,
+                    "maxDecisions": 68,
+                    "maxOutputTokensPerDecision": 8192,
+                    "maxGeneratedTokens": 557056,
+                    "reasoningPolicy": "off-when-supported; required-thinking models use low; all reported generation tokens count",
+                    "reasoningMode": "off-when-supported",
+                    "requestTimeoutSeconds": 180,
+                    "outputContract": "brick-atlas-tool-contract/2",
+                    "truncationPolicy": "stop without executing; exclude from assembly score",
+                    "preflightRequired": true,
+                    "retries": 0,
+                    "scriptedPrefix": 0,
+                    "automaticRepair": false,
+                    "nativeComputeEqualityClaim": false,
+                    "budgetRule": "public inventory count; capped at native task limits; identical for all backbones",
+                    "publicInventoryParts": 21
+                  },
+                  "observationPolicy": "initial views, then only agent-requested images; no automatic scene after a move",
+                  "memory": {
+                    "plan": [
+                      "Inspect remaining parts on inventory page 2",
+                      "Review manual order and identify next missing piece",
+                      "Attach missing parts one at a time",
+                      "Verify final views against target"
+                    ],
+                    "notes": "Starting scene is a red cross-like base with a black/red wheel assembly underneath. Target adds red slopes/bricks and two light-gray cockpit/window pieces. Inventory page 1 shows A001-A012 available; need page 2 for A013-A021.",
+                    "inventorySnapshot": [
+                      {
+                        "partId": "A013",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A014",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A015",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A016",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A017",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A018",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A019",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A020",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A021",
+                        "status": "available"
+                      }
+                    ],
+                    "inventoryCapturedAfterDecision": 0
+                  },
+                  "budget": {
+                    "decisionsRemaining": 66,
+                    "actionsRemaining": 72,
+                    "observationRequestsRemaining": 67,
+                    "generatedTokensRemaining": 556887
+                  },
+                  "responseSchema": {
+                    "required": [
+                      "tool"
+                    ],
+                    "tool": "one available tool",
+                    "args": "object; omitted means empty object",
+                    "plan": "optional list, up to 6 short operational steps",
+                    "notes": "optional operational notes, max 1200 characters"
+                  },
+                  "visualMemoryPolicy": "Same image pixels are retained; capture time is explicit. Old images are NOT refreshed when the world changes.",
+                  "pagination": {
+                    "inventoryItemsPerPage": 12,
+                    "candidateItemsPerPage": 12
+                  }
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6.png",
+                  "sha256": "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da.png",
+                  "sha256": "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86.png",
+                  "sha256": "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9.png",
+                  "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2.png",
+                  "sha256": "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875.png",
+                  "sha256": "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "inventory",
+                  "sha256": "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+                  "width": 1600,
+                  "height": 912,
+                  "page": 2,
+                  "pages": 2,
+                  "observedAfterDecision": 0,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "inventory",
+                  "url": "/assets/c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558.png",
+                  "sha256": "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+                  "width": 1600,
+                  "height": 912,
+                  "page": 2,
+                  "pages": 2,
+                  "observedAfterDecision": 0,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              }
+            ]
+          }
+        ],
+        "binaryImagePolicy": "Exact PNG bytes are in raw API requests; these URLs and hashes identify the same pixels."
+      },
+      "modelOutputRaw": "{\"tool\":\"inspect\",\"args\":{\"manualStep\":1},\"plan\":[\"Inspect manual steps to map missing A013-A021 pieces\",\"Identify legal attachment order and positions\",\"Attach missing parts one at a time\",\"Observe after physical changes\",\"Verify final views against target\"],\"notes\":\"Page 2 parts: A013 gray 2x2 slope, A014 red 2x3? low slope, A015 red 2x3 brick, A016 red 2x4 plate, A017 red 2x3 plate, A018 light gray 2x2 slope, A019 red 2x2 slope/brick, A020 gray 2x2 brick, A021 red 2x2 plate.\"}",
+      "modelOutput": {
+        "tool": "inspect",
+        "args": {
+          "manualStep": 1
+        },
+        "plan": [
+          "Inspect manual steps to map missing A013-A021 pieces",
+          "Identify legal attachment order and positions",
+          "Attach missing parts one at a time",
+          "Observe after physical changes",
+          "Verify final views against target"
+        ],
+        "notes": "Page 2 parts: A013 gray 2x2 slope, A014 red 2x3? low slope, A015 red 2x3 brick, A016 red 2x4 plate, A017 red 2x3 plate, A018 light gray 2x2 slope, A019 red 2x2 slope/brick, A020 gray 2x2 brick, A021 red 2x2 plate."
+      },
+      "environmentOutput": {
+        "code": "OBSERVED",
+        "images": [
+          {
+            "role": "instruction-reference",
+            "url": "/assets/5789be4f93b8edc53ab3f875811704e19b518b62a3e9e05792a784f5b0632125.png",
+            "sha256": "5789be4f93b8edc53ab3f875811704e19b518b62a3e9e05792a784f5b0632125",
+            "width": 1600,
+            "height": 1040,
+            "step": 1,
+            "isTarget": false,
+            "referenceOnly": true,
+            "observedAfterDecision": 3
+          }
+        ],
+        "environmentDecision": 3,
+        "syntaxNormalization": []
+      },
+      "outputValidation": {
+        "action": {
+          "tool": "inspect",
+          "args": {
+            "manualStep": 1
+          },
+          "plan": [
+            "Inspect manual steps to map missing A013-A021 pieces",
+            "Identify legal attachment order and positions",
+            "Attach missing parts one at a time",
+            "Observe after physical changes",
+            "Verify final views against target"
+          ],
+          "notes": "Page 2 parts: A013 gray 2x2 slope, A014 red 2x3? low slope, A015 red 2x3 brick, A016 red 2x4 plate, A017 red 2x3 plate, A018 light gray 2x2 slope, A019 red 2x2 slope/brick, A020 gray 2x2 brick, A021 red 2x2 plate."
+        },
+        "valid": true,
+        "jsonError": false,
+        "errors": [],
+        "normalizations": [],
+        "example": {
+          "tool": "inspect",
+          "args": {
+            "partId": "PART_ID_FROM_INVENTORY",
+            "page": 1
+          }
+        }
+      },
+      "memoryAfter": {
+        "plan": [
+          "Inspect manual steps to map missing A013-A021 pieces",
+          "Identify legal attachment order and positions",
+          "Attach missing parts one at a time",
+          "Observe after physical changes",
+          "Verify final views against target"
+        ],
+        "notes": "Page 2 parts: A013 gray 2x2 slope, A014 red 2x3? low slope, A015 red 2x3 brick, A016 red 2x4 plate, A017 red 2x3 plate, A018 light gray 2x2 slope, A019 red 2x2 slope/brick, A020 gray 2x2 brick, A021 red 2x2 plate."
+      },
+      "inputImageHashes": [
+        "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+        "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+        "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+        "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+        "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+        "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+        "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558"
+      ],
+      "inputImagePixels": 4339200,
+      "requestBytes": 170972,
+      "requestContextSha256": "36f624b3041ff065e16ffe0589991dfb12e6b712adbbc1a4aee09065f05b8258",
+      "providerReceipt": {
+        "id": "021793363658875463b2e7ab2e4caf441b2615bb02bf158ea5621",
+        "archiveId": "345e22673abd4ac0916eec474cfa0fc3",
+        "requestBodySha256": "56f6b08490f6726799edb3957835959f065c760706acd12f21026c7c330e8ff9",
+        "costUSD": 0.0166116,
+        "costBasis": "Ark regular-online peak list price, no cache discount; upper usage estimate, not invoice",
+        "nativeCurrency": "CNY",
+        "inputTokens": 12978,
+        "outputTokens": 173,
+        "reasoningTokens": 0,
+        "finishReason": "stop",
+        "latencySeconds": 6.911
+      }
+    },
+    {
+      "index": 4,
+      "modelInput": {
+        "model": "ark/doubao-seed-2-1-pro-260915",
+        "system": "You operate a continuous LEGO assembly Arena. Match the sole TARGET with any physically legal assembly order. You control every action and every extra observation. The initial packet contains three current views, the same three target views, and inventory page 1. After an action NO new scene image is sent automatically: call observe to inspect what is really there. An unannounced environment change may occur after a physical move. Action success only says your requested move was legal; it does not certify that the scene still matches your expectations.\nUse observe to change camera or inspect stock, inspect to view neutral placement candidates or an optional instruction step, attach/detach to move ONE physical part, recall to retrieve an old observation, and finish to submit the final state. Each partId is one physical part; parts and stock are finite. Candidate previews are hypothetical; they do not say a placement is legal or correct. Position IDs do not encode the answer. A manual is a possible order, never a mandatory one. For a task permitting equivalent assemblies, use its explicit target contract.\nYour memory is maintained in the same way every turn: all target views, the latest two requested scene observations, the latest inventory page, the latest candidate/manual page, recent tool dialogue, and YOUR short plan and notes. Images have capture timestamps and can be stale. A recalled or remembered image is not a new observation. Additional pages, angles and instructions are available through tools. No hidden state, evaluator score, or suggested action is supplied.\nReply with exactly one JSON object containing tool and args; plan and notes are optional updates. plan is at most 6 short next-step items (160 characters each). notes is at most 1200 characters of concise operational facts/uncertainties you want to retain. Do not write an essay or private reasoning trace. Provided plan/notes replace the previous values; omitted fields preserve memory. Long memory is trimmed at the published limits. observe with empty args means current scene, angled view, 0 degree rotation; isometric is accepted as an alias of angled. Example: {\"tool\":\"inspect\",\"args\":{\"partId\":\"PART_ID_FROM_INVENTORY\",\"page\":1},\"plan\":[\"Locate a legal base placement\",\"Build and visually verify\"],\"notes\":\"I have not installed any pieces yet.\"}. Tool errors are feedback; decide your next step yourself.",
+        "messages": [
+          {
+            "role": "assistant",
+            "content": "{\"tool\":\"observe\",\"args\":{\"view\":\"angled\",\"rotateDegrees\":0,\"show\":[\"current\",\"inventory\"],\"inventoryPage\":2},\"plan\":[\"Inspect remaining parts on inventory page 2\",\"Review manual order and identify next missing piece\",\"Attach missing parts one at a time\",\"Verify final views against target\"],\"notes\":\"Starting scene is a red cross-like base with a black/red wheel assembly underneath. Target adds red slopes/bricks and two light-gray cockpit/window pieces. Inventory page 1 shows A001-A012 available; need page 2 for A013-A021.\"}"
+          },
+          {
+            "role": "user",
+            "content": "{\"toolResult\": {\"code\": \"OBSERVED\", \"camera\": {\"azimuthDegrees\": 35, \"elevationDegrees\": 30}, \"environmentDecision\": 1, \"inventoryAvailability\": [{\"partId\": \"A013\", \"status\": \"available\"}, {\"partId\": \"A014\", \"status\": \"available\"}, {\"partId\": \"A015\", \"status\": \"available\"}, {\"partId\": \"A016\", \"status\": \"available\"}, {\"partId\": \"A017\", \"status\": \"available\"}, {\"partId\": \"A018\", \"status\": \"available\"}, {\"partId\": \"A019\", \"status\": \"available\"}, {\"partId\": \"A020\", \"status\": \"available\"}, {\"partId\": \"A021\", \"status\": \"available\"}], \"syntaxNormalization\": []}}"
+          },
+          {
+            "role": "assistant",
+            "content": "{\"tool\":\"inspect\",\"args\":{\"manualStep\":1},\"plan\":\"Inspect manual steps to map missing A013-A021 pieces and legal build order.\"}"
+          },
+          {
+            "role": "user",
+            "content": "{\"toolResult\": {\"code\": \"INVALID_TOOL_REQUEST\", \"environmentDecision\": 2, \"stateChanged\": false, \"syntaxNormalization\": [], \"validationErrors\": [\"plan must be a list of strings.\"], \"example\": {\"tool\": \"inspect\", \"args\": {\"partId\": \"PART_ID_FROM_INVENTORY\", \"page\": 1}}}}"
+          },
+          {
+            "role": "assistant",
+            "content": "{\"tool\":\"inspect\",\"args\":{\"manualStep\":1},\"plan\":[\"Inspect manual steps to map missing A013-A021 pieces\",\"Identify legal attachment order and positions\",\"Attach missing parts one at a time\",\"Observe after physical changes\",\"Verify final views against target\"],\"notes\":\"Page 2 parts: A013 gray 2x2 slope, A014 red 2x3? low slope, A015 red 2x3 brick, A016 red 2x4 plate, A017 red 2x3 plate, A018 light gray 2x2 slope, A019 red 2x2 slope/brick, A020 gray 2x2 brick, A021 red 2x2 plate.\"}"
+          },
+          {
+            "role": "user",
+            "content": "{\"toolResult\": {\"code\": \"OBSERVED\", \"environmentDecision\": 3, \"syntaxNormalization\": []}}"
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "value": {
+                  "protocol": "brick-atlas-unified-visual-agent/2",
+                  "episode": "episode-a436401859534ad79436479f8b536567",
+                  "decision": 4,
+                  "task": "Complete the sole target: Airplane",
+                  "startingState": "preassembled current scene; match the sole target",
+                  "targetContract": "Match the target physical assembly.",
+                  "physicalRules": [
+                    "One physical part per attach/detach.",
+                    "Any legal order is accepted.",
+                    "Fixtures may support subassemblies; gravity, friction and snap force are not simulated.",
+                    "No overlap; a straight insertion/removal path is required."
+                  ],
+                  "inventoryPages": 2,
+                  "manualSteps": 8,
+                  "inspectionOptions": {
+                    "inventoryPage": "1-based; default 1",
+                    "focus": [
+                      "module",
+                      "whole"
+                    ],
+                    "candidatePages": "inspect partId and page"
+                  },
+                  "camera": {
+                    "azimuthDegrees": 35,
+                    "elevationDegrees": 30
+                  },
+                  "actionHandles": [
+                    {
+                      "id": "A001",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A002",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A003",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A004",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A005",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A006",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A007",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A008",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A009",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A010",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A011",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A012",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A013",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A014",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A015",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A016",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A017",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A018",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A019",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A020",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A021",
+                      "candidateCount": 24
+                    }
+                  ],
+                  "availableTools": {
+                    "version": "brick-atlas-tool-contract/2",
+                    "tools": {
+                      "observe": {
+                        "required": [],
+                        "defaults": {
+                          "view": "angled",
+                          "rotateDegrees": 0,
+                          "show": [
+                            "current"
+                          ]
+                        },
+                        "optional": [
+                          "view",
+                          "rotateDegrees",
+                          "show",
+                          "inventoryPage",
+                          "focus"
+                        ],
+                        "example": {
+                          "tool": "observe",
+                          "args": {
+                            "rotateDegrees": 90,
+                            "show": [
+                              "current",
+                              "inventory"
+                            ]
+                          }
+                        }
+                      },
+                      "inspect": {
+                        "required": "partId OR manualStep, never both",
+                        "defaults": {
+                          "page": 1
+                        },
+                        "optional": [
+                          "partId",
+                          "page",
+                          "manualStep"
+                        ],
+                        "example": {
+                          "tool": "inspect",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY",
+                            "page": 1
+                          }
+                        }
+                      },
+                      "attach": {
+                        "required": [
+                          "partId",
+                          "candidate"
+                        ],
+                        "optional": [],
+                        "example": {
+                          "tool": "attach",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY",
+                            "candidate": "POSITION_ID_FROM_REQUESTED_PAGE"
+                          }
+                        }
+                      },
+                      "detach": {
+                        "required": [
+                          "partId"
+                        ],
+                        "optional": [],
+                        "example": {
+                          "tool": "detach",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY"
+                          }
+                        }
+                      },
+                      "recall": {
+                        "required": [
+                          "decision"
+                        ],
+                        "optional": [
+                          "scope"
+                        ],
+                        "defaults": {
+                          "scope": "current"
+                        },
+                        "example": {
+                          "tool": "recall",
+                          "args": {
+                            "decision": 0
+                          }
+                        }
+                      },
+                      "finish": {
+                        "required": [],
+                        "optional": [],
+                        "example": {
+                          "tool": "finish",
+                          "args": {}
+                        }
+                      }
+                    },
+                    "values": {
+                      "view": [
+                        "angled",
+                        "top"
+                      ],
+                      "show": [
+                        "current",
+                        "target",
+                        "inventory"
+                      ],
+                      "focus": [
+                        "module",
+                        "whole"
+                      ],
+                      "scope": [
+                        "current",
+                        "prefix"
+                      ]
+                    },
+                    "normalization": [
+                      "Omitted observe fields use angled, 0 degrees and current scene.",
+                      "isometric is an alias of angled. Rotations are multiples of 90 degrees, normalized modulo 360.",
+                      "Integer strings are accepted for page, manualStep, inventoryPage, decision and rotateDegrees.",
+                      "Part IDs and candidate IDs are exact strings; no guessed IDs or actions.",
+                      "Omitted plan/notes keep previous memory. Memory limits do not invalidate a physical action."
+                    ],
+                    "note": "Examples demonstrate syntax only. Their IDs and placements are not recommendations for this task."
+                  },
+                  "lastToolResult": {
+                    "code": "OBSERVED",
+                    "images": [
+                      {
+                        "role": "instruction-reference",
+                        "url": "/assets/5789be4f93b8edc53ab3f875811704e19b518b62a3e9e05792a784f5b0632125.png",
+                        "sha256": "5789be4f93b8edc53ab3f875811704e19b518b62a3e9e05792a784f5b0632125",
+                        "width": 1600,
+                        "height": 1040,
+                        "step": 1,
+                        "isTarget": false,
+                        "referenceOnly": true,
+                        "observedAfterDecision": 3
+                      }
+                    ],
+                    "environmentDecision": 3,
+                    "syntaxNormalization": []
+                  },
+                  "disturbancePolicy": "An environmental change may occur after a physical move without announcement.",
+                  "profile": {
+                    "name": "visual-memory-pull-v2",
+                    "initialViews": [
+                      "isometric",
+                      "rear",
+                      "top"
+                    ],
+                    "initialInventoryPage": 1,
+                    "targetRetention": "all three target views every decision",
+                    "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+                    "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+                    "catalogueMemory": "latest inventory page and latest candidate/manual page",
+                    "textHistoryTurns": 8,
+                    "planItems": 6,
+                    "planItemCharacters": 160,
+                    "notesCharacters": 1200,
+                    "maxActions": 72,
+                    "maxObservations": 68,
+                    "maxDecisions": 68,
+                    "maxOutputTokensPerDecision": 8192,
+                    "maxGeneratedTokens": 557056,
+                    "reasoningPolicy": "off-when-supported; required-thinking models use low; all reported generation tokens count",
+                    "reasoningMode": "off-when-supported",
+                    "requestTimeoutSeconds": 180,
+                    "outputContract": "brick-atlas-tool-contract/2",
+                    "truncationPolicy": "stop without executing; exclude from assembly score",
+                    "preflightRequired": true,
+                    "retries": 0,
+                    "scriptedPrefix": 0,
+                    "automaticRepair": false,
+                    "nativeComputeEqualityClaim": false,
+                    "budgetRule": "public inventory count; capped at native task limits; identical for all backbones",
+                    "publicInventoryParts": 21
+                  },
+                  "observationPolicy": "initial views, then only agent-requested images; no automatic scene after a move",
+                  "memory": {
+                    "plan": [
+                      "Inspect manual steps to map missing A013-A021 pieces",
+                      "Identify legal attachment order and positions",
+                      "Attach missing parts one at a time",
+                      "Observe after physical changes",
+                      "Verify final views against target"
+                    ],
+                    "notes": "Page 2 parts: A013 gray 2x2 slope, A014 red 2x3? low slope, A015 red 2x3 brick, A016 red 2x4 plate, A017 red 2x3 plate, A018 light gray 2x2 slope, A019 red 2x2 slope/brick, A020 gray 2x2 brick, A021 red 2x2 plate.",
+                    "inventorySnapshot": [
+                      {
+                        "partId": "A013",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A014",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A015",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A016",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A017",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A018",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A019",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A020",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A021",
+                        "status": "available"
+                      }
+                    ],
+                    "inventoryCapturedAfterDecision": 0
+                  },
+                  "budget": {
+                    "decisionsRemaining": 65,
+                    "actionsRemaining": 72,
+                    "observationRequestsRemaining": 66,
+                    "generatedTokensRemaining": 556714
+                  },
+                  "responseSchema": {
+                    "required": [
+                      "tool"
+                    ],
+                    "tool": "one available tool",
+                    "args": "object; omitted means empty object",
+                    "plan": "optional list, up to 6 short operational steps",
+                    "notes": "optional operational notes, max 1200 characters"
+                  },
+                  "visualMemoryPolicy": "Same image pixels are retained; capture time is explicit. Old images are NOT refreshed when the world changes.",
+                  "pagination": {
+                    "inventoryItemsPerPage": 12,
+                    "candidateItemsPerPage": 12
+                  }
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6.png",
+                  "sha256": "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da.png",
+                  "sha256": "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86.png",
+                  "sha256": "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9.png",
+                  "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2.png",
+                  "sha256": "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875.png",
+                  "sha256": "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "inventory",
+                  "sha256": "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+                  "width": 1600,
+                  "height": 912,
+                  "page": 2,
+                  "pages": 2,
+                  "observedAfterDecision": 0,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "inventory",
+                  "url": "/assets/c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558.png",
+                  "sha256": "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+                  "width": 1600,
+                  "height": 912,
+                  "page": 2,
+                  "pages": 2,
+                  "observedAfterDecision": 0,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "instruction-reference",
+                  "sha256": "5789be4f93b8edc53ab3f875811704e19b518b62a3e9e05792a784f5b0632125",
+                  "width": 1600,
+                  "height": 1040,
+                  "step": 1,
+                  "isTarget": false,
+                  "referenceOnly": true,
+                  "observedAfterDecision": 3,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "instruction-reference",
+                  "url": "/assets/5789be4f93b8edc53ab3f875811704e19b518b62a3e9e05792a784f5b0632125.png",
+                  "sha256": "5789be4f93b8edc53ab3f875811704e19b518b62a3e9e05792a784f5b0632125",
+                  "width": 1600,
+                  "height": 1040,
+                  "step": 1,
+                  "isTarget": false,
+                  "referenceOnly": true,
+                  "observedAfterDecision": 3,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              }
+            ]
+          }
+        ],
+        "binaryImagePolicy": "Exact PNG bytes are in raw API requests; these URLs and hashes identify the same pixels."
+      },
+      "modelOutputRaw": "{\"tool\":\"inspect\",\"args\":{\"manualStep\":2},\"plan\":[\"Use manual steps to identify each missing part and placement\",\"Start with cockpit slopes, then red structural pieces\",\"Attach one part per action\",\"Observe after batches or if placement is uncertain\",\"Verify final target views\"],\"notes\":\"Step 1 shows a light-gray 2x2 slope (likely A018) placed immediately right of the vertical fuselage on the horizontal wing, with studs toward the left/rear and slope toward right/front.\"}",
+      "modelOutput": {
+        "tool": "inspect",
+        "args": {
+          "manualStep": 2
+        },
+        "plan": [
+          "Use manual steps to identify each missing part and placement",
+          "Start with cockpit slopes, then red structural pieces",
+          "Attach one part per action",
+          "Observe after batches or if placement is uncertain",
+          "Verify final target views"
+        ],
+        "notes": "Step 1 shows a light-gray 2x2 slope (likely A018) placed immediately right of the vertical fuselage on the horizontal wing, with studs toward the left/rear and slope toward right/front."
+      },
+      "environmentOutput": {
+        "code": "OBSERVED",
+        "images": [
+          {
+            "role": "instruction-reference",
+            "url": "/assets/7e78340fe96cadfd0e9db8d29165a6fc48be1d6ee0e6feb220e4f1592697468b.png",
+            "sha256": "7e78340fe96cadfd0e9db8d29165a6fc48be1d6ee0e6feb220e4f1592697468b",
+            "width": 1600,
+            "height": 1040,
+            "step": 2,
+            "isTarget": false,
+            "referenceOnly": true,
+            "observedAfterDecision": 4
+          }
+        ],
+        "environmentDecision": 4,
+        "syntaxNormalization": []
+      },
+      "outputValidation": {
+        "action": {
+          "tool": "inspect",
+          "args": {
+            "manualStep": 2
+          },
+          "plan": [
+            "Use manual steps to identify each missing part and placement",
+            "Start with cockpit slopes, then red structural pieces",
+            "Attach one part per action",
+            "Observe after batches or if placement is uncertain",
+            "Verify final target views"
+          ],
+          "notes": "Step 1 shows a light-gray 2x2 slope (likely A018) placed immediately right of the vertical fuselage on the horizontal wing, with studs toward the left/rear and slope toward right/front."
+        },
+        "valid": true,
+        "jsonError": false,
+        "errors": [],
+        "normalizations": [],
+        "example": {
+          "tool": "inspect",
+          "args": {
+            "partId": "PART_ID_FROM_INVENTORY",
+            "page": 1
+          }
+        }
+      },
+      "memoryAfter": {
+        "plan": [
+          "Use manual steps to identify each missing part and placement",
+          "Start with cockpit slopes, then red structural pieces",
+          "Attach one part per action",
+          "Observe after batches or if placement is uncertain",
+          "Verify final target views"
+        ],
+        "notes": "Step 1 shows a light-gray 2x2 slope (likely A018) placed immediately right of the vertical fuselage on the horizontal wing, with studs toward the left/rear and slope toward right/front."
+      },
+      "inputImageHashes": [
+        "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+        "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+        "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+        "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+        "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+        "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+        "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+        "5789be4f93b8edc53ab3f875811704e19b518b62a3e9e05792a784f5b0632125"
+      ],
+      "inputImagePixels": 6003200,
+      "requestBytes": 237277,
+      "requestContextSha256": "2b05ffd3af3818b047176cdf82902870fdb82b4adafd53f46305f338343f48f1",
+      "providerReceipt": {
+        "id": "021793363735546c897e1d930e500589fc980a11d7a6eeb651764",
+        "archiveId": "ff25b6ba1d834df087806d015005c695",
+        "requestBodySha256": "3213cba0b6274c40c196b633b290b1876073b74586c466d1ebe39f6ada54bc2b",
+        "costUSD": 0.018416400000000003,
+        "costBasis": "Ark regular-online peak list price, no cache discount; upper usage estimate, not invoice",
+        "nativeCurrency": "CNY",
+        "inputTokens": 14807,
+        "outputTokens": 108,
+        "reasoningTokens": 0,
+        "finishReason": "stop",
+        "latencySeconds": 6.402
+      }
+    },
+    {
+      "index": 5,
+      "modelInput": {
+        "model": "ark/doubao-seed-2-1-pro-260915",
+        "system": "You operate a continuous LEGO assembly Arena. Match the sole TARGET with any physically legal assembly order. You control every action and every extra observation. The initial packet contains three current views, the same three target views, and inventory page 1. After an action NO new scene image is sent automatically: call observe to inspect what is really there. An unannounced environment change may occur after a physical move. Action success only says your requested move was legal; it does not certify that the scene still matches your expectations.\nUse observe to change camera or inspect stock, inspect to view neutral placement candidates or an optional instruction step, attach/detach to move ONE physical part, recall to retrieve an old observation, and finish to submit the final state. Each partId is one physical part; parts and stock are finite. Candidate previews are hypothetical; they do not say a placement is legal or correct. Position IDs do not encode the answer. A manual is a possible order, never a mandatory one. For a task permitting equivalent assemblies, use its explicit target contract.\nYour memory is maintained in the same way every turn: all target views, the latest two requested scene observations, the latest inventory page, the latest candidate/manual page, recent tool dialogue, and YOUR short plan and notes. Images have capture timestamps and can be stale. A recalled or remembered image is not a new observation. Additional pages, angles and instructions are available through tools. No hidden state, evaluator score, or suggested action is supplied.\nReply with exactly one JSON object containing tool and args; plan and notes are optional updates. plan is at most 6 short next-step items (160 characters each). notes is at most 1200 characters of concise operational facts/uncertainties you want to retain. Do not write an essay or private reasoning trace. Provided plan/notes replace the previous values; omitted fields preserve memory. Long memory is trimmed at the published limits. observe with empty args means current scene, angled view, 0 degree rotation; isometric is accepted as an alias of angled. Example: {\"tool\":\"inspect\",\"args\":{\"partId\":\"PART_ID_FROM_INVENTORY\",\"page\":1},\"plan\":[\"Locate a legal base placement\",\"Build and visually verify\"],\"notes\":\"I have not installed any pieces yet.\"}. Tool errors are feedback; decide your next step yourself.",
+        "messages": [
+          {
+            "role": "assistant",
+            "content": "{\"tool\":\"observe\",\"args\":{\"view\":\"angled\",\"rotateDegrees\":0,\"show\":[\"current\",\"inventory\"],\"inventoryPage\":2},\"plan\":[\"Inspect remaining parts on inventory page 2\",\"Review manual order and identify next missing piece\",\"Attach missing parts one at a time\",\"Verify final views against target\"],\"notes\":\"Starting scene is a red cross-like base with a black/red wheel assembly underneath. Target adds red slopes/bricks and two light-gray cockpit/window pieces. Inventory page 1 shows A001-A012 available; need page 2 for A013-A021.\"}"
+          },
+          {
+            "role": "user",
+            "content": "{\"toolResult\": {\"code\": \"OBSERVED\", \"camera\": {\"azimuthDegrees\": 35, \"elevationDegrees\": 30}, \"environmentDecision\": 1, \"inventoryAvailability\": [{\"partId\": \"A013\", \"status\": \"available\"}, {\"partId\": \"A014\", \"status\": \"available\"}, {\"partId\": \"A015\", \"status\": \"available\"}, {\"partId\": \"A016\", \"status\": \"available\"}, {\"partId\": \"A017\", \"status\": \"available\"}, {\"partId\": \"A018\", \"status\": \"available\"}, {\"partId\": \"A019\", \"status\": \"available\"}, {\"partId\": \"A020\", \"status\": \"available\"}, {\"partId\": \"A021\", \"status\": \"available\"}], \"syntaxNormalization\": []}}"
+          },
+          {
+            "role": "assistant",
+            "content": "{\"tool\":\"inspect\",\"args\":{\"manualStep\":1},\"plan\":\"Inspect manual steps to map missing A013-A021 pieces and legal build order.\"}"
+          },
+          {
+            "role": "user",
+            "content": "{\"toolResult\": {\"code\": \"INVALID_TOOL_REQUEST\", \"environmentDecision\": 2, \"stateChanged\": false, \"syntaxNormalization\": [], \"validationErrors\": [\"plan must be a list of strings.\"], \"example\": {\"tool\": \"inspect\", \"args\": {\"partId\": \"PART_ID_FROM_INVENTORY\", \"page\": 1}}}}"
+          },
+          {
+            "role": "assistant",
+            "content": "{\"tool\":\"inspect\",\"args\":{\"manualStep\":1},\"plan\":[\"Inspect manual steps to map missing A013-A021 pieces\",\"Identify legal attachment order and positions\",\"Attach missing parts one at a time\",\"Observe after physical changes\",\"Verify final views against target\"],\"notes\":\"Page 2 parts: A013 gray 2x2 slope, A014 red 2x3? low slope, A015 red 2x3 brick, A016 red 2x4 plate, A017 red 2x3 plate, A018 light gray 2x2 slope, A019 red 2x2 slope/brick, A020 gray 2x2 brick, A021 red 2x2 plate.\"}"
+          },
+          {
+            "role": "user",
+            "content": "{\"toolResult\": {\"code\": \"OBSERVED\", \"environmentDecision\": 3, \"syntaxNormalization\": []}}"
+          },
+          {
+            "role": "assistant",
+            "content": "{\"tool\":\"inspect\",\"args\":{\"manualStep\":2},\"plan\":[\"Use manual steps to identify each missing part and placement\",\"Start with cockpit slopes, then red structural pieces\",\"Attach one part per action\",\"Observe after batches or if placement is uncertain\",\"Verify final target views\"],\"notes\":\"Step 1 shows a light-gray 2x2 slope (likely A018) placed immediately right of the vertical fuselage on the horizontal wing, with studs toward the left/rear and slope toward right/front.\"}"
+          },
+          {
+            "role": "user",
+            "content": "{\"toolResult\": {\"code\": \"OBSERVED\", \"environmentDecision\": 4, \"syntaxNormalization\": []}}"
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "value": {
+                  "protocol": "brick-atlas-unified-visual-agent/2",
+                  "episode": "episode-a436401859534ad79436479f8b536567",
+                  "decision": 5,
+                  "task": "Complete the sole target: Airplane",
+                  "startingState": "preassembled current scene; match the sole target",
+                  "targetContract": "Match the target physical assembly.",
+                  "physicalRules": [
+                    "One physical part per attach/detach.",
+                    "Any legal order is accepted.",
+                    "Fixtures may support subassemblies; gravity, friction and snap force are not simulated.",
+                    "No overlap; a straight insertion/removal path is required."
+                  ],
+                  "inventoryPages": 2,
+                  "manualSteps": 8,
+                  "inspectionOptions": {
+                    "inventoryPage": "1-based; default 1",
+                    "focus": [
+                      "module",
+                      "whole"
+                    ],
+                    "candidatePages": "inspect partId and page"
+                  },
+                  "camera": {
+                    "azimuthDegrees": 35,
+                    "elevationDegrees": 30
+                  },
+                  "actionHandles": [
+                    {
+                      "id": "A001",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A002",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A003",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A004",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A005",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A006",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A007",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A008",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A009",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A010",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A011",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A012",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A013",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A014",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A015",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A016",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A017",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A018",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A019",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A020",
+                      "candidateCount": 24
+                    },
+                    {
+                      "id": "A021",
+                      "candidateCount": 24
+                    }
+                  ],
+                  "availableTools": {
+                    "version": "brick-atlas-tool-contract/2",
+                    "tools": {
+                      "observe": {
+                        "required": [],
+                        "defaults": {
+                          "view": "angled",
+                          "rotateDegrees": 0,
+                          "show": [
+                            "current"
+                          ]
+                        },
+                        "optional": [
+                          "view",
+                          "rotateDegrees",
+                          "show",
+                          "inventoryPage",
+                          "focus"
+                        ],
+                        "example": {
+                          "tool": "observe",
+                          "args": {
+                            "rotateDegrees": 90,
+                            "show": [
+                              "current",
+                              "inventory"
+                            ]
+                          }
+                        }
+                      },
+                      "inspect": {
+                        "required": "partId OR manualStep, never both",
+                        "defaults": {
+                          "page": 1
+                        },
+                        "optional": [
+                          "partId",
+                          "page",
+                          "manualStep"
+                        ],
+                        "example": {
+                          "tool": "inspect",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY",
+                            "page": 1
+                          }
+                        }
+                      },
+                      "attach": {
+                        "required": [
+                          "partId",
+                          "candidate"
+                        ],
+                        "optional": [],
+                        "example": {
+                          "tool": "attach",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY",
+                            "candidate": "POSITION_ID_FROM_REQUESTED_PAGE"
+                          }
+                        }
+                      },
+                      "detach": {
+                        "required": [
+                          "partId"
+                        ],
+                        "optional": [],
+                        "example": {
+                          "tool": "detach",
+                          "args": {
+                            "partId": "PART_ID_FROM_INVENTORY"
+                          }
+                        }
+                      },
+                      "recall": {
+                        "required": [
+                          "decision"
+                        ],
+                        "optional": [
+                          "scope"
+                        ],
+                        "defaults": {
+                          "scope": "current"
+                        },
+                        "example": {
+                          "tool": "recall",
+                          "args": {
+                            "decision": 0
+                          }
+                        }
+                      },
+                      "finish": {
+                        "required": [],
+                        "optional": [],
+                        "example": {
+                          "tool": "finish",
+                          "args": {}
+                        }
+                      }
+                    },
+                    "values": {
+                      "view": [
+                        "angled",
+                        "top"
+                      ],
+                      "show": [
+                        "current",
+                        "target",
+                        "inventory"
+                      ],
+                      "focus": [
+                        "module",
+                        "whole"
+                      ],
+                      "scope": [
+                        "current",
+                        "prefix"
+                      ]
+                    },
+                    "normalization": [
+                      "Omitted observe fields use angled, 0 degrees and current scene.",
+                      "isometric is an alias of angled. Rotations are multiples of 90 degrees, normalized modulo 360.",
+                      "Integer strings are accepted for page, manualStep, inventoryPage, decision and rotateDegrees.",
+                      "Part IDs and candidate IDs are exact strings; no guessed IDs or actions.",
+                      "Omitted plan/notes keep previous memory. Memory limits do not invalidate a physical action."
+                    ],
+                    "note": "Examples demonstrate syntax only. Their IDs and placements are not recommendations for this task."
+                  },
+                  "lastToolResult": {
+                    "code": "OBSERVED",
+                    "images": [
+                      {
+                        "role": "instruction-reference",
+                        "url": "/assets/7e78340fe96cadfd0e9db8d29165a6fc48be1d6ee0e6feb220e4f1592697468b.png",
+                        "sha256": "7e78340fe96cadfd0e9db8d29165a6fc48be1d6ee0e6feb220e4f1592697468b",
+                        "width": 1600,
+                        "height": 1040,
+                        "step": 2,
+                        "isTarget": false,
+                        "referenceOnly": true,
+                        "observedAfterDecision": 4
+                      }
+                    ],
+                    "environmentDecision": 4,
+                    "syntaxNormalization": []
+                  },
+                  "disturbancePolicy": "An environmental change may occur after a physical move without announcement.",
+                  "profile": {
+                    "name": "visual-memory-pull-v2",
+                    "initialViews": [
+                      "isometric",
+                      "rear",
+                      "top"
+                    ],
+                    "initialInventoryPage": 1,
+                    "targetRetention": "all three target views every decision",
+                    "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+                    "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+                    "catalogueMemory": "latest inventory page and latest candidate/manual page",
+                    "textHistoryTurns": 8,
+                    "planItems": 6,
+                    "planItemCharacters": 160,
+                    "notesCharacters": 1200,
+                    "maxActions": 72,
+                    "maxObservations": 68,
+                    "maxDecisions": 68,
+                    "maxOutputTokensPerDecision": 8192,
+                    "maxGeneratedTokens": 557056,
+                    "reasoningPolicy": "off-when-supported; required-thinking models use low; all reported generation tokens count",
+                    "reasoningMode": "off-when-supported",
+                    "requestTimeoutSeconds": 180,
+                    "outputContract": "brick-atlas-tool-contract/2",
+                    "truncationPolicy": "stop without executing; exclude from assembly score",
+                    "preflightRequired": true,
+                    "retries": 0,
+                    "scriptedPrefix": 0,
+                    "automaticRepair": false,
+                    "nativeComputeEqualityClaim": false,
+                    "budgetRule": "public inventory count; capped at native task limits; identical for all backbones",
+                    "publicInventoryParts": 21
+                  },
+                  "observationPolicy": "initial views, then only agent-requested images; no automatic scene after a move",
+                  "memory": {
+                    "plan": [
+                      "Use manual steps to identify each missing part and placement",
+                      "Start with cockpit slopes, then red structural pieces",
+                      "Attach one part per action",
+                      "Observe after batches or if placement is uncertain",
+                      "Verify final target views"
+                    ],
+                    "notes": "Step 1 shows a light-gray 2x2 slope (likely A018) placed immediately right of the vertical fuselage on the horizontal wing, with studs toward the left/rear and slope toward right/front.",
+                    "inventorySnapshot": [
+                      {
+                        "partId": "A013",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A014",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A015",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A016",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A017",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A018",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A019",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A020",
+                        "status": "available"
+                      },
+                      {
+                        "partId": "A021",
+                        "status": "available"
+                      }
+                    ],
+                    "inventoryCapturedAfterDecision": 0
+                  },
+                  "budget": {
+                    "decisionsRemaining": 64,
+                    "actionsRemaining": 72,
+                    "observationRequestsRemaining": 65,
+                    "generatedTokensRemaining": 556606
+                  },
+                  "responseSchema": {
+                    "required": [
+                      "tool"
+                    ],
+                    "tool": "one available tool",
+                    "args": "object; omitted means empty object",
+                    "plan": "optional list, up to 6 short operational steps",
+                    "notes": "optional operational notes, max 1200 characters"
+                  },
+                  "visualMemoryPolicy": "Same image pixels are retained; capture time is explicit. Old images are NOT refreshed when the world changes.",
+                  "pagination": {
+                    "inventoryItemsPerPage": 12,
+                    "candidateItemsPerPage": 12
+                  }
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6.png",
+                  "sha256": "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da.png",
+                  "sha256": "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "target",
+                  "sha256": "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "target",
+                  "url": "/assets/f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86.png",
+                  "sha256": "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9.png",
+                  "sha256": "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+                  "width": 800,
+                  "height": 600,
+                  "view": "isometric",
+                  "camera": {
+                    "preset": "isometric"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2.png",
+                  "sha256": "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+                  "width": 800,
+                  "height": 600,
+                  "view": "rear",
+                  "camera": {
+                    "preset": "rear"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "current",
+                  "sha256": "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "current",
+                  "url": "/assets/a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875.png",
+                  "sha256": "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+                  "width": 800,
+                  "height": 600,
+                  "view": "top",
+                  "camera": {
+                    "preset": "top"
+                  },
+                  "observedAfterDecision": 0,
+                  "focus": "module",
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "inventory",
+                  "sha256": "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+                  "width": 1600,
+                  "height": 912,
+                  "page": 2,
+                  "pages": 2,
+                  "observedAfterDecision": 0,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "inventory",
+                  "url": "/assets/c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558.png",
+                  "sha256": "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+                  "width": 1600,
+                  "height": 912,
+                  "page": 2,
+                  "pages": 2,
+                  "observedAfterDecision": 0,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              },
+              {
+                "type": "text",
+                "value": {
+                  "role": "instruction-reference",
+                  "sha256": "7e78340fe96cadfd0e9db8d29165a6fc48be1d6ee0e6feb220e4f1592697468b",
+                  "width": 1600,
+                  "height": 1040,
+                  "step": 2,
+                  "isTarget": false,
+                  "referenceOnly": true,
+                  "observedAfterDecision": 4,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false
+                }
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "role": "instruction-reference",
+                  "url": "/assets/7e78340fe96cadfd0e9db8d29165a6fc48be1d6ee0e6feb220e4f1592697468b.png",
+                  "sha256": "7e78340fe96cadfd0e9db8d29165a6fc48be1d6ee0e6feb220e4f1592697468b",
+                  "width": 1600,
+                  "height": 1040,
+                  "step": 2,
+                  "isTarget": false,
+                  "referenceOnly": true,
+                  "observedAfterDecision": 4,
+                  "physicalActionsSinceCapture": 0,
+                  "historicalNotLive": false,
+                  "detail": "high"
+                }
+              }
+            ]
+          }
+        ],
+        "binaryImagePolicy": "Exact PNG bytes are in raw API requests; these URLs and hashes identify the same pixels."
+      },
+      "inputImageHashes": [
+        "29dc3b49efa5b2ece9eef0a307fb64b27d0c1892783c7a53f94a769cff4073f6",
+        "132f0c00220b4cdcfca1254a7d7b28ce8e5ec445e841e0a3bb5c98083ef8a6da",
+        "f2835e50eb957d24c083244a6e4704c87f5c894c4e62e99c50f696ea3f7a2c86",
+        "c212ac3b6991f46ac20f2d11ff5a461aba74c29c3cb15d0685c4dc6a85b419a9",
+        "e0385baf232fbe00b0b065a0353f68939e10352e38cfc068379c2a03813a85d2",
+        "a4bb8edf52e31ad8a619267932cf423cdba30535b9a21ec49409bf9927105875",
+        "c6d0730d308fcf9d7d08090504865c7df2ce07acd31eaa8e51aa90516e3aa558",
+        "7e78340fe96cadfd0e9db8d29165a6fc48be1d6ee0e6feb220e4f1592697468b"
+      ],
+      "inputImagePixels": 6003200,
+      "providerReceipt": {
+        "archiveId": "cdc36c617b834630890319f3db05eef1",
+        "requestBodySha256": "7b196c2e5497fba4ee662e72e006a2dce47aabd46d7b5141954a3a48de57c954",
+        "responseAvailable": false
+      },
+      "error": {
+        "code": "API_RATE_LIMIT",
+        "type": "ProviderError",
+        "message": "Provider HTTP 429: {\"error\":{\"code\":\"RateLimitExceeded.EndpointTPMExceeded\",\"message\":\"The Tokens Per Minute (TPM) limit of the associated endpoint for your account has been exceeded. Request id: 0217933638089649a5685e33c81ebc7a325510351e9b158dc74d0\",\"param\":\"\",\"type\":\"TooManyRequests\"}}",
+        "httpStatus": 429,
+        "retryable": false
+      },
+      "environmentOutput": {
+        "code": "service_error",
+        "stateChanged": false,
+        "actionExecuted": false
+      }
+    }
+  ],
+  "result": {
+    "schema": "brick-atlas-evaluated-run/2",
+    "runId": "a436401859534ad79436479f8b536567",
+    "model": "ark/doubao-seed-2-1-pro-260915",
+    "caseId": "SC:544-1:dynamic:missing",
+    "conditionId": "SC:544-1:dynamic:missing/normal-branch",
+    "inputVersion": "brick-atlas-unified-visual-agent/2",
+    "canonicalTaskId": "SC:544-1:dynamic:missing",
+    "objectId": "sc-544-1",
+    "sourceGroup": "set:544",
+    "track": "finishing-stage-dynamic",
+    "taskType": "D0",
+    "targetContract": "exact-physical-parts-and-poses",
+    "sensorVersion": "visible-physical-part-boundaries/1",
+    "terminalStatus": "service_error",
+    "success": null,
+    "scheduledEvents": 0,
+    "appliedEvents": 0,
+    "effectiveIncidentVerified": false,
+    "incidentExposure": "normal_control",
+    "repairApplicable": false,
+    "standaloneConditionalRecovery": null,
+    "stateMetrics": {
+      "finished": false,
+      "success": false,
+      "finalEquivalent": false,
+      "finalConstraintsSatisfied": true,
+      "fullPlacement": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 8,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "partTypeColor": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 8,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "shapeAndPose": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 8,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "colorAndPose": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 8,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "initialEditResidual": 8,
+      "finalEditResidual": 8,
+      "errorReduction": 0.0,
+      "missingTargetRecovered": 0.0,
+      "originalExcessCleared": null,
+      "initiallyCorrectPlacements": 0,
+      "finalDamageCount": 0,
+      "finalDamageRate": null,
+      "initialWasCorrect": false,
+      "scope": "Operable target placements only; unchanged scenery cannot inflate the score.",
+      "residualIsNotShortestRepairLength": true
+    },
+    "executionMetrics": {
+      "decisions": 4,
+      "manipulationAttempts": 0,
+      "acceptedMoves": 0,
+      "wellFormedManipulationAttempts": 0,
+      "physicalRejections": {},
+      "resourceRejections": {},
+      "legalActionRate": null,
+      "formatErrorResponses": 0,
+      "schemaErrorResponses": 1,
+      "inspectionCalls": 3,
+      "budgetRejectedResponses": 0,
+      "falseRepair": false,
+      "movesRelativeToWitness": 0.0,
+      "referenceIsNotOptimal": true,
+      "optimalityScore": null
+    },
+    "allIncidentCompletion": null,
+    "allWindowsRecovered": null,
+    "eventWindows": [],
+    "apiCallsByEnvironment": 0,
+    "apiCalls": 5,
+    "providerUsage": {
+      "calls": 5,
+      "costUSD": 0.0669108,
+      "costLabel": "USD charge / conservative native-provider estimate; see nativeCosts",
+      "confirmedUSD": 0,
+      "nativeCosts": {
+        "USD": 0,
+        "CNY": 0.334554
+      },
+      "unsettledReservationsUSD": 0,
+      "settled": true,
+      "capUSD": 8.0,
+      "promptTokens": 53509,
+      "completionTokens": 450,
+      "reasoningTokens": 0,
+      "provider": "ark"
+    },
+    "baseInputVersion": "brick-atlas-unified-visual-agent/2",
+    "repairPrerequisite": null,
+    "normalQualifiedRecovery": {
+      "eligible": false,
+      "reason": "normal_control",
+      "success": null,
+      "normalRunId": null,
+      "sameTaskModelBudgetAndInputRequired": true,
+      "sharedPrefixVerified": false,
+      "causalEffectClaim": false
+    },
+    "controllerMetrics": {
+      "decisions": 5,
+      "observeCalls": 1,
+      "recallCalls": 0,
+      "invalidSensorRequests": 0,
+      "budget": 68,
+      "actionAttempts": 0,
+      "observationRequests": 3,
+      "inspectCalls": 2,
+      "formatErrors": 1,
+      "actionBudget": 72,
+      "observationBudget": 68
+    },
+    "inputMetrics": {
+      "imageCounts": [
+        7,
+        7,
+        7,
+        8,
+        8
+      ],
+      "maxImagesPerRequest": 8,
+      "totalImages": 37,
+      "imagePixels": 25024000,
+      "serializedRequestBytes": 753059,
+      "configuredTwoImageLimit": false,
+      "initialImages": 7
+    },
+    "agentProfile": {
+      "name": "visual-memory-pull-v2",
+      "initialViews": [
+        "isometric",
+        "rear",
+        "top"
+      ],
+      "initialInventoryPage": 1,
+      "targetRetention": "all three target views every decision",
+      "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+      "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+      "catalogueMemory": "latest inventory page and latest candidate/manual page",
+      "textHistoryTurns": 8,
+      "planItems": 6,
+      "planItemCharacters": 160,
+      "notesCharacters": 1200,
+      "maxActions": 72,
+      "maxObservations": 68,
+      "maxDecisions": 68,
+      "maxOutputTokensPerDecision": 8192,
+      "maxGeneratedTokens": 557056,
+      "reasoningPolicy": "off-when-supported; required-thinking models use low; all reported generation tokens count",
+      "reasoningMode": "off-when-supported",
+      "requestTimeoutSeconds": 180,
+      "outputContract": "brick-atlas-tool-contract/2",
+      "truncationPolicy": "stop without executing; exclude from assembly score",
+      "preflightRequired": true,
+      "retries": 0,
+      "scriptedPrefix": 0,
+      "automaticRepair": false,
+      "nativeComputeEqualityClaim": false,
+      "budgetRule": "public inventory count; capped at native task limits; identical for all backbones",
+      "publicInventoryParts": 21
+    },
+    "agentContractSha256": "e4cfabd9700f64f69e27315cf7641f46935c78d2df00e6c07a3fc3ab13d1862c",
+    "experimentArm": "dynamic-visual-agent",
+    "agentMemory": {
+      "plan": [
+        "Use manual steps to identify each missing part and placement",
+        "Start with cockpit slopes, then red structural pieces",
+        "Attach one part per action",
+        "Observe after batches or if placement is uncertain",
+        "Verify final target views"
+      ],
+      "notes": "Step 1 shows a light-gray 2x2 slope (likely A018) placed immediately right of the vertical fuselage on the horizontal wing, with studs toward the left/rear and slope toward right/front."
+    },
+    "interfaceMetrics": {
+      "normalizedDecisions": 0,
+      "invalidDecisions": 1,
+      "attribution": "mixed_interface_and_assembly"
+    },
+    "assemblyScoreEligible": false,
+    "arenaProtocol": "brick-atlas-unified-visual-agent/2",
+    "arenaBranch": "normal",
+    "arenaRunId": "agent-normal-ark-doubao-seed-2-1-pro-260915-20261030-203034-f1ca",
+    "actor": "ark/doubao-seed-2-1-pro-260915",
+    "apiPreflight": {
+      "certificate": "deliverables/brick-atlas-ark-pilot-v1/preflight/ark--doubao-seed-2-1-pro-260915/certificate.json",
+      "sha256": "154352c2674c150c80221441f3695375f53925d864c143faa090c9327c2bd3df",
+      "checkedAt": 1793361444.393981
+    },
+    "casePreflight": {
+      "caseId": "SC:544-1:dynamic:missing",
+      "normal": true,
+      "passed": true,
+      "taskType": "D0",
+      "moves": 8,
+      "applied": 0,
+      "scheduled": 0,
+      "config": {
+        "name": "visual-memory-pull-v2",
+        "initialViews": [
+          "isometric",
+          "rear",
+          "top"
+        ],
+        "initialInventoryPage": 1,
+        "targetRetention": "all three target views every decision",
+        "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+        "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+        "catalogueMemory": "latest inventory page and latest candidate/manual page",
+        "textHistoryTurns": 8,
+        "planItems": 6,
+        "planItemCharacters": 160,
+        "notesCharacters": 1200,
+        "maxActions": 72,
+        "maxObservations": 68,
+        "maxDecisions": 68,
+        "maxOutputTokensPerDecision": 8192,
+        "maxGeneratedTokens": 557056,
+        "reasoningPolicy": "off-when-supported; required-thinking models use low; all reported generation tokens count",
+        "reasoningMode": "off-when-supported",
+        "requestTimeoutSeconds": 180,
+        "outputContract": "brick-atlas-tool-contract/2",
+        "truncationPolicy": "stop without executing; exclude from assembly score",
+        "preflightRequired": true,
+        "retries": 0,
+        "scriptedPrefix": 0,
+        "automaticRepair": false,
+        "nativeComputeEqualityClaim": false,
+        "budgetRule": "public inventory count; capped at native task limits; identical for all backbones",
+        "publicInventoryParts": 21
+      },
+      "physicalTaskSha256": "6152c32c79ca7fc1f79d4c0b852a34845830991f52e3941a25804cf383e7261a"
+    }
+  }
+}
