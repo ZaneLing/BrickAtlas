@@ -1,0 +1,1967 @@
+{
+  "schema": "brick-atlas-unified-agent-pilot/1",
+  "models": [
+    "deepseek/deepseek-flash",
+    "qwen/qwen3-vl-235b-a22b-instruct",
+    "google/gemini-2.5-flash",
+    "openai/gpt-6.1-sol",
+    "qwen/qwen3.8-flash"
+  ],
+  "cases": [
+    "SC:4096-1-alt-1488:dynamic:buried-repair",
+    "D:obj-city-car--t5--removed_piece--v01"
+  ],
+  "profile": {
+    "name": "visual-memory-pull-v1",
+    "initialViews": [
+      "isometric",
+      "rear",
+      "top"
+    ],
+    "initialInventoryPage": 1,
+    "targetRetention": "all three target views every decision",
+    "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+    "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+    "catalogueMemory": "latest inventory page and latest candidate/manual page",
+    "textHistoryTurns": 8,
+    "planItems": 6,
+    "planItemCharacters": 160,
+    "notesCharacters": 1200,
+    "maxActions": 16,
+    "maxObservations": 24,
+    "maxDecisions": 40,
+    "maxOutputTokensPerDecision": 2048,
+    "maxGeneratedTokens": 81920,
+    "reasoningPolicy": "low when supported; non-thinking-only backbones remain non-thinking; generated-token ceiling includes reported reasoning tokens",
+    "retries": 0,
+    "scriptedPrefix": 0,
+    "automaticRepair": false,
+    "nativeComputeEqualityClaim": false
+  },
+  "planDeclaredBeforeCalls": true,
+  "repeats": 1,
+  "startedAt": 1793352511.61478,
+  "runs": [
+    {
+      "schema": "brick-atlas-evaluated-run/2",
+      "runId": "8210b2e0739348ca8a9966908b8b5f89",
+      "model": "deepseek/deepseek-flash",
+      "caseId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "conditionId": "SC:4096-1-alt-1488:dynamic:buried-repair/normal-branch",
+      "inputVersion": "brick-atlas-unified-visual-agent/1",
+      "canonicalTaskId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "objectId": "sc-4096-1-alt-1488",
+      "sourceGroup": "set:4096",
+      "track": "finishing-stage-dynamic",
+      "taskType": "D0",
+      "targetContract": "exact-physical-parts-and-poses",
+      "sensorVersion": "visible-physical-part-boundaries/1",
+      "terminalStatus": "model_budget_exhausted",
+      "success": false,
+      "scheduledEvents": 0,
+      "appliedEvents": 0,
+      "effectiveIncidentVerified": false,
+      "incidentExposure": "normal_control",
+      "repairApplicable": false,
+      "standaloneConditionalRecovery": null,
+      "stateMetrics": {
+        "finished": false,
+        "success": false,
+        "finalEquivalent": false,
+        "finalConstraintsSatisfied": true,
+        "fullPlacement": {
+          "tp": 0,
+          "fp": 2,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "partTypeColor": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.6666666666666666,
+          "f1": 0.8
+        },
+        "shapeAndPose": {
+          "tp": 0,
+          "fp": 2,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "colorAndPose": {
+          "tp": 0,
+          "fp": 2,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "initialEditResidual": 3,
+        "finalEditResidual": 5,
+        "errorReduction": -0.6666666666666667,
+        "missingTargetRecovered": 0.0,
+        "originalExcessCleared": null,
+        "initiallyCorrectPlacements": 0,
+        "finalDamageCount": 0,
+        "finalDamageRate": null,
+        "initialWasCorrect": false,
+        "scope": "Operable target placements only; unchanged scenery cannot inflate the score.",
+        "residualIsNotShortestRepairLength": true
+      },
+      "executionMetrics": {
+        "decisions": 40,
+        "manipulationAttempts": 11,
+        "acceptedMoves": 6,
+        "wellFormedManipulationAttempts": 11,
+        "physicalRejections": {
+          "ENDPOINT_COLLISION": 4,
+          "NO_CONNECTION": 1
+        },
+        "resourceRejections": {},
+        "legalActionRate": 0.5454545454545454,
+        "formatErrorResponses": 13,
+        "schemaErrorResponses": 4,
+        "inspectionCalls": 12,
+        "budgetRejectedResponses": 0,
+        "falseRepair": false,
+        "movesRelativeToWitness": 3.6666666666666665,
+        "referenceIsNotOptimal": true,
+        "optimalityScore": null
+      },
+      "allIncidentCompletion": null,
+      "allWindowsRecovered": null,
+      "eventWindows": [],
+      "apiCallsByEnvironment": 0,
+      "apiCalls": 40,
+      "providerUsage": {
+        "calls": 40,
+        "costUSD": 0.15953639999999997,
+        "costLabel": "USD charge / conservative native-provider estimate; see nativeCosts",
+        "confirmedUSD": 0,
+        "nativeCosts": {
+          "USD": 0.15953639999999997,
+          "CNY": 0
+        },
+        "unsettledReservationsUSD": 0,
+        "settled": true,
+        "capUSD": 1.5,
+        "promptTokens": 324496,
+        "completionTokens": 55743,
+        "reasoningTokens": 49528,
+        "provider": "deepseek"
+      },
+      "baseInputVersion": "brick-atlas-unified-visual-agent/1",
+      "repairPrerequisite": null,
+      "normalQualifiedRecovery": {
+        "eligible": false,
+        "reason": "normal_control",
+        "success": null,
+        "normalRunId": null,
+        "sameTaskModelBudgetAndInputRequired": true,
+        "sharedPrefixVerified": false,
+        "causalEffectClaim": false
+      },
+      "controllerMetrics": {
+        "decisions": 40,
+        "observeCalls": 5,
+        "recallCalls": 0,
+        "invalidSensorRequests": 0,
+        "budget": 40,
+        "actionAttempts": 11,
+        "observationRequests": 12,
+        "inspectCalls": 7,
+        "formatErrors": 17,
+        "actionBudget": 16,
+        "observationBudget": 24
+      },
+      "inputMetrics": {
+        "imageCounts": [
+          7,
+          7,
+          7,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8
+        ],
+        "maxImagesPerRequest": 10,
+        "totalImages": 329,
+        "imagePixels": 215449600,
+        "serializedRequestBytes": 13614895,
+        "configuredTwoImageLimit": false,
+        "initialImages": 7
+      },
+      "agentProfile": {
+        "name": "visual-memory-pull-v1",
+        "initialViews": [
+          "isometric",
+          "rear",
+          "top"
+        ],
+        "initialInventoryPage": 1,
+        "targetRetention": "all three target views every decision",
+        "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+        "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+        "catalogueMemory": "latest inventory page and latest candidate/manual page",
+        "textHistoryTurns": 8,
+        "planItems": 6,
+        "planItemCharacters": 160,
+        "notesCharacters": 1200,
+        "maxActions": 16,
+        "maxObservations": 24,
+        "maxDecisions": 40,
+        "maxOutputTokensPerDecision": 2048,
+        "maxGeneratedTokens": 81920,
+        "reasoningPolicy": "low when supported; non-thinking-only backbones remain non-thinking; generated-token ceiling includes reported reasoning tokens",
+        "retries": 0,
+        "scriptedPrefix": 0,
+        "automaticRepair": false,
+        "nativeComputeEqualityClaim": false
+      },
+      "agentContractSha256": "052cb7acd0a1476591e732f78d66252a14883c6d98e320f4105b1c11941997e5",
+      "experimentArm": "dynamic-visual-agent",
+      "agentMemory": {
+        "plan": [
+          "Attach A007 at C00040 (plate directly under yellow notched beam, right edge against lower-right wheel)",
+          "Observe top current vs target 57de to confirm alignment",
+          "Observe angled to confirm body match",
+          "Finish if matched"
+        ],
+        "notes": "A007 detached successfully (decision 34). Target top 57de: plate's top edge sits under the yellow notched beam, right edge adjacent to lower-right wheel, white sliver at plate's left before the left-front wheel. Current b77c (C00058 placement) had plate ~1 stud too far lower-left exposing extra white below and yellow notches to its right. C00040 preview shows plate under the notches abutting the wheel: chosen. Red A001-A004 unused (target has no red). Body/wheels/drum assumed correct. Budget: 6 actions, 6 decisions, 12 observations left."
+      },
+      "arenaProtocol": "brick-atlas-unified-visual-agent/1",
+      "arenaBranch": "normal",
+      "arenaRunId": "agent-normal-deepseek-deepseek-flash-20261030-172831-0a56",
+      "actor": "deepseek/deepseek-flash",
+      "evaluationRevision": {
+        "scorer": "connector-workbench/5",
+        "reason": "3023 plain plate resolves to canonical 3023b; preserve half-turn symmetry",
+        "physicalReplayIdentical": true,
+        "apiRerun": false
+      },
+      "outputMetricCorrection": {
+        "reason": "Separate JSON parsing from valid JSON with invalid fields; execution unchanged",
+        "original": {
+          "formatErrorResponses": 17,
+          "schemaErrorResponses": 0
+        },
+        "apiCalls": 0
+      },
+      "outputValidation": {
+        "jsonParseFailures": 13,
+        "argumentSchemaFailures": 4
+      }
+    },
+    {
+      "schema": "brick-atlas-evaluated-run/2",
+      "runId": "1d5224a8a2dc4971a65bf0d2bb6d19ed",
+      "model": "qwen/qwen3-vl-235b-a22b-instruct",
+      "caseId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "conditionId": "SC:4096-1-alt-1488:dynamic:buried-repair/normal-branch",
+      "inputVersion": "brick-atlas-unified-visual-agent/1",
+      "canonicalTaskId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "objectId": "sc-4096-1-alt-1488",
+      "sourceGroup": "set:4096",
+      "track": "finishing-stage-dynamic",
+      "taskType": "D0",
+      "targetContract": "exact-physical-parts-and-poses",
+      "sensorVersion": "visible-physical-part-boundaries/1",
+      "terminalStatus": "service_error",
+      "success": null,
+      "scheduledEvents": 0,
+      "appliedEvents": 0,
+      "effectiveIncidentVerified": false,
+      "incidentExposure": "normal_control",
+      "repairApplicable": false,
+      "standaloneConditionalRecovery": null,
+      "stateMetrics": {
+        "finished": false,
+        "success": false,
+        "finalEquivalent": false,
+        "finalConstraintsSatisfied": true,
+        "fullPlacement": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "partTypeColor": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "shapeAndPose": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "colorAndPose": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "initialEditResidual": 3,
+        "finalEditResidual": 3,
+        "errorReduction": 0.0,
+        "missingTargetRecovered": 0.0,
+        "originalExcessCleared": null,
+        "initiallyCorrectPlacements": 0,
+        "finalDamageCount": 0,
+        "finalDamageRate": null,
+        "initialWasCorrect": false,
+        "scope": "Operable target placements only; unchanged scenery cannot inflate the score.",
+        "residualIsNotShortestRepairLength": true
+      },
+      "executionMetrics": {
+        "decisions": 0,
+        "manipulationAttempts": 0,
+        "acceptedMoves": 0,
+        "wellFormedManipulationAttempts": 0,
+        "physicalRejections": {},
+        "resourceRejections": {},
+        "legalActionRate": null,
+        "formatErrorResponses": 0,
+        "schemaErrorResponses": 0,
+        "inspectionCalls": 0,
+        "budgetRejectedResponses": 0,
+        "falseRepair": false,
+        "movesRelativeToWitness": 0.0,
+        "referenceIsNotOptimal": true,
+        "optimalityScore": null
+      },
+      "allIncidentCompletion": null,
+      "allWindowsRecovered": null,
+      "eventWindows": [],
+      "apiCallsByEnvironment": 0,
+      "apiCalls": 1,
+      "providerUsage": {
+        "calls": 1,
+        "costUSD": 0,
+        "costLabel": "USD charge / conservative native-provider estimate; see nativeCosts",
+        "confirmedUSD": 0,
+        "nativeCosts": {
+          "USD": 0,
+          "CNY": 0
+        },
+        "unsettledReservationsUSD": 0.266098,
+        "settled": false,
+        "capUSD": 1.5,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "reasoningTokens": 0,
+        "provider": "aliyun"
+      },
+      "baseInputVersion": "brick-atlas-unified-visual-agent/1",
+      "repairPrerequisite": null,
+      "normalQualifiedRecovery": {
+        "eligible": false,
+        "reason": "normal_control",
+        "success": null,
+        "normalRunId": null,
+        "sameTaskModelBudgetAndInputRequired": true,
+        "sharedPrefixVerified": false,
+        "causalEffectClaim": false
+      },
+      "controllerMetrics": {
+        "decisions": 1,
+        "observeCalls": 0,
+        "recallCalls": 0,
+        "invalidSensorRequests": 0,
+        "budget": 40,
+        "actionAttempts": 0,
+        "observationRequests": 0,
+        "inspectCalls": 0,
+        "formatErrors": 0,
+        "actionBudget": 16,
+        "observationBudget": 24
+      },
+      "inputMetrics": {
+        "imageCounts": [
+          7
+        ],
+        "maxImagesPerRequest": 7,
+        "totalImages": 7,
+        "imagePixels": 3852800,
+        "serializedRequestBytes": 0,
+        "configuredTwoImageLimit": false,
+        "initialImages": 7
+      },
+      "agentProfile": {
+        "name": "visual-memory-pull-v1",
+        "initialViews": [
+          "isometric",
+          "rear",
+          "top"
+        ],
+        "initialInventoryPage": 1,
+        "targetRetention": "all three target views every decision",
+        "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+        "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+        "catalogueMemory": "latest inventory page and latest candidate/manual page",
+        "textHistoryTurns": 8,
+        "planItems": 6,
+        "planItemCharacters": 160,
+        "notesCharacters": 1200,
+        "maxActions": 16,
+        "maxObservations": 24,
+        "maxDecisions": 40,
+        "maxOutputTokensPerDecision": 2048,
+        "maxGeneratedTokens": 81920,
+        "reasoningPolicy": "low when supported; non-thinking-only backbones remain non-thinking; generated-token ceiling includes reported reasoning tokens",
+        "retries": 0,
+        "scriptedPrefix": 0,
+        "automaticRepair": false,
+        "nativeComputeEqualityClaim": false
+      },
+      "agentContractSha256": "052cb7acd0a1476591e732f78d66252a14883c6d98e320f4105b1c11941997e5",
+      "experimentArm": "dynamic-visual-agent",
+      "agentMemory": {
+        "plan": [],
+        "notes": ""
+      },
+      "arenaProtocol": "brick-atlas-unified-visual-agent/1",
+      "arenaBranch": "normal",
+      "arenaRunId": "agent-normal-qwen-qwen3-vl-235b-a22b-instruct-20261030-173525-5b2c",
+      "actor": "qwen/qwen3-vl-235b-a22b-instruct",
+      "evaluationRevision": {
+        "scorer": "connector-workbench/5",
+        "reason": "3023 plain plate resolves to canonical 3023b; preserve half-turn symmetry",
+        "physicalReplayIdentical": true,
+        "apiRerun": false
+      },
+      "outputValidation": {
+        "jsonParseFailures": 0,
+        "argumentSchemaFailures": 0
+      }
+    },
+    {
+      "schema": "brick-atlas-evaluated-run/2",
+      "runId": "c26f04051cec40348c5b59f2384f2fe1",
+      "model": "google/gemini-2.5-flash",
+      "caseId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "conditionId": "SC:4096-1-alt-1488:dynamic:buried-repair/normal-branch",
+      "inputVersion": "brick-atlas-unified-visual-agent/1",
+      "canonicalTaskId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "objectId": "sc-4096-1-alt-1488",
+      "sourceGroup": "set:4096",
+      "track": "finishing-stage-dynamic",
+      "taskType": "D0",
+      "targetContract": "exact-physical-parts-and-poses",
+      "sensorVersion": "visible-physical-part-boundaries/1",
+      "terminalStatus": "completed",
+      "success": false,
+      "scheduledEvents": 0,
+      "appliedEvents": 0,
+      "effectiveIncidentVerified": false,
+      "incidentExposure": "normal_control",
+      "repairApplicable": false,
+      "standaloneConditionalRecovery": null,
+      "stateMetrics": {
+        "finished": true,
+        "success": false,
+        "finalEquivalent": false,
+        "finalConstraintsSatisfied": true,
+        "fullPlacement": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "partTypeColor": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "shapeAndPose": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "colorAndPose": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "initialEditResidual": 3,
+        "finalEditResidual": 3,
+        "errorReduction": 0.0,
+        "missingTargetRecovered": 0.0,
+        "originalExcessCleared": null,
+        "initiallyCorrectPlacements": 0,
+        "finalDamageCount": 0,
+        "finalDamageRate": null,
+        "initialWasCorrect": false,
+        "scope": "Operable target placements only; unchanged scenery cannot inflate the score.",
+        "residualIsNotShortestRepairLength": true
+      },
+      "executionMetrics": {
+        "decisions": 39,
+        "manipulationAttempts": 16,
+        "acceptedMoves": 0,
+        "wellFormedManipulationAttempts": 16,
+        "physicalRejections": {
+          "NO_CONNECTION": 16
+        },
+        "resourceRejections": {},
+        "legalActionRate": 0.0,
+        "formatErrorResponses": 0,
+        "schemaErrorResponses": 10,
+        "inspectionCalls": 12,
+        "budgetRejectedResponses": 0,
+        "falseRepair": false,
+        "movesRelativeToWitness": 5.333333333333333,
+        "referenceIsNotOptimal": true,
+        "optimalityScore": null
+      },
+      "allIncidentCompletion": null,
+      "allWindowsRecovered": null,
+      "eventWindows": [],
+      "apiCallsByEnvironment": 0,
+      "apiCalls": 39,
+      "providerUsage": {
+        "calls": 39,
+        "costUSD": 0.16228371000000003,
+        "costLabel": "USD charge / conservative native-provider estimate; see nativeCosts",
+        "confirmedUSD": 0.16228371000000003,
+        "nativeCosts": {
+          "USD": 0.16228371000000003,
+          "CNY": 0
+        },
+        "unsettledReservationsUSD": 0,
+        "settled": true,
+        "capUSD": 1.5,
+        "promptTokens": 320554,
+        "completionTokens": 27423,
+        "reasoningTokens": 14575,
+        "provider": "openrouter"
+      },
+      "baseInputVersion": "brick-atlas-unified-visual-agent/1",
+      "repairPrerequisite": null,
+      "normalQualifiedRecovery": {
+        "eligible": false,
+        "reason": "normal_control",
+        "success": null,
+        "normalRunId": null,
+        "sameTaskModelBudgetAndInputRequired": true,
+        "sharedPrefixVerified": false,
+        "causalEffectClaim": false
+      },
+      "controllerMetrics": {
+        "decisions": 39,
+        "observeCalls": 0,
+        "recallCalls": 0,
+        "invalidSensorRequests": 0,
+        "budget": 40,
+        "actionAttempts": 16,
+        "observationRequests": 12,
+        "inspectCalls": 12,
+        "formatErrors": 9,
+        "actionBudget": 16,
+        "observationBudget": 24
+      },
+      "inputMetrics": {
+        "imageCounts": [
+          7,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8
+        ],
+        "maxImagesPerRequest": 8,
+        "totalImages": 311,
+        "imagePixels": 207168000,
+        "serializedRequestBytes": 11512076,
+        "configuredTwoImageLimit": false,
+        "initialImages": 7
+      },
+      "agentProfile": {
+        "name": "visual-memory-pull-v1",
+        "initialViews": [
+          "isometric",
+          "rear",
+          "top"
+        ],
+        "initialInventoryPage": 1,
+        "targetRetention": "all three target views every decision",
+        "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+        "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+        "catalogueMemory": "latest inventory page and latest candidate/manual page",
+        "textHistoryTurns": 8,
+        "planItems": 6,
+        "planItemCharacters": 160,
+        "notesCharacters": 1200,
+        "maxActions": 16,
+        "maxObservations": 24,
+        "maxDecisions": 40,
+        "maxOutputTokensPerDecision": 2048,
+        "maxGeneratedTokens": 81920,
+        "reasoningPolicy": "low when supported; non-thinking-only backbones remain non-thinking; generated-token ceiling includes reported reasoning tokens",
+        "retries": 0,
+        "scriptedPrefix": 0,
+        "automaticRepair": false,
+        "nativeComputeEqualityClaim": false
+      },
+      "agentContractSha256": "052cb7acd0a1476591e732f78d66252a14883c6d98e320f4105b1c11941997e5",
+      "experimentArm": "dynamic-visual-agent",
+      "agentMemory": {
+        "plan": [
+          "Acknowledge that the action budget is exhausted and the task cannot be completed.",
+          "Note that the observe tool is consistently failing.",
+          "Submit the finish action, as no further actions are possible.",
+          "The assembly is incomplete due to budget exhaustion."
+        ],
+        "notes": "The `RESOURCE_BUDGET_EXHAUSTED` message confirms no more `attach` or `detach` actions can be performed. The `observe` tool continues to return `INVALID_TOOL_REQUEST`. The last known state (decision 37) shows only one dark grey 1x2 brick (A007) placed on the left side (C00019), meaning the assembly is incomplete. Since no further actions are possible, I must submit the current state using the `finish` tool."
+      },
+      "arenaProtocol": "brick-atlas-unified-visual-agent/1",
+      "arenaBranch": "normal",
+      "arenaRunId": "agent-normal-google-gemini-2-5-flash-20261030-173527-fbe4",
+      "actor": "google/gemini-2.5-flash",
+      "evaluationRevision": {
+        "scorer": "connector-workbench/5",
+        "reason": "3023 plain plate resolves to canonical 3023b; preserve half-turn symmetry",
+        "physicalReplayIdentical": true,
+        "apiRerun": false
+      },
+      "outputMetricCorrection": {
+        "reason": "Separate JSON parsing from valid JSON with invalid fields; execution unchanged",
+        "original": {
+          "formatErrorResponses": 9,
+          "schemaErrorResponses": 1
+        },
+        "apiCalls": 0
+      },
+      "outputValidation": {
+        "jsonParseFailures": 0,
+        "argumentSchemaFailures": 9
+      }
+    },
+    {
+      "schema": "brick-atlas-evaluated-run/2",
+      "runId": "2d73a5df74ef4060a2a0d66841b78295",
+      "model": "openai/gpt-6.1-sol",
+      "caseId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "conditionId": "SC:4096-1-alt-1488:dynamic:buried-repair/normal-branch",
+      "inputVersion": "brick-atlas-unified-visual-agent/1",
+      "canonicalTaskId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "objectId": "sc-4096-1-alt-1488",
+      "sourceGroup": "set:4096",
+      "track": "finishing-stage-dynamic",
+      "taskType": "D0",
+      "targetContract": "exact-physical-parts-and-poses",
+      "sensorVersion": "visible-physical-part-boundaries/1",
+      "terminalStatus": "completed",
+      "success": true,
+      "scheduledEvents": 0,
+      "appliedEvents": 0,
+      "effectiveIncidentVerified": false,
+      "incidentExposure": "normal_control",
+      "repairApplicable": false,
+      "standaloneConditionalRecovery": null,
+      "stateMetrics": {
+        "finished": true,
+        "success": true,
+        "finalEquivalent": true,
+        "finalConstraintsSatisfied": true,
+        "fullPlacement": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "partTypeColor": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "shapeAndPose": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "colorAndPose": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "initialEditResidual": 3,
+        "finalEditResidual": 0,
+        "errorReduction": 1.0,
+        "missingTargetRecovered": 1.0,
+        "originalExcessCleared": null,
+        "initiallyCorrectPlacements": 0,
+        "finalDamageCount": 0,
+        "finalDamageRate": null,
+        "initialWasCorrect": false,
+        "scope": "Operable target placements only; unchanged scenery cannot inflate the score.",
+        "residualIsNotShortestRepairLength": true
+      },
+      "executionMetrics": {
+        "decisions": 14,
+        "manipulationAttempts": 4,
+        "acceptedMoves": 3,
+        "wellFormedManipulationAttempts": 4,
+        "physicalRejections": {
+          "ENDPOINT_COLLISION": 1
+        },
+        "resourceRejections": {},
+        "legalActionRate": 0.75,
+        "formatErrorResponses": 0,
+        "schemaErrorResponses": 1,
+        "inspectionCalls": 8,
+        "budgetRejectedResponses": 0,
+        "falseRepair": false,
+        "movesRelativeToWitness": 1.3333333333333333,
+        "referenceIsNotOptimal": true,
+        "optimalityScore": null
+      },
+      "allIncidentCompletion": null,
+      "allWindowsRecovered": null,
+      "eventWindows": [],
+      "apiCallsByEnvironment": 0,
+      "apiCalls": 14,
+      "providerUsage": {
+        "calls": 14,
+        "costUSD": 0.324429,
+        "costLabel": "USD charge / conservative native-provider estimate; see nativeCosts",
+        "confirmedUSD": 0.324429,
+        "nativeCosts": {
+          "USD": 0.324429,
+          "CNY": 0
+        },
+        "unsettledReservationsUSD": 0,
+        "settled": true,
+        "capUSD": 1.5,
+        "promptTokens": 126320,
+        "completionTokens": 865,
+        "reasoningTokens": 14,
+        "provider": "openrouter"
+      },
+      "baseInputVersion": "brick-atlas-unified-visual-agent/1",
+      "repairPrerequisite": null,
+      "normalQualifiedRecovery": {
+        "eligible": false,
+        "reason": "normal_control",
+        "success": null,
+        "normalRunId": null,
+        "sameTaskModelBudgetAndInputRequired": true,
+        "sharedPrefixVerified": false,
+        "causalEffectClaim": false
+      },
+      "controllerMetrics": {
+        "decisions": 14,
+        "observeCalls": 3,
+        "recallCalls": 0,
+        "invalidSensorRequests": 0,
+        "budget": 40,
+        "actionAttempts": 4,
+        "observationRequests": 8,
+        "inspectCalls": 5,
+        "formatErrors": 1,
+        "actionBudget": 16,
+        "observationBudget": 24
+      },
+      "inputMetrics": {
+        "imageCounts": [
+          7,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          9,
+          9,
+          9,
+          7,
+          7,
+          7,
+          7
+        ],
+        "maxImagesPerRequest": 9,
+        "totalImages": 110,
+        "imagePixels": 73094400,
+        "serializedRequestBytes": 4077410,
+        "configuredTwoImageLimit": false,
+        "initialImages": 7
+      },
+      "agentProfile": {
+        "name": "visual-memory-pull-v1",
+        "initialViews": [
+          "isometric",
+          "rear",
+          "top"
+        ],
+        "initialInventoryPage": 1,
+        "targetRetention": "all three target views every decision",
+        "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+        "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+        "catalogueMemory": "latest inventory page and latest candidate/manual page",
+        "textHistoryTurns": 8,
+        "planItems": 6,
+        "planItemCharacters": 160,
+        "notesCharacters": 1200,
+        "maxActions": 16,
+        "maxObservations": 24,
+        "maxDecisions": 40,
+        "maxOutputTokensPerDecision": 2048,
+        "maxGeneratedTokens": 81920,
+        "reasoningPolicy": "low when supported; non-thinking-only backbones remain non-thinking; generated-token ceiling includes reported reasoning tokens",
+        "retries": 0,
+        "scriptedPrefix": 0,
+        "automaticRepair": false,
+        "nativeComputeEqualityClaim": false
+      },
+      "agentContractSha256": "052cb7acd0a1476591e732f78d66252a14883c6d98e320f4105b1c11941997e5",
+      "experimentArm": "dynamic-visual-agent",
+      "agentMemory": {
+        "plan": [],
+        "notes": "Fresh current observation after roof attachment matches target isometric exactly (identical image hash). Assembly complete."
+      },
+      "arenaProtocol": "brick-atlas-unified-visual-agent/1",
+      "arenaBranch": "normal",
+      "arenaRunId": "agent-normal-openai-gpt-6-1-sol-20261030-173919-47d5",
+      "actor": "openai/gpt-6.1-sol",
+      "evaluationRevision": {
+        "scorer": "connector-workbench/5",
+        "reason": "3023 plain plate resolves to canonical 3023b; preserve half-turn symmetry",
+        "physicalReplayIdentical": true,
+        "apiRerun": false
+      },
+      "outputMetricCorrection": {
+        "reason": "Separate JSON parsing from valid JSON with invalid fields; execution unchanged",
+        "original": {
+          "formatErrorResponses": 1,
+          "schemaErrorResponses": 0
+        },
+        "apiCalls": 0
+      },
+      "outputValidation": {
+        "jsonParseFailures": 0,
+        "argumentSchemaFailures": 1
+      }
+    },
+    {
+      "schema": "brick-atlas-evaluated-run/2",
+      "runId": "61aad21914134b1d9a8a6b2cc889b174",
+      "model": "openai/gpt-6.1-sol",
+      "caseId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "conditionId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "inputVersion": "brick-atlas-unified-visual-agent/1",
+      "canonicalTaskId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "objectId": "sc-4096-1-alt-1488",
+      "sourceGroup": "set:4096",
+      "track": "finishing-stage-dynamic",
+      "taskType": "D1",
+      "targetContract": "exact-physical-parts-and-poses",
+      "sensorVersion": "visible-physical-part-boundaries/1",
+      "terminalStatus": "completed",
+      "success": true,
+      "scheduledEvents": 1,
+      "appliedEvents": 1,
+      "effectiveIncidentVerified": true,
+      "incidentExposure": "all_applied",
+      "repairApplicable": true,
+      "standaloneConditionalRecovery": null,
+      "stateMetrics": {
+        "finished": true,
+        "success": true,
+        "finalEquivalent": true,
+        "finalConstraintsSatisfied": true,
+        "fullPlacement": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "partTypeColor": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "shapeAndPose": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "colorAndPose": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "initialEditResidual": 3,
+        "finalEditResidual": 0,
+        "errorReduction": 1.0,
+        "missingTargetRecovered": 1.0,
+        "originalExcessCleared": null,
+        "initiallyCorrectPlacements": 0,
+        "finalDamageCount": 0,
+        "finalDamageRate": null,
+        "initialWasCorrect": false,
+        "scope": "Operable target placements only; unchanged scenery cannot inflate the score.",
+        "residualIsNotShortestRepairLength": true
+      },
+      "executionMetrics": {
+        "decisions": 23,
+        "manipulationAttempts": 8,
+        "acceptedMoves": 7,
+        "wellFormedManipulationAttempts": 8,
+        "physicalRejections": {
+          "ENDPOINT_COLLISION": 1
+        },
+        "resourceRejections": {},
+        "legalActionRate": 0.875,
+        "formatErrorResponses": 0,
+        "schemaErrorResponses": 1,
+        "inspectionCalls": 13,
+        "budgetRejectedResponses": 0,
+        "falseRepair": false,
+        "movesRelativeToWitness": 1.1428571428571428,
+        "referenceIsNotOptimal": true,
+        "optimalityScore": null
+      },
+      "allIncidentCompletion": true,
+      "allWindowsRecovered": true,
+      "eventWindows": [
+        {
+          "eventIndex": 1,
+          "startAfterDecision": 9,
+          "endBeforeEventIndex": null,
+          "endDecision": 23,
+          "postNextEventStateExcluded": true,
+          "repairApplicable": true,
+          "observedRecovery": true,
+          "firstRecoveryDecision": 7,
+          "retainedAfterRecovery": true,
+          "windowDecisions": 14,
+          "newlyMissingCorrectPlacements": 1,
+          "newExcessPlacements": 1,
+          "detectionSuccess": null,
+          "referencePrefixEqualityRequired": false
+        }
+      ],
+      "apiCallsByEnvironment": 0,
+      "apiCalls": 23,
+      "providerUsage": {
+        "calls": 23,
+        "costUSD": 0.527108,
+        "costLabel": "USD charge / conservative native-provider estimate; see nativeCosts",
+        "confirmedUSD": 0.527108,
+        "nativeCosts": {
+          "USD": 0.527108,
+          "CNY": 0
+        },
+        "unsettledReservationsUSD": 0,
+        "settled": true,
+        "capUSD": 1.5,
+        "promptTokens": 204605,
+        "completionTokens": 1563,
+        "reasoningTokens": 22,
+        "provider": "openrouter"
+      },
+      "baseInputVersion": "brick-atlas-unified-visual-agent/1",
+      "repairPrerequisite": {
+        "eligible": true,
+        "normalRunId": "agent-normal-openai-gpt-6-1-sol-20261030-173919-47d5",
+        "sameCase": true,
+        "sameModel": true,
+        "sameAgentProfile": true,
+        "sharedPrefixVerified": false,
+        "interpretation": "Independent normal prerequisite, not a matched-prefix causal estimate"
+      },
+      "normalQualifiedRecovery": {
+        "eligible": true,
+        "reason": "eligible",
+        "success": true,
+        "normalRunId": "agent-normal-openai-gpt-6-1-sol-20261030-173919-47d5",
+        "sameTaskModelBudgetAndInputRequired": true,
+        "sharedPrefixVerified": false,
+        "causalEffectClaim": false
+      },
+      "controllerMetrics": {
+        "decisions": 23,
+        "observeCalls": 9,
+        "recallCalls": 0,
+        "invalidSensorRequests": 0,
+        "budget": 40,
+        "actionAttempts": 8,
+        "observationRequests": 13,
+        "inspectCalls": 4,
+        "formatErrors": 1,
+        "actionBudget": 16,
+        "observationBudget": 24
+      },
+      "inputMetrics": {
+        "imageCounts": [
+          7,
+          8,
+          8,
+          8,
+          8,
+          9,
+          9,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "maxImagesPerRequest": 9,
+        "totalImages": 169,
+        "imagePixels": 115008000,
+        "serializedRequestBytes": 6882296,
+        "configuredTwoImageLimit": false,
+        "initialImages": 7
+      },
+      "agentProfile": {
+        "name": "visual-memory-pull-v1",
+        "initialViews": [
+          "isometric",
+          "rear",
+          "top"
+        ],
+        "initialInventoryPage": 1,
+        "targetRetention": "all three target views every decision",
+        "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+        "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+        "catalogueMemory": "latest inventory page and latest candidate/manual page",
+        "textHistoryTurns": 8,
+        "planItems": 6,
+        "planItemCharacters": 160,
+        "notesCharacters": 1200,
+        "maxActions": 16,
+        "maxObservations": 24,
+        "maxDecisions": 40,
+        "maxOutputTokensPerDecision": 2048,
+        "maxGeneratedTokens": 81920,
+        "reasoningPolicy": "low when supported; non-thinking-only backbones remain non-thinking; generated-token ceiling includes reported reasoning tokens",
+        "retries": 0,
+        "scriptedPrefix": 0,
+        "automaticRepair": false,
+        "nativeComputeEqualityClaim": false
+      },
+      "agentContractSha256": "052cb7acd0a1476591e732f78d66252a14883c6d98e320f4105b1c11941997e5",
+      "experimentArm": "dynamic-visual-agent",
+      "agentMemory": {
+        "plan": [],
+        "notes": "Fresh current observation after decision21 exactly matches target isometric image (same SHA256). Assembly complete."
+      },
+      "arenaProtocol": "brick-atlas-unified-visual-agent/1",
+      "arenaBranch": "incident",
+      "arenaRunId": "agent-incident-openai-gpt-6-1-sol-20261030-175050-6d0c",
+      "actor": "openai/gpt-6.1-sol",
+      "outputMetricCorrection": {
+        "reason": "Separate JSON parsing from valid JSON with invalid fields; execution unchanged",
+        "original": {
+          "formatErrorResponses": 1,
+          "schemaErrorResponses": 0
+        },
+        "apiCalls": 0
+      },
+      "outputValidation": {
+        "jsonParseFailures": 0,
+        "argumentSchemaFailures": 1
+      }
+    },
+    {
+      "schema": "brick-atlas-evaluated-run/2",
+      "runId": "20f902d26449429883c645aabd812d6b",
+      "model": "qwen/qwen3.8-flash",
+      "caseId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "conditionId": "SC:4096-1-alt-1488:dynamic:buried-repair/normal-branch",
+      "inputVersion": "brick-atlas-unified-visual-agent/1",
+      "canonicalTaskId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "objectId": "sc-4096-1-alt-1488",
+      "sourceGroup": "set:4096",
+      "track": "finishing-stage-dynamic",
+      "taskType": "D0",
+      "targetContract": "exact-physical-parts-and-poses",
+      "sensorVersion": "visible-physical-part-boundaries/1",
+      "terminalStatus": "completed",
+      "success": false,
+      "scheduledEvents": 0,
+      "appliedEvents": 0,
+      "effectiveIncidentVerified": false,
+      "incidentExposure": "normal_control",
+      "repairApplicable": false,
+      "standaloneConditionalRecovery": null,
+      "stateMetrics": {
+        "finished": true,
+        "success": false,
+        "finalEquivalent": false,
+        "finalConstraintsSatisfied": true,
+        "fullPlacement": {
+          "tp": 0,
+          "fp": 1,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "partTypeColor": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.3333333333333333,
+          "f1": 0.5
+        },
+        "shapeAndPose": {
+          "tp": 0,
+          "fp": 1,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "colorAndPose": {
+          "tp": 0,
+          "fp": 1,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "initialEditResidual": 3,
+        "finalEditResidual": 4,
+        "errorReduction": -0.33333333333333326,
+        "missingTargetRecovered": 0.0,
+        "originalExcessCleared": null,
+        "initiallyCorrectPlacements": 0,
+        "finalDamageCount": 0,
+        "finalDamageRate": null,
+        "initialWasCorrect": false,
+        "scope": "Operable target placements only; unchanged scenery cannot inflate the score.",
+        "residualIsNotShortestRepairLength": true
+      },
+      "executionMetrics": {
+        "decisions": 26,
+        "manipulationAttempts": 16,
+        "acceptedMoves": 1,
+        "wellFormedManipulationAttempts": 16,
+        "physicalRejections": {
+          "ENDPOINT_COLLISION": 4,
+          "NO_CONNECTION": 8,
+          "ALREADY_INSTALLED": 3
+        },
+        "resourceRejections": {},
+        "legalActionRate": 0.0625,
+        "formatErrorResponses": 1,
+        "schemaErrorResponses": 1,
+        "inspectionCalls": 7,
+        "budgetRejectedResponses": 0,
+        "falseRepair": false,
+        "movesRelativeToWitness": 5.333333333333333,
+        "referenceIsNotOptimal": true,
+        "optimalityScore": null
+      },
+      "allIncidentCompletion": null,
+      "allWindowsRecovered": null,
+      "eventWindows": [],
+      "apiCallsByEnvironment": 0,
+      "apiCalls": 26,
+      "providerUsage": {
+        "calls": 26,
+        "costUSD": 0.05457204,
+        "costLabel": "USD charge / conservative native-provider estimate; see nativeCosts",
+        "confirmedUSD": 0,
+        "nativeCosts": {
+          "USD": 0,
+          "CNY": 0.2728602
+        },
+        "unsettledReservationsUSD": 0,
+        "settled": true,
+        "capUSD": 1.5,
+        "promptTokens": 267804,
+        "completionTokens": 21710,
+        "reasoningTokens": 15662,
+        "provider": "aliyun"
+      },
+      "baseInputVersion": "brick-atlas-unified-visual-agent/1",
+      "repairPrerequisite": null,
+      "normalQualifiedRecovery": {
+        "eligible": false,
+        "reason": "normal_control",
+        "success": null,
+        "normalRunId": null,
+        "sameTaskModelBudgetAndInputRequired": true,
+        "sharedPrefixVerified": false,
+        "causalEffectClaim": false
+      },
+      "controllerMetrics": {
+        "decisions": 26,
+        "observeCalls": 0,
+        "recallCalls": 0,
+        "invalidSensorRequests": 0,
+        "budget": 40,
+        "actionAttempts": 16,
+        "observationRequests": 7,
+        "inspectCalls": 7,
+        "formatErrors": 2,
+        "actionBudget": 16,
+        "observationBudget": 24
+      },
+      "inputMetrics": {
+        "imageCounts": [
+          7,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8
+        ],
+        "maxImagesPerRequest": 8,
+        "totalImages": 207,
+        "imagePixels": 137779200,
+        "serializedRequestBytes": 7507361,
+        "configuredTwoImageLimit": false,
+        "initialImages": 7
+      },
+      "agentProfile": {
+        "name": "visual-memory-pull-v1",
+        "initialViews": [
+          "isometric",
+          "rear",
+          "top"
+        ],
+        "initialInventoryPage": 1,
+        "targetRetention": "all three target views every decision",
+        "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+        "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+        "catalogueMemory": "latest inventory page and latest candidate/manual page",
+        "textHistoryTurns": 8,
+        "planItems": 6,
+        "planItemCharacters": 160,
+        "notesCharacters": 1200,
+        "maxActions": 16,
+        "maxObservations": 24,
+        "maxDecisions": 40,
+        "maxOutputTokensPerDecision": 2048,
+        "maxGeneratedTokens": 81920,
+        "reasoningPolicy": "low when supported; non-thinking-only backbones remain non-thinking; generated-token ceiling includes reported reasoning tokens",
+        "retries": 0,
+        "scriptedPrefix": 0,
+        "automaticRepair": false,
+        "nativeComputeEqualityClaim": false
+      },
+      "agentContractSha256": "d79fee8fc43ea158c4094d2f84105a3ad7b9725398985991d4c15c9fd0b30d44",
+      "experimentArm": "dynamic-visual-agent",
+      "agentMemory": {
+        "plan": [
+          "No physical actions remain; submit current best assembly"
+        ],
+        "notes": "actionsRemaining=0. Current scene shows yellow body with exposed 2 studs; white plate (A005) and gray cap (A007) never rendered despite ALREADY_INSTALLED/NO_CONNECTION responses — engine slot/render desync plus disturbances prevented completion. Red A001-A004,A006 unused. Target top stack (white band + gray cap) not achievable within budget. Finishing with best achievable state."
+      },
+      "arenaProtocol": "brick-atlas-unified-visual-agent/1",
+      "arenaBranch": "normal",
+      "arenaRunId": "agent-normal-qwen-qwen3-8-flash-20261030-175754-4136",
+      "actor": "qwen/qwen3.8-flash",
+      "outputMetricCorrection": {
+        "reason": "Separate JSON parsing from valid JSON with invalid fields; execution unchanged",
+        "original": {
+          "formatErrorResponses": 2,
+          "schemaErrorResponses": 0
+        },
+        "apiCalls": 0
+      },
+      "outputValidation": {
+        "jsonParseFailures": 1,
+        "argumentSchemaFailures": 1
+      }
+    },
+    {
+      "schema": "brick-atlas-evaluated-run/2",
+      "runId": "819ea05f0e834545b01194c248c85fb3",
+      "model": "qwen/qwen3.8-flash",
+      "caseId": "D:obj-city-car--t5--removed_piece--v01",
+      "conditionId": "D:obj-city-car--t5--removed_piece--v01/normal-branch",
+      "inputVersion": "brick-atlas-unified-visual-agent/1",
+      "canonicalTaskId": "D:obj-city-car--t3--control",
+      "objectId": "obj-city-car",
+      "sourceGroup": "procedural-family:road-vehicles",
+      "track": "whole-object-dynamic",
+      "taskType": "D0",
+      "targetContract": "exact-physical-parts-and-poses",
+      "sensorVersion": "visible-physical-part-boundaries/1",
+      "terminalStatus": "service_error",
+      "success": null,
+      "scheduledEvents": 0,
+      "appliedEvents": 0,
+      "effectiveIncidentVerified": false,
+      "incidentExposure": "normal_control",
+      "repairApplicable": false,
+      "standaloneConditionalRecovery": null,
+      "stateMetrics": {
+        "finished": false,
+        "success": false,
+        "finalEquivalent": false,
+        "finalConstraintsSatisfied": true,
+        "fullPlacement": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 6,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "partTypeColor": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 6,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "shapeAndPose": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 6,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "colorAndPose": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 6,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "initialEditResidual": 6,
+        "finalEditResidual": 6,
+        "errorReduction": 0.0,
+        "missingTargetRecovered": 0.0,
+        "originalExcessCleared": null,
+        "initiallyCorrectPlacements": 0,
+        "finalDamageCount": 0,
+        "finalDamageRate": null,
+        "initialWasCorrect": false,
+        "scope": "Operable target placements only; unchanged scenery cannot inflate the score.",
+        "residualIsNotShortestRepairLength": true
+      },
+      "executionMetrics": {
+        "decisions": 4,
+        "manipulationAttempts": 3,
+        "acceptedMoves": 0,
+        "wellFormedManipulationAttempts": 3,
+        "physicalRejections": {
+          "NO_CONNECTION": 3
+        },
+        "resourceRejections": {},
+        "legalActionRate": 0.0,
+        "formatErrorResponses": 0,
+        "schemaErrorResponses": 0,
+        "inspectionCalls": 1,
+        "budgetRejectedResponses": 0,
+        "falseRepair": false,
+        "movesRelativeToWitness": 0.5,
+        "referenceIsNotOptimal": true,
+        "optimalityScore": null
+      },
+      "allIncidentCompletion": null,
+      "allWindowsRecovered": null,
+      "eventWindows": [],
+      "apiCallsByEnvironment": 0,
+      "apiCalls": 5,
+      "providerUsage": {
+        "calls": 5,
+        "costUSD": 0.007592640000000001,
+        "costLabel": "USD charge / conservative native-provider estimate; see nativeCosts",
+        "confirmedUSD": 0,
+        "nativeCosts": {
+          "USD": 0,
+          "CNY": 0.0379632
+        },
+        "unsettledReservationsUSD": 0.02470908,
+        "settled": false,
+        "capUSD": 1.5,
+        "promptTokens": 36411,
+        "completionTokens": 3272,
+        "reasoningTokens": 2335,
+        "provider": "aliyun"
+      },
+      "baseInputVersion": "brick-atlas-unified-visual-agent/1",
+      "repairPrerequisite": null,
+      "normalQualifiedRecovery": {
+        "eligible": false,
+        "reason": "normal_control",
+        "success": null,
+        "normalRunId": null,
+        "sameTaskModelBudgetAndInputRequired": true,
+        "sharedPrefixVerified": false,
+        "causalEffectClaim": false
+      },
+      "controllerMetrics": {
+        "decisions": 5,
+        "observeCalls": 0,
+        "recallCalls": 0,
+        "invalidSensorRequests": 0,
+        "budget": 40,
+        "actionAttempts": 3,
+        "observationRequests": 1,
+        "inspectCalls": 1,
+        "formatErrors": 0,
+        "actionBudget": 16,
+        "observationBudget": 24
+      },
+      "inputMetrics": {
+        "imageCounts": [
+          7,
+          8,
+          8,
+          8,
+          8
+        ],
+        "maxImagesPerRequest": 8,
+        "totalImages": 39,
+        "imagePixels": 27686400,
+        "serializedRequestBytes": 807491,
+        "configuredTwoImageLimit": false,
+        "initialImages": 7
+      },
+      "agentProfile": {
+        "name": "visual-memory-pull-v1",
+        "initialViews": [
+          "isometric",
+          "rear",
+          "top"
+        ],
+        "initialInventoryPage": 1,
+        "targetRetention": "all three target views every decision",
+        "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+        "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+        "catalogueMemory": "latest inventory page and latest candidate/manual page",
+        "textHistoryTurns": 8,
+        "planItems": 6,
+        "planItemCharacters": 160,
+        "notesCharacters": 1200,
+        "maxActions": 16,
+        "maxObservations": 24,
+        "maxDecisions": 40,
+        "maxOutputTokensPerDecision": 2048,
+        "maxGeneratedTokens": 81920,
+        "reasoningPolicy": "low when supported; non-thinking-only backbones remain non-thinking; generated-token ceiling includes reported reasoning tokens",
+        "retries": 0,
+        "scriptedPrefix": 0,
+        "automaticRepair": false,
+        "nativeComputeEqualityClaim": false
+      },
+      "agentContractSha256": "3c98cceb7bf8d3e6bcae176395ab74921caee1a1e568ab5c152bb0028894e6e4",
+      "experimentArm": "dynamic-visual-agent",
+      "agentMemory": {
+        "plan": [
+          "Attach blue 2x6 chassis A06 via C101 (plate seated on studs, long axis)",
+          "Observe to confirm chassis connected & centered",
+          "Attach front wheel-axle A01 to chassis side",
+          "Attach rear wheel-axle A04 to opposite side",
+          "Stack light-blue body A05 + blue slope A03 + blue 2x4 cabin A10",
+          "Compare vs target and adjust"
+        ],
+        "notes": "Two prior NO_CONNECTION (C127,C050) = floating/no stud alignment. Candidate previews: grounded-on-studs options are C056,C101,C128,C181. Target: blue 2x6 plate chassis vertical centered on 6x8 baseplate; red-wheel black-plate axles A01/A04 at two rows on sides; light-blue 2x6 plate body A05 on top; blue slope A03 windshield; blue 2x4 brick A10 cabin. Trying C101 (seated, long axis). Inventory page2 (A13-A18) unseen. Budget: 36 decisions,13 actions."
+      },
+      "arenaProtocol": "brick-atlas-unified-visual-agent/1",
+      "arenaBranch": "normal",
+      "arenaRunId": "agent-normal-qwen-qwen3-8-flash-20261030-180728-3198",
+      "actor": "qwen/qwen3.8-flash",
+      "outputValidation": {
+        "jsonParseFailures": 0,
+        "argumentSchemaFailures": 0
+      }
+    },
+    {
+      "schema": "brick-atlas-evaluated-run/2",
+      "runId": "216dd5ffafe54e83a21bdca05a309ae4",
+      "model": "deepseek/deepseek-flash",
+      "caseId": "D:obj-city-car--t5--removed_piece--v01",
+      "conditionId": "D:obj-city-car--t5--removed_piece--v01/normal-branch",
+      "inputVersion": "brick-atlas-unified-visual-agent/1",
+      "canonicalTaskId": "D:obj-city-car--t3--control",
+      "objectId": "obj-city-car",
+      "sourceGroup": "procedural-family:road-vehicles",
+      "track": "whole-object-dynamic",
+      "taskType": "D0",
+      "targetContract": "exact-physical-parts-and-poses",
+      "sensorVersion": "visible-physical-part-boundaries/1",
+      "terminalStatus": "external_stop",
+      "success": null,
+      "scheduledEvents": 0,
+      "appliedEvents": 0,
+      "effectiveIncidentVerified": false,
+      "incidentExposure": "normal_control",
+      "repairApplicable": false,
+      "standaloneConditionalRecovery": null,
+      "stateMetrics": {
+        "finished": false,
+        "success": false,
+        "finalEquivalent": false,
+        "finalConstraintsSatisfied": true,
+        "fullPlacement": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 6,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "partTypeColor": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 6,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "shapeAndPose": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 6,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "colorAndPose": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 6,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "initialEditResidual": 6,
+        "finalEditResidual": 6,
+        "errorReduction": 0.0,
+        "missingTargetRecovered": 0.0,
+        "originalExcessCleared": null,
+        "initiallyCorrectPlacements": 0,
+        "finalDamageCount": 0,
+        "finalDamageRate": null,
+        "initialWasCorrect": false,
+        "scope": "Operable target placements only; unchanged scenery cannot inflate the score.",
+        "residualIsNotShortestRepairLength": true
+      },
+      "executionMetrics": {
+        "decisions": 8,
+        "manipulationAttempts": 0,
+        "acceptedMoves": 0,
+        "wellFormedManipulationAttempts": 0,
+        "physicalRejections": {},
+        "resourceRejections": {},
+        "legalActionRate": null,
+        "formatErrorResponses": 4,
+        "schemaErrorResponses": 3,
+        "inspectionCalls": 1,
+        "budgetRejectedResponses": 0,
+        "falseRepair": false,
+        "movesRelativeToWitness": 0.0,
+        "referenceIsNotOptimal": true,
+        "optimalityScore": null
+      },
+      "allIncidentCompletion": null,
+      "allWindowsRecovered": null,
+      "eventWindows": [],
+      "apiCallsByEnvironment": 0,
+      "apiCalls": 8,
+      "providerUsage": {
+        "calls": 8,
+        "costUSD": 0.030350652,
+        "costLabel": "USD charge / conservative native-provider estimate; see nativeCosts",
+        "confirmedUSD": 0,
+        "nativeCosts": {
+          "USD": 0.030350652,
+          "CNY": 0
+        },
+        "unsettledReservationsUSD": 0,
+        "settled": true,
+        "capUSD": 1.5,
+        "promptTokens": 49257,
+        "completionTokens": 14201,
+        "reasoningTokens": 13231,
+        "provider": "deepseek"
+      },
+      "actor": "deepseek/deepseek-flash",
+      "arenaRunId": "agent-normal-deepseek-deepseek-flash-20261030-174057-f0e1",
+      "arenaBranch": "normal",
+      "arenaProtocol": "brick-atlas-unified-visual-agent/1",
+      "experimentArm": "dynamic-visual-agent",
+      "agentProfile": {
+        "name": "visual-memory-pull-v1",
+        "initialViews": [
+          "isometric",
+          "rear",
+          "top"
+        ],
+        "initialInventoryPage": 1,
+        "targetRetention": "all three target views every decision",
+        "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+        "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+        "catalogueMemory": "latest inventory page and latest candidate/manual page",
+        "textHistoryTurns": 8,
+        "planItems": 6,
+        "planItemCharacters": 160,
+        "notesCharacters": 1200,
+        "maxActions": 16,
+        "maxObservations": 24,
+        "maxDecisions": 40,
+        "maxOutputTokensPerDecision": 2048,
+        "maxGeneratedTokens": 81920,
+        "reasoningPolicy": "low when supported; non-thinking-only backbones remain non-thinking; generated-token ceiling includes reported reasoning tokens",
+        "retries": 0,
+        "scriptedPrefix": 0,
+        "automaticRepair": false,
+        "nativeComputeEqualityClaim": false
+      },
+      "agentMemory": {
+        "plan": [
+          "Inspect A01 candidate list to learn placement handles/coords",
+          "Inspect A06 (blue 2x4) and A03 (slope) candidates",
+          "Attach axles A01/A04, blue body plate, light-blue layer, top, slope",
+          "Observe current views to verify vs target",
+          "Finish"
+        ],
+        "notes": "Target car on white 6x8 baseplate, long axis = 8. Blue 2-wide body strip centered (cols 3-4) spanning full length with front overhang. Stack ~3 plates: blue bottom (A06 2x4 + A10 2x2), light-blue middle (A05+A11 2x4), blue top 2x4 (A06?) - but only one A06; so top layer likely blue 2x4 = A06, bottom blue = A10+? Need candidate data. Rear view: black axle plate (A01/A04) with red wheels at two axle rows; light-blue band visible at sides. Front: blue slope A03, front blue 2x2 A10 with exposed studs at lowest front. Red/yellow parts (A02,A07,A08,A09,A12) probably decoys."
+      },
+      "repairPrerequisite": null,
+      "normalQualifiedRecovery": null,
+      "externalStop": {
+        "reason": "Identical current/target RGB but asymmetric raw transform scoring; audit before further paid execution",
+        "betweenCalls": true,
+        "offlineStateReplayIdentical": true,
+        "extraApiCalls": 0
+      },
+      "controllerMetrics": {
+        "decisions": 8,
+        "actionAttempts": 0,
+        "observationRequests": 1,
+        "observeCalls": 0,
+        "inspectCalls": 1,
+        "recallCalls": 0,
+        "formatErrors": 7,
+        "actionBudget": 16,
+        "observationBudget": 24,
+        "budget": 40
+      },
+      "inputMetrics": {
+        "imageCounts": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          8
+        ],
+        "totalImages": 57,
+        "maxImagesPerRequest": 8,
+        "imagePixels": 36211200,
+        "serializedRequestBytes": 1277768,
+        "configuredTwoImageLimit": false,
+        "initialImages": 7
+      },
+      "outputMetricCorrection": {
+        "reason": "Separate JSON parsing from valid JSON with invalid fields; execution unchanged",
+        "original": {
+          "formatErrorResponses": 7,
+          "schemaErrorResponses": 0
+        },
+        "apiCalls": 0
+      },
+      "outputValidation": {
+        "jsonParseFailures": 4,
+        "argumentSchemaFailures": 3
+      }
+    }
+  ],
+  "formalBenchmarkAggregate": false,
+  "incidentCondition": "same case/backbone/profile normal success required; independent rollout, no shared-prefix causal claim",
+  "notRun": [
+    {
+      "caseId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "model": "deepseek/deepseek-flash",
+      "condition": "incident",
+      "reason": "normal_not_successful"
+    },
+    {
+      "caseId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "model": "qwen/qwen3-vl-235b-a22b-instruct",
+      "condition": "incident",
+      "reason": "aliyun_model_unavailable"
+    },
+    {
+      "caseId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "model": "google/gemini-2.5-flash",
+      "condition": "incident",
+      "reason": "normal_not_successful"
+    },
+    {
+      "caseId": "SC:4096-1-alt-1488:dynamic:buried-repair",
+      "model": "qwen/qwen3.8-flash",
+      "condition": "incident",
+      "reason": "normal_not_successful"
+    },
+    {
+      "caseId": "D:obj-city-car--t5--removed_piece--v01",
+      "model": "deepseek/deepseek-flash",
+      "condition": "incident",
+      "reason": "normal_interrupted_or_service_error"
+    },
+    {
+      "caseId": "D:obj-city-car--t5--removed_piece--v01",
+      "model": "qwen/qwen3-vl-235b-a22b-instruct",
+      "condition": "normal",
+      "reason": "aliyun_model_unavailable"
+    },
+    {
+      "caseId": "D:obj-city-car--t5--removed_piece--v01",
+      "model": "qwen/qwen3-vl-235b-a22b-instruct",
+      "condition": "incident",
+      "reason": "aliyun_model_unavailable"
+    },
+    {
+      "caseId": "D:obj-city-car--t5--removed_piece--v01",
+      "model": "google/gemini-2.5-flash",
+      "condition": "normal",
+      "reason": "original_matrix_stopped_for_scorer_review_then_prioritized_declared_qwen_supplement"
+    },
+    {
+      "caseId": "D:obj-city-car--t5--removed_piece--v01",
+      "model": "google/gemini-2.5-flash",
+      "condition": "incident",
+      "reason": "original_matrix_stopped_for_scorer_review_then_prioritized_declared_qwen_supplement"
+    },
+    {
+      "caseId": "D:obj-city-car--t5--removed_piece--v01",
+      "model": "openai/gpt-6.1-sol",
+      "condition": "normal",
+      "reason": "original_matrix_stopped_for_scorer_review_then_prioritized_declared_qwen_supplement"
+    },
+    {
+      "caseId": "D:obj-city-car--t5--removed_piece--v01",
+      "model": "openai/gpt-6.1-sol",
+      "condition": "incident",
+      "reason": "original_matrix_stopped_for_scorer_review_then_prioritized_declared_qwen_supplement"
+    },
+    {
+      "caseId": "D:obj-city-car--t5--removed_piece--v01",
+      "model": "qwen/qwen3.8-flash",
+      "condition": "incident",
+      "reason": "normal_interrupted_or_service_error"
+    }
+  ],
+  "scorerCorrection": [
+    {
+      "runId": "agent-normal-deepseek-deepseek-flash-20261030-172831-0a56",
+      "beforeSuccess": false,
+      "afterSuccess": false,
+      "beforeF1": 0.0,
+      "afterF1": 0.0
+    },
+    {
+      "runId": "agent-normal-qwen-qwen3-vl-235b-a22b-instruct-20261030-173525-5b2c",
+      "beforeSuccess": null,
+      "afterSuccess": null,
+      "beforeF1": 0.0,
+      "afterF1": 0.0
+    },
+    {
+      "runId": "agent-normal-google-gemini-2-5-flash-20261030-173527-fbe4",
+      "beforeSuccess": false,
+      "afterSuccess": false,
+      "beforeF1": 0.0,
+      "afterF1": 0.0
+    },
+    {
+      "runId": "agent-normal-openai-gpt-6-1-sol-20261030-173919-47d5",
+      "beforeSuccess": false,
+      "afterSuccess": true,
+      "beforeF1": 0.6666666666666666,
+      "afterF1": 1.0
+    }
+  ],
+  "stoppedForScorerReview": {
+    "run": "agent-normal-deepseek-deepseek-flash-20261030-174057-f0e1",
+    "completedCalls": 8,
+    "reason": "Identical current/target RGB but asymmetric raw transform scoring; audit before further paid execution"
+  },
+  "planAmendments": [
+    {
+      "at": 1793354274.328057,
+      "reason": "Aliyun returned model_not_found for Qwen3-VL-235B; supplement with explicitly named available Qwen3.8 Flash; same agent profile",
+      "model": "qwen/qwen3.8-flash",
+      "cases": [
+        "SC:4096-1-alt-1488:dynamic:buried-repair",
+        "D:obj-city-car--t5--removed_piece--v01"
+      ]
+    }
+  ],
+  "finishedAt": 1793355290.3282921,
+  "coverageNote": "Incomplete selected pilot matrix, not a full ranking. All attempted conditions including service errors and external stops retained.",
+  "runtimeMaintenanceAfterPilot": {
+    "behaviorChanges": false,
+    "changes": [
+      "Backward-compatible native provider ledger accounting and legacy transport receipts",
+      "Separate malformed JSON from invalid arguments in metric bookkeeping"
+    ],
+    "pilotSource": "checks/pilot-runtime-source.zip",
+    "newApiCalls": 0
+  },
+  "ledger": {
+    "capUSD": 1.5,
+    "budgetAccountedUpperUSD": 1.2905815219999996,
+    "confirmedUSD": 1.0138207099999998,
+    "estimatedNativeCosts": {
+      "USD": 0.18988705199999995,
+      "CNY": 0.3108234
+    },
+    "unresolvedRequests": 1,
+    "includesInterruptedRuns": true,
+    "usdPerCnyBudgetFactor": 0.2
+  }
+}

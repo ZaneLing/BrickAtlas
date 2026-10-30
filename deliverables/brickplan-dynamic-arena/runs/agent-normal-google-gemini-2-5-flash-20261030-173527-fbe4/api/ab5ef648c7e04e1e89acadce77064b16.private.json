@@ -1,0 +1,71 @@
+{
+  "result": {
+    "id": "gen-1793352957-lbZaPYOQKdzfujYw4GwF",
+    "object": "chat.completion",
+    "created": 1793352957,
+    "model": "google/gemini-2.5-flash",
+    "provider": "Google AI Studio",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "STOP",
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"tool\": \"observe\",\n  \"args\": {\n    \"view\": \"angled\",\n    \"show\": [\n      \"current\"\n    ]\n  },\n  \"plan\": [\n    \"Retry observing the current scene to confirm no changes occurred.\",\n    \"Re-inspect part A007 to get fresh candidate placements if needed.\",\n    \"Place the first dark grey 1x2 brick (A007) on the left side of the yellow base.\",\n    \"Place the second dark grey 1x2 brick (A007) on the right side to complete the first 2x2 layer.\",\n    \"Place two white 1x2 bricks (A005/A006) to form the second 2x2 layer.\",\n    \"Place two dark grey 1x2 bricks (A007) to form the third 2x2 layer.\"\n  ],\n  \"notes\": \"The previous 'observe' action resulted in an 'INVALID_TOOL_REQUEST' error, which is unexpected as the arguments appear valid according to the protocol. I will retry the exact same 'observe' action to get a fresh view of the current scene. This is crucial to ensure the environment is responsive and to verify the state before attempting another 'attach' after multiple NO_CONNECTION errors. The overall plan to build 2x2 layers using 1x2 bricks remains unchanged.\"\n}",
+          "refusal": null,
+          "reasoning": "**Analyzing Tool Parameters**\n\nI've been investigating an \"INVALID_TOOL_REQUEST\" error arising from an `observe` call. The problematic call used `show: [\"current\"]` and `view: \"angled\"`. I'm now cross-referencing these parameters against the `availableTools` section within the protocol to pinpoint the precise validation failure. The goal is to determine which arguments are invalid and why.\n\n\n**Re-evaluating Validation Logic**\n\nI'm now certain that the arguments passed to the `observe` tool should be valid, specifically `view: \"angled\"` and `show: [\"current\"]`. I've re-examined the `availableTools` section within the protocol and confirmed that these parameters are within the acceptable ranges. The mystery deepens; the `INVALID_TOOL_REQUEST` error appears to be inaccurate or there is a constraint I am missing. I'm going to look closer at tool interaction sequencing.\n\n\n**Investigating Protocol Mismatch**\n\nI'm now completely baffled. After meticulously re-examining the `observe` tool's arguments against the `availableTools` definition, I can't find a reason for the \"INVALID_TOOL_REQUEST\" error. Specifically, `view: \"angled\"` and `show: [\"current\"]` are both valid according to the protocol. I'm starting to think the error message is simply incorrect, or that there's some very subtle sequencing issue at play that I'm not yet grasping. I will analyze the test cases to verify assumptions.\n\n\n",
+          "reasoning_details": [
+            {
+              "type": "reasoning.text",
+              "text": "**Analyzing Tool Parameters**\n\nI've been investigating an \"INVALID_TOOL_REQUEST\" error arising from an `observe` call. The problematic call used `show: [\"current\"]` and `view: \"angled\"`. I'm now cross-referencing these parameters against the `availableTools` section within the protocol to pinpoint the precise validation failure. The goal is to determine which arguments are invalid and why.\n\n\n**Re-evaluating Validation Logic**\n\nI'm now certain that the arguments passed to the `observe` tool should be valid, specifically `view: \"angled\"` and `show: [\"current\"]`. I've re-examined the `availableTools` section within the protocol and confirmed that these parameters are within the acceptable ranges. The mystery deepens; the `INVALID_TOOL_REQUEST` error appears to be inaccurate or there is a constraint I am missing. I'm going to look closer at tool interaction sequencing.\n\n\n**Investigating Protocol Mismatch**\n\nI'm now completely baffled. After meticulously re-examining the `observe` tool's arguments against the `availableTools` definition, I can't find a reason for the \"INVALID_TOOL_REQUEST\" error. Specifically, `view: \"angled\"` and `show: [\"current\"]` are both valid according to the protocol. I'm starting to think the error message is simply incorrect, or that there's some very subtle sequencing issue at play that I'm not yet grasping. I will analyze the test cases to verify assumptions.\n\n\n",
+              "format": "google-gemini-v1",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 7078,
+      "completion_tokens": 710,
+      "total_tokens": 7788,
+      "cost": 0.00362732,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 1004,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00362732,
+        "upstream_inference_prompt_cost": 0.00185232,
+        "upstream_inference_completions_cost": 0.001775
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 407,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  },
+  "requestBodySha256": "ebc797bf10e83a745a60b3a9e47d82b4fd5a593a0fd4cc626079ee225241e2b4",
+  "requestShape": {
+    "model": "google/gemini-2.5-flash",
+    "provider": "openrouter",
+    "images": 8,
+    "maxTokens": 2048,
+    "reasoning": {
+      "effort": "low"
+    }
+  },
+  "costUSD": 0.00362732,
+  "costBasis": "provider usage.cost",
+  "nativeCurrency": "USD",
+  "latencySeconds": 5.673,
+  "archiveId": "ab5ef648c7e04e1e89acadce77064b16"
+}

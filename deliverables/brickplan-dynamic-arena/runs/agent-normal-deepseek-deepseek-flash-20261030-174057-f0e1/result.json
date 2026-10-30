@@ -1,0 +1,203 @@
+{
+  "schema": "brick-atlas-evaluated-run/2",
+  "runId": "216dd5ffafe54e83a21bdca05a309ae4",
+  "model": "deepseek/deepseek-flash",
+  "caseId": "D:obj-city-car--t5--removed_piece--v01",
+  "conditionId": "D:obj-city-car--t5--removed_piece--v01/normal-branch",
+  "inputVersion": "brick-atlas-unified-visual-agent/1",
+  "canonicalTaskId": "D:obj-city-car--t3--control",
+  "objectId": "obj-city-car",
+  "sourceGroup": "procedural-family:road-vehicles",
+  "track": "whole-object-dynamic",
+  "taskType": "D0",
+  "targetContract": "exact-physical-parts-and-poses",
+  "sensorVersion": "visible-physical-part-boundaries/1",
+  "terminalStatus": "external_stop",
+  "success": null,
+  "scheduledEvents": 0,
+  "appliedEvents": 0,
+  "effectiveIncidentVerified": false,
+  "incidentExposure": "normal_control",
+  "repairApplicable": false,
+  "standaloneConditionalRecovery": null,
+  "stateMetrics": {
+    "finished": false,
+    "success": false,
+    "finalEquivalent": false,
+    "finalConstraintsSatisfied": true,
+    "fullPlacement": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 6,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "partTypeColor": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 6,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "shapeAndPose": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 6,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "colorAndPose": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 6,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "initialEditResidual": 6,
+    "finalEditResidual": 6,
+    "errorReduction": 0.0,
+    "missingTargetRecovered": 0.0,
+    "originalExcessCleared": null,
+    "initiallyCorrectPlacements": 0,
+    "finalDamageCount": 0,
+    "finalDamageRate": null,
+    "initialWasCorrect": false,
+    "scope": "Operable target placements only; unchanged scenery cannot inflate the score.",
+    "residualIsNotShortestRepairLength": true
+  },
+  "executionMetrics": {
+    "decisions": 8,
+    "manipulationAttempts": 0,
+    "acceptedMoves": 0,
+    "wellFormedManipulationAttempts": 0,
+    "physicalRejections": {},
+    "resourceRejections": {},
+    "legalActionRate": null,
+    "formatErrorResponses": 4,
+    "schemaErrorResponses": 3,
+    "inspectionCalls": 1,
+    "budgetRejectedResponses": 0,
+    "falseRepair": false,
+    "movesRelativeToWitness": 0.0,
+    "referenceIsNotOptimal": true,
+    "optimalityScore": null
+  },
+  "allIncidentCompletion": null,
+  "allWindowsRecovered": null,
+  "eventWindows": [],
+  "apiCallsByEnvironment": 0,
+  "apiCalls": 8,
+  "providerUsage": {
+    "calls": 8,
+    "costUSD": 0.030350652,
+    "costLabel": "USD charge / conservative native-provider estimate; see nativeCosts",
+    "confirmedUSD": 0,
+    "nativeCosts": {
+      "USD": 0.030350652,
+      "CNY": 0
+    },
+    "unsettledReservationsUSD": 0,
+    "settled": true,
+    "capUSD": 1.5,
+    "promptTokens": 49257,
+    "completionTokens": 14201,
+    "reasoningTokens": 13231,
+    "provider": "deepseek"
+  },
+  "actor": "deepseek/deepseek-flash",
+  "arenaRunId": "agent-normal-deepseek-deepseek-flash-20261030-174057-f0e1",
+  "arenaBranch": "normal",
+  "arenaProtocol": "brick-atlas-unified-visual-agent/1",
+  "experimentArm": "dynamic-visual-agent",
+  "agentProfile": {
+    "name": "visual-memory-pull-v1",
+    "initialViews": [
+      "isometric",
+      "rear",
+      "top"
+    ],
+    "initialInventoryPage": 1,
+    "targetRetention": "all three target views every decision",
+    "observationRule": "initial views, then only agent-requested images; no automatic scene after a move",
+    "sceneMemory": "latest observation plus one preceding observation; timestamps retained",
+    "catalogueMemory": "latest inventory page and latest candidate/manual page",
+    "textHistoryTurns": 8,
+    "planItems": 6,
+    "planItemCharacters": 160,
+    "notesCharacters": 1200,
+    "maxActions": 16,
+    "maxObservations": 24,
+    "maxDecisions": 40,
+    "maxOutputTokensPerDecision": 2048,
+    "maxGeneratedTokens": 81920,
+    "reasoningPolicy": "low when supported; non-thinking-only backbones remain non-thinking; generated-token ceiling includes reported reasoning tokens",
+    "retries": 0,
+    "scriptedPrefix": 0,
+    "automaticRepair": false,
+    "nativeComputeEqualityClaim": false
+  },
+  "agentMemory": {
+    "plan": [
+      "Inspect A01 candidate list to learn placement handles/coords",
+      "Inspect A06 (blue 2x4) and A03 (slope) candidates",
+      "Attach axles A01/A04, blue body plate, light-blue layer, top, slope",
+      "Observe current views to verify vs target",
+      "Finish"
+    ],
+    "notes": "Target car on white 6x8 baseplate, long axis = 8. Blue 2-wide body strip centered (cols 3-4) spanning full length with front overhang. Stack ~3 plates: blue bottom (A06 2x4 + A10 2x2), light-blue middle (A05+A11 2x4), blue top 2x4 (A06?) - but only one A06; so top layer likely blue 2x4 = A06, bottom blue = A10+? Need candidate data. Rear view: black axle plate (A01/A04) with red wheels at two axle rows; light-blue band visible at sides. Front: blue slope A03, front blue 2x2 A10 with exposed studs at lowest front. Red/yellow parts (A02,A07,A08,A09,A12) probably decoys."
+  },
+  "repairPrerequisite": null,
+  "normalQualifiedRecovery": null,
+  "externalStop": {
+    "reason": "Identical current/target RGB but asymmetric raw transform scoring; audit before further paid execution",
+    "betweenCalls": true,
+    "offlineStateReplayIdentical": true,
+    "extraApiCalls": 0
+  },
+  "controllerMetrics": {
+    "decisions": 8,
+    "actionAttempts": 0,
+    "observationRequests": 1,
+    "observeCalls": 0,
+    "inspectCalls": 1,
+    "recallCalls": 0,
+    "formatErrors": 7,
+    "actionBudget": 16,
+    "observationBudget": 24,
+    "budget": 40
+  },
+  "inputMetrics": {
+    "imageCounts": [
+      7,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7,
+      8
+    ],
+    "totalImages": 57,
+    "maxImagesPerRequest": 8,
+    "imagePixels": 36211200,
+    "serializedRequestBytes": 1277768,
+    "configuredTwoImageLimit": false,
+    "initialImages": 7
+  },
+  "outputMetricCorrection": {
+    "reason": "Separate JSON parsing from valid JSON with invalid fields; execution unchanged",
+    "original": {
+      "formatErrorResponses": 7,
+      "schemaErrorResponses": 0
+    },
+    "apiCalls": 0
+  },
+  "outputValidation": {
+    "jsonParseFailures": 4,
+    "argumentSchemaFailures": 3
+  }
+}

@@ -260,7 +260,10 @@ class ToolArena:
             inputImageHashes=[i['sha256'] for i in image_refs],inputImagePixels=sum(i['width']*i['height'] for i in image_refs),
             requestBytes=len(json.dumps(provider,ensure_ascii=False).encode()),requestContextSha256=digest(provider),providerReceipt=None)
         if receipt and not self.session.actor.startswith('scripted'):
-            call['providerReceipt']=dict(id=receipt['result']['id'],requestBodySha256=receipt['requestBodySha256'],costUSD=receipt['result']['usage']['cost'],
+            call['providerReceipt']=dict(id=receipt['result']['id'],requestBodySha256=receipt['requestBodySha256'],
+                costUSD=receipt.get('costUSD',receipt['result']['usage'].get('cost')),
+                costBasis=receipt.get('costBasis','provider usage.cost'),nativeCurrency=receipt.get('nativeCurrency','USD'),
+                archiveId=receipt.get('archiveId'),
                 inputTokens=receipt['result']['usage'].get('prompt_tokens'),outputTokens=receipt['result']['usage'].get('completion_tokens'))
         self.calls.append(call)
         history_result={k:v for k,v in output.items() if k!='images'}
@@ -279,7 +282,8 @@ class ToolArena:
                 self.phase = 'thinking'; self.publish()
                 reply = self.transport(provider)
             except Exception as exc:
-                self.session.terminal = 'service_error' if provider is not None else 'harness_error'
+                from unified_agent.providers import CostLimit
+                self.session.terminal = 'client_budget_exhausted' if isinstance(exc,CostLimit) else 'service_error' if provider is not None else 'harness_error'
                 self.calls.append(dict(index=number, modelInput=readable,
                     inputImageHashes=[i['sha256'] for i in image_refs],inputImagePixels=sum(i['width']*i['height'] for i in image_refs),
                     requestBytes=len(json.dumps(provider,ensure_ascii=False).encode()) if provider is not None else 0,

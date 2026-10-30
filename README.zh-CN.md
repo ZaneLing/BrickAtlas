@@ -17,13 +17,14 @@
 | 每个模型、每类错误与题数 | [模型和题目列表](deliverables/brick-atlas-dataset-v1/MODEL-AND-QUESTION-LIST.zh-CN.md) |
 | 图片、当前状态、目标、GT | [本地题库页面](http://127.0.0.1:8810/dataset/) · [Markdown 示例](deliverables/brick-atlas-dataset-v1/EXAMPLES.zh-CN.md) |
 | 输入输出及评分 | [接口与 metrics](deliverables/brick-atlas-dataset-v1/INPUT-OUTPUT-AND-METRICS.zh-CN.md) |
+| 统一视觉 Agent、真实 API 试跑 | [结果、回放、裁判修复与费用](deliverables/brick-atlas-unified-agent-v1/README.zh-CN.md) · [三组实验设计](deliverables/brick-atlas-unified-agent-v1/EXPERIMENTS.zh-CN.md) |
 | 为什么和旧版五千多题不同 | [题量变化说明](deliverables/brick-atlas-dataset-v1/COUNT-CHANGES.zh-CN.md) |
 | 英文论文 | [正文 PDF](paper/brickplan-cvpr/main.pdf) · [补充材料](paper/brickplan-cvpr/supplement.pdf) |
 | 论文源码和预留实验表 | [论文说明](paper/brickplan-cvpr/README.zh-CN.md) · [Overleaf 包](paper/brickplan-cvpr/brickplan-cvpr-overleaf.zip) |
 
 动态题统一进入 Arena：模型主动请求观察、选择角度、安装、拆卸、回看和结束。每次只操作一块；允许不同合法顺序。正式结果以实际最终状态为准，不照着 GT 的中间顺序判分。
 
-**目前是程序检查通过，尚未完成本版独立真人审查、独立物理验证和正式 API 模型实验。** 参考脚本成功不能当作模型成功。本次检查不调用付费 API。
+**目前是程序检查通过，尚未完成本版独立真人审查、独立物理验证和全库正式模型实验。** 已归档一轮统一视觉 Agent 的真实 API 小样本试跑，不能当作全库排行榜。参考脚本成功不能当作模型成功。Qwen 固定走阿里云，DeepSeek 固定走官方 API，规则保存在 `AGENTS.md`。
 
 ## 本地打开
 

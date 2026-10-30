@@ -16,13 +16,14 @@ A benchmark connecting static brick repair with autonomous recovery during conti
 | Current states, targets, and GT | [Local review page](http://127.0.0.1:8810/dataset/) · [illustrated examples](deliverables/brick-atlas-dataset-v1/EXAMPLES.zh-CN.md) |
 | Input/output and metrics | [Protocol guide](deliverables/brick-atlas-dataset-v1/INPUT-OUTPUT-AND-METRICS.zh-CN.md) |
 | Paged sensing, matched-state comparison and portable runtime | [2026-10-30 implementation and checks](deliverables/brick-atlas-reliability-v1/README.zh-CN.md) |
+| Shared visual agent and real API pilot | [Results, replay, scorer correction and costs](deliverables/brick-atlas-unified-agent-v1/README.zh-CN.md) · [experiment groups](deliverables/brick-atlas-unified-agent-v1/EXPERIMENTS.zh-CN.md) |
 | Paper | [Main PDF](paper/brickplan-cvpr/main.pdf) · [supplement](paper/brickplan-cvpr/supplement.pdf) · [Overleaf ZIP](paper/brickplan-cvpr/brickplan-cvpr-overleaf.zip) |
 | Build instructions and pending study | [Paper guide](paper/brickplan-cvpr/README.zh-CN.md) |
 | Historical count reconciliation | [Count changes](deliverables/brick-atlas-dataset-v1/COUNT-CHANGES.zh-CN.md) |
 
 Dynamic agents explicitly request observations, inspect parts/instructions, attach, detach, recall, and finish. One physical part moves per action. Final physical equivalence accepts alternative legal orders. Service failures and untriggered incidents are not mislabeled as repair failures.
 
-**Status: machine checked; independent human qualification, independent physical validation, and formal current-interface model experiments remain pending.** Scripted reference success is not model performance. This revision makes no paid API calls.
+**Status: machine checked; independent human qualification, independent physical validation, and full current-interface model experiments remain pending.** A selected paid visual-agent pilot is now archived separately; it is not a full ranking. Scripted reference success is not model performance. Qwen uses Aliyun and DeepSeek uses its native API, as specified in `AGENTS.md`.
 
 ## Local use
 

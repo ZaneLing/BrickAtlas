@@ -28,6 +28,12 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed = urlparse(self.path)
         try:
+            if parsed.path in ('/agent','/agent/'):
+                from unified_agent import __file__ as agent_file
+                return self.send(Path(agent_file).with_name('viewer.html').read_bytes(),'text/html; charset=utf-8')
+            if parsed.path == '/api/agent-report':
+                from unified_agent import OUT as AGENT_OUT
+                return self.send((AGENT_OUT/'pilot.json').read_bytes(),'application/json')
             if parsed.path in ('/dataset','/dataset/'):
                 self.send_response(302);self.send_header('Location','/dataset/index.html');self.end_headers();return
             if parsed.path.startswith('/dataset/'):
@@ -69,6 +75,14 @@ class Handler(BaseHTTPRequestHandler):
                 number = query.get('call', [''])[0]
                 if not number.isdecimal() or not 1 <= int(number) <= 10000:
                     return self.send_error(400)
+                state=json.loads((directory/'spectator.json').read_text())
+                calls=state.get('calls',[])
+                receipt=(calls[int(number)-1].get('providerReceipt') or {}) if int(number)<=len(calls) else {}
+                archive_id=receipt.get('archiveId','')
+                if runid.startswith('agent-') or archive_id:
+                    if not re.fullmatch(r'[0-9a-f]{32}',archive_id):return self.send_error(404,'No provider receipt')
+                    suffix='.request.json.gz' if parsed.path=='/api/raw-request' else '.response.private.json.gz'
+                    return self.send(gzip.decompress((directory/'api'/(archive_id+suffix)).read_bytes()),'application/json')
                 ledger_name = ('unified-ledger.private.json' if runid.startswith('arena-') else 'normal-pilot-ledger.private.json' if
                     runid.startswith(('normal-', 'incident-')) else 'api-ledger.private.json')
                 ledger = json.loads((OUT / ledger_name).read_text())

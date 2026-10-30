@@ -1,0 +1,71 @@
+{
+  "result": {
+    "id": "gen-1793352974-WqKHLD4cpzWqZN6Cooat",
+    "object": "chat.completion",
+    "created": 1793352974,
+    "model": "google/gemini-2.5-flash",
+    "provider": "Google AI Studio",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "STOP",
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"tool\": \"inspect\",\n  \"args\": {\n    \"partId\": \"A007\",\n    \"page\": 1\n  },\n  \"plan\": [\n    \"Re-inspect part A007 to refresh candidate placements and confirm environment responsiveness.\",\n    \"Place the first dark grey 1x2 brick (A007) on the left side of the yellow base.\",\n    \"Place the second dark grey 1x2 brick (A007) on the right side to complete the first 2x2 layer.\",\n    \"Place two white 1x2 bricks (A005/A006) to form the second 2x2 layer.\",\n    \"Place two dark grey 1x2 bricks (A007) to form the third 2x2 layer.\",\n    \"Observe the final assembly to confirm it matches the target, then finish.\"\n  ],\n  \"notes\": \"I've encountered multiple NO_CONNECTION and INVALID_TOOL_REQUEST errors when trying to 'attach' and 'observe'. The `observe` tool seems to be problematic. I will try `inspect` on part A007 again, as this was successful initially and provides candidate placements. This should also confirm if the environment is responsive. The plan to build 2x2 layers using two 1x2 bricks each remains unchanged. Candidate C00019 for A007 is still the intended first placement, assuming it's still valid after re-inspection.\"\n}",
+          "refusal": null,
+          "reasoning": "**Analyzing Connection Issues**\n\nI'm currently grappling with persistent `NO_CONNECTION` and `INVALID_TOOL_REQUEST` errors, the latest one being an invalid request for an angled view. I'm focusing on the `availableTools` to understand what's going wrong. My analysis is ongoing, but I will get to the bottom of this.\n\n\n**Re-evaluating Observational Limits**\n\nI've been re-evaluating the persistent connection and tool request issues. I've re-examined the latest protocol information and, although the arguments seem valid, I still can't get a live observation. Specifically, views such as `angled`, along with the `show` arguments are failing, despite being explicitly listed in the tool's specifications. It appears I'm locked in a state of stale data. I believe the core problem is obtaining live data.\n\n\n**Investigating Stale Data**\n\nI'm now zeroing in on the \"stale data\" issue. The observations I'm receiving consistently report `observedAfterDecision: 0` and `physicalActionsSinceCapture: 3`, indicating they are not live.  I've confirmed the `angled` view and `show` parameters are valid according to the protocol, but the requests continue to fail. The core issue remains obtaining live observation data, and I'm drilling down into the tool's behavior and the possibility of environmental factors impacting data freshness. I plan to re-examine how I am calling the tools.\n\n\n",
+          "reasoning_details": [
+            {
+              "type": "reasoning.text",
+              "text": "**Analyzing Connection Issues**\n\nI'm currently grappling with persistent `NO_CONNECTION` and `INVALID_TOOL_REQUEST` errors, the latest one being an invalid request for an angled view. I'm focusing on the `availableTools` to understand what's going wrong. My analysis is ongoing, but I will get to the bottom of this.\n\n\n**Re-evaluating Observational Limits**\n\nI've been re-evaluating the persistent connection and tool request issues. I've re-examined the latest protocol information and, although the arguments seem valid, I still can't get a live observation. Specifically, views such as `angled`, along with the `show` arguments are failing, despite being explicitly listed in the tool's specifications. It appears I'm locked in a state of stale data. I believe the core problem is obtaining live data.\n\n\n**Investigating Stale Data**\n\nI'm now zeroing in on the \"stale data\" issue. The observations I'm receiving consistently report `observedAfterDecision: 0` and `physicalActionsSinceCapture: 3`, indicating they are not live.  I've confirmed the `angled` view and `show` parameters are valid according to the protocol, but the requests continue to fail. The core issue remains obtaining live observation data, and I'm drilling down into the tool's behavior and the possibility of environmental factors impacting data freshness. I plan to re-examine how I am calling the tools.\n\n\n",
+              "format": "google-gemini-v1",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 8101,
+      "completion_tokens": 734,
+      "total_tokens": 8835,
+      "cost": 0.00372314,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2008,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00372314,
+        "upstream_inference_prompt_cost": 0.00188814,
+        "upstream_inference_completions_cost": 0.001835
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 408,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  },
+  "requestBodySha256": "809395230994afd523b8b3cc87b6879eab002881ad09e5f9c254aa4db20987b0",
+  "requestShape": {
+    "model": "google/gemini-2.5-flash",
+    "provider": "openrouter",
+    "images": 8,
+    "maxTokens": 2048,
+    "reasoning": {
+      "effort": "low"
+    }
+  },
+  "costUSD": 0.00372314,
+  "costBasis": "provider usage.cost",
+  "nativeCurrency": "USD",
+  "latencySeconds": 5.655,
+  "archiveId": "1fd16a81dee14622a60e6398630a8868"
+}

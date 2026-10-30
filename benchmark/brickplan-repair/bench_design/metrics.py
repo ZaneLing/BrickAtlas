@@ -71,7 +71,7 @@ def execution_metrics(records,*,initial_was_correct=False,reference_moves=None):
 
 
 VALID_TERMINAL={'completed','model_budget_exhausted'}
-ALL_TERMINAL=VALID_TERMINAL|{'service_error','harness_error','external_stop'}
+ALL_TERMINAL=VALID_TERMINAL|{'service_error','harness_error','external_stop','client_budget_exhausted'}
 
 
 def run_status(record):

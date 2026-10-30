@@ -1,0 +1,71 @@
+{
+  "result": {
+    "id": "gen-1793352962-e45EbUSDBvUFdH2LZhe6",
+    "object": "chat.completion",
+    "created": 1793352962,
+    "model": "google/gemini-2.5-flash",
+    "provider": "Google AI Studio",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "STOP",
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"tool\": \"observe\",\n  \"args\": {\n    \"view\": \"angled\"\n  },\n  \"plan\": [\n    \"Attempt a simpler 'observe' to get a fresh view of the current scene.\",\n    \"If successful, re-inspect part A007 to get fresh candidate placements.\",\n    \"Place the first dark grey 1x2 brick (A007) on the left side of the yellow base.\",\n    \"Place the second dark grey 1x2 brick (A007) on the right side to complete the first 2x2 layer.\",\n    \"Place two white 1x2 bricks (A005/A006) to form the second 2x2 layer.\",\n    \"Place two dark grey 1x2 bricks (A007) to form the third 2x2 layer.\"\n  ],\n  \"notes\": \"The previous 'observe' actions with `show: [\\\"current\\\"]` resulted in 'INVALID_TOOL_REQUEST'. This is unexpected as the arguments seemed valid. I will try a simpler 'observe' call, only specifying `view: \\\"angled\\\"`, to see if the environment is responsive and if this argument combination is accepted. This is critical to get a live view and confirm the state after multiple NO_CONNECTION errors and before attempting any more 'attach' actions. The overall plan to build 2x2 layers using 1x2 bricks remains unchanged.\"\n}",
+          "refusal": null,
+          "reasoning": "**Analyzing Tool Usage**\n\nI'm puzzled. My last two attempts to use the \"observe\" tool failed, reporting an \"INVALID_TOOL_REQUEST.\" This is strange, as \"observe\" is usually a reliable standard tool, especially with \"view\" and \"show\" arguments. I will investigate available tools and their usage details.\n\n\n**Re-evaluating Observe Failures**\n\nI'm still stuck with the \"observe\" tool failing. My analysis of the available tools and their arguments in the protocol section hasn't yielded any immediate answers. The `lastToolResult` shows `stateChanged: false` after the last unsuccessful attempts. The failure is particularly odd given that the arguments I used, such as \"view: angled\" and \"show: [\\\"current\\\"]\", appear valid based on the protocol examples. I still need to get a fresh observation to move forward, but this tool seems unavailable, so I cannot get a good view of the scene.\n\n\n**Testing Tool Alternatives**\n\nI'm frustrated. The \"observe\" tool continues to fail, even with a streamlined \"view: 'angled'\" call. It still gives the dreaded \"INVALID_TOOL_REQUEST\". I reviewed the protocol and tools definitions again. Since the environment and tool appear problematic, I will try a different \"view\" option, possibly \"top\". The `stateChanged: false` and `historicalNotLive: true` properties of the scene state are not very helpful. I need to bypass this issue and get a current view.\n\n\n",
+          "reasoning_details": [
+            {
+              "type": "reasoning.text",
+              "text": "**Analyzing Tool Usage**\n\nI'm puzzled. My last two attempts to use the \"observe\" tool failed, reporting an \"INVALID_TOOL_REQUEST.\" This is strange, as \"observe\" is usually a reliable standard tool, especially with \"view\" and \"show\" arguments. I will investigate available tools and their usage details.\n\n\n**Re-evaluating Observe Failures**\n\nI'm still stuck with the \"observe\" tool failing. My analysis of the available tools and their arguments in the protocol section hasn't yielded any immediate answers. The `lastToolResult` shows `stateChanged: false` after the last unsuccessful attempts. The failure is particularly odd given that the arguments I used, such as \"view: angled\" and \"show: [\\\"current\\\"]\", appear valid based on the protocol examples. I still need to get a fresh observation to move forward, but this tool seems unavailable, so I cannot get a good view of the scene.\n\n\n**Testing Tool Alternatives**\n\nI'm frustrated. The \"observe\" tool continues to fail, even with a streamlined \"view: 'angled'\" call. It still gives the dreaded \"INVALID_TOOL_REQUEST\". I reviewed the protocol and tools definitions again. Since the environment and tool appear problematic, I will try a different \"view\" option, possibly \"top\". The `stateChanged: false` and `historicalNotLive: true` properties of the scene state are not very helpful. I need to bypass this issue and get a current view.\n\n\n",
+              "format": "google-gemini-v1",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 7415,
+      "completion_tokens": 722,
+      "total_tokens": 8137,
+      "cost": 0.00348707,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2009,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00348707,
+        "upstream_inference_prompt_cost": 0.00168207,
+        "upstream_inference_completions_cost": 0.001805
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 407,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  },
+  "requestBodySha256": "e907d1e473f8b0072e33748c38c0df80c8d7a0b561e12bcc3338279faa9b3215",
+  "requestShape": {
+    "model": "google/gemini-2.5-flash",
+    "provider": "openrouter",
+    "images": 8,
+    "maxTokens": 2048,
+    "reasoning": {
+      "effort": "low"
+    }
+  },
+  "costUSD": 0.00348707,
+  "costBasis": "provider usage.cost",
+  "nativeCurrency": "USD",
+  "latencySeconds": 5.59,
+  "archiveId": "9318cb7ff7be4747a31cfa21d8b4026b"
+}

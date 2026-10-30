@@ -48,6 +48,14 @@ def catalogue(model_id=MODEL, output=None):
 
 class Transport:
     def __init__(self, directory, cap=1.0, model=MODEL, ledger_path=None):
+        # Permanent user routing preference. Keep historical artifacts intact;
+        # future legacy runner invocations must not send these families to OR.
+        self._native = None
+        if model.startswith(('qwen/','deepseek/','qwen','deepseek-','qvq')):
+            from unified_agent.providers import PaidTransport
+            self._native=PaidTransport(directory,cap,model,ledger_path=ledger_path or OUT/'api-ledger.private.json')
+            self.directory,self.model,self.latest=Path(directory),model,None
+            return
         assert 0 < cap <= 10.0
         self.directory = Path(directory)
         self.model = model
@@ -62,7 +70,10 @@ class Transport:
         self.output_price = float(self.catalogue['pricing']['completion'])
 
     def __call__(self, payload):
-        if self.ledger_path == OUT / 'api-ledger.private.json' and any(c['status'] != 'settled' for c in self.ledger['charges']):
+        if getattr(self,'_native',None) is not None:
+            reply=self._native(payload);self.latest=self._native.latest
+            return reply
+        if any(c['status'] in ('pending','uncertain') and c.get('provider','openrouter')=='openrouter' for c in self.ledger['charges']):
             raise RuntimeError('Unsettled API charge; reconcile before any further call')
         # Bound text by UTF-8 bytes and images by 16K tokens each. The provider
         # price cap matches this bound; oversize images/requests are rejected.
@@ -82,10 +93,11 @@ class Transport:
                         image_count += 1
         assert image_count <= 20 and text_bytes <= 250_000
         reserved = (text_bytes + image_count * 16384) * self.input_price + 2048 * self.output_price + image_count * .005
-        spent = sum(c['actualUSD'] if c['actualUSD'] is not None else c['reservedUSD']
-                    for c in self.ledger['charges'])
+        from unified_agent.providers import total
+        spent = total(self.ledger)
         if spent + reserved > self.ledger['capUSD']:
-            raise RuntimeError('Arena demo budget limit reached before request')
+            from unified_agent.providers import CostLimit
+            raise CostLimit('Arena demo budget limit reached before request')
         entry = dict(id=uuid.uuid4().hex, model=self.model, reservedUSD=reserved,
             actualUSD=None, status='pending', createdAt=time.time(), run=self.directory.name)
         self.ledger['charges'].append(entry)
@@ -157,6 +169,7 @@ class Transport:
             pending.unlink(missing_ok=True)
 
     def usage(self):
+        if getattr(self,'_native',None) is not None:return self._native.usage()
         charges = [c for c in self.ledger['charges'] if c['run'] == self.directory.name]
         return dict(calls=len(charges), costUSD=sum(c['actualUSD'] or 0 for c in charges),
             unsettledReservationsUSD=sum(c['reservedUSD'] for c in charges if c['status'] != 'settled'),

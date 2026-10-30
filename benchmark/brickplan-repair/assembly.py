@@ -15,7 +15,7 @@ from geometry import parse_ldr
 from bricknet.graph import _part_info
 from bricknet.core import _STUD_MATES, _AXLE_MATES
 
-PROTOCOL = 'connector-workbench/4'
+PROTOCOL = 'connector-workbench/5'
 
 @lru_cache(maxsize=256)
 def info(canonical):
@@ -181,9 +181,14 @@ class Assembly:
         # Explicit symmetry of plain rectangular LEGO bricks/plates. Do not
         # infer symmetry for hinges, clips, slopes, printed or asymmetric parts.
         rectangles = {'3001','3002','3003','3004','3005','3008','3009','3010',
-                      '3020','3021','3022','3023','3024','3031','3032','3034',
+                      '3020','3021','3022','3023','3023b','3024','3031','3032','3034',
                       '3035','3036','3460','3666','3710','4477'}
         squares = {'3003','3005','3022','3024','3031'}
+        # BrickNet resolves the plain LDraw 3023 plate to canonical 3023b with
+        # the identity alias transform. It has the same half-turn symmetry.
+        # Do not strip arbitrary suffixes: printed/asymmetric parts must retain
+        # their own orientation. Regression evidence includes connector/mesh
+        # checks and a real API rollout, not just equality in one rendered view.
         result = []
         for key in state.values():
             if not key: continue

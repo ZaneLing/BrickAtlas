@@ -1,0 +1,71 @@
+{
+  "result": {
+    "id": "gen-1793352968-938wTYmObevDHBcswBqL",
+    "object": "chat.completion",
+    "created": 1793352968,
+    "model": "google/gemini-2.5-flash",
+    "provider": "Google AI Studio",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "STOP",
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"tool\": \"observe\",\n  \"args\": {\n    \"view\": \"angled\",\n    \"show\": [\n      \"current\"\n    ]\n  },\n  \"plan\": [\n    \"Observe the current scene to confirm the environment is responsive and state.\",\n    \"Place the first dark grey 1x2 brick (A007) on the left side of the yellow base.\",\n    \"Place the second dark grey 1x2 brick (A007) on the right side to complete the first 2x2 layer.\",\n    \"Place two white 1x2 bricks (A005/A006) to form the second 2x2 layer.\",\n    \"Place two dark grey 1x2 bricks (A007) to form the third 2x2 layer.\",\n    \"Observe the final assembly to confirm it matches the target, then finish.\"\n  ],\n  \"notes\": \"I've encountered multiple NO_CONNECTION and INVALID_TOOL_REQUEST errors. The `observe` tool requires the `show` argument. I will retry `observe` with `view: \\\"angled\\\"` and `show: [\\\"current\\\"]` to get a fresh view and confirm environment responsiveness. The plan to build 2x2 layers using two 1x2 bricks each remains unchanged. Candidate C00019 for A007 is still the intended first placement.\"\n}",
+          "refusal": null,
+          "reasoning": "**Troubleshooting Communication Failures**\n\nI'm now encountering a series of `NO_CONNECTION` errors, directly followed by `INVALID_TOOL_REQUEST` responses when attempting to use the `observe` tool. Specifically, the latest attempt, `{\"tool\": \"observe\", \"args\": {\"view\": \"angled\"}}`, also failed with an `INVALID_TOOL_REQUEST` error. I'm focusing on why this particular tool request is being rejected.\n\n\n**Refining Tool Arguments**\n\nI've realized the `show` argument for `observe` is mandatory, contradicting my prior simplification attempts. My latest failed `observe` attempts may have neglected this. I believe the correct call will be `{\"tool\": \"observe\", \"args\": {\"view\": \"angled\", \"show\": [\"current\"]}}`. I'm hoping this resolves the persistent `INVALID_TOOL_REQUEST` errors, assuming temporary instability. Once I have a fresh observation, I can continue with placing the dark grey and white bricks.\n\n\n**Addressing Connection Issues**\n\nI'm still grappling with intermittent `NO_CONNECTION` and subsequent `INVALID_TOOL_REQUEST` errors. The `observe` tool appears to be the primary culprit, with my last attempt, `{\"tool\": \"observe\", \"args\": {\"view\": \"angled\"}}`, failing. Examining the tool documentation, I've confirmed that the `show` argument is mandatory. I will retry with the correct call `{\"tool\": \"observe\", \"args\": {\"view\": \"angled\", \"show\": [\"current\"]}}`. I'm optimistic about this format.\n\n\n",
+          "reasoning_details": [
+            {
+              "type": "reasoning.text",
+              "text": "**Troubleshooting Communication Failures**\n\nI'm now encountering a series of `NO_CONNECTION` errors, directly followed by `INVALID_TOOL_REQUEST` responses when attempting to use the `observe` tool. Specifically, the latest attempt, `{\"tool\": \"observe\", \"args\": {\"view\": \"angled\"}}`, also failed with an `INVALID_TOOL_REQUEST` error. I'm focusing on why this particular tool request is being rejected.\n\n\n**Refining Tool Arguments**\n\nI've realized the `show` argument for `observe` is mandatory, contradicting my prior simplification attempts. My latest failed `observe` attempts may have neglected this. I believe the correct call will be `{\"tool\": \"observe\", \"args\": {\"view\": \"angled\", \"show\": [\"current\"]}}`. I'm hoping this resolves the persistent `INVALID_TOOL_REQUEST` errors, assuming temporary instability. Once I have a fresh observation, I can continue with placing the dark grey and white bricks.\n\n\n**Addressing Connection Issues**\n\nI'm still grappling with intermittent `NO_CONNECTION` and subsequent `INVALID_TOOL_REQUEST` errors. The `observe` tool appears to be the primary culprit, with my last attempt, `{\"tool\": \"observe\", \"args\": {\"view\": \"angled\"}}`, failing. Examining the tool documentation, I've confirmed that the `show` argument is mandatory. I will retry with the correct call `{\"tool\": \"observe\", \"args\": {\"view\": \"angled\", \"show\": [\"current\"]}}`. I'm optimistic about this format.\n\n\n",
+              "format": "google-gemini-v1",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 7761,
+      "completion_tokens": 714,
+      "total_tokens": 8475,
+      "cost": 0.00357114,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2008,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00357114,
+        "upstream_inference_prompt_cost": 0.00178614,
+        "upstream_inference_completions_cost": 0.001785
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 405,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  },
+  "requestBodySha256": "a072456b9ff9867033be1d969bdbc9aefe560a0e320cf4312de88b5dc875f452",
+  "requestShape": {
+    "model": "google/gemini-2.5-flash",
+    "provider": "openrouter",
+    "images": 8,
+    "maxTokens": 2048,
+    "reasoning": {
+      "effort": "low"
+    }
+  },
+  "costUSD": 0.00357114,
+  "costBasis": "provider usage.cost",
+  "nativeCurrency": "USD",
+  "latencySeconds": 5.46,
+  "archiveId": "93ddeca9c73c4be588f4904fb517358c"
+}
