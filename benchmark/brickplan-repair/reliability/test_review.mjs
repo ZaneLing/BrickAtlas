@@ -1,0 +1,40 @@
+import { chromium } from 'playwright';
+import { spawn } from 'node:child_process';
+import { mkdtempSync,mkdirSync,writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { resolve } from 'node:path';
+const temp=mkdtempSync(resolve(tmpdir(),'brick-review-check-')),port=8821;
+const process=spawn('benchmark/.runtime/mlx-env/bin/python',['-m','reliability.review','--port',String(port),'--data',temp],{env:{...globalThis.process.env,PYTHONPATH:'benchmark/brickplan-repair'},stdio:'pipe'});
+let browser;
+try{
+ for(let i=0;i<100;i++){try{if((await fetch(`http://127.0.0.1:${port}/api/tasks`)).ok)break}catch{}await new Promise(r=>setTimeout(r,100))}
+ browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});const page=await browser.newPage({viewport:{width:1280,height:1000}});const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+ await page.goto(`http://127.0.0.1:${port}/?person=A&role=gt`);
+ await page.waitForFunction(()=>document.querySelectorAll('#choices input').length===3,{timeout:60000});
+ await page.locator('input[value="correct"]').check();await page.locator('#submit').click();await page.getByText('已保存 ✓',{exact:true}).waitFor();
+ await page.locator('#next').click();await page.waitForFunction(()=>document.querySelector('#title').textContent.startsWith('R002'));
+ await page.locator('input[value="unclear"]').check();await page.locator('#submit').click();await page.getByText('已保存 ✓',{exact:true}).waitFor();
+ await page.locator('#task').selectOption('R001');await page.waitForFunction(()=>document.querySelector('#title').textContent.startsWith('R001'));
+ if(!await page.locator('input[value="correct"]').isChecked())throw Error('Answer lost after switching');
+ await page.reload();await page.waitForFunction(()=>document.querySelector('input[value="correct"]')?.checked,{timeout:60000});
+ const firstView=await page.locator('#images img').first().getAttribute('src');
+ await page.locator('#gtView').selectOption('rear');await page.waitForFunction(src=>document.querySelector('#images img')?.getAttribute('src')!==src,firstView);
+ const out='deliverables/brick-atlas-reliability-v1/checks';mkdirSync(out,{recursive:true});await page.screenshot({path:out+'/review-gt.png',fullPage:true});
+ const denial=await fetch(`http://127.0.0.1:${port}/api/open?person=A&role=blind&code=R001`);if(denial.status!==400)throw Error('GT contamination was not blocked');
+ await page.goto(`http://127.0.0.1:${port}/?person=B&role=blind`);await page.locator('[data-view="0"]').waitFor();await page.locator('[data-view="0"]').click();
+ await page.waitForFunction(()=>document.querySelectorAll('#images img').length===1,{timeout:60000});
+ await page.locator('#inspect').click();await page.waitForFunction(()=>document.querySelector('#candidate').options[0]?.value.startsWith('C'),{timeout:60000});
+ await page.locator('summary').click();await page.locator('#recallLook').click();
+ await page.waitForFunction(()=>document.querySelector('#feedback').textContent.includes('HISTORY_AVAILABLE'));
+ await page.locator('#inventoryLook').click();await page.waitForFunction(()=>document.querySelector('#stock').textContent.includes('：'));
+ await page.screenshot({path:out+'/review-blind.png',fullPage:true});
+ const summary=await (await fetch(`http://127.0.0.1:${port}/api/summary`)).json();
+ if(summary.roles.gt.length!==2||summary.roles.blind.length!==0||summary.humanValidatedWholeDataset)throw Error('Role mixing');
+ const noPrivate=await fetch(`http://127.0.0.1:${port}/review/geometry.private.json`);if(noPrivate.status!==404)throw Error('Private data exposed');
+ const physics=await (await fetch(`http://127.0.0.1:${port}/api/open?person=C&role=physics&code=P001`)).json();
+ if(physics.engineResult||physics.independent||!physics.geometryDownload)throw Error('Geometry download/verdict separation');
+ const geometry=await fetch(`http://127.0.0.1:${port}`+physics.geometryDownload.file);if(!geometry.ok||(await geometry.arrayBuffer()).byteLength<1000)throw Error('Geometry download broken');
+ if(errors.length)throw Error(errors.join('\n'));
+ writeFileSync(out+'/review-ui-check.json',JSON.stringify({passed:true,automatedUITest:true,notHumanResponses:true,answersRetainedAcrossTasksAndReload:true,alternateGTView:true,inventoryStatusVisible:true,historyRecall:true,externalGeometryDownload:true,exposureGate:true,roleSeparation:true,privatePathDenied:true,browserErrors:errors},null,2));
+ console.log('PASS local review UI: task/reload persistence, three choices, exposure gate, paging and role separation. Test responses are isolated.');
+}finally{await browser?.close();process.kill('SIGTERM')}

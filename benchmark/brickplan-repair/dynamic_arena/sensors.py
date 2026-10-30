@@ -39,9 +39,13 @@ class Sensors:
         frame = ['_module_frame'] if focus == 'module' and '_module_frame' in self.renderer.bounds else None
         return self.renderer.rgb(state, view, size=size, angles=angles, frame_keys=frame, supersample=1)[0]
 
-    def availability(self):
-        if hasattr(self.ep,'inventory') and callable(self.ep.inventory):return self.ep.inventory()
-        return [dict(partId=public,status='installed' if self.ep.state.get(a) else 'available') for a,public in self.aliases.items()]
+    def availability(self,page=None):
+        rows=(self.ep.inventory() if hasattr(self.ep,'inventory') and callable(self.ep.inventory) else
+              [dict(partId=public,status='installed' if self.ep.state.get(a) else 'available') for a,public in self.aliases.items()])
+        if page is None:return rows
+        if not 1<=page<=self.inventory_count:raise ValueError('Unknown inventory page')
+        group=set(sorted(self.aliases.values())[(page-1)*12:page*12])
+        return [r for r in rows if r['partId'] in group]
 
     def inventory(self, page):
         if not 1 <= page <= self.inventory_count: raise ValueError('Unknown inventory page')

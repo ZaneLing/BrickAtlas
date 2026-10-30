@@ -15,6 +15,7 @@ A benchmark connecting static brick repair with autonomous recovery during conti
 | Models, errors, question counts | [Full list](deliverables/brick-atlas-dataset-v1/MODEL-AND-QUESTION-LIST.zh-CN.md) |
 | Current states, targets, and GT | [Local review page](http://127.0.0.1:8810/dataset/) · [illustrated examples](deliverables/brick-atlas-dataset-v1/EXAMPLES.zh-CN.md) |
 | Input/output and metrics | [Protocol guide](deliverables/brick-atlas-dataset-v1/INPUT-OUTPUT-AND-METRICS.zh-CN.md) |
+| Paged sensing, matched-state comparison and portable runtime | [2026-10-30 implementation and checks](deliverables/brick-atlas-reliability-v1/README.zh-CN.md) |
 | Paper | [Main PDF](paper/brickplan-cvpr/main.pdf) · [supplement](paper/brickplan-cvpr/supplement.pdf) · [Overleaf ZIP](paper/brickplan-cvpr/brickplan-cvpr-overleaf.zip) |
 | Build instructions and pending study | [Paper guide](paper/brickplan-cvpr/README.zh-CN.md) |
 | Historical count reconciliation | [Count changes](deliverables/brick-atlas-dataset-v1/COUNT-CHANGES.zh-CN.md) |

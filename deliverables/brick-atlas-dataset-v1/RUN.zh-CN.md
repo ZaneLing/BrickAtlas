@@ -31,6 +31,6 @@ PYTHONPATH=benchmark/brickplan-repair benchmark/.runtime/mlx-env/bin/python -m s
 
 ## 换一台电脑时
 
-看静态网页只需仓库中的 HTML、JS 和 PNG。执行裁判还需 Python 3.11、NumPy、Pillow、Matplotlib、MeshLib 和 BrickNet，当前版本记录在 `checks/runtime-versions.json`。原始 LDraw 依赖随仓库保存；本机的虚拟环境和 BrickNet 碰撞网格目录 `benchmark/.runtime/bricknet-data/inset/` 不随 Git 上传，需按项目现有环境准备。新下载来源的导入还使用 LDraw 完整库压缩包 `assets-source/ldraw-library/complete.zip`，已有题目的查看不需要重新下载它。
+2026-10-30 起提供 [独立运行包与安装步骤](../brick-atlas-reliability-v1/RUN.zh-CN.md)，附带当前 310 个物件及候选位置需要的 919 份碰撞网格、逐件来源与许可、固定版本 Python 依赖和加载／观察／评分检查。已有题目不再要求准备作者电脑的隐藏网格缓存；导入全新来源仍属于另一条采集流程。
 
-本次交付是已核对的数据与本机可执行环境，不声称已经做成跨平台的一键安装包。真人审题、独立物理复核和真实 API 模型实验仍待开展。
+干净环境复现范围是同一台 macOS 的项目外目录和新 Python 环境，不声称已在 Linux／Windows 完成安装。真人审题、全面独立物理复核和新版真实 API 模型实验仍待开展。

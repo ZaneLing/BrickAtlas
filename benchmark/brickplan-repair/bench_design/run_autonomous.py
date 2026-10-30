@@ -142,7 +142,12 @@ def command_policy(command,timeout):
 
 
 def main():
+    import sys
+    if '--legacy-full-context' not in sys.argv:
+        from reliability.run import main as paged_main
+        return paged_main()
     p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--legacy-full-context',action='store_true')
     p.add_argument('--id',required=True);p.add_argument('--actor',required=True)
     p.add_argument('--output',type=Path);p.add_argument('--max-decisions',type=int)
     p.add_argument('--allow-module',action='store_true');p.add_argument('--timeout',type=float,default=120)

@@ -62,7 +62,7 @@ def main():
         result = runner.run()
         assert result['success'] and result['appliedEvents'] == 1 and runner.azimuth == 125
         assert runner.calls[0]['modelOutput']['tool'] == 'observe'
-        assert runner.calls[0]['environmentOutput']['images'][0]['role'] == 'current'
+        assert runner.calls[0]['environmentOutput']['images'][0]['role'] == 'current-target'
         assert runner.calls[4]['modelOutput']['tool'] == 'observe'
         assert runner.calls[4]['environmentOutput']['camera']['azimuthDegrees'] == 125
         assert all('events' not in json.dumps(c['modelInput']) for c in runner.calls)
@@ -71,7 +71,7 @@ def main():
         for call in runner.calls:
             content = call['modelInput']['messages'][-1]['content']
             images = [x for x in content if x['type'] == 'image_url']
-            assert len(images) == (3 if call['index'] == 2 else 2 if call['index'] == 6 else 0)
+            assert len(images) == (2 if call['index'] == 2 else 1 if call['index'] == 6 else 0)
         assert len(runner.frames) == len(runner.calls) + 1
         assert all('scenes' in f for f in runner.frames)
         print('PASS pull observation, 90-degree camera, whole-episode recovery and JSON trace; scripted, no API')

@@ -61,6 +61,9 @@ def _load(case_id,directory,diagnostic=False):
     if case_id.startswith('QX:'):
         from bench_design.challenges import load_challenge
         return load_challenge(case_id,directory)
+    if case_id.startswith(('E7:','D:')):
+        from reliability.active_load import index,load as active_load
+        if case_id in index():return active_load(case_id,directory)
     row=deepcopy(source_rows()[case_id])
     public=public_rows()[case_id]
     if public['track'] in ('archived-crop-dynamic','dynamic-structure-diagnostic') and not diagnostic:
@@ -117,7 +120,12 @@ def valid(action):
 def main():
     from bench_design.session import Session
     import sys
+    # The full-context image bundle is retained only for historical replay.
+    if '--legacy-full-context' not in sys.argv:
+        from reliability.run import main as paged_main
+        return paged_main()
     parser=argparse.ArgumentParser()
+    parser.add_argument('--legacy-full-context',action='store_true')
     parser.add_argument('--id',required=True)
     parser.add_argument('--diagnostic',action='store_true')
     parser.add_argument('--actions',type=Path,help='Optional JSONL action script; otherwise read stdin')

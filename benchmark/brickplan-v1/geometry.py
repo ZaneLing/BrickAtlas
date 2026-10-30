@@ -19,7 +19,8 @@ import numpy as np
 import meshlib.mrmeshpy as mm
 
 ROOT = Path(__file__).resolve().parents[2]
-os.environ.setdefault("BRICKNET_DATA", str(ROOT / "benchmark/.runtime/bricknet-data"))
+portable_data = ROOT / "benchmark/.runtime/brick-atlas-data"
+os.environ.setdefault("BRICKNET_DATA", str(portable_data if (portable_data / "verified.json").exists() else ROOT / "benchmark/.runtime/bricknet-data"))
 from bricknet.data import load_aliases, load_catalog
 from bricknet.graph import parse_ldr
 from bricknet.collision import data_dir

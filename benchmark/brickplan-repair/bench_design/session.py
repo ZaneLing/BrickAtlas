@@ -304,7 +304,7 @@ class Session:
                                       reference_moves=reference_moves)
         task_type = 'D0' if control else meta['taskType']
         return dict(schema='brick-atlas-evaluated-run/2', runId=self.run_id, model=self.actor,
-                    caseId=self.row['key'], conditionId=self.condition, inputVersion=INPUT_VERSION,
+                    caseId=self.row['key'], conditionId=self.condition, inputVersion=getattr(self,'agent_input_version',INPUT_VERSION),
                     canonicalTaskId=meta.get('normalCanonicalId', meta['canonicalId']) if control else meta['canonicalId'],
                     objectId=meta['model'], sourceGroup=meta['source'], track=meta['track'], taskType=task_type,
                     targetContract=self.row['case'].get('targetContract','exact-physical-parts-and-poses'),
@@ -323,7 +323,7 @@ class Session:
     def export(self):
         normalized=self.result()
         return dict(schema='brick-atlas-private-execution/2', caseId=self.row['key'], runId=self.run_id,
-                    inputVersion=INPUT_VERSION, evaluationMetadata=self.row['evaluationMetadata'],
+                    inputVersion=getattr(self,'agent_input_version',INPUT_VERSION), evaluationMetadata=self.row['evaluationMetadata'],
                     initial=self.initial, final=deepcopy(self.ep.state), goal=self.goal,
                     aliasMaps=alias_maps(self.ep), decisionCap=self.cap, records=self.records,
                     nativeEvents=deepcopy(events_of(self.ep)), eventLedger=self.events,
