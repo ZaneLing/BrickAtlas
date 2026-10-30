@@ -14,7 +14,7 @@ from dynamic_arena.demo import create, CASE_ID, TITLE
 from dynamic_arena.sensors import Sensors
 from dynamic_arena.transport import Transport, write_json
 
-PROTOCOL = 'brick-atlas-tool-arena/5'
+PROTOCOL = 'brick-atlas-tool-arena/6'
 SYSTEM = '''You control one continuous LEGO assembly episode. The starting scene may be an empty white studded baseplate or a preassembled object with a named section to finish. Match the sole target; all physically legal assembly orders are accepted. Call exactly ONE tool per JSON response, with only tool and args. Use observe for current/target/inventory images, inspect for a part's neutral candidate positions or an optional instruction page, attach or detach to move one physical part, recall to retrieve a previously requested image, and finish to submit. No image is supplied automatically after a move. Observation is your responsibility. Environment changes may happen without announcement; feedback only describes your requested action. Choose observations, plan, build, recheck and repair autonomously. Anonymous handles do not encode answers. A candidate preview is hypothetical, not a legality or correctness label. Inventory is finite; one handle represents one physical part. For tasks explicitly allowing equivalent assemblies, match the stated colored volume and connections, not the illustrated seams. The manual provides a possible construction order, never a required order. Return a direct JSON object, for example {"tool":"observe","args":{"view":"angled","rotateDegrees":0,"show":["current","target","inventory"]}}.'''
 
 from dynamic_arena.contract import TOOLS,validate
@@ -69,8 +69,15 @@ class ToolArena:
     def public_request(self):
         number = len(self.calls) + 1
         handles = [dict(id=h['id'],candidateCount=len(h['candidates'])) for h in self.sensors.handles()]
+        static = self.session.row['mode'] == 'static'
+        task = ('Check and, if needed, repair the CURRENT scene to match exactly the displayed TARGET stage. '
+                'Do not continue to later construction stages. If CURRENT already matches TARGET, call finish. '
+                if static else 'Build the displayed TARGET from CURRENT, checking and repairing as needed. ')
         return dict(protocol=PROTOCOL, episode='episode-'+self.session.run_id, decision=number, decisionBudget=self.cap,
-                    task='Complete the sole target: ' + self.session.row['title'],
+                    task=task + 'Object: ' + self.session.row['title'],
+                    targetScope=dict(kind='static-stage' if static else 'complete-requested-assembly',
+                        instructionStage=self.sensors.target_stage,
+                        rule='The displayed TARGET is the sole required final state. Unused inventory may remain. The manual is optional; any legal order is accepted.'),
                     startingState='preassembled current scene; match the sole target' if self.session.ep.runtime.cert.get('fixed') or any(self.session.initial.values()) else 'empty white studded baseplate',
                     targetContract=self.session.ep.observe().get('targetContract','Match the target physical assembly.'),
                     physicalRules=['One physical part per attach/detach.', 'Any legal order is accepted.', 'Fixtures may support subassemblies; gravity, friction and snap force are not simulated.', 'No overlap; a straight insertion/removal path is required.'],

@@ -22,8 +22,16 @@ class Sensors:
         self.reverse = {v: k for k, v in self.aliases.items()}
         self.poses = self.ep.pose_alias
         self.manual = getattr(session.packet, 'manual', None)
-        self.manual_count = (len(self.manual['actions']) if self.manual else
+        self.full_manual_count = (len(self.manual['actions']) if self.manual else
             len(getattr(session.packet, 'module', {}).get('manual', [])))
+        self.manual_count = self.full_manual_count
+        self.target_stage = None
+        if session.row['mode'] == 'static':
+            # This is public task metadata, not a repair witness. Later build
+            # steps describe another goal and must not appear in this task.
+            self.target_stage = self.ep.case.get('completedInstructionStep')
+            self.manual_count = (min(self.full_manual_count, self.target_stage)
+                if type(self.target_stage) is int and self.target_stage >= 0 else 0)
         self.inventory_count = math.ceil(len(self.aliases) / 12)
 
     def keys(self, actor):
@@ -77,6 +85,7 @@ class Sensors:
         return im, dict(partId=public,page=page,pages=math.ceil(len(keys)/12),items=items,hypothetical=True,legalityOrCorrectnessShown=False)
 
     def instruction(self, step):
-        if not 1 <= step <= self.manual_count: raise ValueError('No such manual step')
+        if not 1 <= step <= self.manual_count:
+            raise ValueError('No such manual step for this task target; later construction stages are unavailable')
         asset = self.s.packet.manual_page(step)
         with Image.open(asset['file']) as im: return im.copy()

@@ -2,7 +2,7 @@
 from copy import deepcopy
 
 PROFILE = dict(
-    name='visual-memory-pull-v2', initialViews=['isometric', 'rear', 'top'],
+    name='visual-memory-pull-v3', initialViews=['isometric', 'rear', 'top'],
     initialInventoryPage=1, targetRetention='all three target views every decision',
     observationRule='initial views, then only agent-requested images; no automatic scene after a move',
     sceneMemory='latest observation plus one preceding observation; timestamps retained',

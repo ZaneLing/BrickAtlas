@@ -17,7 +17,9 @@
 
 ## Experiment readiness — 2026-10-30
 
-- For new shared visual-agent experiments, use `unified_agent.run` and the v2 profile. It requires a current API certificate from `unified_agent.readiness` and a fresh case check before spending on a task. See `deliverables/brick-atlas-experiment-readiness-v2/RUN.zh-CN.md`.
+- The Ark/Aliyun pilot in `deliverables/brick-atlas-ark-pilot-v1` is complete and uses the historical v2 input. Preserve its original scores and receipts. Its `completed.json` prevents new paid requests in that directory.
+- New shared visual-agent experiments use `unified_agent.run` and the v3 profile, with static manuals restricted to the public target stage. Use a new output directory and current interface certificate; never reuse the v2 scores as v3 results. For Ark batch tools, set `BRICK_ARK_PILOT_OUT` to a new directory under this project's `deliverables/` and supply its plan. See `deliverables/brick-atlas-ark-pilot-v1/RUN.zh-CN.md`.
+- Every run requires a current API certificate from `unified_agent.readiness` and a fresh case check before spending on a task.
 - Keep model inputs, defaults, memory and per-case budgets identical across backbones within a condition. Record provider-specific generation settings. Never silently enlarge one failed run's budget.
 - Never execute or guess a truncated action. Keep service failures, output truncation, schema errors, budget rejections and physical rejections separately observable; technical interruptions are not assembly failures.
 - Preserve raw requests/responses, image hashes and cost ledgers. Do not delete or reset a ledger to bypass its cumulative budget, and do not silently retry an uncertain request.
