@@ -8,7 +8,8 @@ from dynamic_arena import ROOT,OUT as ARENA_OUT
 from dynamic_arena.transport import write_json
 from bench_design.metrics import execution_metrics
 from unified_agent import OUT
-from unified_agent.providers import LEDGER
+# Historical v1 evidence has its own immutable spending ledger.
+LEDGER=OUT/'ledger.private.json'
 
 
 def main():

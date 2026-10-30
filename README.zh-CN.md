@@ -17,6 +17,7 @@
 | 每个模型、每类错误与题数 | [模型和题目列表](deliverables/brick-atlas-dataset-v1/MODEL-AND-QUESTION-LIST.zh-CN.md) |
 | 图片、当前状态、目标、GT | [本地题库页面](http://127.0.0.1:8810/dataset/) · [Markdown 示例](deliverables/brick-atlas-dataset-v1/EXAMPLES.zh-CN.md) |
 | 输入输出及评分 | [接口与 metrics](deliverables/brick-atlas-dataset-v1/INPUT-OUTPUT-AND-METRICS.zh-CN.md) |
+| API、输入输出、截断及题目复查 | [修复报告与检查证据](deliverables/brick-atlas-experiment-readiness-v2/README.zh-CN.md) · [后续运行命令](deliverables/brick-atlas-experiment-readiness-v2/RUN.zh-CN.md) |
 | 统一视觉 Agent、真实 API 试跑 | [结果、回放、裁判修复与费用](deliverables/brick-atlas-unified-agent-v1/README.zh-CN.md) · [三组实验设计](deliverables/brick-atlas-unified-agent-v1/EXPERIMENTS.zh-CN.md) |
 | 为什么和旧版五千多题不同 | [题量变化说明](deliverables/brick-atlas-dataset-v1/COUNT-CHANGES.zh-CN.md) |
 | 英文论文 | [正文 PDF](paper/brickplan-cvpr/main.pdf) · [补充材料](paper/brickplan-cvpr/supplement.pdf) |

@@ -4,7 +4,10 @@ from copy import deepcopy
 from dynamic_arena import OUT as ARENA_OUT
 from dynamic_arena.run import open_session
 from dynamic_arena.transport import write_json
-from unified_agent import OUT,PROTOCOL
+from unified_agent import OUT
+
+# One-off closer for the archived v1 diagnostic, never a v2 experiment.
+PROTOCOL='brick-atlas-unified-visual-agent/1'
 
 
 def main():

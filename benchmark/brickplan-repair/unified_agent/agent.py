@@ -6,30 +6,24 @@ plans/notes. Ground truth, scores, disturbances, and spectator views are exclude
 import base64,hashlib,json,time
 from copy import deepcopy
 from dynamic_arena import OUT as ARENA_OUT
-from dynamic_arena.tool_arena import ToolArena,TOOLS,parse
+from dynamic_arena.tool_arena import ToolArena,TOOLS
+from dynamic_arena.contract import validate
 from dynamic_arena.transport import write_json
 from bench_design.session import digest
 from unified_agent import PROTOCOL
 from unified_agent.profile import profile
 from unified_agent.providers import CostLimit
+from unified_agent.failures import terminal_for,describe,GenerationError
 
 SYSTEM='''You operate a continuous LEGO assembly Arena. Match the sole TARGET with any physically legal assembly order. You control every action and every extra observation. The initial packet contains three current views, the same three target views, and inventory page 1. After an action NO new scene image is sent automatically: call observe to inspect what is really there. An unannounced environment change may occur after a physical move. Action success only says your requested move was legal; it does not certify that the scene still matches your expectations.
 Use observe to change camera or inspect stock, inspect to view neutral placement candidates or an optional instruction step, attach/detach to move ONE physical part, recall to retrieve an old observation, and finish to submit the final state. Each partId is one physical part; parts and stock are finite. Candidate previews are hypothetical; they do not say a placement is legal or correct. Position IDs do not encode the answer. A manual is a possible order, never a mandatory one. For a task permitting equivalent assemblies, use its explicit target contract.
 Your memory is maintained in the same way every turn: all target views, the latest two requested scene observations, the latest inventory page, the latest candidate/manual page, recent tool dialogue, and YOUR short plan and notes. Images have capture timestamps and can be stale. A recalled or remembered image is not a new observation. Additional pages, angles and instructions are available through tools. No hidden state, evaluator score, or suggested action is supplied.
-Reply with exactly one JSON object containing tool, args, plan and notes. plan is at most 6 short next-step items (160 characters each). notes is at most 1200 characters of concise operational facts/uncertainties you want to retain. Do not write an essay or private reasoning trace. These fields replace your previous plan/notes. Example: {"tool":"inspect","args":{"partId":"A01","page":1},"plan":["Locate a legal base placement","Build and visually verify"],"notes":"I have not installed any pieces yet."}. Tool errors are feedback; decide your next step yourself.'''
+Reply with exactly one JSON object containing tool and args; plan and notes are optional updates. plan is at most 6 short next-step items (160 characters each). notes is at most 1200 characters of concise operational facts/uncertainties you want to retain. Do not write an essay or private reasoning trace. Provided plan/notes replace the previous values; omitted fields preserve memory. Long memory is trimmed at the published limits. observe with empty args means current scene, angled view, 0 degree rotation; isometric is accepted as an alias of angled. Example: {"tool":"inspect","args":{"partId":"PART_ID_FROM_INVENTORY","page":1},"plan":["Locate a legal base placement","Build and visually verify"],"notes":"I have not installed any pieces yet."}. Tool errors are feedback; decide your next step yourself.'''
 
 
 def parse_agent(reply,p):
-    try:
-        obj=json.loads(reply) if isinstance(reply,str) else reply
-        if not isinstance(obj,dict) or set(obj)!={'tool','args','plan','notes'}:raise ValueError()
-        if not isinstance(obj['plan'],list) or len(obj['plan'])>p['planItems']:raise ValueError()
-        if any(not isinstance(x,str) or len(x)>p['planItemCharacters'] for x in obj['plan']):raise ValueError()
-        if not isinstance(obj['notes'],str) or len(obj['notes'])>p['notesCharacters']:raise ValueError()
-        a=parse({k:obj[k] for k in ('tool','args')})
-        if a['tool']=='invalid':raise ValueError()
-        return obj,True
-    except (ValueError,TypeError,KeyError):return dict(tool='invalid',args={}),False
+    result=validate(reply,memory=True,limits=p)
+    return result['action'],result['valid']
 
 
 class VisualAgent(ToolArena):
@@ -58,7 +52,8 @@ class VisualAgent(ToolArena):
         self.contract_sha=digest(dict(initial=session.initial,goal=session.goal,certificate=session.ep.runtime.cert,
             aliases=self.sensors.handles(),inventory=sorted(getattr(session.ep.runtime,'available',[])),
             profile=self.profile,system=SYSTEM,tools=TOOLS,environment=task_digest(session,self.cap),
-            implementation={name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in ['agent.py','profile.py','providers.py']}))
+            implementation={name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in ['agent.py','profile.py','providers.py']},
+            assemblyImplementation=hashlib.sha256(Path(__file__).parents[1].joinpath('assembly.py').read_bytes()).hexdigest()))
 
     def capture(self,state,role,view='isometric',angles=None,focus='module'):
         return self.image(self.render(state,view,angles,focus),role,view=view,
@@ -75,7 +70,7 @@ class VisualAgent(ToolArena):
             budget=dict(decisionsRemaining=self.cap-len(self.calls),actionsRemaining=self.profile['maxActions']-self.action_attempts,
                         observationRequestsRemaining=self.profile['maxObservations']-self.observation_attempts,
                         generatedTokensRemaining=self.profile['maxGeneratedTokens']-self.transport.usage().get('completionTokens',0)),
-            responseSchema=dict(tool='one available tool',args='tool parameters',plan='list of up to 6 short operational steps',notes='short operational notes, max 1200 characters'),
+            responseSchema=dict(required=['tool'],tool='one available tool',args='object; omitted means empty object',plan='optional list, up to 6 short operational steps',notes='optional operational notes, max 1200 characters'),
             visualMemoryPolicy='Same image pixels are retained; capture time is explicit. Old images are NOT refreshed when the world changes.',
             pagination=dict(inventoryItemsPerPage=12,candidateItemsPerPage=12))
         return value
@@ -108,6 +103,8 @@ class VisualAgent(ToolArena):
         return provider,readable,visible,unique
 
     def observe(self,args,number):
+        if 'inventory' in args['show'] and not 1<=args.get('inventoryPage',1)<=self.sensors.inventory_count:
+            raise ValueError('inventoryPage must be between 1 and '+str(self.sensors.inventory_count))
         self.azimuth=(self.azimuth+args['rotateDegrees'])%360
         self.elevation=90 if args['view']=='top' else 30
         angles=(self.azimuth,self.elevation);view='top' if self.elevation==90 else 'isometric'
@@ -150,17 +147,17 @@ class VisualAgent(ToolArena):
     def step(self,reply,request=None):
         provider,readable,visible,images=request or self.request()
         number=len(self.calls)+1
-        action,valid=parse_agent(reply,self.profile)
-        try:
-            if isinstance(reply,str):json.loads(reply)
-            self._tool_parse_failed=False
-        except (ValueError,TypeError):self._tool_parse_failed=True
-        if valid:self.plan,self.notes=deepcopy(action['plan']),action['notes']
+        validation=validate(reply,memory=True,limits=self.profile)
+        action,valid=validation['action'],validation['valid']
+        self._tool_parse_failed=validation['jsonError']
+        if valid:self.plan,self.notes=deepcopy(action.get('plan',self.plan)),action.get('notes',self.notes)
         self.session._pending_observation=dict(decision=len(self.session.records)+1,packetSha256=digest(visible),imageHashes=[im['sha256'] for im in images])
         output,returned=self.execute(action,number)
+        output['syntaxNormalization']=validation['normalizations']
+        if not valid:output.update(validationErrors=validation['errors'],example=validation.get('example',TOOLS['tools']['observe']['example']))
         self.last_result=output
         receipt=getattr(self.transport,'latest',None)
-        call=dict(index=number,modelInput=readable,modelOutputRaw=reply,modelOutput=action,environmentOutput=output,
+        call=dict(index=number,modelInput=readable,modelOutputRaw=reply,modelOutput=action,environmentOutput=output,outputValidation=validation,
             memoryAfter=dict(plan=self.plan,notes=self.notes),inputImageHashes=[im['sha256'] for im in images],
             inputImagePixels=sum(im['width']*im['height'] for im in images),requestBytes=len(json.dumps(provider).encode()),
             requestContextSha256=digest(provider),providerReceipt=None)
@@ -188,6 +185,15 @@ class VisualAgent(ToolArena):
         value['inputMetrics']['maxImagesPerRequest']=max(value['inputMetrics']['imageCounts'],default=0)
         value['inputMetrics']['configuredTwoImageLimit']=False
         value['inputMetrics']['initialImages']=len(self.initial_images)
+        # Controller budget rejections are not malformed model JSON.
+        value['executionMetrics']['formatErrorResponses']=sum(bool(c.get('outputValidation',{}).get('jsonError')) for c in self.calls)
+        value['executionMetrics']['schemaErrorResponses']=sum(c.get('modelOutput',{}).get('tool')=='invalid' and not c.get('outputValidation',{}).get('jsonError') for c in self.calls)
+        value['executionMetrics']['budgetRejectedResponses']=sum(c.get('environmentOutput',{}).get('code') in ('RESOURCE_BUDGET_EXHAUSTED','BUDGET_EXHAUSTED') for c in self.calls)
+
+        value['interfaceMetrics']=dict(normalizedDecisions=sum(bool(c.get('outputValidation',{}).get('normalizations')) for c in self.calls),
+            invalidDecisions=sum(c.get('modelOutput',{}).get('tool')=='invalid' for c in self.calls),
+            attribution='mixed_interface_and_assembly' if any(c.get('modelOutput',{}).get('tool')=='invalid' for c in self.calls) else 'no_schema_errors')
+        value['assemblyScoreEligible']=value['terminalStatus'] in ('completed','model_budget_exhausted') and not value['interfaceMetrics']['invalidDecisions']
         return value
 
     def publish(self):
@@ -209,12 +215,16 @@ class VisualAgent(ToolArena):
                 provider,readable,visible,images=self.request();self.phase='thinking';self.publish()
                 reply=self.transport(provider)
             except Exception as exc:
-                self.session.terminal=('client_budget_exhausted' if isinstance(exc,CostLimit) else 'service_error' if provider else 'harness_error')
+                self.session.terminal=('client_budget_exhausted' if isinstance(exc,CostLimit) else terminal_for(exc) if provider else 'harness_error')
+                receipt=getattr(self.transport,'latest',None)
+                archive=getattr(self.transport,'latest_attempt',None)
+                if receipt:archive=dict(archiveId=receipt['archiveId'],requestBodySha256=receipt['requestBodySha256'],responseAvailable=True)
                 self.calls.append(dict(index=len(self.calls)+1,modelInput=readable,inputImageHashes=[im['sha256'] for im in images],
-                    inputImagePixels=sum(im['width']*im['height'] for im in images),error=dict(code=self.session.terminal,type=type(exc).__name__,message=str(exc)[:300])))
+                    inputImagePixels=sum(im['width']*im['height'] for im in images),providerReceipt=archive,
+                    error=describe(exc),environmentOutput=dict(code=self.session.terminal,stateChanged=False,actionExecuted=False)))
                 break
             self.step(reply,(provider,readable,visible,images))
-        if not self.session.done:self.session.terminal='model_budget_exhausted'
+        if not self.session.done and self.session.terminal is None:self.session.terminal='model_budget_exhausted'
         self.phase='finished';self.session.save();self.publish()
         result=self.result();write_json(self.session.directory/'result.json',result)
         write_json(self.session.directory/'log.json',dict(protocol=PROTOCOL,profile=self.profile,initialImages=self.initial_images,calls=self.calls,result=result))

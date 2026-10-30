@@ -14,51 +14,14 @@ from dynamic_arena.demo import create, CASE_ID, TITLE
 from dynamic_arena.sensors import Sensors
 from dynamic_arena.transport import Transport, write_json
 
-PROTOCOL = 'brick-atlas-tool-arena/4'
+PROTOCOL = 'brick-atlas-tool-arena/5'
 SYSTEM = '''You control one continuous LEGO assembly episode. The starting scene may be an empty white studded baseplate or a preassembled object with a named section to finish. Match the sole target; all physically legal assembly orders are accepted. Call exactly ONE tool per JSON response, with only tool and args. Use observe for current/target/inventory images, inspect for a part's neutral candidate positions or an optional instruction page, attach or detach to move one physical part, recall to retrieve a previously requested image, and finish to submit. No image is supplied automatically after a move. Observation is your responsibility. Environment changes may happen without announcement; feedback only describes your requested action. Choose observations, plan, build, recheck and repair autonomously. Anonymous handles do not encode answers. A candidate preview is hypothetical, not a legality or correctness label. Inventory is finite; one handle represents one physical part. For tasks explicitly allowing equivalent assemblies, match the stated colored volume and connections, not the illustrated seams. The manual provides a possible construction order, never a required order. Return a direct JSON object, for example {"tool":"observe","args":{"view":"angled","rotateDegrees":0,"show":["current","target","inventory"]}}.'''
 
-TOOLS = {
-    'observe': {'args': {'view': ['angled', 'top'], 'rotateDegrees': [-90, 0, 90, 180],
-                         'show': ['current', 'target', 'inventory'],
-                         'inventoryPage': 'optional 1-based page, default 1', 'focus': 'optional module (default) or whole'},
-                'example': {'tool': 'observe', 'args': {'view': 'angled', 'rotateDegrees': 90,
-                                                       'show': ['current', 'target']}}},
-    'inspect': {'args': {'partId': 'part handle (candidate catalogue)', 'page': '1-based page; default 1', 'manualStep': 'instruction number; use instead of partId'}},
-    'attach': {'args': {'partId': 'anonymous inventory handle', 'candidate': 'registered placement handle'}},
-    'detach': {'args': {'partId': 'anonymous installed handle'}},
-    'recall': {'args': {'decision': 'a previously requested observation decision number','scope':'current (default) or prefix in a matched continuation'}},
-    'finish': {'args': {}}
-}
+from dynamic_arena.contract import TOOLS,validate
 
 
 def parse(reply):
-    try:
-        obj = json.loads(reply) if isinstance(reply, str) else reply
-        if not isinstance(obj, dict) or set(obj) != {'tool', 'args'} or not isinstance(obj['args'], dict):
-            raise ValueError('Expected tool and args')
-        name, args = obj['tool'], obj['args']
-        if name == 'attach' and set(args) == {'partId', 'candidate'} and all(isinstance(v, str) for v in args.values()):
-            return obj
-        if name == 'detach' and set(args) == {'partId'} and isinstance(args['partId'], str):
-            return obj
-        if name == 'finish' and not args:
-            return obj
-        if name == 'recall' and {'decision'}<=set(args)<={'decision','scope'} and type(args['decision']) is int and args['decision'] > 0 and args.get('scope','current') in ('current','prefix'):
-            return obj
-        if name == 'inspect' and ((set(args) <= {'partId','page'} and isinstance(args.get('partId'),str) and type(args.get('page',1)) is int and args.get('page',1)>0) or (set(args)=={'manualStep'} and type(args['manualStep']) is int and args['manualStep']>0)):
-            return obj
-        if name == 'observe' and {'view','rotateDegrees','show'} <= set(args) <= {'view','rotateDegrees','show','inventoryPage','focus'}:
-            show = args['show']
-            if (args['view'] in ('angled', 'top') and type(args['rotateDegrees']) is int
-                    and args['rotateDegrees'] in (-90, 0, 90, 180)
-                    and isinstance(show, list) and show and len(show) == len(set(show))
-                    and set(show) <= {'current', 'target', 'inventory'}
-                    and type(args.get('inventoryPage',1)) is int and args.get('inventoryPage',1)>0
-                    and args.get('focus','module') in ('module','whole')):
-                return obj
-    except (ValueError, TypeError, KeyError):
-        pass
-    return {'tool': 'invalid', 'args': {}}
+    return validate(reply)['action']
 
 
 class ToolArena:
@@ -142,6 +105,8 @@ class ToolArena:
         return provider, readable, visible, image_refs
 
     def observe(self, args, number):
+        if 'inventory' in args['show'] and not 1<=args.get('inventoryPage',1)<=self.sensors.inventory_count:
+            raise ValueError('inventoryPage must be between 1 and '+str(self.sensors.inventory_count))
         self.azimuth = (self.azimuth + args['rotateDegrees']) % 360
         self.elevation = 90 if args['view'] == 'top' else 30
         view = 'top' if self.elevation == 90 else 'isometric'
@@ -183,9 +148,10 @@ class ToolArena:
                 self.session.submit(dict(type='inspect',view='isometric'))
                 images=[self.image(im,role,**meta)];self.archive[number]=images
                 return dict(code='OBSERVED',images=images,environmentDecision=len(self.session.records)),images
-            except (KeyError,ValueError,IndexError):
+            except (KeyError,ValueError,IndexError) as exc:
                 self.session.submit(dict(type='invalid'),parse_error=False)
-                return dict(code='INVALID_SENSOR_REQUEST'),[]
+                return dict(code='INVALID_SENSOR_REQUEST',message=str(exc),stateChanged=False,
+                    inventoryPages=self.sensors.inventory_count,manualSteps=self.sensors.manual_count),[]
         if name == 'recall':
             self.session.submit(dict(type='inspect',view='isometric'))
             images = (getattr(self,'prior_archive',{}) if args.get('scope')=='prefix' else self.archive).get(args['decision'])
@@ -247,16 +213,15 @@ class ToolArena:
         if self.session.done or len(self.calls)>=self.cap:raise ValueError('Episode decision budget exhausted or already finished')
         provider,readable,visible,image_refs=request or self.request()
         number=len(self.calls)+1
-        try:
-            if isinstance(reply,str):json.loads(reply)
-            self._tool_parse_failed=False
-        except (ValueError,TypeError):self._tool_parse_failed=True
-        action=parse(reply)
+        validation=validate(reply);action=validation['action']
+        self._tool_parse_failed=validation['jsonError']
         self.session._pending_observation=dict(decision=len(self.session.records)+1,packetSha256=digest(visible),imageHashes=[i['sha256'] for i in image_refs])
         output,images=self.execute(action,number)
+        output['syntaxNormalization']=validation['normalizations']
+        if not validation['valid']:output.update(validationErrors=validation['errors'],example=validation['example'] if 'example' in validation else TOOLS['tools']['observe']['example'])
         self.pending_images,self.last_result=images,output
         receipt=getattr(self.transport,'latest',None)
-        call=dict(index=number,modelInput=readable,modelOutputRaw=reply,modelOutput=action,environmentOutput=output,
+        call=dict(index=number,modelInput=readable,modelOutputRaw=reply,modelOutput=action,environmentOutput=output,outputValidation=validation,
             inputImageHashes=[i['sha256'] for i in image_refs],inputImagePixels=sum(i['width']*i['height'] for i in image_refs),
             requestBytes=len(json.dumps(provider,ensure_ascii=False).encode()),requestContextSha256=digest(provider),providerReceipt=None)
         if receipt and not self.session.actor.startswith('scripted'):
@@ -283,11 +248,12 @@ class ToolArena:
                 reply = self.transport(provider)
             except Exception as exc:
                 from unified_agent.providers import CostLimit
-                self.session.terminal = 'client_budget_exhausted' if isinstance(exc,CostLimit) else 'service_error' if provider is not None else 'harness_error'
+                from unified_agent.failures import terminal_for,describe
+                self.session.terminal = 'client_budget_exhausted' if isinstance(exc,CostLimit) else terminal_for(exc) if provider is not None else 'harness_error'
                 self.calls.append(dict(index=number, modelInput=readable,
                     inputImageHashes=[i['sha256'] for i in image_refs],inputImagePixels=sum(i['width']*i['height'] for i in image_refs),
                     requestBytes=len(json.dumps(provider,ensure_ascii=False).encode()) if provider is not None else 0,
-                    error=dict(code=self.session.terminal, type=type(exc).__name__, message=str(exc)[:160])))
+                    error=describe(exc)))
                 break
             self.step(reply,(provider,readable,visible,image_refs))
             if stop_after_incident and self.session.events and self.session.events[-1]['atDecision']==len(self.session.records) and self.session.events[-1]['effectiveIncidentVerified']:

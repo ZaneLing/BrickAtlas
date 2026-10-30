@@ -47,132 +47,19 @@ def catalogue(model_id=MODEL, output=None):
 
 
 class Transport:
-    def __init__(self, directory, cap=1.0, model=MODEL, ledger_path=None):
-        # Permanent user routing preference. Keep historical artifacts intact;
-        # future legacy runner invocations must not send these families to OR.
-        self._native = None
-        if model.startswith(('qwen/','deepseek/','qwen','deepseek-','qvq')):
-            from unified_agent.providers import PaidTransport
-            self._native=PaidTransport(directory,cap,model,ledger_path=ledger_path or OUT/'api-ledger.private.json')
-            self.directory,self.model,self.latest=Path(directory),model,None
-            return
-        assert 0 < cap <= 10.0
-        self.directory = Path(directory)
-        self.model = model
-        self.ledger_path = Path(ledger_path) if ledger_path else OUT / 'api-ledger.private.json'
-        self.ledger = json.loads(self.ledger_path.read_text()) if self.ledger_path.exists() else dict(
-            capUSD=cap, authorization='User requested multiple model/object normal-gate API tests, 2026-10-28', charges=[])
-        self.ledger['capUSD'] = min(self.ledger['capUSD'], cap)
-        self.latest = None
-        self.secret = key()
-        self.catalogue = catalogue(model, self.directory / 'model-pricing.json' if ledger_path else None)
-        self.input_price = float(self.catalogue['pricing']['prompt'])
-        self.output_price = float(self.catalogue['pricing']['completion'])
+    """All current controllers share the audited provider adapter.
 
-    def __call__(self, payload):
-        if getattr(self,'_native',None) is not None:
-            reply=self._native(payload);self.latest=self._native.latest
-            return reply
-        if any(c['status'] in ('pending','uncertain') and c.get('provider','openrouter')=='openrouter' for c in self.ledger['charges']):
-            raise RuntimeError('Unsettled API charge; reconcile before any further call')
-        # Bound text by UTF-8 bytes and images by 16K tokens each. The provider
-        # price cap matches this bound; oversize images/requests are rejected.
-        text_bytes, image_count = 2048, 0
-        for message in payload['messages']:
-            content = message['content']
-            if isinstance(content, str):
-                text_bytes += len(content.encode())
-            else:
-                for item in content:
-                    if item['type'] == 'text':
-                        text_bytes += len(item['text'].encode())
-                    else:
-                        raw = base64.b64decode(item['image_url']['url'].split(',', 1)[1])
-                        with Image.open(io.BytesIO(raw)) as im:
-                            assert max(im.size) <= 1800
-                        image_count += 1
-        assert image_count <= 20 and text_bytes <= 250_000
-        reserved = (text_bytes + image_count * 16384) * self.input_price + 2048 * self.output_price + image_count * .005
-        from unified_agent.providers import total
-        spent = total(self.ledger)
-        if spent + reserved > self.ledger['capUSD']:
-            from unified_agent.providers import CostLimit
-            raise CostLimit('Arena demo budget limit reached before request')
-        entry = dict(id=uuid.uuid4().hex, model=self.model, reservedUSD=reserved,
-            actualUSD=None, status='pending', createdAt=time.time(), run=self.directory.name)
-        self.ledger['charges'].append(entry)
-        write_json(self.ledger_path, self.ledger)
-        reasoning = dict(effort='low') if self.model.startswith(('openai/', 'anthropic/')) else dict(enabled=False)
-        body = dict(model=self.model, messages=payload['messages'], temperature=0, max_tokens=2048,
-            reasoning=reasoning, response_format=dict(type='json_object'),
-            provider=dict(sort='price', allow_fallbacks=False, require_parameters=False,
-                data_collection='deny', max_price=dict(prompt=self.input_price * 1e6,
-                    completion=self.output_price * 1e6, image=.005)))
-        raw_body = json.dumps(body, ensure_ascii=False).encode()
-        # Keep the exact request body (including image bytes) for an audit.
-        # No Authorization header or API key is written to this file.
-        request_archive = self.directory / 'api' / (entry['id'] + '.request.json.gz')
-        request_archive.parent.mkdir(parents=True, exist_ok=True)
-        with gzip.open(request_archive, 'wb') as archive:
-            archive.write(raw_body)
-        pending = self.directory / 'api' / (entry['id'] + '.request.pending')
-        pending.write_bytes(raw_body)
-        start = time.time()
-        try:
-            # curl handles repeated TLS connections more reliably here. The
-            # credential is sent on stdin, never in process arguments or logs.
-            config = ('url = "https://openrouter.ai/api/v1/chat/completions"\n'
-                'request = "POST"\n'
-                'header = "Authorization: Bearer ' + self.secret + '"\n'
-                'header = "Content-Type: application/json"\n'
-                'header = "X-OpenRouter-Title: Brick Atlas continuous assembly arena"\n')
-            response = subprocess.run(['curl', '-sS', '--max-time', '110',
-                '--data-binary', '@' + str(pending), '--write-out', '\n%{http_code}',
-                '--config', '-'], input=config, text=True, capture_output=True)
-            if response.returncode:
-                raise RuntimeError('HTTP transport error: ' + response.stderr[:160])
-            body_text, status = response.stdout.rsplit('\n', 1)
-            if status != '200':
-                raise RuntimeError('Provider HTTP ' + status + ': ' + body_text[:240])
-            result = json.loads(body_text)
-            # Preserve the provider response before validating billing. An
-            # incomplete receipt must not erase a returned generation ID or
-            # model output needed for later reconciliation. No headers/key.
-            response_archive = self.directory / 'api' / (entry['id'] + '.response.private.json.gz')
-            with gzip.open(response_archive, 'wt', encoding='utf-8') as archive:
-                json.dump(result, archive, ensure_ascii=False)
-            entry['responseArchive'] = str(response_archive.relative_to(self.directory))
-            entry['responseSha256'] = hashlib.sha256(body_text.encode()).hexdigest()
-            if isinstance(result.get('id'), str):
-                entry['generationId'] = result['id']
-            write_json(self.ledger_path, self.ledger)
-            cost = result.get('usage', {}).get('cost')
-            if not isinstance(cost, (float, int)) or not math.isfinite(cost) or cost < 0 or not result.get('id'):
-                raise RuntimeError('API response missing a verifiable charge')
-            entry.update(actualUSD=cost, generationId=result['id'],
-                status='settled' if cost <= reserved else 'uncertain',
-                promptTokens=result['usage'].get('prompt_tokens'), completionTokens=result['usage'].get('completion_tokens'))
-            write_json(self.ledger_path, self.ledger)
-            self.latest = dict(result=result, requestBodySha256=hashlib.sha256(raw_body).hexdigest(),
-                requestShape=dict(model=self.model, messages=len(body['messages']), images=image_count,
-                    maxTokens=2048, reasoning=reasoning), latencySeconds=round(time.time() - start, 3))
-            write_json(self.directory / 'api' / (entry['id'] + '.private.json'), self.latest)
-            if entry['status'] != 'settled':
-                raise RuntimeError('Provider exceeded reserved ceiling')
-            return result['choices'][0]['message']['content']
-        except Exception:
-            if entry['status'] == 'pending':
-                entry['status'] = 'uncertain'
-                write_json(self.ledger_path, self.ledger)
-            raise
-        finally:
-            pending.unlink(missing_ok=True)
+    Old API logs remain immutable; this prevents direct/static runners from
+    accidentally bypassing native routing, truncation or receipt checks.
+    """
+    def __init__(self,directory,cap=1.0,model=MODEL,ledger_path=None):
+        from unified_agent.providers import PaidTransport
+        self._native=PaidTransport(directory,cap,model,
+            ledger_path=ledger_path or OUT/'api-ledger.private.json')
+        self.directory,self.model,self.latest=Path(directory),model,None
 
-    def usage(self):
-        if getattr(self,'_native',None) is not None:return self._native.usage()
-        charges = [c for c in self.ledger['charges'] if c['run'] == self.directory.name]
-        return dict(calls=len(charges), costUSD=sum(c['actualUSD'] or 0 for c in charges),
-            unsettledReservationsUSD=sum(c['reservedUSD'] for c in charges if c['status'] != 'settled'),
-            settled=all(c['status'] == 'settled' for c in charges), capUSD=self.ledger['capUSD'],
-            promptTokens=sum(c.get('promptTokens') or 0 for c in charges),
-            completionTokens=sum(c.get('completionTokens') or 0 for c in charges))
+    def __call__(self,payload):
+        try:return self._native(payload)
+        finally:self.latest=self._native.latest
+
+    def usage(self):return self._native.usage()

@@ -6,7 +6,10 @@ from dynamic_arena import OUT as ARENA_OUT
 from dynamic_arena.run import open_session
 from dynamic_arena.transport import write_json
 from unified_agent import OUT
-from unified_agent.providers import LEDGER,total
+from unified_agent.providers import total
+
+# Historical v1 report; do not read the new v2 experiment ledger.
+LEDGER=OUT/'ledger.private.json'
 
 
 def main():

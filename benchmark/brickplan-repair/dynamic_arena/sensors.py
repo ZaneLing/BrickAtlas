@@ -50,11 +50,14 @@ class Sensors:
     def inventory(self, page):
         if not 1 <= page <= self.inventory_count: raise ValueError('Unknown inventory page')
         group = sorted(self.aliases, key=self.aliases.get)[(page-1)*12:page*12]
+        availability={r['partId']:r['status'] for r in self.availability(page)}
         im = Image.new('RGB', (1600, math.ceil(len(group)/4)*304), 'white'); draw = ImageDraw.Draw(im)
         for i, actor in enumerate(group):
             key = self.keys(actor)[0]; x, y = (i%4)*400, (i//4)*304
             tile = self.renderer.rgb({actor: key}, size=(400, 280), only=actor, frame_keys=[key], fixtures=False, supersample=1)[0]
-            im.paste(tile, (x, y+24)); draw.text((x+8, y+4), self.aliases[actor], font=FONT, fill='#17283a')
+            im.paste(tile, (x, y+24))
+            label=self.aliases[actor]+' | '+availability[self.aliases[actor]]
+            draw.text((x+8,y+4),label,font=FONT,fill='#17283a')
         return im
 
     def candidates(self, public, page, view, angles):

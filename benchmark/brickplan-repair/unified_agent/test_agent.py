@@ -37,13 +37,13 @@ class AgentChecks(unittest.TestCase):
 
     def test_strict_output(self):
         p=profile();self.assertFalse(parse_agent('```json\n{}\n```',p)[1])
-        self.assertFalse(parse_agent(dict(tool='finish',args={},plan=[],notes='x'*1201),p)[1])
+        self.assertEqual(len(parse_agent(dict(tool='finish',args={},plan=[],notes='x'*1201),p)[0]['notes']),1200)
         self.assertTrue(parse_agent(dict(tool='finish',args={},plan=[],notes=''),p)[1])
 
     def test_json_and_argument_errors_are_separate(self):
         a=self.agent()
         a.step('{"tool":')
-        a.step(dict(tool='observe',args=dict(view='top',show=['current']),plan=[],notes=''))
+        a.step(dict(tool='observe',args=dict(view='diagonal-unknown',show=['current']),plan=[],notes=''))
         self.assertTrue(a.session.records[0]['parseError'])
         self.assertFalse(a.session.records[1]['parseError'])
         metrics=a.result()['executionMetrics']
@@ -91,6 +91,8 @@ class AgentChecks(unittest.TestCase):
         a=self.agent(configuration=profile(maxActions=1,maxObservations=1))
         moves=a.session.row['case']['normalReferenceActions'];self.move(a,moves[0])
         self.assertEqual(self.move(a,moves[1])['code'],'RESOURCE_BUDGET_EXHAUSTED')
+        self.assertEqual(a.result()['executionMetrics']['schemaErrorResponses'],0)
+        self.assertEqual(a.result()['executionMetrics']['budgetRejectedResponses'],1)
         self.assertEqual(self.send(a,'observe',dict(view='top',rotateDegrees=0,show=['current']))['code'],'OBSERVED')
         self.assertEqual(a.observation_attempts,1)
         self.send(a,'finish');self.assertEqual(a.session.terminal,'completed')

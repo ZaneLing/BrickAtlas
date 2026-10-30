@@ -32,8 +32,11 @@ class Handler(BaseHTTPRequestHandler):
                 from unified_agent import __file__ as agent_file
                 return self.send(Path(agent_file).with_name('viewer.html').read_bytes(),'text/html; charset=utf-8')
             if parsed.path == '/api/agent-report':
-                from unified_agent import OUT as AGENT_OUT
-                return self.send((AGENT_OUT/'pilot.json').read_bytes(),'application/json')
+                from unified_agent import OUT as OLD_AGENT_OUT, RUN_OUT as AGENT_OUT
+                version=parse_qs(parsed.query).get('version',['latest'])[0]
+                if version not in ('1','2','latest'):return self.send_error(400)
+                report=(OLD_AGENT_OUT if version=='1' or (version=='latest' and not (AGENT_OUT/'pilot.json').exists()) else AGENT_OUT)/'pilot.json'
+                return self.send(report.read_bytes(),'application/json')
             if parsed.path in ('/dataset','/dataset/'):
                 self.send_response(302);self.send_header('Location','/dataset/index.html');self.end_headers();return
             if parsed.path.startswith('/dataset/'):

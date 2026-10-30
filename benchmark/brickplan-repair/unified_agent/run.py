@@ -5,9 +5,9 @@ from bench_design.session import scheduled_of
 from dynamic_arena import OUT as ARENA_OUT
 from dynamic_arena.run import open_session,NoProvider
 from dynamic_arena.transport import write_json
-from unified_agent import OUT,PROTOCOL
+from unified_agent import RUN_OUT as OUT,PROTOCOL
 from unified_agent.agent import VisualAgent
-from unified_agent.profile import profile
+from unified_agent.profile import profile,for_session
 from unified_agent.providers import PaidTransport,MODELS,LEDGER,total
 
 CASES=('SC:4096-1-alt-1488:dynamic:buried-repair','D:obj-city-car--t5--removed_piece--v01')
@@ -23,8 +23,17 @@ def execute(cid,model,condition,cap,configuration,normal=None,ledger_path=None,r
     runid='agent-'+condition+'-'+re.sub('[^a-z0-9]+','-',model.lower()).strip('-')+'-'+time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:4]
     directory=ARENA_OUT/'runs'/runid
     session=open_session(cid,directory,model,condition=='normal')
+    configuration=configuration or for_session(session)
+    from unified_agent.readiness import require
+    from unified_agent.casecheck import checked
+    prerequisite=require(model,configuration)
+    case_check=checked(cid,condition=='normal',images=True)
+    if not case_check['passed']:raise ValueError('Case preflight failed: '+str(case_check))
+    if case_check['moves']>configuration['maxActions'] or case_check['moves']+1>configuration['maxDecisions']:
+        raise ValueError('Declared agent budget is below a verified feasible path')
     setup_error=None
-    try:transport=PaidTransport(directory,cap,model,max_output=configuration['maxOutputTokensPerDecision'],ledger_path=ledger_path)
+    try:transport=PaidTransport(directory,cap,model,max_output=configuration['maxOutputTokensPerDecision'],ledger_path=ledger_path,
+        reasoning_mode=configuration['reasoningMode'],timeout=configuration['requestTimeoutSeconds'])
     except Exception as exc:
         transport=NoProvider();transport.model=model;setup_error=str(exc)[:300]
     agent=VisualAgent(session,transport,configuration)
@@ -44,7 +53,7 @@ def execute(cid,model,condition,cap,configuration,normal=None,ledger_path=None,r
         session.terminal='service_error';agent.phase='finished';agent.spectator_frame();result=agent.result();result['setupError']=setup_error
         write_json(directory/'log.json',dict(protocol=PROTOCOL,calls=[],result=result));session.save()
     else:result=agent.run()
-    result.update(arenaProtocol=PROTOCOL,arenaBranch=condition,arenaRunId=runid,actor=model)
+    result.update(arenaProtocol=PROTOCOL,arenaBranch=condition,arenaRunId=runid,actor=model,apiPreflight=prerequisite,casePreflight=case_check)
     for name in ['result.json','log.json','spectator.json']:
         path=directory/name
         value=result if name=='result.json' else json.loads(path.read_text())
@@ -61,7 +70,8 @@ def main():
     a=p.parse_args();OUT.mkdir(parents=True,exist_ok=True)
     report_path=OUT/a.report
     if report_path.exists():raise ValueError('Report already exists; never overwrite or silently repeat a paid pilot')
-    report=dict(schema='brick-atlas-unified-agent-pilot/1',models=a.models,cases=a.cases,profile=profile(),
+    report=dict(schema='brick-atlas-unified-agent-pilot/2',models=a.models,cases=a.cases,profile=profile(),
+        budgetRule='Per-case public inventory and native limits; same for every backbone',
         planDeclaredBeforeCalls=True,repeats=1,startedAt=time.time(),runs=[],formalBenchmarkAggregate=False,
         incidentCondition='same case/backbone/profile normal success required; independent rollout, no shared-prefix causal claim')
     write_json(report_path,report)
@@ -70,10 +80,13 @@ def main():
         # Case-major order lets every backbone try the easier task first.
         for cid in a.cases:
             for model in a.models:
-                normal=execute(cid,model,'normal',a.cap_usd,report['profile'],ledger_path=a.ledger,report_path=report_path)
+                try:normal=execute(cid,model,'normal',a.cap_usd,None,ledger_path=a.ledger,report_path=report_path)
+                except ValueError as exc:
+                    report.setdefault('notRun',[]).append(dict(caseId=cid,model=model,condition='normal-and-incident',reason='preflight_failed',detail=str(exc)[:400]))
+                    write_json(report_path,report);continue
                 report['runs'].append(normal);write_json(report_path,report)
                 if normal['success'] is True:
-                    report['runs'].append(execute(cid,model,'incident',a.cap_usd,report['profile'],normal,ledger_path=a.ledger,report_path=report_path))
+                    report['runs'].append(execute(cid,model,'incident',a.cap_usd,normal['agentProfile'],normal,ledger_path=a.ledger,report_path=report_path))
                 else:report.setdefault('notRun',[]).append(dict(caseId=cid,model=model,condition='incident',reason='normal_not_successful'))
                 write_json(report_path,report)
                 print('DONE '+model+' '+cid+' normal='+str(normal['success']),flush=True)

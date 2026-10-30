@@ -1,5 +1,7 @@
 # 当前论文：Brick Atlas
 
+**2026-10-30 实验接口修复（源码更新，PDF 未重编）：** 加入 v2 输出与失败处理规则、公开规模对应的预算、运行前检查；保留 v1 历史实验设置。四个模型共 8 次真实接口检查均通过，这些是接口证据，不是拼装成绩。详见 [修复与验证报告](../../deliverables/brick-atlas-experiment-readiness-v2/README.zh-CN.md)。
+
 **2026-10-30 Agent 补充（只更新源码，未重编 PDF／Overleaf 包）：** 已加入静态模型、动态直接模型、动态视觉 Agent 三组设计及统一 backbone 控制规则；新增真实小样本结果与一处等价摆放裁判修复说明。详见 [真实试跑与完整日志](../../deliverables/brick-atlas-unified-agent-v1/README.zh-CN.md)。这些结果不替代全库正式实验。
 
 **2026-10-30 实现补充（本次未重编 PDF）：** [输入减负、同故障现场的历史对比、独立检查与可运行包](../../deliverables/brick-atlas-reliability-v1/README.zh-CN.md)。该版本提供新的实验实现与脚本证据，尚未产生新的正式模型成绩，不能替换文中既有 API 结果。

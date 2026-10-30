@@ -32,8 +32,8 @@ class ProviderChecks(unittest.TestCase):
                 self.assertNotIn('openrouter',url);self.assertNotIn('provider',body)
                 self.assertEqual(body['model'],model.split('/')[1])
                 if provider=='aliyun':
-                    self.assertEqual(body['max_completion_tokens'],2048);self.assertNotIn('max_tokens',body)
-                    self.assertFalse(body['preserve_thinking']);self.assertEqual(body['reasoning_effort'],'low')
+                    self.assertEqual(body['max_completion_tokens'],8192);self.assertNotIn('max_tokens',body)
+                    self.assertFalse(body['preserve_thinking']);self.assertFalse(body['enable_thinking']);self.assertNotIn('reasoning_effort',body)
                     self.assertAlmostEqual(t.usage()['nativeCosts']['CNY'],.000161)
                 else:self.assertAlmostEqual(t.usage()['nativeCosts']['USD'],.00006306)
                 self.assertEqual(t.usage()['confirmedUSD'],0);self.assertTrue(t.usage()['settled'])
